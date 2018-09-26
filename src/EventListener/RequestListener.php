@@ -8,22 +8,19 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Controller;
+namespace App\EventListener;
 
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EntryPointAction
+class RequestListener
 {
-    /**
-     * @Route(path="/", methods={"GET"})
-     * @return Response
-     */
-    public function handleRequest(): Response
+    public function onKernelRequest(GetResponseEvent $event)
     {
-        return new Response('ok');
+        $request = $event->getRequest();
+        $event->setResponse(new Response($request->getPathInfo()));
     }
 }
