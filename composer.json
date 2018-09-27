@@ -12,6 +12,12 @@
         "symfony/yaml": "4.*"
     },
     "require-dev": {
+        "behat/behat": "dev-master",
+        "behat/mink": "dev-master",
+        "behat/mink-browserkit-driver": "1.*",
+        "behat/mink-extension": "2.*",
+        "behat/symfony2-extension": "2.*",
+        "behatch/contexts": "3.*"
     },
     "config": {
         "preferred-install": {

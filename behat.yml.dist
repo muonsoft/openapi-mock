@@ -1,0 +1,24 @@
+default:
+  suites:
+    default:
+      paths:
+        features: 'tests/Acceptance'
+        bootstrap: 'tests/Acceptance/bootstrap'
+      contexts:
+        - App\Tests\Acceptance\Context\FeatureContext:
+            kernel: '@kernel'
+        - Behat\MinkExtension\Context\MinkContext
+        - behatch:context:json
+        - behatch:context:rest
+
+  extensions:
+    Behat\Symfony2Extension:
+      kernel:
+        bootstrap: 'tests/Acceptance/bootstrap.php'
+        class: App\Kernel
+    Behat\MinkExtension:
+      base_url: "http://example.com/"
+      sessions:
+        default:
+          symfony2: ~
+    Behatch\Extension: ~
