@@ -1,7 +1,8 @@
 FROM php:fpm-alpine
 LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
-ENV APP_ENV=prod
+ENV APP_ENV=prod \
+    SPECIFICATION_URL=''
 
 RUN set -xe \
     && apk --no-cache add --update \

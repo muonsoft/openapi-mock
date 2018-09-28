@@ -17,7 +17,9 @@
         "behat/mink-browserkit-driver": "1.*",
         "behat/mink-extension": "2.*",
         "behat/symfony2-extension": "2.*",
-        "behatch/contexts": "3.*"
+        "behatch/contexts": "3.*",
+        "phake/phake": "3.*",
+        "phpunit/phpunit": "7.*"
     },
     "config": {
         "preferred-install": {

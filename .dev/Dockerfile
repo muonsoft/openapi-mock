@@ -2,7 +2,7 @@ FROM strider2038/swagger-mock
 
 ENV APP_ENV=dev \
     COMPOSER_HOME=/var/run/composer \
-    XDEBUG_CONFIG="remote_enable=1 remote_mode=req remote_port=9001 remote_host=172.17.0.1 remote_log=/dev/stdout" \
+    XDEBUG_CONFIG="remote_enable=1 remote_mode=req remote_port=9001 remote_host=172.17.0.1 remote_log=/app/var/xdebug.log" \
     PHP_IDE_CONFIG="serverName=default"
 
 RUN set -xe \

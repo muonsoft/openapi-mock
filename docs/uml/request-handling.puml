@@ -1,0 +1,16 @@
+@startuml
+
+RequestHandler -> MockRepository : findMockByPath(uri)
+RequestHandler <- MockRepository : mockParameters
+RequestHandler -> MockResponseGenerator : generateResponse(request, mockParameters)
+MockResponseGenerator -> MediaTypeNegotiator : negotiateMediaType(request, mockParameters)
+MockResponseGenerator <- MediaTypeNegotiator : mediaType
+MockResponseGenerator -> ResponseStatusNegotiator : negotiateResponseStatus(request, mockParameters)
+MockResponseGenerator <- ResponseStatusNegotiator : statusCode
+MockResponseGenerator -> DataGenerator : generateResponseData(schema)
+MockResponseGenerator <- DataGenerator : data
+MockResponseGenerator -> Responder : createResponse(statusCode, mediaType, data)
+MockResponseGenerator <- Responder : response
+RequestHandler <- MockResponseGenerator : response
+
+@enduml

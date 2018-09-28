@@ -1,5 +1,6 @@
 parameters:
     locale: 'en'
+    specification_url: '%env(SPECIFICATION_URL)%'
 
 services:
   _defaults:

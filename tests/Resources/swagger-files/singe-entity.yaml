@@ -1,0 +1,18 @@
+openapi: "3.0.0"
+paths:
+  /entity:
+    get:
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - name
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
