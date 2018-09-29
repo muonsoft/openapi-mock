@@ -10,8 +10,6 @@
 
 namespace App\Mock\Generation;
 
-use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
 
 /**
@@ -19,12 +17,22 @@ use App\Mock\Parameters\Schema\Schema;
  */
 class DataGenerator
 {
+    /** @var ValueGeneratorLocator */
+    private $generatorLocator;
+
+    public function __construct(ValueGeneratorLocator $generatorLocator)
+    {
+        $this->generatorLocator = $generatorLocator;
+    }
+
     /**
      * @param Schema $schema
      * @return mixed
      */
     public function generateData(Schema $schema)
     {
+        $valueGenerator = $this->generatorLocator->getValueGenerator($schema->value);
 
+        return $valueGenerator->generateValue($schema->value);
     }
 }

@@ -8,15 +8,13 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters\Schema;
+namespace App\Tests\Utility;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class Schema
+class DummyType implements TypeMarkerInterface
 {
-    /** @var TypeMarkerInterface */
-    public $value;
 }

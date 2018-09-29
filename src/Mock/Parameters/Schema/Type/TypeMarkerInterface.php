@@ -8,15 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters\Schema;
-
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+namespace App\Mock\Parameters\Schema\Type;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class Schema
+interface TypeMarkerInterface
 {
-    /** @var TypeMarkerInterface */
-    public $value;
+
 }

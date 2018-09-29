@@ -8,15 +8,17 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters\Schema;
+namespace App\Mock\Parameters\Schema\Type;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Utility\AbstractClassCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class Schema
+class TypeCollection extends AbstractClassCollection
 {
-    /** @var TypeMarkerInterface */
-    public $value;
+    protected function getElementClassName(): string
+    {
+        return TypeMarkerInterface::class;
+    }
 }
