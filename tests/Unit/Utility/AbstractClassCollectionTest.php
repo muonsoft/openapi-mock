@@ -10,7 +10,7 @@
 
 namespace App\Unit\Utility;
 
-use App\Tests\Utility\DummyClass;
+use App\Tests\Utility\Dummy\DummyClass;
 use App\Utility\AbstractClassCollection;
 use PHPUnit\Framework\TestCase;
 

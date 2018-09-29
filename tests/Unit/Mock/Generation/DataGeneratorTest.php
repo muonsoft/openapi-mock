@@ -11,31 +11,25 @@
 namespace App\Tests\Unit\Mock\Generation;
 
 use App\Mock\Generation\DataGenerator;
-use App\Mock\Generation\Value\ValueGeneratorInterface;
-use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Schema;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\Tests\Utility\DummyType;
+use App\Tests\Utility\Dummy\DummyType;
+use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class DataGeneratorTest extends TestCase
 {
-    /** @var ValueGeneratorLocator */
-    private $generatorLocator;
-
-    /** @var ValueGeneratorInterface */
-    private $valueGenerator;
+    use ValueGeneratorCaseTrait;
 
     protected function setUp(): void
     {
-        $this->generatorLocator = \Phake::mock(ValueGeneratorLocator::class);
-        $this->valueGenerator = \Phake::mock(ValueGeneratorInterface::class);
+        $this->setUpValueGenerator();
     }
 
     /** @test */
-    public function generateData_given_expected(): void
+    public function generateData_valueTypeInSchema_valueGeneratedByConcreteGeneratorAndReturned(): void
     {
-        $generator = new DataGenerator($this->generatorLocator);
+        $generator = new DataGenerator($this->valueGeneratorLocator);
         $type = new DummyType();
         $schema = $this->givenSchemaWithValueType($type);
         $generatedValue = $this->givenValueGenerator_generateValue_returnsValue();
@@ -48,40 +42,11 @@ class DataGeneratorTest extends TestCase
         $this->assertSame($generatedValue, $value);
     }
 
-    private function assertValueGenerator_generateValue_isCalledOnceWithType(TypeMarkerInterface $type): void
-    {
-        \Phake::verify($this->valueGenerator)
-            ->generateValue($type);
-    }
-
-    private function givenValueGenerator_generateValue_returnsValue(): string
-    {
-        $generatedValue = 'generated_value';
-        \Phake::when($this->valueGenerator)
-            ->generateValue(\Phake::anyParameters())
-            ->thenReturn($generatedValue);
-
-        return $generatedValue;
-    }
-
     private function givenSchemaWithValueType(TypeMarkerInterface $type): Schema
     {
         $schema = new Schema();
         $schema->value = $type;
 
         return $schema;
-    }
-
-    private function assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType(TypeMarkerInterface $type): void
-    {
-        \Phake::verify($this->generatorLocator)
-            ->getValueGenerator($type);
-    }
-
-    private function givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator(): void
-    {
-        \Phake::when($this->generatorLocator)
-            ->getValueGenerator(\Phake::anyParameters())
-            ->thenReturn($this->valueGenerator);
     }
 }

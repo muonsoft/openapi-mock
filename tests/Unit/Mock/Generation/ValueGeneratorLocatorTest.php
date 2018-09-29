@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation;
 
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
-use App\Tests\Utility\DummyType;
+use App\Tests\Utility\Dummy\DummyType;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 

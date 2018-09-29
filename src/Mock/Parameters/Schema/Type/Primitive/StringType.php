@@ -8,13 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Tests\Utility;
+namespace App\Mock\Parameters\Schema\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class DummyType implements TypeMarkerInterface
+class StringType implements TypeMarkerInterface
 {
+
 }

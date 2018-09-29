@@ -5,6 +5,7 @@
         "php": "7.2.*",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "fzaninotto/faker": "1.*",
         "sensio/framework-extra-bundle": "5.*",
         "symfony/console": "4.*",
         "symfony/flex": "1.*",
