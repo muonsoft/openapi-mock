@@ -8,19 +8,17 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters;
+namespace App\OpenAPI\Parsing;
+
+use App\Mock\Parameters\MockParameters;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters
+class EndpointParser
 {
-    /** @var string */
-    public $httpMethod;
+    public function parseEndpoint(string $path, string $httpMethod, array $specification): MockParameters
+    {
 
-    /** @var string */
-    public $path;
-
-    /** @var MockResponseCollection */
-    public $responses;
+    }
 }

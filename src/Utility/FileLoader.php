@@ -8,15 +8,15 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock;
+namespace App\Utility;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockRepository
+class FileLoader
 {
-    public function findMockByPath(string $path)
+    public function loadFileContents(string $uri): string
     {
-
+        return file_get_contents($uri);
     }
 }

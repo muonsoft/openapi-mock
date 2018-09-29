@@ -10,17 +10,15 @@
 
 namespace App\Mock\Parameters;
 
+use App\Utility\AbstractClassCollection;
+
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters
+class MockParametersCollection extends AbstractClassCollection
 {
-    /** @var string */
-    public $httpMethod;
-
-    /** @var string */
-    public $path;
-
-    /** @var MockResponseCollection */
-    public $responses;
+    protected function getElementClassName(): string
+    {
+        return MockParameters::class;
+    }
 }

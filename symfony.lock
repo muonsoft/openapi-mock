@@ -248,6 +248,9 @@
     "symfony/property-access": {
         "version": "4.1.x-dev"
     },
+    "symfony/property-info": {
+        "version": "v4.1.4"
+    },
     "symfony/routing": {
         "version": "4.0",
         "recipe": {
@@ -256,6 +259,12 @@
             "version": "4.0",
             "ref": "cda8b550123383d25827705d05a42acf6819fe4e"
         }
+    },
+    "symfony/serializer": {
+        "version": "v4.1.4"
+    },
+    "symfony/serializer-pack": {
+        "version": "v1.0.1"
     },
     "symfony/translation": {
         "version": "3.3",

@@ -8,19 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters;
+namespace App\OpenAPI\Parsing;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters
+class ParsingException extends \DomainException
 {
-    /** @var string */
-    public $httpMethod;
 
-    /** @var string */
-    public $path;
-
-    /** @var MockResponseCollection */
-    public $responses;
 }

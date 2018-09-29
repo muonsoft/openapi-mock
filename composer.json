@@ -10,6 +10,7 @@
         "symfony/console": "4.*",
         "symfony/flex": "1.*",
         "symfony/framework-bundle": "4.*",
+        "symfony/serializer-pack": "1.*",
         "symfony/yaml": "4.*"
     },
     "require-dev": {
