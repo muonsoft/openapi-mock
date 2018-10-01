@@ -32,8 +32,12 @@ class SpecificationParser
         $collection = new MockParametersCollection();
 
         foreach ($specification['paths'] as $path => $endpoints) {
-            foreach ($endpoints as $httpMethod => $value) {
-                $mockParameters = $this->endpointParser->parseEndpoint($path, $httpMethod, $specification);
+            $this->validateEndpointSpecificationAtPath($endpoints, $path);
+
+            foreach ($endpoints as $httpMethod => $endpointSpecification) {
+                $this->validateEndpointSpecificationAtPath($endpointSpecification, $path);
+
+                $mockParameters = $this->endpointParser->parseEndpoint($endpointSpecification);
                 $collection->add($mockParameters);
             }
         }
@@ -57,6 +61,13 @@ class SpecificationParser
             || \count($specification['paths']) === 0
         ) {
             throw new ParsingException('Section "paths" is empty or does not exist');
+        }
+    }
+
+    private function validateEndpointSpecificationAtPath($endpointSpecification, string $path): void
+    {
+        if (!\is_array($endpointSpecification) || \count($endpointSpecification) === 0) {
+            throw new ParsingException(sprintf('Invalid endpoint specification at path "%s"', $path));
         }
     }
 }

@@ -19,11 +19,12 @@ class SpecificationParserTest extends TestCase
 {
     private const PATH = '/entity';
     private const HTTP_METHOD = 'get';
+    private const ENDPOINT_SPECIFICATION = ['endpoint_specification'];
     private const VALID_SPECIFICATION = [
         'openapi' => '3.0',
         'paths' => [
             self::PATH => [
-                self::HTTP_METHOD => [],
+                self::HTTP_METHOD => self::ENDPOINT_SPECIFICATION,
             ],
         ],
     ];
@@ -44,7 +45,7 @@ class SpecificationParserTest extends TestCase
 
         $mockParametersCollection = $parser->parseSpecification(self::VALID_SPECIFICATION);
 
-        $this->assertEndpointParser_parseEndpoint_isCalledOnceWithExpectedParameters(self::PATH, self::HTTP_METHOD, self::VALID_SPECIFICATION);
+        $this->assertEndpointParser_parseEndpoint_isCalledOnceWithEndpointSpecification(self::ENDPOINT_SPECIFICATION);
         $this->assertCount(1, $mockParametersCollection);
         $this->assertSame($mockParameters, $mockParametersCollection->first());
     }
@@ -90,18 +91,52 @@ class SpecificationParserTest extends TestCase
         ]);
     }
 
+    /**
+     * @test
+     * @expectedException \App\OpenAPI\Parsing\ParsingException
+     * @expectedExceptionMessage Invalid endpoint specification at path
+     */
+    public function parseSpecification_noEndpoints_parsingExceptionThrown(): void
+    {
+        $parser = $this->createSpecificationParser();
+
+        $parser->parseSpecification([
+            'openapi' => '3.0',
+            'paths' => [
+                '/entity' => 'invalid'
+            ],
+        ]);
+    }
+
+    /**
+     * @test
+     * @expectedException \App\OpenAPI\Parsing\ParsingException
+     * @expectedExceptionMessage Invalid endpoint specification at path
+     */
+    public function parseSpecification_invalidEndpoint_parsingExceptionThrown(): void
+    {
+        $parser = $this->createSpecificationParser();
+
+        $parser->parseSpecification([
+            'openapi' => '3.0',
+            'paths' => [
+                '/entity' => [
+                    'get' => 'invalid'
+                ],
+            ],
+        ]);
+    }
+
     private function createSpecificationParser(): SpecificationParser
     {
         return new SpecificationParser($this->endpointParser);
     }
 
-    private function assertEndpointParser_parseEndpoint_isCalledOnceWithExpectedParameters(
-        string $path,
-        string $httpMethod,
+    private function assertEndpointParser_parseEndpoint_isCalledOnceWithEndpointSpecification(
         array $specification
     ): void {
         \Phake::verify($this->endpointParser)
-            ->parseEndpoint($path, $httpMethod, $specification);
+            ->parseEndpoint($specification);
     }
 
     private function givenEndpointParser_parseEndpoint_returnsMockParameters(): MockParameters

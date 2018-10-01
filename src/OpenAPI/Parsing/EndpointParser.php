@@ -17,7 +17,7 @@ use App\Mock\Parameters\MockParameters;
  */
 class EndpointParser
 {
-    public function parseEndpoint(string $path, string $httpMethod, array $specification): MockParameters
+    public function parseEndpoint(array $endpointSpecification): MockParameters
     {
 
     }
