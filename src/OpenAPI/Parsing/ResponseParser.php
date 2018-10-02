@@ -17,8 +17,32 @@ use App\Mock\Parameters\MockResponse;
  */
 class ResponseParser
 {
+    /** @var SchemaParser */
+    private $schemaParser;
+
+    public function __construct(SchemaParser $schemaParser)
+    {
+        $this->schemaParser = $schemaParser;
+    }
+
     public function parseResponse(array $responseSpecification): MockResponse
     {
+        $response = new MockResponse();
+        $content = $responseSpecification['content'] ?? [];
+        $this->validateContent($content);
 
+        foreach ($content as $mediaType => $schema) {
+            $parsedSchema = $this->schemaParser->parseSchema($schema);
+            $response->content->set($mediaType, $parsedSchema);
+        }
+
+        return $response;
+    }
+
+    private function validateContent($content): void
+    {
+        if (!\is_array($content)) {
+            throw new ParsingException('Invalid response content');
+        }
     }
 }

@@ -29,7 +29,7 @@ class ValueGeneratorLocatorTest extends TestCase
     }
 
     /** @test */
-    public function getValueGenerator_given_expected(): void
+    public function getValueGenerator_typeClass_generatorReturned(): void
     {
         $locator = new ValueGeneratorLocator($this->container, [
             DummyType::class => self::VALUE_GENERATOR_SERVICE_ID

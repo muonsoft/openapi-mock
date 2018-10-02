@@ -22,4 +22,9 @@ class MockResponse
 
     /** @var SchemaCollection */
     public $content;
+
+    public function __construct()
+    {
+        $this->content = new SchemaCollection();
+    }
 }
