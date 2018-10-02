@@ -38,6 +38,8 @@ class SpecificationParser
                 $this->validateEndpointSpecificationAtPath($endpointSpecification, $path);
 
                 $mockParameters = $this->endpointParser->parseEndpoint($endpointSpecification);
+                $mockParameters->path = $path;
+                $mockParameters->httpMethod = strtoupper($httpMethod);
                 $collection->add($mockParameters);
             }
         }

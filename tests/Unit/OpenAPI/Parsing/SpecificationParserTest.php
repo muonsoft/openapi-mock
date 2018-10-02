@@ -41,13 +41,17 @@ class SpecificationParserTest extends TestCase
     public function parseSpecification_validSpecification_specificationParsedToMockParameters(): void
     {
         $parser = $this->createSpecificationParser();
-        $mockParameters = $this->givenEndpointParser_parseEndpoint_returnsMockParameters();
+        $expectedMockParameters = $this->givenEndpointParser_parseEndpoint_returnsMockParameters();
 
         $mockParametersCollection = $parser->parseSpecification(self::VALID_SPECIFICATION);
 
         $this->assertEndpointParser_parseEndpoint_isCalledOnceWithEndpointSpecification(self::ENDPOINT_SPECIFICATION);
         $this->assertCount(1, $mockParametersCollection);
-        $this->assertSame($mockParameters, $mockParametersCollection->first());
+        /** @var MockParameters $mockParameters */
+        $mockParameters = $mockParametersCollection->first();
+        $this->assertSame($expectedMockParameters, $mockParameters);
+        $this->assertSame(self::PATH, $mockParameters->path);
+        $this->assertSame(strtoupper(self::HTTP_METHOD), $mockParameters->httpMethod);
     }
 
     /**

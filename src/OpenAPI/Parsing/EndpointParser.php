@@ -17,8 +17,38 @@ use App\Mock\Parameters\MockParameters;
  */
 class EndpointParser
 {
+    /** @var ResponseParser */
+    private $responseParser;
+
+    public function __construct(ResponseParser $responseParser)
+    {
+        $this->responseParser = $responseParser;
+    }
+
     public function parseEndpoint(array $endpointSpecification): MockParameters
     {
+        $mockParameters = new MockParameters();
 
+        if (array_key_exists('responses', $endpointSpecification)) {
+            foreach ($endpointSpecification['responses'] as $statusCode => $responseSpecification) {
+                $this->validateResponse($statusCode, $responseSpecification);
+
+                $response = $this->responseParser->parseResponse($responseSpecification);
+                $response->statusCode = (int) $statusCode;
+                $mockParameters->responses->set((int) $statusCode, $response);
+            }
+        }
+
+        return $mockParameters;
+    }
+
+    private function validateResponse($statusCode, $responseSpecification): void
+    {
+        if (!\is_int($statusCode)) {
+            throw new ParsingException('Invalid status code. Must be integer.');
+        }
+        if (!\is_array($responseSpecification)) {
+            throw new ParsingException('Invalid response specification.');
+        }
     }
 }

@@ -8,24 +8,17 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters;
+namespace App\OpenAPI\Parsing;
+
+use App\Mock\Parameters\MockResponse;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters
+class ResponseParser
 {
-    /** @var string */
-    public $httpMethod;
-
-    /** @var string */
-    public $path;
-
-    /** @var MockResponseCollection */
-    public $responses;
-
-    public function __construct()
+    public function parseResponse(array $responseSpecification): MockResponse
     {
-        $this->responses = new MockResponseCollection();
+
     }
 }
