@@ -12,15 +12,22 @@ namespace App\Mock\Parameters\Schema\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Utility\StringList;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class ObjectType implements TypeMarkerInterface
 {
-    /** @var string[] */
+    /** @var StringList */
     public $required;
 
     /** @var TypeCollection */
     public $properties;
+
+    public function __construct()
+    {
+        $this->required = new StringList();
+        $this->properties = new TypeCollection();
+    }
 }

@@ -14,10 +14,13 @@ use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\SchemaParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\Parsing\TypeParserLocator;
+use App\Tests\Utility\TestCase\TypeParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class SchemaParserTest extends TestCase
 {
+    use TypeParserTestCaseTrait;
+
     private const VALUE_TYPE = 'value_type';
     private const VALID_SCHEMA = [
         'schema' => [
@@ -25,16 +28,9 @@ class SchemaParserTest extends TestCase
         ]
     ];
 
-    /** @var TypeParserLocator */
-    private $typeParserLocator;
-
-    /** @var TypeParserInterface */
-    private $typeParser;
-
     protected function setUp(): void
     {
-        $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
-        $this->typeParser = \Phake::mock(TypeParserInterface::class);
+        $this->setUpTypeParser();
     }
 
     /** @test */
@@ -61,35 +57,5 @@ class SchemaParserTest extends TestCase
         $parser = new SchemaParser($this->typeParserLocator);
 
         $parser->parseSchema([]);
-    }
-
-    private function assertTypeParserLocator_getTypeParser_isCalledOnceWithType(string $type): void
-    {
-        \Phake::verify($this->typeParserLocator)
-            ->getTypeParser($type);
-    }
-
-    private function assertTypeParser_parseTypeSchema_isCalledOnceWithSchema(array $schema): void
-    {
-        \Phake::verify($this->typeParser)
-            ->parseTypeSchema($schema);
-    }
-
-    private function givenTypeParserLocator_getTypeParser_returnsTypeParser(): void
-    {
-        \Phake::when($this->typeParserLocator)
-            ->getTypeParser(\Phake::anyParameters())
-            ->thenReturn($this->typeParser);
-    }
-
-    private function givenTypeParser_parseTypeSchema_returnsType(): TypeMarkerInterface
-    {
-        $type = \Phake::mock(TypeMarkerInterface::class);
-
-        \Phake::when($this->typeParser)
-            ->parseTypeSchema(\Phake::anyParameters())
-            ->thenReturn($type);
-
-        return $type;
     }
 }
