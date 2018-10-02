@@ -26,8 +26,18 @@ class MockParametersRepository
         $this->collection = $collection;
     }
 
-    public function findMockParameters(string $httpMethod, string $uri): MockParameters
+    public function findMockParameters(string $httpMethod, string $uri): ?MockParameters
     {
+        $parameters = null;
 
+        /** @var MockParameters $collectionParameters */
+        foreach ($this->collection as $collectionParameters) {
+            if ($httpMethod === $collectionParameters->httpMethod && $uri === $collectionParameters->path) {
+                $parameters = $collectionParameters;
+                break;
+            }
+        }
+
+        return $parameters;
     }
 }
