@@ -29,6 +29,7 @@ services:
 
   mock_parameters_collection:
     class: App\Mock\Parameters\MockParametersCollection
+    public: true
     factory: ['@App\OpenAPI\SpecificationLoader', 'loadMockParameters']
     arguments:
       - '%kernel.project_dir%/tests/Resources/swagger-files/single-entity.yaml'
