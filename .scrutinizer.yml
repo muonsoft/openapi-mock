@@ -13,9 +13,9 @@ build:
           - command: phpcs-run
             use_website_config: true
           - command: ./vendor/bin/phpunit --coverage-clover clover.xml
-              coverage:
-                file: clover.xml
-                format: 'php-clover'
+            coverage:
+              file: clover.xml
+              format: 'php-clover'
     tests: true
 filter:
   excluded_paths:
