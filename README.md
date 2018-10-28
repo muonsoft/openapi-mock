@@ -7,9 +7,10 @@ Swagger mock server with fake data generation support
 
 ## TODO list
 
-* [ ] basic array type support
+* [x] basic array type support
 * [ ] basic number type support
 * [ ] boolean type support
+* [ ] parsing context (path) and better exceptions
 * [ ] content negotiation
 * [ ] xml/json encoding in responder
 * [ ] using number parameters for generator

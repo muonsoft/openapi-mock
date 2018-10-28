@@ -11,8 +11,13 @@ paths:
                 required:
                   - id
                   - name
+                  - tags
                 properties:
                   id:
                     type: integer
                   name:
                     type: string
+                  tags:
+                    type: array
+                    items:
+                      type: string

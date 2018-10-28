@@ -28,17 +28,27 @@ class TypeParserLocatorTest extends TestCase
     }
 
     /** @test */
-    public function getTypeParser_type_typeParserReturned(): void
+    public function getTypeParser_existingType_typeParserReturned(): void
     {
-        $locator = new TypeParserLocator($this->container, [
-            'type' => self::TYPE_PARSER_SERVICE_ID
-        ]);
+        $locator = $this->createTypeParserLocator();
         $containerParser = $this->givenContainer_get_returnsTypeParser();
 
         $parser = $locator->getTypeParser('type');
 
         $this->assertContainer_get_isCalledOnceWithServiceId(self::TYPE_PARSER_SERVICE_ID);
         $this->assertSame($containerParser, $parser);
+    }
+
+    /**
+     * @test
+     * @expectedException \App\OpenAPI\Parsing\ParsingException
+     * @expectedExceptionMessage Unrecognized schema type
+     */
+    public function getTypeParser_notExistingType_exceptionThrown(): void
+    {
+        $locator = $this->createTypeParserLocator();
+
+        $locator->getTypeParser('invalid');
     }
 
     private function assertContainer_get_isCalledOnceWithServiceId(string $serviceId): void
@@ -56,5 +66,15 @@ class TypeParserLocatorTest extends TestCase
             ->thenReturn($valueGenerator);
 
         return $valueGenerator;
+    }
+
+    private function createTypeParserLocator(): TypeParserLocator
+    {
+        return new TypeParserLocator(
+            $this->container,
+            [
+                'type' => self::TYPE_PARSER_SERVICE_ID
+            ]
+        );
     }
 }

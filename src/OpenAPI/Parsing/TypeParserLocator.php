@@ -32,6 +32,10 @@ class TypeParserLocator
 
     public function getTypeParser(string $type): TypeParserInterface
     {
+        if (!array_key_exists($type, $this->typeParserMap)) {
+            throw new ParsingException(sprintf('Unrecognized schema type "%s".', $type));
+        }
+
         $generatorServiceId = $this->typeParserMap[$type];
 
         return $this->container->get($generatorServiceId);

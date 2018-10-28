@@ -4,11 +4,13 @@ parameters:
 
   type_parser_map:
     object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
+    array: 'App\OpenAPI\Parsing\Type\Composite\ArrayTypeParser'
     integer: 'App\OpenAPI\Parsing\Type\Primitive\IntegerTypeParser'
     string: 'App\OpenAPI\Parsing\Type\Primitive\StringTypeParser'
 
   value_generator_map:
     App\Mock\Parameters\Schema\Type\Composite\ObjectType: 'App\Mock\Generation\Value\Composite\ObjectValueGenerator'
+    App\Mock\Parameters\Schema\Type\Composite\ArrayType: 'App\Mock\Generation\Value\Composite\ArrayValueGenerator'
     App\Mock\Parameters\Schema\Type\Primitive\IntegerType: 'App\Mock\Generation\Value\Primitive\FakerIntegerGenerator'
     App\Mock\Parameters\Schema\Type\Primitive\StringType: 'App\Mock\Generation\Value\Primitive\FakerStringGenerator'
 

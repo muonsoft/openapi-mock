@@ -50,6 +50,12 @@ trait ValueGeneratorCaseTrait
             ->generateValue($type);
     }
 
+    protected function assertValueGenerator_generateValue_isCalledAtLeastOnceWithType(TypeMarkerInterface $type): void
+    {
+        \Phake::verify($this->valueGenerator, \Phake::atLeast(1))
+            ->generateValue($type);
+    }
+
     protected function givenValueGenerator_generateValue_returnsValue(): string
     {
         $generatedValue = 'generated_value';

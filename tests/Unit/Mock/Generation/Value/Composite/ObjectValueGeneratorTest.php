@@ -29,7 +29,7 @@ class ObjectValueGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function generateValue_given_expected(): void
+    public function generateValue_objectTypeWithPropertyType_objectWithPropertyGeneratedAndReturned(): void
     {
         $type = new ObjectType();
         $propertyType = new DummyType();
