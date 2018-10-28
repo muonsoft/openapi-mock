@@ -24,10 +24,10 @@ class TypeParserLocator
     /** @var string[] */
     private $typeParserMap;
 
-    public function __construct(ContainerInterface $container, array $valueGeneratorMap)
+    public function __construct(ContainerInterface $container, array $typeParserMap)
     {
         $this->container = $container;
-        $this->typeParserMap = $valueGeneratorMap;
+        $this->typeParserMap = $typeParserMap;
     }
 
     public function getTypeParser(string $type): TypeParserInterface

@@ -19,6 +19,12 @@ class Responder
 {
     public function createResponse(int $statusCode, string $mediaType, $data): Response
     {
-
+        return new Response(
+            json_encode($data),
+            $statusCode,
+            [
+                'Content-Type' => $mediaType
+            ]
+        );
     }
 }

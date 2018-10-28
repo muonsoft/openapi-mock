@@ -32,7 +32,7 @@ class SchemaParser
 
         $valueType = $schema['schema']['type'];
         $typeParser = $this->typeParserLocator->getTypeParser($valueType);
-        $parsedSchema->value = $typeParser->parseTypeSchema($schema);
+        $parsedSchema->value = $typeParser->parseTypeSchema($schema['schema']);
 
         return $parsedSchema;
     }

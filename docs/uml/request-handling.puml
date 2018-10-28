@@ -1,6 +1,6 @@
 @startuml
 
-RequestHandler -> MockRepository : findMockByPath(uri)
+RequestHandler -> MockRepository : findMockParameters(httpMethod, uri)
 RequestHandler <- MockRepository : mockParameters
 RequestHandler -> MockResponseGenerator : generateResponse(request, mockParameters)
 MockResponseGenerator -> MediaTypeNegotiator : negotiateMediaType(request, mockParameters)

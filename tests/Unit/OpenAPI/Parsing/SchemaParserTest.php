@@ -10,10 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\SchemaParser;
-use App\OpenAPI\Parsing\Type\TypeParserInterface;
-use App\OpenAPI\Parsing\TypeParserLocator;
 use App\Tests\Utility\TestCase\TypeParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -22,10 +19,11 @@ class SchemaParserTest extends TestCase
     use TypeParserTestCaseTrait;
 
     private const VALUE_TYPE = 'value_type';
+    private const SCHEMA_DEFINITION = [
+        'type' => self::VALUE_TYPE
+    ];
     private const VALID_SCHEMA = [
-        'schema' => [
-            'type' => self::VALUE_TYPE
-        ]
+        'schema' => self::SCHEMA_DEFINITION
     ];
 
     protected function setUp(): void
@@ -43,7 +41,7 @@ class SchemaParserTest extends TestCase
         $parsedSchema = $parser->parseSchema(self::VALID_SCHEMA);
 
         $this->assertTypeParserLocator_getTypeParser_isCalledOnceWithType(self::VALUE_TYPE);
-        $this->assertTypeParser_parseTypeSchema_isCalledOnceWithSchema(self::VALID_SCHEMA);
+        $this->assertTypeParser_parseTypeSchema_isCalledOnceWithSchema(self::SCHEMA_DEFINITION);
         $this->assertSame($type, $parsedSchema->value);
     }
 

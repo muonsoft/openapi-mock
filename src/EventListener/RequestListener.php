@@ -10,7 +10,7 @@
 
 namespace App\EventListener;
 
-use Symfony\Component\HttpFoundation\Response;
+use App\API\RequestHandler;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 /**
@@ -18,9 +18,18 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
  */
 class RequestListener
 {
-    public function onKernelRequest(GetResponseEvent $event)
+    /** @var RequestHandler */
+    private $requestHandler;
+
+    public function __construct(RequestHandler $requestHandler)
+    {
+        $this->requestHandler = $requestHandler;
+    }
+
+    public function onKernelRequest(GetResponseEvent $event): void
     {
         $request = $event->getRequest();
-        $event->setResponse(new Response($request->getPathInfo()));
+        $response = $this->requestHandler->handleRequest($request);
+        $event->setResponse($response);
     }
 }

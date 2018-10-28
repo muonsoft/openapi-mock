@@ -20,6 +20,6 @@ class MediaTypeNegotiator
 {
     public function negotiateMediaType(Request $request, MockParameters $parameters): string
     {
-
+        return 'application/json';
     }
 }

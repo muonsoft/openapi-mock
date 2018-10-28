@@ -2,6 +2,10 @@
 
 namespace App;
 
+use App\DependencyInjection\TypeParserPass;
+use App\DependencyInjection\ValueGeneratorPass;
+use App\Mock\Generation\Value\ValueGeneratorInterface;
+use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;
@@ -33,6 +37,17 @@ class Kernel extends BaseKernel
                 yield new $class();
             }
         }
+    }
+
+    protected function build(ContainerBuilder $container): void
+    {
+        $definition = $container->registerForAutoconfiguration(TypeParserInterface::class);
+        $definition->addTag(TypeParserPass::TYPE_PARSER_TAG);
+        $definition = $container->registerForAutoconfiguration(ValueGeneratorInterface::class);
+        $definition->addTag(ValueGeneratorPass::VALUE_GENERATOR_TAG);
+
+        $container->addCompilerPass(new TypeParserPass());
+        $container->addCompilerPass(new ValueGeneratorPass());
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)

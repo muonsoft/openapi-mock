@@ -1,6 +1,17 @@
 parameters:
-    locale: 'en'
-    specification_url: '%env(SPECIFICATION_URL)%'
+  locale: 'en'
+  specification_url: '%env(SPECIFICATION_URL)%'
+
+  type_parser_map:
+    object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
+    integer: 'App\OpenAPI\Parsing\Type\Primitive\IntegerTypeParser'
+    string: 'App\OpenAPI\Parsing\Type\Primitive\StringTypeParser'
+
+  value_generator_map:
+    App\Mock\Parameters\Schema\Type\Composite\ObjectType: 'App\Mock\Generation\Value\Composite\ObjectValueGenerator'
+    App\Mock\Parameters\Schema\Type\Primitive\IntegerType: 'App\Mock\Generation\Value\Primitive\FakerIntegerGenerator'
+    App\Mock\Parameters\Schema\Type\Primitive\StringType: 'App\Mock\Generation\Value\Primitive\FakerStringGenerator'
+
 
 services:
   _defaults:
@@ -15,3 +26,33 @@ services:
   App\EventListener\RequestListener:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 48 }
+
+  mock_parameters_collection:
+    class: App\Mock\Parameters\MockParametersCollection
+    factory: ['@App\OpenAPI\SpecificationLoader', 'loadMockParameters']
+    arguments:
+      - '%kernel.project_dir%/tests/Resources/swagger-files/single-entity.yaml'
+
+  App\Mock\MockParametersRepository:
+    arguments:
+      - '@mock_parameters_collection'
+
+  type_parser_service_locator:
+    class: Symfony\Component\DependencyInjection\ServiceLocator
+
+  value_generator_service_locator:
+    class: Symfony\Component\DependencyInjection\ServiceLocator
+
+  App\OpenAPI\Parsing\TypeParserLocator:
+    arguments:
+      - '@type_parser_service_locator'
+      - '%type_parser_map%'
+
+  App\Mock\Generation\ValueGeneratorLocator:
+    arguments:
+      - '@value_generator_service_locator'
+      - '%value_generator_map%'
+
+  Faker\Generator:
+    class: Faker\Generator
+    factory: ['Faker\Factory', 'create']
