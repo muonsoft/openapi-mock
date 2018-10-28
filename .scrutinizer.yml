@@ -1,21 +1,23 @@
 build:
   nodes:
     analysis:
-      environment:
-        variables:
-          APP_ENV: 'test'
       project_setup:
         override:
           - 'true'
       tests:
         override:
           - php-scrutinizer-run
-          - phpcs-run
+    tests:
+      environment:
+        variables:
+          APP_ENV: 'test'
+      tests:
+        override:
           - command: ./vendor/bin/phpunit --coverage-clover clover.xml
             coverage:
               file: clover.xml
               format: 'php-clover'
-    tests: true
+
 filter:
   excluded_paths:
     - 'tests/*'
