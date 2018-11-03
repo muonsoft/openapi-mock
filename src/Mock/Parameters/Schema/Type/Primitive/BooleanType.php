@@ -8,16 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing\Type;
+namespace App\Mock\Parameters\Schema\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingContext;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface TypeParserInterface extends ContextualParserInterface
+class BooleanType implements TypeMarkerInterface
 {
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface;
+
 }

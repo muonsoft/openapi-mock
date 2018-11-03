@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
-use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
+use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
@@ -18,10 +18,10 @@ use App\OpenAPI\Parsing\Type\TypeParserInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class IntegerTypeParser implements TypeParserInterface
+class NumberTypeParser implements TypeParserInterface
 {
     public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
     {
-        return new IntegerType();
+        return new NumberType();
     }
 }

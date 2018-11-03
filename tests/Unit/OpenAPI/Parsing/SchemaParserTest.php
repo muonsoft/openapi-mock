@@ -10,13 +10,14 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
+use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\SchemaParser;
-use App\Tests\Utility\TestCase\TypeParserTestCaseTrait;
+use App\Tests\Utility\TestCase\SchemaTransformingParserTestCase;
 use PHPUnit\Framework\TestCase;
 
 class SchemaParserTest extends TestCase
 {
-    use TypeParserTestCaseTrait;
+    use SchemaTransformingParserTestCase;
 
     private const VALUE_TYPE = 'value_type';
     private const SCHEMA_DEFINITION = [
@@ -28,20 +29,21 @@ class SchemaParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpTypeParser();
+        $this->setUpSchemaTransformingParser();
     }
 
     /** @test */
-    public function parseSchema_validSchema_schemaCreatedByTypeParserFromLocator(): void
+    public function parse_validSchema_schemaCreatedByTypeParserFromLocator(): void
     {
-        $parser = new SchemaParser($this->typeParserLocator);
-        $this->givenTypeParserLocator_getTypeParser_returnsTypeParser();
-        $type = $this->givenTypeParser_parseTypeSchema_returnsType();
+        $parser = $this->createSchemaParser();
+        $type = $this->givenSchemaTransformingParser_parse_returnsType();
 
-        $parsedSchema = $parser->parseSchema(self::VALID_SCHEMA);
+        $parsedSchema = $parser->parse(self::VALID_SCHEMA, new ParsingContext());
 
-        $this->assertTypeParserLocator_getTypeParser_isCalledOnceWithType(self::VALUE_TYPE);
-        $this->assertTypeParser_parseTypeSchema_isCalledOnceWithSchema(self::SCHEMA_DEFINITION);
+        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::SCHEMA_DEFINITION,
+            'schema'
+        );
         $this->assertSame($type, $parsedSchema->value);
     }
 
@@ -50,10 +52,15 @@ class SchemaParserTest extends TestCase
      * @expectedException \App\OpenAPI\Parsing\ParsingException
      * @expectedExceptionMessage Invalid schema
      */
-    public function parseSchema_invalidSchema_exceptionThrown(): void
+    public function parse_invalidSchema_exceptionThrown(): void
     {
-        $parser = new SchemaParser($this->typeParserLocator);
+        $parser = $this->createSchemaParser();
 
-        $parser->parseSchema([]);
+        $parser->parse([], new ParsingContext());
+    }
+
+    private function createSchemaParser(): SchemaParser
+    {
+        return new SchemaParser($this->schemaTransformingParser);
     }
 }

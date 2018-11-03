@@ -15,25 +15,27 @@ use App\Mock\Parameters\MockParameters;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointParser
+class EndpointParser implements ContextualParserInterface
 {
-    /** @var ResponseParser */
+    /** @var ContextualParserInterface */
     private $responseParser;
 
-    public function __construct(ResponseParser $responseParser)
+    public function __construct(ContextualParserInterface $responseParser)
     {
         $this->responseParser = $responseParser;
     }
 
-    public function parseEndpoint(array $endpointSpecification): MockParameters
+    public function parse(array $schema, ParsingContext $context): MockParameters
     {
         $mockParameters = new MockParameters();
 
-        if (array_key_exists('responses', $endpointSpecification)) {
-            foreach ($endpointSpecification['responses'] as $statusCode => $responseSpecification) {
-                $this->validateResponse($statusCode, $responseSpecification);
+        if (array_key_exists('responses', $schema)) {
+            $responsesContext = $context->withSubPath('responses');
+            foreach ($schema['responses'] as $statusCode => $responseSpecification) {
+                $responseContext = $responsesContext->withSubPath($statusCode);
+                $this->validateResponse($statusCode, $responseSpecification, $responseContext);
 
-                $response = $this->responseParser->parseResponse($responseSpecification);
+                $response = $this->responseParser->parse($responseSpecification, $responseContext);
                 $response->statusCode = (int) $statusCode;
                 $mockParameters->responses->set((int) $statusCode, $response);
             }
@@ -42,13 +44,13 @@ class EndpointParser
         return $mockParameters;
     }
 
-    private function validateResponse($statusCode, $responseSpecification): void
+    private function validateResponse($statusCode, $responseSpecification, ParsingContext $context): void
     {
         if (!\is_int($statusCode)) {
-            throw new ParsingException('Invalid status code. Must be integer.');
+            throw new ParsingException('Invalid status code. Must be integer.', $context);
         }
         if (!\is_array($responseSpecification)) {
-            throw new ParsingException('Invalid response specification.');
+            throw new ParsingException('Invalid response specification.', $context);
         }
     }
 }

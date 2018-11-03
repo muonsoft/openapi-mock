@@ -11,12 +11,18 @@ paths:
                 required:
                   - id
                   - name
+                  - price
+                  - isActive
                   - tags
                 properties:
                   id:
                     type: integer
                   name:
                     type: string
+                  price:
+                    type: number
+                  isActive:
+                    type: boolean
                   tags:
                     type: array
                     items:

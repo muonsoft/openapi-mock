@@ -8,20 +8,29 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing\Type\Primitive;
+namespace App\OpenAPI\Parsing\Type;
 
-use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\ParsingContext;
-use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\Parsing\TypeParserLocator;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class IntegerTypeParser implements TypeParserInterface
+class SchemaTransformingParser implements TypeParserInterface
 {
+    /** @var TypeParserLocator */
+    private $typeParserLocator;
+
+    public function __construct(TypeParserLocator $typeParserLocator)
+    {
+        $this->typeParserLocator = $typeParserLocator;
+    }
+
     public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
     {
-        return new IntegerType();
+        $typeParser = $this->typeParserLocator->getTypeParser($schema['type']);
+
+        return $typeParser->parse($schema, $context);
     }
 }

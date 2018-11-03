@@ -12,6 +12,7 @@ namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 
 /**
@@ -19,7 +20,7 @@ use App\OpenAPI\Parsing\Type\TypeParserInterface;
  */
 class StringTypeParser implements TypeParserInterface
 {
-    public function parseTypeSchema(array $schema): TypeMarkerInterface
+    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
     {
         return new StringType();
     }

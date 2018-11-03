@@ -11,12 +11,14 @@
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockParameters;
-use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\SpecificationParser;
+use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class SpecificationParserTest extends TestCase
 {
+    use ContextualParserTestCaseTrait;
+
     private const PATH = '/entity';
     private const HTTP_METHOD = 'get';
     private const ENDPOINT_SPECIFICATION = ['endpoint_specification'];
@@ -29,23 +31,24 @@ class SpecificationParserTest extends TestCase
         ],
     ];
 
-    /** @var EndpointParser */
-    private $endpointParser;
-
     protected function setUp(): void
     {
-        $this->endpointParser = \Phake::mock(EndpointParser::class);
+        $this->setUpContextualParser();
     }
 
     /** @test */
     public function parseSpecification_validSpecification_specificationParsedToMockParameters(): void
     {
         $parser = $this->createSpecificationParser();
-        $expectedMockParameters = $this->givenEndpointParser_parseEndpoint_returnsMockParameters();
+        $expectedMockParameters = new MockParameters();
+        $this->givenContextualParser_parse_returns($expectedMockParameters);
 
         $mockParametersCollection = $parser->parseSpecification(self::VALID_SPECIFICATION);
 
-        $this->assertEndpointParser_parseEndpoint_isCalledOnceWithEndpointSpecification(self::ENDPOINT_SPECIFICATION);
+        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::ENDPOINT_SPECIFICATION,
+            'paths.'.self::PATH.'.'.self::HTTP_METHOD
+        );
         $this->assertCount(1, $mockParametersCollection);
         /** @var MockParameters $mockParameters */
         $mockParameters = $mockParametersCollection->first();
@@ -98,7 +101,7 @@ class SpecificationParserTest extends TestCase
     /**
      * @test
      * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Invalid endpoint specification at path
+     * @expectedExceptionMessage Empty or invalid endpoint specification
      */
     public function parseSpecification_noEndpoints_parsingExceptionThrown(): void
     {
@@ -115,7 +118,7 @@ class SpecificationParserTest extends TestCase
     /**
      * @test
      * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Invalid endpoint specification at path
+     * @expectedExceptionMessage Empty or invalid endpoint specification
      */
     public function parseSpecification_invalidEndpoint_parsingExceptionThrown(): void
     {
@@ -133,24 +136,6 @@ class SpecificationParserTest extends TestCase
 
     private function createSpecificationParser(): SpecificationParser
     {
-        return new SpecificationParser($this->endpointParser);
-    }
-
-    private function assertEndpointParser_parseEndpoint_isCalledOnceWithEndpointSpecification(
-        array $specification
-    ): void {
-        \Phake::verify($this->endpointParser)
-            ->parseEndpoint($specification);
-    }
-
-    private function givenEndpointParser_parseEndpoint_returnsMockParameters(): MockParameters
-    {
-        $mockParameters = new MockParameters();
-
-        \Phake::when($this->endpointParser)
-            ->parseEndpoint(\Phake::anyParameters())
-            ->thenReturn($mockParameters);
-
-        return $mockParameters;
+        return new SpecificationParser($this->contextualParser);
     }
 }

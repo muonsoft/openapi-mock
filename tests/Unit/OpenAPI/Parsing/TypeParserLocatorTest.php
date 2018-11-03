@@ -41,7 +41,7 @@ class TypeParserLocatorTest extends TestCase
 
     /**
      * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
+     * @expectedException \DomainException
      * @expectedExceptionMessage Unrecognized schema type
      */
     public function getTypeParser_notExistingType_exceptionThrown(): void

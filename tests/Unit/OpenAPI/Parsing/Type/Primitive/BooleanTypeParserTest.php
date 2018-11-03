@@ -10,20 +10,20 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
-use App\Mock\Parameters\Schema\Type\Primitive\StringType;
+use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
 use App\OpenAPI\Parsing\ParsingContext;
-use App\OpenAPI\Parsing\Type\Primitive\StringTypeParser;
+use App\OpenAPI\Parsing\Type\Primitive\BooleanTypeParser;
 use PHPUnit\Framework\TestCase;
 
-class StringTypeParserTest extends TestCase
+class BooleanTypeParserTest extends TestCase
 {
     /** @test */
-    public function parse_validStringTypeSchema_stringTypeReturned(): void
+    public function parse_validBooleanSchema_booleanTypeReturned(): void
     {
-        $parser = new StringTypeParser();
+        $parser = new BooleanTypeParser();
 
         $type = $parser->parse([], new ParsingContext());
 
-        $this->assertInstanceOf(StringType::class, $type);
+        $this->assertInstanceOf(BooleanType::class, $type);
     }
 }

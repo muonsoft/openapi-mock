@@ -12,44 +12,39 @@ namespace App\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
-use App\OpenAPI\Parsing\TypeParserLocator;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class ArrayTypeParser implements TypeParserInterface
 {
-    /** @var TypeParserLocator */
-    private $typeParserLocator;
+    /** @var SchemaTransformingParser */
+    private $schemaTransformingParser;
 
-    public function __construct(TypeParserLocator $typeParserLocator)
+    public function __construct(SchemaTransformingParser $schemaTransformingParser)
     {
-        $this->typeParserLocator = $typeParserLocator;
+        $this->schemaTransformingParser = $schemaTransformingParser;
     }
 
-    public function parseTypeSchema(array $schema): TypeMarkerInterface
+    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
     {
-        $this->validateSchema($schema);
+        $this->validateSchema($schema, $context);
 
         $type = new ArrayType();
-        $type->items = $this->parseItemsSchema($schema['items']);
+        $itemsContext = $context->withSubPath('items');
+        $type->items = $this->schemaTransformingParser->parse($schema['items'], $itemsContext);
 
         return $type;
     }
 
-    private function validateSchema(array $schema): void
+    private function validateSchema(array $schema, ParsingContext $context): void
     {
         if (!array_key_exists('items', $schema)) {
-            throw new ParsingException('Items schema is required');
+            throw new ParsingException('Section "items" is required', $context);
         }
-    }
-
-    private function parseItemsSchema(array $schema): TypeMarkerInterface
-    {
-        $typeParser = $this->typeParserLocator->getTypeParser($schema['type']);
-
-        return $typeParser->parseTypeSchema($schema);
     }
 }

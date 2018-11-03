@@ -10,20 +10,20 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
-use App\Mock\Parameters\Schema\Type\Primitive\StringType;
+use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\OpenAPI\Parsing\ParsingContext;
-use App\OpenAPI\Parsing\Type\Primitive\StringTypeParser;
+use App\OpenAPI\Parsing\Type\Primitive\NumberTypeParser;
 use PHPUnit\Framework\TestCase;
 
-class StringTypeParserTest extends TestCase
+class NumberTypeParserTest extends TestCase
 {
     /** @test */
-    public function parse_validStringTypeSchema_stringTypeReturned(): void
+    public function parse_validNumberSchema_numberTypeReturned(): void
     {
-        $parser = new StringTypeParser();
+        $parser = new NumberTypeParser();
 
         $type = $parser->parse([], new ParsingContext());
 
-        $this->assertInstanceOf(StringType::class, $type);
+        $this->assertInstanceOf(NumberType::class, $type);
     }
 }

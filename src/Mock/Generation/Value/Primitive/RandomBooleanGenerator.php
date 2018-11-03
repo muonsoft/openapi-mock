@@ -8,16 +8,18 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing\Type;
+namespace App\Mock\Generation\Value\Primitive;
 
+use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingContext;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface TypeParserInterface extends ContextualParserInterface
+class RandomBooleanGenerator implements ValueGeneratorInterface
 {
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface;
+    public function generateValue(TypeMarkerInterface $type): bool
+    {
+        return (bool) random_int(0, 1);
+    }
 }

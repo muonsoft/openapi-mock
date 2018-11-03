@@ -12,12 +12,15 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
+use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\ResponseParser;
-use App\OpenAPI\Parsing\SchemaParser;
+use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ResponseParserTest extends TestCase
 {
+    use ContextualParserTestCaseTrait;
+
     private const SCHEMA = ['schema'];
     private const MEDIA_TYPE = 'application/json';
     private const VALID_RESPONSE_SPECIFICATION = [
@@ -25,33 +28,35 @@ class ResponseParserTest extends TestCase
             self::MEDIA_TYPE => self::SCHEMA,
         ]
     ];
-
-    /** @var SchemaParser */
-    private $schemaParser;
+    private const CONTEXT_PATH = 'content.' . self::MEDIA_TYPE;
 
     protected function setUp(): void
     {
-        $this->schemaParser = \Phake::mock(SchemaParser::class);
+        $this->setUpContextualParser();
     }
 
     /** @test */
-    public function parseResponse_validResponseSpecification_mockResponseCreatedAndReturned(): void
+    public function parse_validResponseSpecification_mockResponseCreatedAndReturned(): void
     {
-        $parser = new ResponseParser($this->schemaParser);
-        $expectedSchema = $this->givenSchemaParser_parseSchema_returnsSchema();
+        $parser = $this->createResponseParser();
+        $expectedSchema = new Schema();
+        $this->givenContextualParser_parse_returns($expectedSchema);
 
-        $response = $parser->parseResponse(self::VALID_RESPONSE_SPECIFICATION);
+        $response = $parser->parse(self::VALID_RESPONSE_SPECIFICATION, new ParsingContext());
 
-        $this->assertSchemaParser_parseSchema_isCalledOnceWithRawSchema(self::SCHEMA);
+        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::SCHEMA,
+            self::CONTEXT_PATH
+        );
         $this->assertResponseHasValidContentWithExpectedSchema($response, $expectedSchema);
     }
 
     /** @test */
-    public function parseResponse_noContentInResponseSpecification_emptyContentInMockResponse(): void
+    public function parse_noContentInResponseSpecification_emptyContentInMockResponse(): void
     {
-        $parser = new ResponseParser($this->schemaParser);
+        $parser = $this->createResponseParser();
 
-        $response = $parser->parseResponse([]);
+        $response = $parser->parse([], new ParsingContext());
 
         $this->assertCount(0, $response->content);
     }
@@ -61,30 +66,11 @@ class ResponseParserTest extends TestCase
      * @expectedException \App\OpenAPI\Parsing\ParsingException
      * @expectedExceptionMessage Invalid response content
      */
-    public function parseResponse_invalidContentInResponseSpecification_exceptionThrown(): void
+    public function parse_invalidContentInResponseSpecification_exceptionThrown(): void
     {
-        $parser = new ResponseParser($this->schemaParser);
+        $parser = $this->createResponseParser();
 
-        $parser->parseResponse([
-            'content' => 'invalid'
-        ]);
-    }
-
-    private function assertSchemaParser_parseSchema_isCalledOnceWithRawSchema($schema): void
-    {
-        \Phake::verify($this->schemaParser)
-            ->parseSchema($schema);
-    }
-
-    private function givenSchemaParser_parseSchema_returnsSchema(): Schema
-    {
-        $schema = new Schema();
-
-        \Phake::when($this->schemaParser)
-            ->parseSchema(\Phake::anyParameters())
-            ->thenReturn($schema);
-
-        return $schema;
+        $parser->parse(['content' => 'invalid'], new ParsingContext());
     }
 
     private function assertResponseHasValidContentWithExpectedSchema(MockResponse $response, Schema $expectedSchema): void
@@ -93,5 +79,10 @@ class ResponseParserTest extends TestCase
         $parsedSchema = $response->content->first();
         $this->assertSame($expectedSchema, $parsedSchema);
         $this->assertEquals([self::MEDIA_TYPE], $response->content->getKeys());
+    }
+
+    private function createResponseParser(): ResponseParser
+    {
+        return new ResponseParser($this->contextualParser);
     }
 }

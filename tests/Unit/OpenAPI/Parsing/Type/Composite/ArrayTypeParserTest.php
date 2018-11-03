@@ -11,13 +11,14 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\Type\Composite\ArrayTypeParser;
-use App\Tests\Utility\TestCase\TypeParserTestCaseTrait;
+use App\Tests\Utility\TestCase\SchemaTransformingParserTestCase;
 use PHPUnit\Framework\TestCase;
 
 class ArrayTypeParserTest extends TestCase
 {
-    use TypeParserTestCaseTrait;
+    use SchemaTransformingParserTestCase;
 
     private const ITEMS_SCHEMA_TYPE = 'itemsSchemaType';
     private const ITEMS_SCHEMA = [
@@ -33,39 +34,40 @@ class ArrayTypeParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpTypeParser();
+        $this->setUpSchemaTransformingParser();
     }
 
     /** @test */
-    public function parseTypeSchema_validSchemaWithItems_itemSchemaParsedByTypeParser(): void
+    public function parse_validSchemaWithItems_itemSchemaParsedByTypeParser(): void
     {
         $parser = $this->createArrayTypeParser();
-        $this->givenTypeParserLocator_getTypeParser_returnsTypeParser();
-        $itemsType = $this->givenTypeParser_parseTypeSchema_returnsType();
+        $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var ArrayType $type */
-        $type = $parser->parseTypeSchema(self::VALID_SCHEMA);
+        $type = $parser->parse(self::VALID_SCHEMA, new ParsingContext());
 
         $this->assertInstanceOf(ArrayType::class, $type);
-        $this->assertTypeParserLocator_getTypeParser_isCalledOnceWithType(self::ITEMS_SCHEMA_TYPE);
-        $this->assertTypeParser_parseTypeSchema_isCalledOnceWithSchema(self::ITEMS_SCHEMA);
+        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::ITEMS_SCHEMA,
+            'items'
+        );
         $this->assertSame($itemsType, $type->items);
     }
 
     /**
      * @test
      * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Items schema is required
+     * @expectedExceptionMessage Section "items" is required
      */
-    public function parseTypeSchema_noItemsInSchema_exceptionThrown(): void
+    public function parse_noItemsInSchema_exceptionThrown(): void
     {
         $parser = $this->createArrayTypeParser();
 
-        $parser->parseTypeSchema(self::SCHEMA_WITHOUT_ITEMS);
+        $parser->parse(self::SCHEMA_WITHOUT_ITEMS, new ParsingContext());
     }
 
     private function createArrayTypeParser(): ArrayTypeParser
     {
-        return new ArrayTypeParser($this->typeParserLocator);
+        return new ArrayTypeParser($this->schemaTransformingParser);
     }
 }

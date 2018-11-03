@@ -15,34 +15,36 @@ use App\Mock\Parameters\MockResponse;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ResponseParser
+class ResponseParser implements ContextualParserInterface
 {
-    /** @var SchemaParser */
+    /** @var ContextualParserInterface */
     private $schemaParser;
 
-    public function __construct(SchemaParser $schemaParser)
+    public function __construct(ContextualParserInterface $schemaParser)
     {
         $this->schemaParser = $schemaParser;
     }
 
-    public function parseResponse(array $responseSpecification): MockResponse
+    public function parse(array $responseSpecification, ParsingContext $context): MockResponse
     {
         $response = new MockResponse();
         $content = $responseSpecification['content'] ?? [];
-        $this->validateContent($content);
+        $contentContext = $context->withSubPath('content');
+        $this->validateContent($content, $contentContext);
 
         foreach ($content as $mediaType => $schema) {
-            $parsedSchema = $this->schemaParser->parseSchema($schema);
+            $mediaTypeContext = $contentContext->withSubPath($mediaType);
+            $parsedSchema = $this->schemaParser->parse($schema, $mediaTypeContext);
             $response->content->set($mediaType, $parsedSchema);
         }
 
         return $response;
     }
 
-    private function validateContent($content): void
+    private function validateContent($content, ParsingContext $context): void
     {
         if (!\is_array($content)) {
-            throw new ParsingException('Invalid response content');
+            throw new ParsingException('Invalid response content', $context);
         }
     }
 }

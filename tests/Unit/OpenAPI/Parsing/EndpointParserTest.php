@@ -12,11 +12,14 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\OpenAPI\Parsing\EndpointParser;
-use App\OpenAPI\Parsing\ResponseParser;
+use App\OpenAPI\Parsing\ParsingContext;
+use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class EndpointParserTest extends TestCase
 {
+    use ContextualParserTestCaseTrait;
+
     private const RESPONSE_SPECIFICATION = ['response_specification'];
     private const RESPONSE_STATUS_CODE = '200';
     private const VALID_ENDPOINT_SPECIFICATION = [
@@ -35,23 +38,24 @@ class EndpointParserTest extends TestCase
         ],
     ];
 
-    /** @var ResponseParser */
-    private $responseParser;
-
     protected function setUp(): void
     {
-        $this->responseParser = \Phake::mock(ResponseParser::class);
+        $this->setUpContextualParser();
     }
 
     /** @test */
-    public function parseEndpoint_validResponseSpecification_mockParametersWithResponses(): void
+    public function parse_validResponseSpecification_mockParametersWithResponses(): void
     {
         $parser = $this->createEndpointParser();
-        $expectedMockResponse = $this->givenResponseParser_parseResponse_returnsMockResponse();
+        $expectedMockResponse = new MockResponse();
+        $this->givenContextualParser_parse_returns($expectedMockResponse);
 
-        $mockParameters = $parser->parseEndpoint(self::VALID_ENDPOINT_SPECIFICATION);
+        $mockParameters = $parser->parse(self::VALID_ENDPOINT_SPECIFICATION, new ParsingContext());
 
-        $this->assertResponseParser_parseResponse_isCalledOnceWithSpecification(self::RESPONSE_SPECIFICATION);
+        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::RESPONSE_SPECIFICATION,
+            'responses.200'
+        );
         $this->assertCount(1, $mockParameters->responses);
         $this->assertSame([(int) self::RESPONSE_STATUS_CODE], $mockParameters->responses->getKeys());
         /** @var MockResponse $mockResponse */
@@ -65,11 +69,11 @@ class EndpointParserTest extends TestCase
      * @expectedException \App\OpenAPI\Parsing\ParsingException
      * @expectedExceptionMessage Invalid status code. Must be integer.
      */
-    public function parseEndpoint_specificationWithInvalidStatusCode_exceptionThrown(): void
+    public function parse_specificationWithInvalidStatusCode_exceptionThrown(): void
     {
         $parser = $this->createEndpointParser();
 
-        $parser->parseEndpoint(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE);
+        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE, new ParsingContext());
     }
 
     /**
@@ -77,32 +81,15 @@ class EndpointParserTest extends TestCase
      * @expectedException \App\OpenAPI\Parsing\ParsingException
      * @expectedExceptionMessage Invalid response specification
      */
-    public function parseEndpoint_invalidResponseSpecification_exceptionThrown(): void
+    public function parse_invalidResponseSpecification_exceptionThrown(): void
     {
         $parser = $this->createEndpointParser();
 
-        $parser->parseEndpoint(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION);
-    }
-
-    private function assertResponseParser_parseResponse_isCalledOnceWithSpecification(array $responseSpecification): void
-    {
-        \Phake::verify($this->responseParser)
-            ->parseResponse($responseSpecification);
-    }
-
-    private function givenResponseParser_parseResponse_returnsMockResponse(): MockResponse
-    {
-        $expectedMockResponse = new MockResponse();
-
-        \Phake::when($this->responseParser)
-            ->parseResponse(\Phake::anyParameters())
-            ->thenReturn($expectedMockResponse);
-
-        return $expectedMockResponse;
+        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION, new ParsingContext());
     }
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->responseParser);
+        return new EndpointParser($this->contextualParser);
     }
 }

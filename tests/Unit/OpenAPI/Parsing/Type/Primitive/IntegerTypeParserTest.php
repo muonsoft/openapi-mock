@@ -11,17 +11,18 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
+use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\Type\Primitive\IntegerTypeParser;
 use PHPUnit\Framework\TestCase;
 
 class IntegerTypeParserTest extends TestCase
 {
     /** @test */
-    public function parseTypeSchema_validIntegerSchema_integerTypeReturned(): void
+    public function parse_validIntegerSchema_integerTypeReturned(): void
     {
         $parser = new IntegerTypeParser();
 
-        $type = $parser->parseTypeSchema([]);
+        $type = $parser->parse([], new ParsingContext());
 
         $this->assertInstanceOf(IntegerType::class, $type);
     }
