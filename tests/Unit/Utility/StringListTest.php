@@ -16,6 +16,7 @@ use PHPUnit\Framework\TestCase;
 class StringListTest extends TestCase
 {
     private const STRING_VALUE = 'a';
+    private const KEY = 'key';
 
     /** @test */
     public function construct_givenString_stringInCollection(): void
@@ -33,5 +34,15 @@ class StringListTest extends TestCase
         $list->add(self::STRING_VALUE);
 
         $this->assertContains(self::STRING_VALUE, $list);
+    }
+
+    /** @test */
+    public function set_givenString_stringValueByKeyIsInCollection(): void
+    {
+        $list = new StringList();
+
+        $list->set(self::KEY, self::STRING_VALUE);
+
+        $this->assertSame(self::STRING_VALUE, $list->get(self::KEY));
     }
 }

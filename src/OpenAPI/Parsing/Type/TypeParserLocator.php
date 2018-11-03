@@ -8,9 +8,8 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing;
+namespace App\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use Psr\Container\ContainerInterface;
 
 /**

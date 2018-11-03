@@ -6,13 +6,15 @@
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
+        "doctrine/collections": "1.*",
         "fzaninotto/faker": "1.*",
-        "sensio/framework-extra-bundle": "5.*",
+        "symfony/cache": "4.*",
         "symfony/console": "4.*",
         "symfony/flex": "1.*",
         "symfony/framework-bundle": "4.*",
         "symfony/serializer-pack": "1.*",
-        "symfony/yaml": "4.*"
+        "symfony/yaml": "4.*",
+        "willdurand/negotiation": "2.*"
     },
     "require-dev": {
         "behat/behat": "dev-master",

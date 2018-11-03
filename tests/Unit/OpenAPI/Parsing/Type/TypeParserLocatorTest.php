@@ -8,10 +8,10 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Tests\Unit\OpenAPI\Parsing;
+namespace App\Tests\Unit\OpenAPI\Parsing\Type;
 
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
-use App\OpenAPI\Parsing\TypeParserLocator;
+use App\OpenAPI\Parsing\Type\TypeParserLocator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 

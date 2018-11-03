@@ -17,20 +17,10 @@ use Throwable;
  */
 class ParsingException extends \DomainException
 {
-    /** @var ParsingContext */
-    private $context;
-
     public function __construct(string $message, ParsingContext $context, int $code = 0, Throwable $previous = null)
     {
-        $this->context = $context;
-
         $messageWithPath = sprintf('Parsing error "%s" at path "%s".', $message, $context->getPath());
 
         parent::__construct($messageWithPath, $code, $previous);
-    }
-
-    public function getContext(): ParsingContext
-    {
-        return $this->context;
     }
 }

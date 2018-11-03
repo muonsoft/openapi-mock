@@ -1,6 +1,7 @@
 parameters:
   locale: 'en'
-  specification_url: '%env(SPECIFICATION_URL)%'
+#  specification_url: '%env(SPECIFICATION_URL)%'
+  specification_url: '%kernel.project_dir%/tests/Resources/swagger-files/single-entity.yaml'
 
   type_parser_map:
     object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
@@ -37,16 +38,23 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 48 }
 
-  mock_parameters_collection:
-    class: App\Mock\Parameters\MockParametersCollection
-    public: true
-    factory: ['@App\OpenAPI\SpecificationLoader', 'loadMockParameters']
-    arguments:
-      - '%kernel.project_dir%/tests/Resources/swagger-files/single-entity.yaml'
-
   App\Mock\MockParametersRepository:
     arguments:
-      - '@mock_parameters_collection'
+      - '@specification_loader'
+      - '%specification_url%'
+
+  specification_loader:
+    class: App\OpenAPI\Loading\CachedSpecificationLoader
+    arguments:
+      - '@App\OpenAPI\Loading\SpecificationFileLoader'
+      - '@specification_cache'
+
+  specification_cache:
+    class: Symfony\Component\Cache\Simple\FilesystemCache
+    arguments:
+      - 'openapi'
+      - 0
+      - '%kernel.project_dir%/var/file-cache'
 
   type_parser_service_locator:
     class: Symfony\Component\DependencyInjection\ServiceLocator
@@ -54,7 +62,7 @@ services:
   value_generator_service_locator:
     class: Symfony\Component\DependencyInjection\ServiceLocator
 
-  App\OpenAPI\Parsing\TypeParserLocator:
+  App\OpenAPI\Parsing\Type\TypeParserLocator:
     arguments:
       - '@type_parser_service_locator'
       - '%type_parser_map%'
@@ -67,3 +75,6 @@ services:
   Faker\Generator:
     class: Faker\Generator
     factory: ['Faker\Factory', 'create']
+
+  Negotiation\Negotiator:
+    class: Negotiation\Negotiator

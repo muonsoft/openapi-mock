@@ -10,9 +10,10 @@
 
 namespace App\Mock\Negotiation;
 
+use App\Mock\Exception\MockGenerationException;
 use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -21,6 +22,26 @@ class ResponseStatusNegotiator
 {
     public function negotiateResponseStatus(Request $request, MockParameters $parameters): int
     {
-        return Response::HTTP_OK;
+        $successCodes = [];
+        $errorsCodes = [];
+
+        /** @var MockResponse $response */
+        foreach ($parameters->responses as $response) {
+            if ($response->statusCode >= 200 && $response->statusCode < 300) {
+                $successCodes[] = $response->statusCode;
+            } else {
+                $errorsCodes[] = $response->statusCode;
+            }
+        }
+
+        if (\count($successCodes) !== 0) {
+            $bestStatusCode = $successCodes[0];
+        } elseif (\count($errorsCodes) !== 0) {
+            $bestStatusCode = $errorsCodes[0];
+        } else {
+            throw new MockGenerationException('Mock response not found.');
+        }
+
+        return $bestStatusCode;
     }
 }

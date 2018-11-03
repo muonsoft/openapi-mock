@@ -13,7 +13,7 @@ namespace App\Tests\Utility\TestCase;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
-use App\OpenAPI\Parsing\TypeParserLocator;
+use App\OpenAPI\Parsing\Type\TypeParserLocator;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>

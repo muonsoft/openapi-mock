@@ -8,16 +8,16 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Tests\Unit\OpenAPI;
+namespace App\Tests\Unit\OpenAPI\Loading;
 
 use App\Mock\Parameters\MockParametersCollection;
+use App\OpenAPI\Loading\SpecificationFileLoader;
 use App\OpenAPI\Parsing\SpecificationParser;
-use App\OpenAPI\SpecificationLoader;
 use App\Utility\FileLoader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
-class SpecificationLoaderTest extends TestCase
+class SpecificationFileLoaderTest extends TestCase
 {
     /** @var FileLoader */
     private $fileLoader;
@@ -129,8 +129,8 @@ class SpecificationLoaderTest extends TestCase
         return $parsedSpecification;
     }
 
-    private function createSpecificationLoader(): SpecificationLoader
+    private function createSpecificationLoader(): SpecificationFileLoader
     {
-        return new SpecificationLoader($this->fileLoader, $this->decoder, $this->parser);
+        return new SpecificationFileLoader($this->fileLoader, $this->decoder, $this->parser);
     }
 }

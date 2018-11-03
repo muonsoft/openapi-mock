@@ -8,17 +8,18 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI;
+namespace App\OpenAPI\Loading;
 
 use App\Mock\Parameters\MockParametersCollection;
 use App\OpenAPI\Parsing\SpecificationParser;
+use App\OpenAPI\SpecificationLoaderInterface;
 use App\Utility\FileLoader;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SpecificationLoader
+class SpecificationFileLoader implements SpecificationLoaderInterface
 {
     private const FORMAT_BY_EXTENSION_MAP = [
         'yaml' => 'yaml',

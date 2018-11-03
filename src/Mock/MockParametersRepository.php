@@ -11,27 +11,33 @@
 namespace App\Mock;
 
 use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockParametersCollection;
+use App\OpenAPI\SpecificationLoaderInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class MockParametersRepository
 {
-    /** @var MockParametersCollection */
-    private $collection;
+    /** @var SpecificationLoaderInterface */
+    private $specificationLoader;
 
-    public function __construct(MockParametersCollection $collection)
+    /** @var string */
+    private $specificationUrl;
+
+    public function __construct(SpecificationLoaderInterface $specificationLoader, string $specificationUrl)
     {
-        $this->collection = $collection;
+        $this->specificationLoader = $specificationLoader;
+        $this->specificationUrl = $specificationUrl;
     }
 
     public function findMockParameters(string $httpMethod, string $uri): ?MockParameters
     {
+        $collection = $this->specificationLoader->loadMockParameters($this->specificationUrl);
+
         $parameters = null;
 
         /** @var MockParameters $collectionParameters */
-        foreach ($this->collection as $collectionParameters) {
+        foreach ($collection as $collectionParameters) {
             if ($httpMethod === $collectionParameters->httpMethod && $uri === $collectionParameters->path) {
                 $parameters = $collectionParameters;
                 break;

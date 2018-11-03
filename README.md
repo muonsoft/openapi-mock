@@ -11,8 +11,8 @@ Swagger mock server with fake data generation support
 * [x] basic number type support
 * [x] boolean type support
 * [x] parsing context (path) and better exceptions
-* [ ] content negotiation
-* [ ] xml/json encoding in responder
+* [x] content negotiation
+* [x] xml/json encoding in responder
 * [ ] using number parameters for generator
 * [ ] using integer parameters for generator
 * [ ] using string parameters for generator
@@ -21,5 +21,5 @@ Swagger mock server with fake data generation support
 * [ ] complex types (oneOf, anyOf, allOf)
 * [ ] faker expression extension for numbers
 * [ ] faker expression extension for strings
-* [ ] caching loader for OpenAPI specification
-* [ ] reference resolver
+* [x] caching loader for OpenAPI specification
+* [ ] reference resolving

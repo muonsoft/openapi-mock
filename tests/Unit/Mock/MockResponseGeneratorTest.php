@@ -29,9 +29,6 @@ class MockResponseGeneratorTest extends TestCase
     private const MEDIA_TYPE = 'media_type';
     private const STATUS_CODE = 200;
     private const RESPONSE_DATA = 'response_data';
-    private const UNSUPPORTED_MEDIA_TYPE_STATUS_CODE = 406;
-    private const DEFAULT_MEDIA_TYPE = 'text/html';
-    private const UNSUPPORTED_MEDIA_TYPE = 'Unsupported media type';
 
     /** @var MediaTypeNegotiator */
     private $mediaTypeNegotiator;
@@ -68,7 +65,10 @@ class MockResponseGeneratorTest extends TestCase
         $response = $generator->generateResponse($request, $parameters);
 
         $this->assertNotNull($response);
-        $this->assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndParameters($request, $parameters);
+        $this->assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndMockResponse(
+            $request,
+            $parameters->responses->get(self::STATUS_CODE)
+        );
         $this->assertResponseStatusNegotiator_negotiateResponseStatus_isCalledOnceWithRequestAndParameters($request, $parameters);
         $this->assertDataGenerator_generateData_isCalledOnceWithSchema($schema);
         $this->assertResponder_createResponse_isCalledOnceWithStatusCodeAndMediaTypeAndData(
@@ -77,44 +77,6 @@ class MockResponseGeneratorTest extends TestCase
             self::RESPONSE_DATA
         );
         $this->assertSame($responderResponse, $response);
-    }
-
-    /** @test */
-    public function generateResponse_requestWithUnsupportedMediaType_unsupportedMediaTypeResponseCreated(): void
-    {
-        $generator = $this->createMockResponseGenerator();
-        $request = new Request();
-        $parameters = $this->givenMockParametersWithStatusCodeAndNoMediaType();
-        $this->givenMediaTypeNegotiator_negotiateMediaType_returnsMediaType(self::MEDIA_TYPE);
-        $this->givenResponseStatusNegotiator_negotiateResponseStatus_returnsStatusCode(self::STATUS_CODE);
-        $responderResponse = $this->givenResponder_createResponse_returnsResponse();
-
-        $response = $generator->generateResponse($request, $parameters);
-
-        $this->assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndParameters($request, $parameters);
-        $this->assertResponseStatusNegotiator_negotiateResponseStatus_isCalledOnceWithRequestAndParameters($request, $parameters);
-        $this->assertDataGenerator_generateData_isNeverCalledWithAnyParameters();
-        $this->assertResponder_createResponse_isCalledOnceWithStatusCodeAndMediaTypeAndData(
-            self::UNSUPPORTED_MEDIA_TYPE_STATUS_CODE,
-            self::DEFAULT_MEDIA_TYPE,
-            self::UNSUPPORTED_MEDIA_TYPE
-        );
-        $this->assertSame($responderResponse, $response);
-    }
-
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Invalid response status code negotiated
-     */
-    public function generateResponse_requestAndParametersWithoutStatusCode_exceptionThrown(): void
-    {
-        $generator = $this->createMockResponseGenerator();
-        $request = new Request();
-        $parameters = $this->givenMockParametersWithStatusCodeAndNoMediaType();
-        $this->givenResponseStatusNegotiator_negotiateResponseStatus_returnsStatusCode(0);
-
-        $generator->generateResponse($request, $parameters);
     }
 
     private function createMockResponseGenerator(): MockResponseGenerator
@@ -127,11 +89,12 @@ class MockResponseGeneratorTest extends TestCase
         );
     }
 
-    private function assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndParameters(
-        Request $request, MockParameters $parameters
+    private function assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndMockResponse(
+        Request $request,
+        MockResponse $response
     ): void {
         \Phake::verify($this->mediaTypeNegotiator)
-            ->negotiateMediaType($request, $parameters);
+            ->negotiateMediaType($request, $response);
     }
 
     private function assertResponseStatusNegotiator_negotiateResponseStatus_isCalledOnceWithRequestAndParameters(
@@ -181,9 +144,11 @@ class MockResponseGeneratorTest extends TestCase
     private function givenResponder_createResponse_returnsResponse(): Response
     {
         $responderResponse = new Response();
+
         \Phake::when($this->responder)
             ->createResponse(\Phake::anyParameters())
             ->thenReturn($responderResponse);
+
         return $responderResponse;
     }
 
@@ -200,24 +165,5 @@ class MockResponseGeneratorTest extends TestCase
         ]);
 
         return $parameters;
-    }
-
-    private function givenMockParametersWithStatusCodeAndNoMediaType(): MockParameters
-    {
-        $parameters = new MockParameters();
-        $mockResponse = new MockResponse();
-
-        $mockResponse->content = new SchemaCollection();
-        $parameters->responses = new MockResponseCollection([
-            self::STATUS_CODE => $mockResponse
-        ]);
-
-        return $parameters;
-    }
-
-    private function assertDataGenerator_generateData_isNeverCalledWithAnyParameters(): void
-    {
-        \Phake::verify($this->dataGenerator, \Phake::times(0))
-            ->generateData(\Phake::anyParameters());
     }
 }

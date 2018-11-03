@@ -12,7 +12,6 @@ namespace App\OpenAPI\Parsing\Type;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\ParsingContext;
-use App\OpenAPI\Parsing\TypeParserLocator;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>

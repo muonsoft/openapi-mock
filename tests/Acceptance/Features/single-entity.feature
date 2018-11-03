@@ -1,6 +1,6 @@
 Feature: Single entity
 
-  Scenario: GET /api/entity | no parameters | 200 entity returned
+  Scenario: GET /entity | no parameters | 200 entity returned
     Given I have OpenAPI specification file "single-entity.yaml"
     When I send a "GET" request to "/entity"
     Then the response status code should be 200

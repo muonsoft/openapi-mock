@@ -15,7 +15,6 @@ use App\Mock\Generation\DataGenerator;
 use App\Mock\Negotiation\MediaTypeNegotiator;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
 use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,10 +24,6 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class MockResponseGenerator
 {
-    private const UNSUPPORTED_MEDIA_TYPE_STATUS_CODE = 406;
-    private const DEFAULT_MEDIA_TYPE = 'text/html';
-    private const UNSUPPORTED_MEDIA_TYPE = 'Unsupported media type';
-
     /** @var MediaTypeNegotiator */
     private $mediaTypeNegotiator;
 
@@ -40,12 +35,6 @@ class MockResponseGenerator
 
     /** @var Responder */
     private $responder;
-
-    /** @var int */
-    private $statusCode;
-
-    /** @var string */
-    private $mediaType;
 
     public function __construct(
         MediaTypeNegotiator $mediaTypeNegotiator,
@@ -61,54 +50,18 @@ class MockResponseGenerator
 
     public function generateResponse(Request $request, MockParameters $parameters): Response
     {
-        $this->negotiateResponseStatusCode($request, $parameters);
-        $this->negotiateMediaType($request, $parameters);
-        $schema = $this->detectResponseDataSchema($parameters);
+        $statusCode = $this->responseStatusNegotiator->negotiateResponseStatus($request, $parameters);
+        $mockResponse = $parameters->responses->get($statusCode);
+        $mediaType = $this->mediaTypeNegotiator->negotiateMediaType($request, $mockResponse);
+        $schema = $mockResponse->content->get($mediaType);
 
-        if (null === $schema) {
-            $response = $this->createUnsupportedMediaTypeResponse();
-        } else {
-            $response = $this->generateMockResponseBySchema($schema);
-        }
-
-        return $response;
+        return $this->generateMockResponseBySchema($statusCode, $mediaType, $schema);
     }
 
-    private function negotiateResponseStatusCode(Request $request, MockParameters $parameters): void
-    {
-        $this->statusCode = $this->responseStatusNegotiator->negotiateResponseStatus($request, $parameters);
-    }
-
-    private function negotiateMediaType(Request $request, MockParameters $parameters): void
-    {
-        $this->mediaType = $this->mediaTypeNegotiator->negotiateMediaType($request, $parameters);
-    }
-
-    private function detectResponseDataSchema(MockParameters $parameters): ?Schema
-    {
-        /** @var MockResponse $mockResponse */
-        $mockResponse = $parameters->responses->get($this->statusCode);
-
-        if (null === $mockResponse) {
-            throw new \DomainException('Invalid response status code negotiated');
-        }
-
-        return $mockResponse->content->get($this->mediaType);
-    }
-
-    private function createUnsupportedMediaTypeResponse(): Response
-    {
-        return $this->responder->createResponse(
-            self::UNSUPPORTED_MEDIA_TYPE_STATUS_CODE,
-            self::DEFAULT_MEDIA_TYPE,
-            self::UNSUPPORTED_MEDIA_TYPE
-        );
-    }
-
-    private function generateMockResponseBySchema(Schema $schema): Response
+    private function generateMockResponseBySchema(int $statusCode, string $mediaType, Schema $schema): Response
     {
         $responseData = $this->dataGenerator->generateData($schema);
 
-        return $this->responder->createResponse($this->statusCode, $this->mediaType, $responseData);
+        return $this->responder->createResponse($statusCode, $mediaType, $responseData);
     }
 }
