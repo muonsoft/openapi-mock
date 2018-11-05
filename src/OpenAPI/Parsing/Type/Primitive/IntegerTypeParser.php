@@ -22,6 +22,31 @@ class IntegerTypeParser implements TypeParserInterface
 {
     public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
     {
-        return new IntegerType();
+        $type = new IntegerType();
+
+        $type->nullable = $this->readBoolValue($schema, 'nullable');
+        $type->exclusiveMinimum = $this->readBoolValue($schema, 'exclusiveMinimum');
+        $type->exclusiveMaximum = $this->readBoolValue($schema, 'exclusiveMaximum');
+        $type->minimum = $this->readIntegerOrNullValue($schema, 'minimum');
+        $type->maximum = $this->readIntegerOrNullValue($schema, 'maximum');
+        $type->multipleOf = $this->readIntegerOrNullValue($schema, 'multipleOf');
+
+        return $type;
+    }
+
+    private function readBoolValue(array $schema, string $key): bool
+    {
+        return (bool) ($schema[$key] ?? false);
+    }
+
+    private function readIntegerOrNullValue(array $schema, string $key): ?int
+    {
+        $value = null;
+
+        if (array_key_exists($key, $schema)) {
+            $value = (int) $schema[$key];
+        }
+
+        return $value;
     }
 }

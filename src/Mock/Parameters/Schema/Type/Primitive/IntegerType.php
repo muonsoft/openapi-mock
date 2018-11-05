@@ -17,5 +17,21 @@ use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
  */
 class IntegerType implements TypeMarkerInterface
 {
+    /** @var bool */
+    public $nullable = false;
 
+    /** @var int|null */
+    public $minimum;
+
+    /** @var int|null */
+    public $maximum;
+
+    /** @var bool */
+    public $exclusiveMinimum = false;
+
+    /** @var bool */
+    public $exclusiveMaximum = false;
+
+    /** @var int|null */
+    public $multipleOf;
 }

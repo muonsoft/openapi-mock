@@ -17,13 +17,49 @@ use PHPUnit\Framework\TestCase;
 
 class NumberTypeParserTest extends TestCase
 {
+    private const MINIMUM = 10.5;
+    private const MAXIMUM = 100.5;
+    private const MULTIPLE_OF = 2.5;
+    private const NUMBER_SCHEMA = [
+        'nullable' => true,
+        'minimum' => self::MINIMUM,
+        'maximum' => self::MAXIMUM,
+        'exclusiveMinimum' => true,
+        'exclusiveMaximum' => true,
+        'multipleOf' => self::MULTIPLE_OF,
+    ];
+
     /** @test */
-    public function parse_validNumberSchema_numberTypeReturned(): void
+    public function parse_numberSchemaWithoutParameters_numberTypeWithDefaultsReturned(): void
     {
         $parser = new NumberTypeParser();
 
+        /** @var NumberType $type */
         $type = $parser->parse([], new ParsingContext());
 
         $this->assertInstanceOf(NumberType::class, $type);
+        $this->assertFalse($type->nullable);
+        $this->assertNull($type->minimum);
+        $this->assertNull($type->maximum);
+        $this->assertFalse($type->exclusiveMinimum);
+        $this->assertFalse($type->exclusiveMaximum);
+        $this->assertNull($type->multipleOf);
+    }
+
+    /** @test */
+    public function parse_numberSchemaWithParameters_numberTypeWithParametersReturned(): void
+    {
+        $parser = new NumberTypeParser();
+
+        /** @var NumberType $type */
+        $type = $parser->parse(self::NUMBER_SCHEMA, new ParsingContext());
+
+        $this->assertInstanceOf(NumberType::class, $type);
+        $this->assertTrue($type->nullable);
+        $this->assertSame(self::MINIMUM, $type->minimum);
+        $this->assertSame(self::MAXIMUM, $type->maximum);
+        $this->assertTrue($type->exclusiveMinimum);
+        $this->assertTrue($type->exclusiveMaximum);
+        $this->assertSame(self::MULTIPLE_OF, $type->multipleOf);
     }
 }

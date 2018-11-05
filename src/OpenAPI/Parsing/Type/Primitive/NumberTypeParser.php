@@ -22,6 +22,31 @@ class NumberTypeParser implements TypeParserInterface
 {
     public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
     {
-        return new NumberType();
+        $type = new NumberType();
+
+        $type->nullable = $this->readBoolValue($schema, 'nullable');
+        $type->exclusiveMinimum = $this->readBoolValue($schema, 'exclusiveMinimum');
+        $type->exclusiveMaximum = $this->readBoolValue($schema, 'exclusiveMaximum');
+        $type->minimum = $this->readFloatOrNullValue($schema, 'minimum');
+        $type->maximum = $this->readFloatOrNullValue($schema, 'maximum');
+        $type->multipleOf = $this->readFloatOrNullValue($schema, 'multipleOf');
+
+        return $type;
+    }
+
+    private function readBoolValue(array $schema, string $key): bool
+    {
+        return (bool) ($schema[$key] ?? false);
+    }
+
+    private function readFloatOrNullValue(array $schema, string $key): ?float
+    {
+        $value = null;
+
+        if (array_key_exists($key, $schema)) {
+            $value = (float) $schema[$key];
+        }
+
+        return $value;
     }
 }

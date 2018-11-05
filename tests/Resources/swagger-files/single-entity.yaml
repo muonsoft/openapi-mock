@@ -17,10 +17,15 @@ paths:
                 properties:
                   id:
                     type: integer
+                    minumum: 0
+                    maximum: 65535
                   name:
                     type: string
                   price:
                     type: number
+                    minimum: 10
+                    maximum: 10000
+                    multipleOf: 0.01
                   isActive:
                     type: boolean
                   tags:

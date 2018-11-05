@@ -24,6 +24,5 @@ trait FakerCaseTrait
     protected function setUpFaker(): void
     {
         $this->faker = Factory::create();
-        $this->faker->seed(0);
     }
 }

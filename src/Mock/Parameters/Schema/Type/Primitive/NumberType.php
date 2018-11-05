@@ -17,5 +17,21 @@ use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
  */
 class NumberType implements TypeMarkerInterface
 {
+    /** @var bool */
+    public $nullable = false;
 
+    /** @var float|null */
+    public $minimum;
+
+    /** @var float|null */
+    public $maximum;
+
+    /** @var bool */
+    public $exclusiveMinimum = false;
+
+    /** @var bool */
+    public $exclusiveMaximum = false;
+
+    /** @var float|null */
+    public $multipleOf;
 }
