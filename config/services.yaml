@@ -1,7 +1,7 @@
 parameters:
   locale: 'en'
 #  specification_url: '%env(SPECIFICATION_URL)%'
-  specification_url: '%kernel.project_dir%/tests/Resources/swagger-files/single-entity.yaml'
+  specification_url: '%kernel.project_dir%/tests/Resources/swagger-files/value-generation.yaml'
 
   type_parser_map:
     object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
@@ -74,7 +74,7 @@ services:
 
   Faker\Generator:
     class: Faker\Generator
-    factory: ['Faker\Factory', 'create']
+    factory: ['App\Faker\FakerGeneratorFactory', 'createGenerator']
 
   Negotiation\Negotiator:
     class: Negotiation\Negotiator

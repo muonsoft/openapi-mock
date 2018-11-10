@@ -10,7 +10,6 @@
 
 namespace App\Tests\Utility\TestCase;
 
-use Faker\Factory;
 use Faker\Generator;
 
 /**
@@ -23,6 +22,31 @@ trait FakerCaseTrait
 
     protected function setUpFaker(): void
     {
-        $this->faker = Factory::create();
+        $this->faker = \Phake::mock(Generator::class);
+    }
+
+    protected function assertFaker_method_wasCalledOnce(string $method): void
+    {
+        \Phake::verify($this->faker)
+            ->{$method}();
+    }
+
+    protected function assertFaker_method_wasCalledOnceWithParameter(string $method, $parameter): void
+    {
+        \Phake::verify($this->faker)
+            ->{$method}($parameter);
+    }
+
+    protected function assertFaker_method_wasCalledOnceWithTwoParameters(string $method, $parameter1, $parameter2): void
+    {
+        \Phake::verify($this->faker)
+            ->{$method}($parameter1, $parameter2);
+    }
+
+    protected function givenFaker_method_returnsValue(string $method, $value): void
+    {
+        \Phake::when($this->faker)
+            ->{$method}(\Phake::anyParameters())
+            ->thenReturn($value);
     }
 }

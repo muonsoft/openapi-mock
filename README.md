@@ -15,12 +15,13 @@ Swagger mock server with fake data generation support
 * [x] xml/json encoding in responder
 * [x] using number parameters for generator
 * [x] using integer parameters for generator
-* [ ] using string parameters for generator
+* [x] using string parameters for generator
 * [ ] using array parameters for generator
 * [ ] support of additionalProperties for object type
 * [ ] complex types (oneOf, anyOf, allOf)
 * [ ] reference resolving
 * [x] caching loader for OpenAPI specification
+* [ ] cache invalidation by timestamp/hash
 * [ ] logging
 * [ ] docker build in ci
 * [ ] faker expression extension for numbers

@@ -8,8 +8,8 @@ default:
         - App\Tests\Acceptance\Context\FeatureContext:
             specificationLoader: '@specification_loader'
             swaggerFilesDirectory: 'tests/Resources/swagger-files/'
+        - App\Tests\Acceptance\Context\ExtendedJsonContext:
         - Behat\MinkExtension\Context\MinkContext
-        - behatch:context:json
         - behatch:context:xml
         - behatch:context:rest
 
