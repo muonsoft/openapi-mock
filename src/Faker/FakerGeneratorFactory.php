@@ -20,7 +20,7 @@ use Faker\Generator;
  */
 class FakerGeneratorFactory
 {
-    public function createGenerator(): Generator
+    public static function createGenerator(): Generator
     {
         $generator = Factory::create();
         $generator->addProvider(new Base64Provider($generator));
