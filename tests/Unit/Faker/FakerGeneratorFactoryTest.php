@@ -23,7 +23,7 @@ class FakerGeneratorFactoryTest extends TestCase
     {
         $factory = new FakerGeneratorFactory();
 
-        $generator = $factory->createGenerator();
+        $generator = $factory::createGenerator();
 
         $this->assertNotNull($generator);
         $this->assertGeneratorHasProviderClass($generator, Base64Provider::class);
