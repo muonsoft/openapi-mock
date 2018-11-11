@@ -21,9 +21,7 @@ class FakerGeneratorFactoryTest extends TestCase
     /** @test */
     public function createGenerator_noParameters_fakerGeneratorCreatedAndReturned(): void
     {
-        $factory = new FakerGeneratorFactory();
-
-        $generator = $factory::createGenerator();
+        $generator = FakerGeneratorFactory::createGenerator();
 
         $this->assertNotNull($generator);
         $this->assertGeneratorHasProviderClass($generator, Base64Provider::class);

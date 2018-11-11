@@ -33,6 +33,25 @@ class FakerStringGeneratorTest extends TestCase
     }
 
     /** @test */
+    public function generateValue_stringTypeWithNullableParameters_nullValueReturned(): void
+    {
+        $generator = $this->createFakerStringGenerator();
+        $type = new StringType();
+        $type->nullable = true;
+        $this->givenFaker_method_returnsValue('rangedText', '');
+
+        for ($i = 0; $i < 100; $i++) {
+            $value = $generator->generateValue($type);
+
+            if (null === $value) {
+                break;
+            }
+        }
+
+        $this->assertNull($value);
+    }
+
+    /** @test */
     public function generateValue_stringTypeWithEnum_enumValueReturned(): void
     {
         $generator = $this->createFakerStringGenerator();
