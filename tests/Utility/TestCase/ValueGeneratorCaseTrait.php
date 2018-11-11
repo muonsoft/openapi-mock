@@ -37,11 +37,15 @@ trait ValueGeneratorCaseTrait
             ->getValueGenerator($type);
     }
 
-    protected function givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator(): void
+    protected function givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator(ValueGeneratorInterface $generator = null): void
     {
+        if ($generator === null) {
+            $generator = $this->valueGenerator;
+        }
+
         \Phake::when($this->valueGeneratorLocator)
             ->getValueGenerator(\Phake::anyParameters())
-            ->thenReturn($this->valueGenerator);
+            ->thenReturn($generator);
     }
 
     protected function assertValueGenerator_generateValue_isCalledOnceWithType(TypeMarkerInterface $type): void

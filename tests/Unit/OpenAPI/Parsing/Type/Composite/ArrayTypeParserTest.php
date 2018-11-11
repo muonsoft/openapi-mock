@@ -24,13 +24,22 @@ class ArrayTypeParserTest extends TestCase
     private const ITEMS_SCHEMA = [
         'type' => self::ITEMS_SCHEMA_TYPE
     ];
-    private const VALID_SCHEMA = [
+    private const VALID_SCHEMA_WITH_PARAMETERS = [
         'type' => 'array',
-        'items' => self::ITEMS_SCHEMA
+        'items' => self::ITEMS_SCHEMA,
+        'minItems' => self::MIN_ITEMS,
+        'maxItems' => self::MAX_ITEMS,
+        'uniqueItems' => true,
+    ];
+    private const VALID_SCHEMA_WITHOUT_PARAMETERS = [
+        'type' => 'array',
+        'items' => self::ITEMS_SCHEMA,
     ];
     private const SCHEMA_WITHOUT_ITEMS = [
         'type' => 'array',
     ];
+    private const MIN_ITEMS = 5;
+    private const MAX_ITEMS = 10;
 
     protected function setUp(): void
     {
@@ -38,13 +47,13 @@ class ArrayTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_validSchemaWithItems_itemSchemaParsedByTypeParser(): void
+    public function parse_validSchemaWithItemsAndParameters_itemSchemaParsedByTypeParser(): void
     {
         $parser = $this->createArrayTypeParser();
         $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var ArrayType $type */
-        $type = $parser->parse(self::VALID_SCHEMA, new ParsingContext());
+        $type = $parser->parse(self::VALID_SCHEMA_WITH_PARAMETERS, new ParsingContext());
 
         $this->assertInstanceOf(ArrayType::class, $type);
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
@@ -52,6 +61,29 @@ class ArrayTypeParserTest extends TestCase
             'items'
         );
         $this->assertSame($itemsType, $type->items);
+        $this->assertSame(self::MIN_ITEMS, $type->minItems);
+        $this->assertSame(self::MAX_ITEMS, $type->maxItems);
+        $this->assertTrue($type->uniqueItems);
+    }
+
+    /** @test */
+    public function parse_validSchemaWithItemsAndNoParameters_itemSchemaParsedByTypeParserAndParametersSetToDefaults(): void
+    {
+        $parser = $this->createArrayTypeParser();
+        $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
+
+        /** @var ArrayType $type */
+        $type = $parser->parse(self::VALID_SCHEMA_WITHOUT_PARAMETERS, new ParsingContext());
+
+        $this->assertInstanceOf(ArrayType::class, $type);
+        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::ITEMS_SCHEMA,
+            'items'
+        );
+        $this->assertSame($itemsType, $type->items);
+        $this->assertSame(0, $type->minItems);
+        $this->assertSame(0, $type->maxItems);
+        $this->assertFalse($type->uniqueItems);
     }
 
     /**

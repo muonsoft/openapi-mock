@@ -16,7 +16,7 @@ Swagger mock server with fake data generation support
 * [x] using number parameters for generator
 * [x] using integer parameters for generator
 * [x] using string parameters for generator
-* [ ] using array parameters for generator
+* [x] using array parameters for generator
 * [ ] support of additionalProperties for object type
 * [ ] complex types (oneOf, anyOf, allOf)
 * [ ] reference resolving

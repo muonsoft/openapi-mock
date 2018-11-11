@@ -11,7 +11,9 @@
 namespace App\Tests\Unit\Mock\Generation\Value\Composite;
 
 use App\Mock\Generation\Value\Composite\ArrayValueGenerator;
+use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -20,17 +22,21 @@ class ArrayValueGeneratorTest extends TestCase
 {
     use ValueGeneratorCaseTrait;
 
+    private const DEFAULT_MIN_ITEMS = 1;
+    private const DEFAULT_MAX_ITEMS = 20;
+    private const ARRAY_SIZE = 25;
+
     protected function setUp(): void
     {
         $this->setUpValueGenerator();
     }
 
     /** @test */
-    public function generateValue_arrayTypeWithItemsType_arrayOfTypedItemsGeneratedAndReturned(): void
+    public function generateValue_arrayTypeWithItemsTypeAndDefaultSize_arrayOfTypedItemsGeneratedAndReturned(): void
     {
+        $generator = $this->createArrayValueGenerator();
         $type = new ArrayType();
         $type->items = new DummyType();
-        $generator = new ArrayValueGenerator($this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
         $value = $this->givenValueGenerator_generateValue_returnsValue();
 
@@ -39,5 +45,89 @@ class ArrayValueGeneratorTest extends TestCase
         $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($type->items);
         $this->assertValueGenerator_generateValue_isCalledAtLeastOnceWithType($type->items);
         $this->assertContains($value, $array);
+        $this->assertGreaterThanOrEqual(self::DEFAULT_MIN_ITEMS, \count($array));
+        $this->assertLessThanOrEqual(self::DEFAULT_MAX_ITEMS, \count($array));
+    }
+
+    /** @test */
+    public function generateValue_arrayTypeWithItemsTypeAndGivenSize_arrayOfGivenSizeGeneratedAndReturned(): void
+    {
+        $generator = $this->createArrayValueGenerator();
+        $type = new ArrayType();
+        $type->items = new DummyType();
+        $type->minItems = self::ARRAY_SIZE;
+        $type->maxItems = self::ARRAY_SIZE;
+        $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
+        $this->givenValueGenerator_generateValue_returnsValue();
+
+        $array = $generator->generateValue($type);
+
+        $this->assertCount(self::ARRAY_SIZE, $array);
+    }
+
+    /** @test */
+    public function generateValue_arrayTypeWithUniqueItems_arrayWithUniqueItemsGeneratedAndReturned(): void
+    {
+        $generator = $this->createArrayValueGenerator();
+        $type = new ArrayType();
+        $type->items = new DummyType();
+        $type->minItems = 3;
+        $type->maxItems = 3;
+        $type->uniqueItems = true;
+        $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 2);
+        $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator($randomRangeValueGenerator);
+
+        $array = $generator->generateValue($type);
+
+        $this->assertContains(0, $array);
+        $this->assertContains(1, $array);
+        $this->assertContains(2, $array);
+    }
+
+    /**
+     * @test
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Cannot generate array with unique values, attempts limit exceeded
+     */
+    public function generateValue_arrayTypeWithUniqueItems_exceptionThrownOnRetryLimit(): void
+    {
+        $generator = $this->createArrayValueGenerator();
+        $type = new ArrayType();
+        $type->items = new DummyType();
+        $type->minItems = 3;
+        $type->maxItems = 3;
+        $type->uniqueItems = true;
+        $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
+        $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator($randomRangeValueGenerator);
+
+        $generator->generateValue($type);
+    }
+
+    private function createArrayValueGenerator(): ArrayValueGenerator
+    {
+        return new ArrayValueGenerator($this->valueGeneratorLocator);
+    }
+
+    private function givenRandomRangeValueGenerator(int $min, int $max): ValueGeneratorInterface
+    {
+        return new class ($min, $max) implements ValueGeneratorInterface
+        {
+            /** @var int */
+            private $min;
+
+            /** @var int */
+            private $max;
+
+            public function __construct(int $min, int $max)
+            {
+                $this->min = $min;
+                $this->max = $max;
+            }
+
+            public function generateValue(TypeMarkerInterface $type): int
+            {
+                return random_int($this->min, $this->max);
+            }
+        };
     }
 }

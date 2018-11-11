@@ -19,4 +19,13 @@ class ArrayType implements TypeMarkerInterface
 {
     /** @var TypeMarkerInterface */
     public $items;
+
+    /** @var int */
+    public $minItems = 0;
+
+    /** @var int */
+    public $maxItems = 0;
+
+    /** @var bool */
+    public $uniqueItems = false;
 }

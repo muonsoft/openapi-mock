@@ -19,3 +19,4 @@ Feature: Value generation
     And the JSON node "byte" should match "/^[a-zA-Z0-9+\/]+={0,2}$/"
     And the JSON node "shortString" should be a string with length in range between "2" and "4"
     And the JSON node "longString" should be a string with length in range between "100" and "105"
+    And the JSON node "array" should have "5" elements

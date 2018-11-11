@@ -35,8 +35,10 @@ class ArrayTypeParser implements TypeParserInterface
         $this->validateSchema($schema, $context);
 
         $type = new ArrayType();
-        $itemsContext = $context->withSubPath('items');
-        $type->items = $this->schemaTransformingParser->parse($schema['items'], $itemsContext);
+        $type->items = $this->readItemsSchema($schema, $context);
+        $type->minItems = $this->readIntegerValue($schema, 'minItems');
+        $type->maxItems = $this->readIntegerValue($schema, 'maxItems');
+        $type->uniqueItems = $this->readBoolValue($schema, 'uniqueItems');
 
         return $type;
     }
@@ -46,5 +48,23 @@ class ArrayTypeParser implements TypeParserInterface
         if (!array_key_exists('items', $schema)) {
             throw new ParsingException('Section "items" is required', $context);
         }
+    }
+
+    private function readItemsSchema(array $schema, ParsingContext $context): TypeMarkerInterface
+    {
+        $itemsContext = $context->withSubPath('items');
+        $itemsSchema = $this->schemaTransformingParser->parse($schema['items'], $itemsContext);
+
+        return $itemsSchema;
+    }
+
+    private function readBoolValue(array $schema, string $key): bool
+    {
+        return (bool) ($schema[$key] ?? false);
+    }
+
+    private function readIntegerValue(array $schema, string $key): int
+    {
+        return (int) ($schema[$key] ?? 0);
     }
 }
