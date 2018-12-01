@@ -18,6 +18,9 @@ Swagger mock server with fake data generation support
 * [x] using string parameters for generator
 * [x] using array parameters for generator
 * [ ] support of additionalProperties for object type
+  * [ ] free-form object
+  * [ ] hash-map
+  * [ ] hash-map fixed keys
 * [ ] complex types (oneOf, anyOf, allOf)
 * [ ] reference resolving
 * [x] caching loader for OpenAPI specification

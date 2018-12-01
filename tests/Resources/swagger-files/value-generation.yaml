@@ -24,6 +24,7 @@ paths:
                   - shortString
                   - longString
                   - array
+                  - freeForm
                 properties:
                   rangedInteger:
                     type: integer
@@ -81,3 +82,6 @@ paths:
                     maxItems: 5
                     items:
                       type: integer
+                  freeForm:
+                    type: object
+                    additionalProperties: {}
