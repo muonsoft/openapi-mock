@@ -28,6 +28,10 @@ class ObjectTypeParserTest extends TestCase
     private const PROPERTY_SCHEMA = [
         'type' => self::PROPERTY_TYPE
     ];
+    private const DEFAULT_PROPERTY_NAME = 'defaultPropertyName';
+    private const DEFAULT_PROPERTY_SCHEMA = [
+        'type' => 'defaultPropertyType'
+    ];
     private const VALID_OBJECT_SCHEMA = [
         'type' => 'object',
         'properties' => [
@@ -38,9 +42,20 @@ class ObjectTypeParserTest extends TestCase
         ]
     ];
     private const PROPERTY_CONTEXT_PATH = 'properties.propertyName';
+    private const DEFAULT_PROPERTY_CONTEXT_PATH = 'properties.defaultPropertyName';
     private const HASH_MAP_SCHEMA = [
         'type' => 'object',
         'additionalProperties' => self::PROPERTY_SCHEMA
+    ];
+    private const HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES = [
+        'type' => 'object',
+        'additionalProperties' => self::PROPERTY_SCHEMA,
+        'properties' => [
+            self::DEFAULT_PROPERTY_NAME => self::DEFAULT_PROPERTY_SCHEMA,
+        ],
+        'required' => [
+            self::DEFAULT_PROPERTY_NAME,
+        ],
     ];
     private const HASH_MAP_SCHEMA_WITH_MIN_MAX = [
         'type' => 'object',
@@ -179,6 +194,28 @@ class ObjectTypeParserTest extends TestCase
         $this->assertSame(self::MAX_PROPERTIES, $object->maxProperties);
     }
 
+    /** @test */
+    public function parse_validSchemaWithDefaultProperties_hashMapTypeWithDefaultPropertiesReturned(): void
+    {
+        $parser = $this->createObjectTypeParser();
+        $type = $this->givenSchemaTransformingParser_parse_returnsType();
+
+        /** @var HashMapType $object */
+        $object = $parser->parse(self::HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES, new ParsingContext());
+
+        $this->assertInstanceOf(HashMapType::class, $object);
+        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::PROPERTY_SCHEMA,
+            'additionalProperties'
+        );
+        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+            self::DEFAULT_PROPERTY_SCHEMA,
+            self::DEFAULT_PROPERTY_CONTEXT_PATH
+        );
+        $this->assertSame($type, $object->value);
+        $this->assertHashMapHasValidDefaultProperty($object, $type);
+    }
+
     /**
      * @test
      * @expectedException \App\OpenAPI\Parsing\ParsingException
@@ -242,5 +279,13 @@ class ObjectTypeParserTest extends TestCase
         $this->assertSame($propertyType, $object->properties->first());
         $this->assertSame([self::PROPERTY_NAME], $object->properties->getKeys());
         $this->assertSame([self::PROPERTY_NAME], $object->required->toArray());
+    }
+
+    private function assertHashMapHasValidDefaultProperty(HashMapType $type, TypeMarkerInterface $propertyType): void
+    {
+        $this->assertCount(1, $type->properties);
+        $this->assertSame($propertyType, $type->properties->first());
+        $this->assertSame([self::DEFAULT_PROPERTY_NAME], $type->properties->getKeys());
+        $this->assertSame([self::DEFAULT_PROPERTY_NAME], $type->required->toArray());
     }
 }

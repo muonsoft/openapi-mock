@@ -20,3 +20,6 @@ Feature: Value generation
     And the JSON node "shortString" should be a string with length in range between "2" and "4"
     And the JSON node "longString" should be a string with length in range between "100" and "105"
     And the JSON node "array" should have "5" elements
+    And the JSON node "freeForm" should exist
+    And the JSON node "hashMap" should exist
+    And the JSON node "fixedHashMap.default" should be equal to the string "value"

@@ -87,8 +87,12 @@ class ObjectTypeParser implements TypeParserInterface
     private function parseHashMap(array $schema, ParsingContext $context): HashMapType
     {
         $object = new HashMapType();
+
         $propertyContext = $context->withSubPath('additionalProperties');
         $object->value = $this->schemaTransformingParser->parse($schema['additionalProperties'], $propertyContext);
+
+        $object->properties = $this->parseProperties($schema, $context);
+        $object->required = $this->parseRequiredProperties($schema, $context, $object->properties);
 
         return $object;
     }

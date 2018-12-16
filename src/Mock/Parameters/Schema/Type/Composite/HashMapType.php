@@ -15,7 +15,7 @@ use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class HashMapType implements TypeMarkerInterface
+class HashMapType extends ObjectType
 {
     /** @var TypeMarkerInterface */
     public $value;

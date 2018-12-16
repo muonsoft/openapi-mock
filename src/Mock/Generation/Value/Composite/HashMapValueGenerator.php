@@ -36,6 +36,9 @@ class HashMapValueGenerator implements ValueGeneratorInterface
     /** @var TypeMarkerInterface */
     private $valueType;
 
+    /** @var array */
+    private $properties = [];
+
     public function __construct(Generator $faker, ValueGeneratorLocator $generatorLocator)
     {
         $this->faker = $faker;
@@ -50,22 +53,38 @@ class HashMapValueGenerator implements ValueGeneratorInterface
     {
         $this->initializeValueGenerator($type->value);
 
-        $properties = [];
+        $this->generateDefaultProperties($type);
+        $this->generateRandomProperties($type);
 
-        $length = $this->generateRandomArrayLength($type);
-
-        for ($i = 0; $i < $length; $i++) {
-            $key = $this->faker->unique()->word();
-            $properties[$key] = $this->valueGenerator->generateValue($type->value);
-        }
-
-        return $properties;
+        return $this->properties;
     }
 
     private function initializeValueGenerator(TypeMarkerInterface $type): void
     {
         $this->valueType = $type;
         $this->valueGenerator = $this->generatorLocator->getValueGenerator($this->valueType);
+        $this->properties = [];
+    }
+
+    private function generateDefaultProperties(HashMapType $type): void
+    {
+        foreach ($type->required as $defaultPropertyName) {
+            $defaultPropertyType = $type->properties[$defaultPropertyName];
+            $valueGenerator = $this->generatorLocator->getValueGenerator($defaultPropertyType);
+            $this->properties[$defaultPropertyName] = $valueGenerator->generateValue($defaultPropertyType);
+        }
+    }
+
+    private function generateRandomProperties(HashMapType $type): array
+    {
+        $length = $this->generateRandomArrayLength($type);
+
+        for ($i = \count($this->properties); $i < $length; $i++) {
+            $key = $this->faker->unique()->word();
+            $this->properties[$key] = $this->valueGenerator->generateValue($type->value);
+        }
+
+        return $this->properties;
     }
 
     private function generateRandomArrayLength(HashMapType $type): int

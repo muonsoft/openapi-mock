@@ -17,15 +17,17 @@ Swagger mock server with fake data generation support
 * [x] using integer parameters for generator
 * [x] using string parameters for generator
 * [x] using array parameters for generator
-* [ ] support of additionalProperties for object type
+* [x] support of additionalProperties for object type
   * [x] free-form object
   * [x] hash-map
-  * [ ] hash-map fixed keys
+  * [x] hash-map fixed keys
 * [ ] complex types (oneOf, anyOf, allOf)
 * [ ] reference resolving
+* [ ] support of readOnly, writeOnly fields
 * [x] caching loader for OpenAPI specification
 * [ ] cache invalidation by timestamp/hash
 * [ ] logging
 * [ ] docker build in ci
+* [ ] try spiral/roadrunner server instead of nginx
 * [ ] faker expression extension for numbers
 * [ ] faker expression extension for strings
