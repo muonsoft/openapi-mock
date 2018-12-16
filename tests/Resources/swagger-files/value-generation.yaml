@@ -85,3 +85,7 @@ paths:
                   freeForm:
                     type: object
                     additionalProperties: {}
+                  hashMap:
+                    type: object
+                    additionalProperties:
+                      type: string

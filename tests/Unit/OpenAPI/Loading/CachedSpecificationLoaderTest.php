@@ -15,6 +15,8 @@ use App\Mock\Parameters\MockParametersCollection;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
+use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
@@ -121,6 +123,8 @@ class CachedSpecificationLoaderTest extends TestCase
         $objectType->properties->add(new NumberType());
         $objectType->properties->add(new StringType());
         $objectType->properties->add(new ArrayType());
+        $objectType->properties->add(new FreeFormObjectType());
+        $objectType->properties->add(new HashMapType());
         $schema = new Schema();
         $schema->value = $objectType;
         $mockResponse = new MockResponse();

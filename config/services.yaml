@@ -13,6 +13,8 @@ parameters:
 
   value_generator_map:
     App\Mock\Parameters\Schema\Type\Composite\ObjectType: 'App\Mock\Generation\Value\Composite\ObjectValueGenerator'
+    App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType: 'App\Mock\Generation\Value\Composite\FreeFormObjectValueGenerator'
+    App\Mock\Parameters\Schema\Type\Composite\HashMapType: 'App\Mock\Generation\Value\Composite\HashMapValueGenerator'
     App\Mock\Parameters\Schema\Type\Composite\ArrayType: 'App\Mock\Generation\Value\Composite\ArrayValueGenerator'
     App\Mock\Parameters\Schema\Type\Primitive\BooleanType: 'App\Mock\Generation\Value\Primitive\RandomBooleanGenerator'
     App\Mock\Parameters\Schema\Type\Primitive\IntegerType: 'App\Mock\Generation\Value\Primitive\RandomIntegerGenerator'

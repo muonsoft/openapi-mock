@@ -31,6 +31,18 @@ trait FakerCaseTrait
             ->{$method}();
     }
 
+    protected function assertFaker_method_wasCalledAtLeastOnce(string $method): void
+    {
+        \Phake::verify($this->faker, \Phake::atLeast(1))
+            ->{$method}();
+    }
+
+    protected function assertFakerMock_method_wasCalledAtLeastOnce(Generator $faker, string $method): void
+    {
+        \Phake::verify($faker, \Phake::atLeast(1))
+            ->{$method}();
+    }
+
     protected function assertFaker_method_wasCalledOnceWithParameter(string $method, $parameter): void
     {
         \Phake::verify($this->faker)
@@ -48,5 +60,23 @@ trait FakerCaseTrait
         \Phake::when($this->faker)
             ->{$method}(\Phake::anyParameters())
             ->thenReturn($value);
+    }
+
+    protected function givenFakerMock_method_returnsValue(Generator $faker, string $method, $value): void
+    {
+        \Phake::when($faker)
+            ->{$method}(\Phake::anyParameters())
+            ->thenReturn($value);
+    }
+
+    protected function givenFaker_method_returnsNewFaker(string $method): Generator
+    {
+        $faker = \Phake::mock(Generator::class);
+
+        \Phake::when($this->faker)
+            ->{$method}(\Phake::anyParameters())
+            ->thenReturn($faker);
+
+        return $faker;
     }
 }

@@ -1,0 +1,18 @@
+version: '3.0'
+
+volumes:
+  composer_data:
+
+services:
+  swagger_mock:
+    container_name: swagger_mock
+    build:
+      context: ./.dev
+    environment:
+      APP_ENV: dev
+    volumes:
+      - .:/app
+      - composer_data:/var/run/composer
+    ports:
+      - "80:80"
+      - "9002:9001"
