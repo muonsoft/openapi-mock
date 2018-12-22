@@ -12,8 +12,8 @@ namespace App\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 
@@ -30,12 +30,12 @@ class ArrayTypeParser implements TypeParserInterface
         $this->schemaTransformingParser = $schemaTransformingParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
-        $this->validateSchema($schema, $context);
+        $this->validateSchema($schema, $pointer);
 
         $type = new ArrayType();
-        $type->items = $this->readItemsSchema($schema, $context);
+        $type->items = $this->readItemsSchema($schema, $pointer);
         $type->minItems = $this->readIntegerValue($schema, 'minItems');
         $type->maxItems = $this->readIntegerValue($schema, 'maxItems');
         $type->uniqueItems = $this->readBoolValue($schema, 'uniqueItems');
@@ -43,14 +43,14 @@ class ArrayTypeParser implements TypeParserInterface
         return $type;
     }
 
-    private function validateSchema(array $schema, ParsingContext $context): void
+    private function validateSchema(array $schema, SpecificationPointer $context): void
     {
         if (!array_key_exists('items', $schema)) {
             throw new ParsingException('Section "items" is required', $context);
         }
     }
 
-    private function readItemsSchema(array $schema, ParsingContext $context): TypeMarkerInterface
+    private function readItemsSchema(array $schema, SpecificationPointer $context): TypeMarkerInterface
     {
         $itemsContext = $context->withSubPath('items');
         $itemsSchema = $this->schemaTransformingParser->parse($schema['items'], $itemsContext);

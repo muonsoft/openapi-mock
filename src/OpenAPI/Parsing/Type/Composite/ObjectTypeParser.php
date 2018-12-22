@@ -15,8 +15,8 @@ use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\Utility\StringList;
@@ -34,18 +34,18 @@ class ObjectTypeParser implements TypeParserInterface
         $this->schemaTransformingParser = $schemaTransformingParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         if (array_key_exists('additionalProperties', $schema)) {
-            $object = $this->parseFreeFormOrHashMap($schema, $context);
+            $object = $this->parseFreeFormOrHashMap($schema, $pointer);
         } else {
-            $object = $this->parseObjectType($schema, $context);
+            $object = $this->parseObjectType($schema, $pointer);
         }
 
         return $object;
     }
 
-    private function parseObjectType(array $schema, ParsingContext $context): ObjectType
+    private function parseObjectType(array $schema, SpecificationPointer $context): ObjectType
     {
         $object = new ObjectType();
 
@@ -55,7 +55,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $object;
     }
 
-    private function parseFreeFormOrHashMap(array $schema, ParsingContext $context): TypeMarkerInterface
+    private function parseFreeFormOrHashMap(array $schema, SpecificationPointer $context): TypeMarkerInterface
     {
         $additionalProperties = $this->getAdditionalPropertiesFromSchema($schema, $context);
 
@@ -71,7 +71,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $object;
     }
 
-    private function getAdditionalPropertiesFromSchema(array $schema, ParsingContext $context): array
+    private function getAdditionalPropertiesFromSchema(array $schema, SpecificationPointer $context): array
     {
         if ($schema['additionalProperties'] === true) {
             $additionalProperties = [];
@@ -84,7 +84,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $additionalProperties;
     }
 
-    private function parseHashMap(array $schema, ParsingContext $context): HashMapType
+    private function parseHashMap(array $schema, SpecificationPointer $context): HashMapType
     {
         $object = new HashMapType();
 
@@ -97,7 +97,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $object;
     }
 
-    private function parseProperties(array $schema, ParsingContext $context): TypeCollection
+    private function parseProperties(array $schema, SpecificationPointer $context): TypeCollection
     {
         $properties = new TypeCollection();
 
@@ -113,7 +113,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $properties;
     }
 
-    private function parseRequiredProperties(array $schema, ParsingContext $context, TypeCollection $properties): StringList
+    private function parseRequiredProperties(array $schema, SpecificationPointer $context, TypeCollection $properties): StringList
     {
         $requiredProperties = new StringList();
 
@@ -128,7 +128,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $requiredProperties;
     }
 
-    private function validateProperty($propertyName, TypeCollection $properties, ParsingContext $context): void
+    private function validateProperty($propertyName, TypeCollection $properties, SpecificationPointer $context): void
     {
         if (!\is_string($propertyName)) {
             throw new ParsingException('Invalid required property', $context);

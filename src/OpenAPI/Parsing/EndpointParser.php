@@ -25,12 +25,12 @@ class EndpointParser implements ContextualParserInterface
         $this->responseParser = $responseParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): MockParameters
+    public function parse(array $schema, SpecificationPointer $pointer): MockParameters
     {
         $mockParameters = new MockParameters();
 
         if (array_key_exists('responses', $schema)) {
-            $responsesContext = $context->withSubPath('responses');
+            $responsesContext = $pointer->withSubPath('responses');
             foreach ($schema['responses'] as $statusCode => $responseSpecification) {
                 $responseContext = $responsesContext->withSubPath($statusCode);
                 $this->validateResponse($statusCode, $responseSpecification, $responseContext);
@@ -44,7 +44,7 @@ class EndpointParser implements ContextualParserInterface
         return $mockParameters;
     }
 
-    private function validateResponse($statusCode, $responseSpecification, ParsingContext $context): void
+    private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $context): void
     {
         if (!\is_int($statusCode)) {
             throw new ParsingException('Invalid status code. Must be integer.', $context);

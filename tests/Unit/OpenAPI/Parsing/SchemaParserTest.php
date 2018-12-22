@@ -10,8 +10,8 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\SchemaParser;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\SchemaTransformingParserTestCase;
 use PHPUnit\Framework\TestCase;
 
@@ -38,7 +38,7 @@ class SchemaParserTest extends TestCase
         $parser = $this->createSchemaParser();
         $type = $this->givenSchemaTransformingParser_parse_returnsType();
 
-        $parsedSchema = $parser->parse(self::VALID_SCHEMA, new ParsingContext());
+        $parsedSchema = $parser->parse(self::VALID_SCHEMA, new SpecificationPointer());
 
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
             self::SCHEMA_DEFINITION,
@@ -56,7 +56,7 @@ class SchemaParserTest extends TestCase
     {
         $parser = $this->createSchemaParser();
 
-        $parser->parse([], new ParsingContext());
+        $parser->parse([], new SpecificationPointer());
     }
 
     private function createSchemaParser(): SchemaParser

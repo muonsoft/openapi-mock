@@ -12,7 +12,7 @@ namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use Psr\Log\LoggerInterface;
 
@@ -32,7 +32,7 @@ class StringTypeParser implements TypeParserInterface
         $this->logger = $logger;
     }
 
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         $this->type = new StringType();
 
@@ -42,9 +42,9 @@ class StringTypeParser implements TypeParserInterface
         $this->type->format = $this->readStringValue($schema, 'format');
         $this->type->pattern = $this->readStringValue($schema, 'pattern');
 
-        $this->lengthsAutoCorrection($context);
+        $this->lengthsAutoCorrection($pointer);
 
-        $this->processEnumProperty($schema, $context);
+        $this->processEnumProperty($schema, $pointer);
 
         return $this->type;
     }
@@ -64,7 +64,7 @@ class StringTypeParser implements TypeParserInterface
         return (string) ($schema[$key] ?? '');
     }
 
-    private function lengthsAutoCorrection(ParsingContext $context): void
+    private function lengthsAutoCorrection(SpecificationPointer $context): void
     {
         if ($this->type->minLength < 0) {
             $this->type->minLength = 0;
@@ -100,7 +100,7 @@ class StringTypeParser implements TypeParserInterface
         }
     }
 
-    private function processEnumProperty(array $schema, ParsingContext $context): void
+    private function processEnumProperty(array $schema, SpecificationPointer $context): void
     {
         $enumValues = $schema['enum'] ?? [];
 
@@ -117,7 +117,7 @@ class StringTypeParser implements TypeParserInterface
         }
     }
 
-    private function processEnumValues(array $enumValues, ParsingContext $context): void
+    private function processEnumValues(array $enumValues, SpecificationPointer $context): void
     {
         foreach ($enumValues as $enumValue) {
             if (\is_string($enumValue)) {

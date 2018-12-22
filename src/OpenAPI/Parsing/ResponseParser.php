@@ -25,11 +25,11 @@ class ResponseParser implements ContextualParserInterface
         $this->schemaParser = $schemaParser;
     }
 
-    public function parse(array $responseSpecification, ParsingContext $context): MockResponse
+    public function parse(array $responseSpecification, SpecificationPointer $pointer): MockResponse
     {
         $response = new MockResponse();
         $content = $responseSpecification['content'] ?? [];
-        $contentContext = $context->withSubPath('content');
+        $contentContext = $pointer->withSubPath('content');
         $this->validateContent($content, $contentContext);
 
         foreach ($content as $mediaType => $schema) {
@@ -41,7 +41,7 @@ class ResponseParser implements ContextualParserInterface
         return $response;
     }
 
-    private function validateContent($content, ParsingContext $context): void
+    private function validateContent($content, SpecificationPointer $context): void
     {
         if (!\is_array($content)) {
             throw new ParsingException('Invalid response content', $context);

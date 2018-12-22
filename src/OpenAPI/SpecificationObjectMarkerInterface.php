@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing;
+namespace App\OpenAPI;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface ContextualParserInterface
+interface SpecificationObjectMarkerInterface
 {
-    public function parse(array $schema, SpecificationPointer $pointer);
+
 }

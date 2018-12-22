@@ -11,7 +11,7 @@
 namespace App\Tests\Utility\TestCase;
 
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -31,7 +31,7 @@ trait ContextualParserTestCaseTrait
         array $schema,
         string $path
     ): void {
-        /** @var ParsingContext $context */
+        /** @var SpecificationPointer $context */
         \Phake::verify($this->contextualParser)
             ->parse($schema, \Phake::capture($context));
         Assert::assertSame($path, $context->getPath());

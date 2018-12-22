@@ -13,12 +13,17 @@ namespace App\OpenAPI\Parsing;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ParsingContext
+class SpecificationPointer
 {
     private const PATH_DELIMITER = '.';
 
     /** @var string[] */
     private $path = [];
+
+    public function getPathElements(): array
+    {
+        return $this->path;
+    }
 
     public function getPath(): string
     {
@@ -30,11 +35,11 @@ class ParsingContext
         $this->path[] = $subPath;
     }
 
-    public function withSubPath(string $path): ParsingContext
+    public function withSubPath(string $path): SpecificationPointer
     {
-        $newContext = clone $this;
-        $newContext->addSubPath($path);
+        $newPointer = clone $this;
+        $newPointer->addSubPath($path);
 
-        return $newContext;
+        return $newPointer;
     }
 }

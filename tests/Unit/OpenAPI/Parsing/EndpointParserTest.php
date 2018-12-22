@@ -12,7 +12,7 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\OpenAPI\Parsing\EndpointParser;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -50,7 +50,7 @@ class EndpointParserTest extends TestCase
         $expectedMockResponse = new MockResponse();
         $this->givenContextualParser_parse_returns($expectedMockResponse);
 
-        $mockParameters = $parser->parse(self::VALID_ENDPOINT_SPECIFICATION, new ParsingContext());
+        $mockParameters = $parser->parse(self::VALID_ENDPOINT_SPECIFICATION, new SpecificationPointer());
 
         $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
             self::RESPONSE_SPECIFICATION,
@@ -73,7 +73,7 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
 
-        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE, new ParsingContext());
+        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE, new SpecificationPointer());
     }
 
     /**
@@ -85,7 +85,7 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
 
-        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION, new ParsingContext());
+        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
     }
 
     private function createEndpointParser(): EndpointParser

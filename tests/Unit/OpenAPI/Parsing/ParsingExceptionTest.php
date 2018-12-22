@@ -10,8 +10,8 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use PHPUnit\Framework\TestCase;
 
 class ParsingExceptionTest extends TestCase
@@ -19,7 +19,7 @@ class ParsingExceptionTest extends TestCase
     /** @test */
     public function construct_messageAndContext_contextIsSetAndMessageHasPath(): void
     {
-        $context = new ParsingContext();
+        $context = new SpecificationPointer();
         $context->addSubPath('path');
 
         $exception = new ParsingException('message', $context);

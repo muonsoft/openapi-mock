@@ -17,7 +17,7 @@ use Throwable;
  */
 class ParsingException extends \DomainException
 {
-    public function __construct(string $message, ParsingContext $context, int $code = 0, Throwable $previous = null)
+    public function __construct(string $message, SpecificationPointer $context, int $code = 0, Throwable $previous = null)
     {
         $messageWithPath = sprintf('Parsing error "%s" at path "%s".', $message, $context->getPath());
 

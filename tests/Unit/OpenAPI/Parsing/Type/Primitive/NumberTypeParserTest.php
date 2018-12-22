@@ -11,7 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\NumberTypeParser;
 use PHPUnit\Framework\TestCase;
 
@@ -35,7 +35,7 @@ class NumberTypeParserTest extends TestCase
         $parser = new NumberTypeParser();
 
         /** @var NumberType $type */
-        $type = $parser->parse([], new ParsingContext());
+        $type = $parser->parse([], new SpecificationPointer());
 
         $this->assertInstanceOf(NumberType::class, $type);
         $this->assertFalse($type->nullable);
@@ -52,7 +52,7 @@ class NumberTypeParserTest extends TestCase
         $parser = new NumberTypeParser();
 
         /** @var NumberType $type */
-        $type = $parser->parse(self::NUMBER_SCHEMA, new ParsingContext());
+        $type = $parser->parse(self::NUMBER_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(NumberType::class, $type);
         $this->assertTrue($type->nullable);

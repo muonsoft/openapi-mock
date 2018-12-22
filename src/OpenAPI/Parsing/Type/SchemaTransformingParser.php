@@ -11,7 +11,7 @@
 namespace App\OpenAPI\Parsing\Type;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -26,10 +26,10 @@ class SchemaTransformingParser implements TypeParserInterface
         $this->typeParserLocator = $typeParserLocator;
     }
 
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         $typeParser = $this->typeParserLocator->getTypeParser($schema['type']);
 
-        return $typeParser->parse($schema, $context);
+        return $typeParser->parse($schema, $pointer);
     }
 }

@@ -12,7 +12,7 @@ namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 
 /**
@@ -20,7 +20,7 @@ use App\OpenAPI\Parsing\Type\TypeParserInterface;
  */
 class BooleanTypeParser implements TypeParserInterface
 {
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         return new BooleanType();
     }

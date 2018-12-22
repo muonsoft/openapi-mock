@@ -11,7 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\StringTypeParser;
 use App\Tests\Utility\TestCase\LoggerTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -57,7 +57,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(self::VALID_STRING_SCHEMA, new ParsingContext());
+        $type = $parser->parse(self::VALID_STRING_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(StringType::class, $type);
         $this->assertTrue($type->nullable);
@@ -76,7 +76,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse([], new ParsingContext());
+        $type = $parser->parse([], new SpecificationPointer());
 
         $this->assertInstanceOf(StringType::class, $type);
         $this->assertFalse($type->nullable);
@@ -93,7 +93,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(self::SCHEMA_WITH_INVALID_ENUM, new ParsingContext());
+        $type = $parser->parse(self::SCHEMA_WITH_INVALID_ENUM, new SpecificationPointer());
 
         $this->assertCount(0, $type->enum);
         $this->assertLogger_warning_wasCalledOnce();
@@ -110,7 +110,7 @@ class StringTypeParserTest extends TestCase
                 'minLength' => -2,
                 'maxLength' => -1,
             ],
-            new ParsingContext()
+            new SpecificationPointer()
         );
 
         $this->assertSame(self::DEFAULT_LENGTH, $type->minLength);
@@ -129,7 +129,7 @@ class StringTypeParserTest extends TestCase
                 'minLength' => 10,
                 'maxLength' => 9,
             ],
-            new ParsingContext()
+            new SpecificationPointer()
         );
 
         $this->assertSame(10, $type->maxLength);
@@ -142,7 +142,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(self::SCHEMA_WITH_INVALID_ENUM_VALUE, new ParsingContext());
+        $type = $parser->parse(self::SCHEMA_WITH_INVALID_ENUM_VALUE, new SpecificationPointer());
 
         $this->assertCount(1, $type->enum);
         $this->assertContains(self::ENUM_VALUE_1, $type->enum);

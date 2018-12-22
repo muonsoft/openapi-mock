@@ -11,7 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ArrayTypeParser;
 use App\Tests\Utility\TestCase\SchemaTransformingParserTestCase;
 use PHPUnit\Framework\TestCase;
@@ -53,7 +53,7 @@ class ArrayTypeParserTest extends TestCase
         $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var ArrayType $type */
-        $type = $parser->parse(self::VALID_SCHEMA_WITH_PARAMETERS, new ParsingContext());
+        $type = $parser->parse(self::VALID_SCHEMA_WITH_PARAMETERS, new SpecificationPointer());
 
         $this->assertInstanceOf(ArrayType::class, $type);
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
@@ -73,7 +73,7 @@ class ArrayTypeParserTest extends TestCase
         $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var ArrayType $type */
-        $type = $parser->parse(self::VALID_SCHEMA_WITHOUT_PARAMETERS, new ParsingContext());
+        $type = $parser->parse(self::VALID_SCHEMA_WITHOUT_PARAMETERS, new SpecificationPointer());
 
         $this->assertInstanceOf(ArrayType::class, $type);
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
@@ -95,7 +95,7 @@ class ArrayTypeParserTest extends TestCase
     {
         $parser = $this->createArrayTypeParser();
 
-        $parser->parse(self::SCHEMA_WITHOUT_ITEMS, new ParsingContext());
+        $parser->parse(self::SCHEMA_WITHOUT_ITEMS, new SpecificationPointer());
     }
 
     private function createArrayTypeParser(): ArrayTypeParser

@@ -11,7 +11,7 @@
 namespace App\Tests\Utility\TestCase;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
 use PHPUnit\Framework\Assert;
 
@@ -32,7 +32,7 @@ trait SchemaTransformingParserTestCase
         array $schema,
         string $path
     ): void {
-        /** @var ParsingContext $context */
+        /** @var SpecificationPointer $context */
         \Phake::verify($this->schemaTransformingParser)
             ->parse($schema, \Phake::capture($context));
         Assert::assertSame($path, $context->getPath());

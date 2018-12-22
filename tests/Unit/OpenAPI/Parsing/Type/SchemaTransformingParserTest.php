@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
 use App\Tests\Utility\TestCase\TypeParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,7 @@ class SchemaTransformingParserTest extends TestCase
     {
         $parser = new SchemaTransformingParser($this->typeParserLocator);
         $this->givenTypeParserLocator_getTypeParser_returnsTypeParser();
-        $context = new ParsingContext();
+        $context = new SpecificationPointer();
         $expectedType = $this->givenTypeParser_parse_returnsType();
 
         $type = $parser->parse(self::SCHEMA_DEFINITION, $context);

@@ -26,18 +26,18 @@ class SchemaParser implements ContextualParserInterface
         $this->schemaTransformingParser = $schemaTransformingParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): Schema
+    public function parse(array $schema, SpecificationPointer $pointer): Schema
     {
         $parsedSchema = new Schema();
-        $this->validateSchema($schema, $context);
+        $this->validateSchema($schema, $pointer);
 
-        $schemaContext = $context->withSubPath('schema');
+        $schemaContext = $pointer->withSubPath('schema');
         $parsedSchema->value = $this->schemaTransformingParser->parse($schema['schema'], $schemaContext);
 
         return $parsedSchema;
     }
 
-    private function validateSchema(array $schema, ParsingContext $context): void
+    private function validateSchema(array $schema, SpecificationPointer $context): void
     {
         if (!\array_key_exists('schema', $schema)) {
             throw new ParsingException('Invalid schema', $context);

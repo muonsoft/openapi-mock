@@ -14,7 +14,7 @@ use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser;
 use App\Tests\Utility\TestCase\SchemaTransformingParserTestCase;
 use PHPUnit\Framework\TestCase;
@@ -88,7 +88,7 @@ class ObjectTypeParserTest extends TestCase
         $expectedPropertyType = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var ObjectType $object */
-        $object = $parser->parse(self::VALID_OBJECT_SCHEMA, new ParsingContext());
+        $object = $parser->parse(self::VALID_OBJECT_SCHEMA, new SpecificationPointer());
 
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
             self::PROPERTY_SCHEMA,
@@ -110,7 +110,7 @@ class ObjectTypeParserTest extends TestCase
             'additionalProperties' => $additionalProperties
         ];
 
-        $object = $parser->parse($schema, new ParsingContext());
+        $object = $parser->parse($schema, new SpecificationPointer());
 
         $this->assertInstanceOf(FreeFormObjectType::class, $object);
     }
@@ -129,7 +129,7 @@ class ObjectTypeParserTest extends TestCase
         $parser = $this->createObjectTypeParser();
 
         /** @var FreeFormObjectType $object */
-        $object = $parser->parse(self::FREE_FORM_SCHEMA, new ParsingContext());
+        $object = $parser->parse(self::FREE_FORM_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(FreeFormObjectType::class, $object);
         $this->assertSame(0, $object->minProperties);
@@ -142,7 +142,7 @@ class ObjectTypeParserTest extends TestCase
         $parser = $this->createObjectTypeParser();
 
         /** @var FreeFormObjectType $object */
-        $object = $parser->parse(self::FREE_FORM_SCHEMA_WITH_MIN_MAX, new ParsingContext());
+        $object = $parser->parse(self::FREE_FORM_SCHEMA_WITH_MIN_MAX, new SpecificationPointer());
 
         $this->assertInstanceOf(FreeFormObjectType::class, $object);
         $this->assertSame(self::MIN_PROPERTIES, $object->minProperties);
@@ -156,7 +156,7 @@ class ObjectTypeParserTest extends TestCase
         $type = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var HashMapType $object */
-        $object = $parser->parse(self::HASH_MAP_SCHEMA, new ParsingContext());
+        $object = $parser->parse(self::HASH_MAP_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(HashMapType::class, $object);
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
@@ -173,7 +173,7 @@ class ObjectTypeParserTest extends TestCase
         $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var HashMapType $object */
-        $object = $parser->parse(self::HASH_MAP_SCHEMA, new ParsingContext());
+        $object = $parser->parse(self::HASH_MAP_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(HashMapType::class, $object);
         $this->assertSame(0, $object->minProperties);
@@ -187,7 +187,7 @@ class ObjectTypeParserTest extends TestCase
         $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var HashMapType $object */
-        $object = $parser->parse(self::HASH_MAP_SCHEMA_WITH_MIN_MAX, new ParsingContext());
+        $object = $parser->parse(self::HASH_MAP_SCHEMA_WITH_MIN_MAX, new SpecificationPointer());
 
         $this->assertInstanceOf(HashMapType::class, $object);
         $this->assertSame(self::MIN_PROPERTIES, $object->minProperties);
@@ -201,7 +201,7 @@ class ObjectTypeParserTest extends TestCase
         $type = $this->givenSchemaTransformingParser_parse_returnsType();
 
         /** @var HashMapType $object */
-        $object = $parser->parse(self::HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES, new ParsingContext());
+        $object = $parser->parse(self::HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES, new SpecificationPointer());
 
         $this->assertInstanceOf(HashMapType::class, $object);
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
@@ -228,7 +228,7 @@ class ObjectTypeParserTest extends TestCase
             'additionalProperties' => 'invalid'
         ];
 
-        $parser->parse($schema, new ParsingContext());
+        $parser->parse($schema, new SpecificationPointer());
     }
 
     /**
@@ -251,7 +251,7 @@ class ObjectTypeParserTest extends TestCase
                     'not_exist',
                 ]
             ],
-            new ParsingContext()
+            new SpecificationPointer()
         );
     }
 
@@ -265,7 +265,7 @@ class ObjectTypeParserTest extends TestCase
         $parser = $this->createObjectTypeParser();
         $this->givenSchemaTransformingParser_parse_returnsType();
 
-        $parser->parse(['required' => [[]]], new ParsingContext());
+        $parser->parse(['required' => [[]]], new SpecificationPointer());
     }
 
     private function createObjectTypeParser(): ObjectTypeParser

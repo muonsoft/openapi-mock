@@ -11,7 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\BooleanTypeParser;
 use PHPUnit\Framework\TestCase;
 
@@ -22,7 +22,7 @@ class BooleanTypeParserTest extends TestCase
     {
         $parser = new BooleanTypeParser();
 
-        $type = $parser->parse([], new ParsingContext());
+        $type = $parser->parse([], new SpecificationPointer());
 
         $this->assertInstanceOf(BooleanType::class, $type);
     }

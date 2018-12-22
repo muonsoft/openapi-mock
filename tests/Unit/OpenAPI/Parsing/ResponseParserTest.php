@@ -12,8 +12,8 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
-use App\OpenAPI\Parsing\ParsingContext;
 use App\OpenAPI\Parsing\ResponseParser;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -42,7 +42,7 @@ class ResponseParserTest extends TestCase
         $expectedSchema = new Schema();
         $this->givenContextualParser_parse_returns($expectedSchema);
 
-        $response = $parser->parse(self::VALID_RESPONSE_SPECIFICATION, new ParsingContext());
+        $response = $parser->parse(self::VALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
 
         $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
             self::SCHEMA,
@@ -56,7 +56,7 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
 
-        $response = $parser->parse([], new ParsingContext());
+        $response = $parser->parse([], new SpecificationPointer());
 
         $this->assertCount(0, $response->content);
     }
@@ -70,7 +70,7 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
 
-        $parser->parse(['content' => 'invalid'], new ParsingContext());
+        $parser->parse(['content' => 'invalid'], new SpecificationPointer());
     }
 
     private function assertResponseHasValidContentWithExpectedSchema(MockResponse $response, Schema $expectedSchema): void

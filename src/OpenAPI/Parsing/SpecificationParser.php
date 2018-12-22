@@ -20,7 +20,7 @@ class SpecificationParser
     /** @var ContextualParserInterface */
     private $endpointParser;
 
-    /** @var ParsingContext */
+    /** @var SpecificationPointer */
     private $context;
 
     public function __construct(ContextualParserInterface $endpointParser)
@@ -56,7 +56,7 @@ class SpecificationParser
 
     private function initializeContext(): void
     {
-        $this->context = new ParsingContext();
+        $this->context = new SpecificationPointer();
     }
 
     private function validateSpecification(array $specification): void
@@ -84,7 +84,7 @@ class SpecificationParser
         }
     }
 
-    private function validateEndpointSpecificationAtPath($endpointSpecification, ParsingContext $context): void
+    private function validateEndpointSpecificationAtPath($endpointSpecification, SpecificationPointer $context): void
     {
         if (!\is_array($endpointSpecification) || \count($endpointSpecification) === 0) {
             throw new ParsingException('Empty or invalid endpoint specification', $context);

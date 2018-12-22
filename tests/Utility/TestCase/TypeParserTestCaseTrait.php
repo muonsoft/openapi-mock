@@ -11,7 +11,7 @@
 namespace App\Tests\Utility\TestCase;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\Parsing\Type\TypeParserLocator;
 
@@ -38,7 +38,7 @@ trait TypeParserTestCaseTrait
             ->getTypeParser($type);
     }
 
-    protected function assertTypeParser_parse_isCalledOnceWithSchemaAndContext(array $schema, ParsingContext $context): void
+    protected function assertTypeParser_parse_isCalledOnceWithSchemaAndContext(array $schema, SpecificationPointer $context): void
     {
         \Phake::verify($this->typeParser)
             ->parse($schema, $context);

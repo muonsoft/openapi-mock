@@ -12,12 +12,12 @@ namespace App\OpenAPI\Parsing\Type;
 
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationPointer;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 interface TypeParserInterface extends ContextualParserInterface
 {
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface;
+    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface;
 }
