@@ -20,7 +20,7 @@ class ParsingExceptionTest extends TestCase
     public function construct_messageAndContext_contextIsSetAndMessageHasPath(): void
     {
         $context = new SpecificationPointer();
-        $context->addSubPath('path');
+        $context->addPathElement('path');
 
         $exception = new ParsingException('message', $context);
 

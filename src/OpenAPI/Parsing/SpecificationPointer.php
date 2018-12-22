@@ -18,27 +18,32 @@ class SpecificationPointer
     private const PATH_DELIMITER = '.';
 
     /** @var string[] */
-    private $path = [];
+    private $pathElements;
+
+    public function __construct(array $pathElements = [])
+    {
+        $this->pathElements = $pathElements;
+    }
 
     public function getPathElements(): array
     {
-        return $this->path;
+        return $this->pathElements;
     }
 
     public function getPath(): string
     {
-        return implode(self::PATH_DELIMITER, $this->path);
+        return implode(self::PATH_DELIMITER, $this->pathElements);
     }
 
-    public function addSubPath(string $subPath): void
+    public function addPathElement(string $pathElement): void
     {
-        $this->path[] = $subPath;
+        $this->pathElements[] = $pathElement;
     }
 
-    public function withSubPath(string $path): SpecificationPointer
+    public function withPathElement(string $pathElement): SpecificationPointer
     {
         $newPointer = clone $this;
-        $newPointer->addSubPath($path);
+        $newPointer->addPathElement($pathElement);
 
         return $newPointer;
     }

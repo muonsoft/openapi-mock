@@ -20,7 +20,7 @@ use App\OpenAPI\Parsing\Type\TypeParserInterface;
  */
 class BooleanTypeParser implements TypeParserInterface
 {
-    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         return new BooleanType();
     }

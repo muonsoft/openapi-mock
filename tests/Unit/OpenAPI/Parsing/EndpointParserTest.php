@@ -48,11 +48,11 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
         $expectedMockResponse = new MockResponse();
-        $this->givenContextualParser_parse_returns($expectedMockResponse);
+        $this->givenContextualParser_parsePointedSchema_returns($expectedMockResponse);
 
-        $mockParameters = $parser->parse(self::VALID_ENDPOINT_SPECIFICATION, new SpecificationPointer());
+        $mockParameters = $parser->parsePointedSchema(self::VALID_ENDPOINT_SPECIFICATION, new SpecificationPointer());
 
-        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             self::RESPONSE_SPECIFICATION,
             'responses.200'
         );
@@ -73,7 +73,7 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
 
-        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE, new SpecificationPointer());
+        $parser->parsePointedSchema(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE, new SpecificationPointer());
     }
 
     /**
@@ -85,7 +85,7 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
 
-        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
+        $parser->parsePointedSchema(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
     }
 
     private function createEndpointParser(): EndpointParser

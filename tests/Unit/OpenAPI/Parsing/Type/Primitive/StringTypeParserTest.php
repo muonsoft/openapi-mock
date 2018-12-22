@@ -57,7 +57,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(self::VALID_STRING_SCHEMA, new SpecificationPointer());
+        $type = $parser->parsePointedSchema(self::VALID_STRING_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(StringType::class, $type);
         $this->assertTrue($type->nullable);
@@ -76,7 +76,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse([], new SpecificationPointer());
+        $type = $parser->parsePointedSchema([], new SpecificationPointer());
 
         $this->assertInstanceOf(StringType::class, $type);
         $this->assertFalse($type->nullable);
@@ -93,7 +93,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(self::SCHEMA_WITH_INVALID_ENUM, new SpecificationPointer());
+        $type = $parser->parsePointedSchema(self::SCHEMA_WITH_INVALID_ENUM, new SpecificationPointer());
 
         $this->assertCount(0, $type->enum);
         $this->assertLogger_warning_wasCalledOnce();
@@ -105,7 +105,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(
+        $type = $parser->parsePointedSchema(
             [
                 'minLength' => -2,
                 'maxLength' => -1,
@@ -124,7 +124,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(
+        $type = $parser->parsePointedSchema(
             [
                 'minLength' => 10,
                 'maxLength' => 9,
@@ -142,7 +142,7 @@ class StringTypeParserTest extends TestCase
         $parser = $this->createStringTypeParser();
 
         /** @var StringType $type */
-        $type = $parser->parse(self::SCHEMA_WITH_INVALID_ENUM_VALUE, new SpecificationPointer());
+        $type = $parser->parsePointedSchema(self::SCHEMA_WITH_INVALID_ENUM_VALUE, new SpecificationPointer());
 
         $this->assertCount(1, $type->enum);
         $this->assertContains(self::ENUM_VALUE_1, $type->enum);

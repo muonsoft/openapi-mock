@@ -26,10 +26,10 @@ class SchemaTransformingParser implements TypeParserInterface
         $this->typeParserLocator = $typeParserLocator;
     }
 
-    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         $typeParser = $this->typeParserLocator->getTypeParser($schema['type']);
 
-        return $typeParser->parse($schema, $pointer);
+        return $typeParser->parsePointedSchema($schema, $pointer);
     }
 }

@@ -25,17 +25,17 @@ class EndpointParser implements ContextualParserInterface
         $this->responseParser = $responseParser;
     }
 
-    public function parse(array $schema, SpecificationPointer $pointer): MockParameters
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): MockParameters
     {
         $mockParameters = new MockParameters();
 
         if (array_key_exists('responses', $schema)) {
-            $responsesContext = $pointer->withSubPath('responses');
+            $responsesContext = $pointer->withPathElement('responses');
             foreach ($schema['responses'] as $statusCode => $responseSpecification) {
-                $responseContext = $responsesContext->withSubPath($statusCode);
+                $responseContext = $responsesContext->withPathElement($statusCode);
                 $this->validateResponse($statusCode, $responseSpecification, $responseContext);
 
-                $response = $this->responseParser->parse($responseSpecification, $responseContext);
+                $response = $this->responseParser->parsePointedSchema($responseSpecification, $responseContext);
                 $response->statusCode = (int) $statusCode;
                 $mockParameters->responses->set((int) $statusCode, $response);
             }

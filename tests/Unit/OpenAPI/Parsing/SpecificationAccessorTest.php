@@ -12,6 +12,7 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 use PHPUnit\Framework\TestCase;
 
 class SpecificationAccessorTest extends TestCase
@@ -20,6 +21,7 @@ class SpecificationAccessorTest extends TestCase
     private const TOP_LEVEL_VALUE = ['midLevel' => self::MID_LEVEL_VALUE];
     private const MID_LEVEL_VALUE = ['lowLevel' => self::LOW_LEVEL_VALUE];
     private const LOW_LEVEL_VALUE = ['value'];
+    private const REFERENCE = '#reference';
 
     /**
      * @test
@@ -37,22 +39,33 @@ class SpecificationAccessorTest extends TestCase
     public function pointerAndExpectedSchemaProvider(): array
     {
         return [
-            [$this->createPointer(), self::SPECIFICATION],
-            [$this->createPointer(['topLevel']), self::TOP_LEVEL_VALUE],
-            [$this->createPointer(['topLevel', 'midLevel']), self::MID_LEVEL_VALUE],
-            [$this->createPointer(['topLevel', 'midLevel', 'lowLevel']), self::LOW_LEVEL_VALUE],
-            [$this->createPointer(['emptyPath']), []],
+            [new SpecificationPointer(), self::SPECIFICATION],
+            [new SpecificationPointer(['topLevel']), self::TOP_LEVEL_VALUE],
+            [new SpecificationPointer(['topLevel', 'midLevel']), self::MID_LEVEL_VALUE],
+            [new SpecificationPointer(['topLevel', 'midLevel', 'lowLevel']), self::LOW_LEVEL_VALUE],
+            [new SpecificationPointer(['emptyPath']), []],
         ];
     }
 
-    private function createPointer(array $pathElements = []): SpecificationPointer
+    /** @test */
+    public function findResolvedObject_noReferenceObject_nullReturned(): void
     {
-        $pointer = new SpecificationPointer();
+        $accessor = new SpecificationAccessor([]);
 
-        foreach ($pathElements as $pathElement) {
-            $pointer = $pointer->withSubPath($pathElement);
-        }
+        $object = $accessor->findResolvedObject(self::REFERENCE);
 
-        return $pointer;
+        $this->assertNull($object);
+    }
+
+    /** @test */
+    public function findResolvedObject_referenceObjectExist_objectReturned(): void
+    {
+        $accessor = new SpecificationAccessor([]);
+        $expectedObject = \Phake::mock(SpecificationObjectMarkerInterface::class);
+        $accessor->setResolvedObject(self::REFERENCE, $expectedObject);
+
+        $object = $accessor->findResolvedObject(self::REFERENCE);
+
+        $this->assertSame($expectedObject, $object);
     }
 }

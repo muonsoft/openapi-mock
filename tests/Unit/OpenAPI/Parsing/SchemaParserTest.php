@@ -38,7 +38,7 @@ class SchemaParserTest extends TestCase
         $parser = $this->createSchemaParser();
         $type = $this->givenSchemaTransformingParser_parse_returnsType();
 
-        $parsedSchema = $parser->parse(self::VALID_SCHEMA, new SpecificationPointer());
+        $parsedSchema = $parser->parsePointedSchema(self::VALID_SCHEMA, new SpecificationPointer());
 
         $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
             self::SCHEMA_DEFINITION,
@@ -56,7 +56,7 @@ class SchemaParserTest extends TestCase
     {
         $parser = $this->createSchemaParser();
 
-        $parser->parse([], new SpecificationPointer());
+        $parser->parsePointedSchema([], new SpecificationPointer());
     }
 
     private function createSchemaParser(): SchemaParser

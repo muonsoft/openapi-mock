@@ -32,7 +32,7 @@ class StringTypeParser implements TypeParserInterface
         $this->logger = $logger;
     }
 
-    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         $this->type = new StringType();
 

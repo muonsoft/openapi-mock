@@ -25,16 +25,16 @@ class ResponseParser implements ContextualParserInterface
         $this->schemaParser = $schemaParser;
     }
 
-    public function parse(array $responseSpecification, SpecificationPointer $pointer): MockResponse
+    public function parsePointedSchema(array $responseSpecification, SpecificationPointer $pointer): MockResponse
     {
         $response = new MockResponse();
         $content = $responseSpecification['content'] ?? [];
-        $contentContext = $pointer->withSubPath('content');
+        $contentContext = $pointer->withPathElement('content');
         $this->validateContent($content, $contentContext);
 
         foreach ($content as $mediaType => $schema) {
-            $mediaTypeContext = $contentContext->withSubPath($mediaType);
-            $parsedSchema = $this->schemaParser->parse($schema, $mediaTypeContext);
+            $mediaTypeContext = $contentContext->withPathElement($mediaType);
+            $parsedSchema = $this->schemaParser->parsePointedSchema($schema, $mediaTypeContext);
             $response->content->set($mediaType, $parsedSchema);
         }
 

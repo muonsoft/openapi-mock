@@ -30,7 +30,7 @@ class ArrayTypeParser implements TypeParserInterface
         $this->schemaTransformingParser = $schemaTransformingParser;
     }
 
-    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         $this->validateSchema($schema, $pointer);
 
@@ -52,8 +52,8 @@ class ArrayTypeParser implements TypeParserInterface
 
     private function readItemsSchema(array $schema, SpecificationPointer $context): TypeMarkerInterface
     {
-        $itemsContext = $context->withSubPath('items');
-        $itemsSchema = $this->schemaTransformingParser->parse($schema['items'], $itemsContext);
+        $itemsContext = $context->withPathElement('items');
+        $itemsSchema = $this->schemaTransformingParser->parsePointedSchema($schema['items'], $itemsContext);
 
         return $itemsSchema;
     }

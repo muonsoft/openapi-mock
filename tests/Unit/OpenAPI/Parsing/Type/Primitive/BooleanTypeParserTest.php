@@ -22,7 +22,7 @@ class BooleanTypeParserTest extends TestCase
     {
         $parser = new BooleanTypeParser();
 
-        $type = $parser->parse([], new SpecificationPointer());
+        $type = $parser->parsePointedSchema([], new SpecificationPointer());
 
         $this->assertInstanceOf(BooleanType::class, $type);
     }

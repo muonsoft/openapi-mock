@@ -41,11 +41,11 @@ class SpecificationParserTest extends TestCase
     {
         $parser = $this->createSpecificationParser();
         $expectedMockParameters = new MockParameters();
-        $this->givenContextualParser_parse_returns($expectedMockParameters);
+        $this->givenContextualParser_parsePointedSchema_returns($expectedMockParameters);
 
         $mockParametersCollection = $parser->parseSpecification(self::VALID_SPECIFICATION);
 
-        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             self::ENDPOINT_SPECIFICATION,
             'paths.'.self::PATH.'.'.self::HTTP_METHOD
         );

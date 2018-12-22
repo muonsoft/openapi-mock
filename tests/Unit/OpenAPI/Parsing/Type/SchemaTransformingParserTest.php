@@ -37,7 +37,7 @@ class SchemaTransformingParserTest extends TestCase
         $context = new SpecificationPointer();
         $expectedType = $this->givenTypeParser_parse_returnsType();
 
-        $type = $parser->parse(self::SCHEMA_DEFINITION, $context);
+        $type = $parser->parsePointedSchema(self::SCHEMA_DEFINITION, $context);
 
         $this->assertTypeParserLocator_getTypeParser_isCalledOnceWithType(self::VALUE_TYPE);
         $this->assertTypeParser_parse_isCalledOnceWithSchemaAndContext(self::SCHEMA_DEFINITION, $context);

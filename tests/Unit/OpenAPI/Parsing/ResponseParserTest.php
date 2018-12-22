@@ -40,11 +40,11 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
         $expectedSchema = new Schema();
-        $this->givenContextualParser_parse_returns($expectedSchema);
+        $this->givenContextualParser_parsePointedSchema_returns($expectedSchema);
 
-        $response = $parser->parse(self::VALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
+        $response = $parser->parsePointedSchema(self::VALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
 
-        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             self::SCHEMA,
             self::CONTEXT_PATH
         );
@@ -56,7 +56,7 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
 
-        $response = $parser->parse([], new SpecificationPointer());
+        $response = $parser->parsePointedSchema([], new SpecificationPointer());
 
         $this->assertCount(0, $response->content);
     }
@@ -70,7 +70,7 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
 
-        $parser->parse(['content' => 'invalid'], new SpecificationPointer());
+        $parser->parsePointedSchema(['content' => 'invalid'], new SpecificationPointer());
     }
 
     private function assertResponseHasValidContentWithExpectedSchema(MockResponse $response, Schema $expectedSchema): void

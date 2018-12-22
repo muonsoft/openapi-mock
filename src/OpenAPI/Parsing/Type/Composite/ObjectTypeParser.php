@@ -34,7 +34,7 @@ class ObjectTypeParser implements TypeParserInterface
         $this->schemaTransformingParser = $schemaTransformingParser;
     }
 
-    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
     {
         if (array_key_exists('additionalProperties', $schema)) {
             $object = $this->parseFreeFormOrHashMap($schema, $pointer);
@@ -88,8 +88,8 @@ class ObjectTypeParser implements TypeParserInterface
     {
         $object = new HashMapType();
 
-        $propertyContext = $context->withSubPath('additionalProperties');
-        $object->value = $this->schemaTransformingParser->parse($schema['additionalProperties'], $propertyContext);
+        $propertyContext = $context->withPathElement('additionalProperties');
+        $object->value = $this->schemaTransformingParser->parsePointedSchema($schema['additionalProperties'], $propertyContext);
 
         $object->properties = $this->parseProperties($schema, $context);
         $object->required = $this->parseRequiredProperties($schema, $context, $object->properties);
@@ -102,11 +102,11 @@ class ObjectTypeParser implements TypeParserInterface
         $properties = new TypeCollection();
 
         $schemaProperties = $schema['properties'] ?? [];
-        $propertiesContext = $context->withSubPath('properties');
+        $propertiesContext = $context->withPathElement('properties');
 
         foreach ($schemaProperties as $propertyName => $propertySchema) {
-            $propertyContext = $propertiesContext->withSubPath($propertyName);
-            $property = $this->schemaTransformingParser->parse($propertySchema, $propertyContext);
+            $propertyContext = $propertiesContext->withPathElement($propertyName);
+            $property = $this->schemaTransformingParser->parsePointedSchema($propertySchema, $propertyContext);
             $properties->set($propertyName, $property);
         }
 
@@ -118,7 +118,7 @@ class ObjectTypeParser implements TypeParserInterface
         $requiredProperties = new StringList();
 
         $schemaRequiredProperties = $schema['required'] ?? [];
-        $requiredContext = $context->withSubPath('required');
+        $requiredContext = $context->withPathElement('required');
 
         foreach ($schemaRequiredProperties as $propertyName) {
             $this->validateProperty($propertyName, $properties, $requiredContext);

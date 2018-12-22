@@ -38,22 +38,22 @@ class SpecificationPointerTest extends TestCase
     }
 
     /** @test */
-    public function addSubPath_noPathIsSetAndGivenSubPath_pathReturned(): void
+    public function addPathElement_noPathIsSetAndGivenSubPath_pathReturned(): void
     {
         $pointer = new SpecificationPointer();
 
-        $pointer->addSubPath(self::PATH);
+        $pointer->addPathElement(self::PATH);
 
         $this->assertSame(self::PATH, $pointer->getPath());
         $this->assertSame([self::PATH], $pointer->getPathElements());
     }
 
     /** @test */
-    public function withSubPath_contextWithEmptyPathAndSubPathGiven_newContextWithFullPathCreatedAndReturned(): void
+    public function withPathElement_contextWithEmptyPathAndSubPathGiven_newContextWithFullPathCreatedAndReturned(): void
     {
         $pointer = new SpecificationPointer();
 
-        $newPointer = $pointer->withSubPath(self::SUB_PATH);
+        $newPointer = $pointer->withPathElement(self::SUB_PATH);
 
         $this->assertNotNull($newPointer);
         $this->assertNotSame($newPointer, $pointer);
@@ -62,12 +62,11 @@ class SpecificationPointerTest extends TestCase
     }
 
     /** @test */
-    public function withSubPath_contextWithPathAndSubPathGiven_newContextWithFullPathCreatedAndReturned(): void
+    public function withPathElement_contextWithPathAndSubPathGiven_newContextWithFullPathCreatedAndReturned(): void
     {
-        $pointer = new SpecificationPointer();
-        $pointer->addSubPath(self::PATH);
+        $pointer = new SpecificationPointer([self::PATH]);
 
-        $newPointer = $pointer->withSubPath(self::SUB_PATH);
+        $newPointer = $pointer->withPathElement(self::SUB_PATH);
 
         $this->assertNotNull($newPointer);
         $this->assertNotSame($newPointer, $pointer);

@@ -10,6 +10,8 @@
 
 namespace App\OpenAPI\Parsing;
 
+use App\OpenAPI\SpecificationObjectMarkerInterface;
+
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
@@ -17,6 +19,9 @@ class SpecificationAccessor
 {
     /** @var array */
     private $specification;
+
+    /** @var SpecificationObjectMarkerInterface[] */
+    private $resolvedObjects = [];
 
     public function __construct(array $specification)
     {
@@ -40,5 +45,21 @@ class SpecificationAccessor
         }
 
         return $schema;
+    }
+
+    public function findResolvedObject(string $reference): ?SpecificationObjectMarkerInterface
+    {
+        $object = null;
+
+        if (array_key_exists($reference, $this->resolvedObjects)) {
+            $object = $this->resolvedObjects[$reference];
+        }
+
+        return $object;
+    }
+
+    public function setResolvedObject(string $reference, SpecificationObjectMarkerInterface $object): void
+    {
+        $this->resolvedObjects[$reference] = $object;
     }
 }

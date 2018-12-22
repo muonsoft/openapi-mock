@@ -11,7 +11,9 @@
 namespace App\Tests\Utility\TestCase;
 
 use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 use PHPUnit\Framework\Assert;
 
 /**
@@ -27,20 +29,42 @@ trait ContextualParserTestCaseTrait
         $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
     }
 
-    protected function assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
-        array $schema,
-        string $path
+    protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        SpecificationAccessor $specification,
+        array $path
     ): void {
-        /** @var SpecificationPointer $context */
+        /** @var SpecificationPointer $pointer */
         \Phake::verify($this->contextualParser)
-            ->parse($schema, \Phake::capture($context));
-        Assert::assertSame($path, $context->getPath());
+            ->parsePointedSchema($specification, \Phake::capture($pointer));
+        Assert::assertSame($path, $pointer->getPathElements());
     }
 
-    protected function givenContextualParser_parse_returns($parsingResult): void
+    protected function assertContextualParser_parsePointedSchema_wasNeverCalledWithAnyParameters(): void
+    {
+        \Phake::verify($this->contextualParser, \Phake::never())
+            ->parsePointedSchema(\Phake::anyParameters());
+    }
+
+    protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer
+    ): void {
+        \Phake::verify($this->contextualParser)
+            ->parsePointedSchema($specification, $pointer);
+    }
+
+    protected function givenContextualParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface $object): void
     {
         \Phake::when($this->contextualParser)
-            ->parse(\Phake::anyParameters())
-            ->thenReturn($parsingResult);
+            ->parsePointedSchema(\Phake::anyParameters())
+            ->thenReturn($object);
+    }
+
+    protected function givenContextualParser_parsePointedSchema_returnsObject(): SpecificationObjectMarkerInterface
+    {
+        $object = \Phake::mock(SpecificationObjectMarkerInterface::class);
+        $this->givenContextualParser_parsePointedSchema_returns($object);
+
+        return $object;
     }
 }

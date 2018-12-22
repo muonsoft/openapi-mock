@@ -19,5 +19,5 @@ use App\OpenAPI\Parsing\SpecificationPointer;
  */
 interface TypeParserInterface extends ContextualParserInterface
 {
-    public function parse(array $schema, SpecificationPointer $pointer): TypeMarkerInterface;
+    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface;
 }

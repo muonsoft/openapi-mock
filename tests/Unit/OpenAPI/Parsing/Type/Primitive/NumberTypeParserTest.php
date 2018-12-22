@@ -35,7 +35,7 @@ class NumberTypeParserTest extends TestCase
         $parser = new NumberTypeParser();
 
         /** @var NumberType $type */
-        $type = $parser->parse([], new SpecificationPointer());
+        $type = $parser->parsePointedSchema([], new SpecificationPointer());
 
         $this->assertInstanceOf(NumberType::class, $type);
         $this->assertFalse($type->nullable);
@@ -52,7 +52,7 @@ class NumberTypeParserTest extends TestCase
         $parser = new NumberTypeParser();
 
         /** @var NumberType $type */
-        $type = $parser->parse(self::NUMBER_SCHEMA, new SpecificationPointer());
+        $type = $parser->parsePointedSchema(self::NUMBER_SCHEMA, new SpecificationPointer());
 
         $this->assertInstanceOf(NumberType::class, $type);
         $this->assertTrue($type->nullable);

@@ -34,17 +34,17 @@ class SpecificationParser
         $this->validateSpecification($specification);
 
         $collection = new MockParametersCollection();
-        $pathsContext = $this->context->withSubPath('paths');
+        $pathsContext = $this->context->withPathElement('paths');
 
         foreach ($specification['paths'] as $path => $endpoints) {
-            $pathContext = $pathsContext->withSubPath($path);
+            $pathContext = $pathsContext->withPathElement($path);
             $this->validateEndpointSpecificationAtPath($endpoints, $pathContext);
 
             foreach ($endpoints as $httpMethod => $endpointSpecification) {
-                $endpointContext = $pathContext->withSubPath($httpMethod);
+                $endpointContext = $pathContext->withPathElement($httpMethod);
                 $this->validateEndpointSpecificationAtPath($endpointSpecification, $endpointContext);
 
-                $mockParameters = $this->endpointParser->parse($endpointSpecification, $endpointContext);
+                $mockParameters = $this->endpointParser->parsePointedSchema($endpointSpecification, $endpointContext);
                 $mockParameters->path = $path;
                 $mockParameters->httpMethod = strtoupper($httpMethod);
                 $collection->add($mockParameters);
