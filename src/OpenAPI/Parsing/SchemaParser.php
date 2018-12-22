@@ -11,30 +11,31 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Schema\Schema;
-use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class SchemaParser implements ContextualParserInterface
 {
-    /** @var SchemaTransformingParser */
-    private $schemaTransformingParser;
+    /** @var ContextualParserInterface */
+    private $delegatingSchemaParser;
 
-    public function __construct(SchemaTransformingParser $schemaTransformingParser)
+    public function __construct(ContextualParserInterface $delegatingSchemaParser)
     {
-        $this->schemaTransformingParser = $schemaTransformingParser;
+        $this->delegatingSchemaParser = $delegatingSchemaParser;
     }
 
-    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): Schema
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $parsedSchema = new Schema();
+        $schema = $specification->getSchema($pointer);
+        $schemaType = new Schema();
         $this->validateSchema($schema, $pointer);
 
         $schemaContext = $pointer->withPathElement('schema');
-        $parsedSchema->value = $this->schemaTransformingParser->parsePointedSchema($schema['schema'], $schemaContext);
+        $schemaType->value = $this->delegatingSchemaParser->parsePointedSchema($specification, $schemaContext);
 
-        return $parsedSchema;
+        return $schemaType;
     }
 
     private function validateSchema(array $schema, SpecificationPointer $context): void

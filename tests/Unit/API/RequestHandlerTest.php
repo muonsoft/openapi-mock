@@ -44,8 +44,8 @@ class RequestHandlerTest extends TestCase
 
         $response = $handler->handleRequest($request);
 
-        $this->assertMockParametersRepository_findMockParameters_isCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
-        $this->assertMockResponseGenerator_generateResponse_isCalledOnceWithRequestAndMockParameters($request, $mockParameters);
+        $this->assertMockParametersRepository_findMockParameters_wasCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
+        $this->assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockParameters($request, $mockParameters);
         $this->assertSame($expectedResponse, $response);
     }
 
@@ -58,12 +58,12 @@ class RequestHandlerTest extends TestCase
 
         $response = $handler->handleRequest($request);
 
-        $this->assertMockParametersRepository_findMockParameters_isCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
+        $this->assertMockParametersRepository_findMockParameters_wasCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
         $this->assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
         $this->assertSame('API endpoint not found.', $response->getContent());
     }
 
-    private function assertMockParametersRepository_findMockParameters_isCalledOnceWithHttpMethodAndRequestUri(
+    private function assertMockParametersRepository_findMockParameters_wasCalledOnceWithHttpMethodAndRequestUri(
         string $httpMethod,
         string $requestUri
     ): void {
@@ -71,7 +71,7 @@ class RequestHandlerTest extends TestCase
             ->findMockParameters($httpMethod, $requestUri);
     }
 
-    private function assertMockResponseGenerator_generateResponse_isCalledOnceWithRequestAndMockParameters(
+    private function assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockParameters(
         Request $request,
         MockParameters $mockParameters
     ): void {

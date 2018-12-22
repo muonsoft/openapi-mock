@@ -31,7 +31,7 @@ trait ValueGeneratorCaseTrait
         $this->valueGenerator = \Phake::mock(ValueGeneratorInterface::class);
     }
 
-    protected function assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType(TypeMarkerInterface $type): void
+    protected function assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType(TypeMarkerInterface $type): void
     {
         \Phake::verify($this->valueGeneratorLocator)
             ->getValueGenerator($type);
@@ -48,13 +48,13 @@ trait ValueGeneratorCaseTrait
             ->thenReturn($generator);
     }
 
-    protected function assertValueGenerator_generateValue_isCalledOnceWithType(TypeMarkerInterface $type): void
+    protected function assertValueGenerator_generateValue_wasCalledOnceWithType(TypeMarkerInterface $type): void
     {
         \Phake::verify($this->valueGenerator)
             ->generateValue($type);
     }
 
-    protected function assertValueGenerator_generateValue_isCalledAtLeastOnceWithType(TypeMarkerInterface $type): void
+    protected function assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType(TypeMarkerInterface $type): void
     {
         \Phake::verify($this->valueGenerator, \Phake::atLeast(1))
             ->generateValue($type);

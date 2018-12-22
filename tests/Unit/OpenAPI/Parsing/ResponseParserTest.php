@@ -12,7 +12,9 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
+use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\ResponseParser;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +30,7 @@ class ResponseParserTest extends TestCase
             self::MEDIA_TYPE => self::SCHEMA,
         ]
     ];
-    private const CONTEXT_PATH = 'content.' . self::MEDIA_TYPE;
+    private const CONTEXT_PATH = ['content', self::MEDIA_TYPE];
 
     protected function setUp(): void
     {
@@ -36,41 +38,45 @@ class ResponseParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_validResponseSpecification_mockResponseCreatedAndReturned(): void
+    public function parsePointedSchema_validResponseSpecification_mockResponseCreatedAndReturned(): void
     {
         $parser = $this->createResponseParser();
         $expectedSchema = new Schema();
         $this->givenContextualParser_parsePointedSchema_returns($expectedSchema);
+        $specification = new SpecificationAccessor(self::VALID_RESPONSE_SPECIFICATION);
 
-        $response = $parser->parsePointedSchema(self::VALID_RESPONSE_SPECIFICATION, new SpecificationPointer());
+        /** @var MockResponse $response */
+        $response = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
-            self::SCHEMA,
+            $specification,
             self::CONTEXT_PATH
         );
         $this->assertResponseHasValidContentWithExpectedSchema($response, $expectedSchema);
     }
 
     /** @test */
-    public function parse_noContentInResponseSpecification_emptyContentInMockResponse(): void
+    public function parsePointedSchema_noContentInResponseSpecification_emptyContentInMockResponse(): void
     {
         $parser = $this->createResponseParser();
+        $specification = new SpecificationAccessor([]);
 
-        $response = $parser->parsePointedSchema([], new SpecificationPointer());
+        /** @var MockResponse $response */
+        $response = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertCount(0, $response->content);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Invalid response content
-     */
-    public function parse_invalidContentInResponseSpecification_exceptionThrown(): void
+    /** @test */
+    public function parsePointedSchema_invalidContentInResponseSpecification_exceptionThrown(): void
     {
         $parser = $this->createResponseParser();
+        $specification = new SpecificationAccessor(['content' => 'invalid']);
 
-        $parser->parsePointedSchema(['content' => 'invalid'], new SpecificationPointer());
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Invalid response content');
+
+        $parser->parsePointedSchema($specification, new SpecificationPointer());
     }
 
     private function assertResponseHasValidContentWithExpectedSchema(MockResponse $response, Schema $expectedSchema): void

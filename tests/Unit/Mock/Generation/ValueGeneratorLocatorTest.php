@@ -39,11 +39,11 @@ class ValueGeneratorLocatorTest extends TestCase
 
         $generator = $locator->getValueGenerator($type);
 
-        $this->assertContainer_get_isCalledOnceWithServiceId(self::VALUE_GENERATOR_SERVICE_ID);
+        $this->assertContainer_get_wasCalledOnceWithServiceId(self::VALUE_GENERATOR_SERVICE_ID);
         $this->assertSame($containerGenerator, $generator);
     }
 
-    private function assertContainer_get_isCalledOnceWithServiceId(string $serviceId): void
+    private function assertContainer_get_wasCalledOnceWithServiceId(string $serviceId): void
     {
         \Phake::verify($this->container)
             ->get($serviceId);

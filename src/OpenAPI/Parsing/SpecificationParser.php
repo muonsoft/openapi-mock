@@ -10,6 +10,7 @@
 
 namespace App\OpenAPI\Parsing;
 
+use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockParametersCollection;
 
 /**
@@ -20,31 +21,30 @@ class SpecificationParser
     /** @var ContextualParserInterface */
     private $endpointParser;
 
-    /** @var SpecificationPointer */
-    private $context;
-
     public function __construct(ContextualParserInterface $endpointParser)
     {
         $this->endpointParser = $endpointParser;
     }
 
-    public function parseSpecification(array $specification): MockParametersCollection
+    public function parseSpecification(SpecificationAccessor $specification): MockParametersCollection
     {
-        $this->initializeContext();
-        $this->validateSpecification($specification);
+        $pointer = new SpecificationPointer();
+        $this->validateSpecificationSchema($specification, $pointer);
 
         $collection = new MockParametersCollection();
-        $pathsContext = $this->context->withPathElement('paths');
+        $pathsPointer = $pointer->withPathElement('paths');
+        $paths = $specification->getSchema($pathsPointer);
 
-        foreach ($specification['paths'] as $path => $endpoints) {
-            $pathContext = $pathsContext->withPathElement($path);
-            $this->validateEndpointSpecificationAtPath($endpoints, $pathContext);
+        foreach ($paths as $path => $endpoints) {
+            $pathPointer = $pathsPointer->withPathElement($path);
+            $this->validateEndpointSpecificationAtPath($endpoints, $pathPointer);
 
             foreach ($endpoints as $httpMethod => $endpointSpecification) {
-                $endpointContext = $pathContext->withPathElement($httpMethod);
-                $this->validateEndpointSpecificationAtPath($endpointSpecification, $endpointContext);
+                $endpointPointer = $pathPointer->withPathElement($httpMethod);
+                $this->validateEndpointSpecificationAtPath($endpointSpecification, $endpointPointer);
 
-                $mockParameters = $this->endpointParser->parsePointedSchema($endpointSpecification, $endpointContext);
+                /** @var MockParameters $mockParameters */
+                $mockParameters = $this->endpointParser->parsePointedSchema($specification, $endpointPointer);
                 $mockParameters->path = $path;
                 $mockParameters->httpMethod = strtoupper($httpMethod);
                 $collection->add($mockParameters);
@@ -54,40 +54,37 @@ class SpecificationParser
         return $collection;
     }
 
-    private function initializeContext(): void
+    private function validateSpecificationSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): void
     {
-        $this->context = new SpecificationPointer();
-    }
+        $schema = $specification->getSchema($pointer);
 
-    private function validateSpecification(array $specification): void
-    {
-        if (!array_key_exists('openapi', $specification)) {
+        if (!array_key_exists('openapi', $schema)) {
             throw new ParsingException(
                 'Cannot detect OpenAPI specification version: tag "openapi" does not exist.',
-                $this->context
+                $pointer
             );
         }
 
-        if (((int)$specification['openapi']) !== 3) {
+        if (((int)$schema['openapi']) !== 3) {
             throw new ParsingException(
                 'OpenAPI specification version is not supported. Supports only 3.*.',
-                $this->context
+                $pointer
             );
         }
 
         if (
-            !array_key_exists('paths', $specification)
-            || !\is_array($specification['paths'])
-            || \count($specification['paths']) === 0
+            !array_key_exists('paths', $schema)
+            || !\is_array($schema['paths'])
+            || \count($schema['paths']) === 0
         ) {
-            throw new ParsingException('Section "paths" is empty or does not exist', $this->context);
+            throw new ParsingException('Section "paths" is empty or does not exist', $pointer);
         }
     }
 
-    private function validateEndpointSpecificationAtPath($endpointSpecification, SpecificationPointer $context): void
+    private function validateEndpointSpecificationAtPath($endpointSpecification, SpecificationPointer $pointer): void
     {
         if (!\is_array($endpointSpecification) || \count($endpointSpecification) === 0) {
-            throw new ParsingException('Empty or invalid endpoint specification', $context);
+            throw new ParsingException('Empty or invalid endpoint specification', $pointer);
         }
     }
 }

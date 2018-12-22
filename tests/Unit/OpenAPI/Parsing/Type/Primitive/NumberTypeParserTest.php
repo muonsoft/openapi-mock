@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\NumberTypeParser;
 use PHPUnit\Framework\TestCase;
@@ -30,12 +31,13 @@ class NumberTypeParserTest extends TestCase
     ];
 
     /** @test */
-    public function parse_numberSchemaWithoutParameters_numberTypeWithDefaultsReturned(): void
+    public function parsePointedSchema_numberSchemaWithoutParameters_numberTypeWithDefaultsReturned(): void
     {
         $parser = new NumberTypeParser();
+        $specification = new SpecificationAccessor([]);
 
         /** @var NumberType $type */
-        $type = $parser->parsePointedSchema([], new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(NumberType::class, $type);
         $this->assertFalse($type->nullable);
@@ -47,12 +49,13 @@ class NumberTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_numberSchemaWithParameters_numberTypeWithParametersReturned(): void
+    public function parsePointedSchema_numberSchemaWithParameters_numberTypeWithParametersReturned(): void
     {
         $parser = new NumberTypeParser();
+        $specification = new SpecificationAccessor(self::NUMBER_SCHEMA);
 
         /** @var NumberType $type */
-        $type = $parser->parsePointedSchema(self::NUMBER_SCHEMA, new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(NumberType::class, $type);
         $this->assertTrue($type->nullable);

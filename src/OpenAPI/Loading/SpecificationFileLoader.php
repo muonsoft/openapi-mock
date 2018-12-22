@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Loading;
 
 use App\Mock\Parameters\MockParametersCollection;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\SpecificationLoaderInterface;
 use App\Utility\FileLoader;
@@ -47,7 +48,8 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
     {
         $format = $this->guessFormatByExtension($url);
         $fileContents = $this->fileLoader->loadFileContents($url);
-        $specification = $this->decoder->decode($fileContents, $format);
+        $specificationSchema = $this->decoder->decode($fileContents, $format);
+        $specification = new SpecificationAccessor($specificationSchema);
 
         return $this->parser->parseSpecification($specification);
     }

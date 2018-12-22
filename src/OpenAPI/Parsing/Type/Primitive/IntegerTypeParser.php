@@ -11,18 +11,20 @@
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class IntegerTypeParser implements TypeParserInterface
 {
-    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $type = new IntegerType();
+        $schema = $specification->getSchema($pointer);
 
         $type->nullable = $this->readBoolValue($schema, 'nullable');
         $type->exclusiveMinimum = $this->readBoolValue($schema, 'exclusiveMinimum');

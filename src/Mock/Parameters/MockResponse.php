@@ -11,11 +11,12 @@
 namespace App\Mock\Parameters;
 
 use App\Mock\Parameters\Schema\SchemaCollection;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockResponse
+class MockResponse implements SpecificationObjectMarkerInterface
 {
     /** @var int */
     public $statusCode;

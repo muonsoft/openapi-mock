@@ -10,13 +10,15 @@
 
 namespace App\OpenAPI\Parsing\Type;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SchemaTransformingParser implements TypeParserInterface
+class DelegatingSchemaParser implements ContextualParserInterface
 {
     /** @var TypeParserLocator */
     private $typeParserLocator;
@@ -26,10 +28,12 @@ class SchemaTransformingParser implements TypeParserInterface
         $this->typeParserLocator = $typeParserLocator;
     }
 
-    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
+        $schema = $specification->getSchema($pointer);
+
         $typeParser = $this->typeParserLocator->getTypeParser($schema['type']);
 
-        return $typeParser->parsePointedSchema($schema, $pointer);
+        return $typeParser->parsePointedSchema($specification, $pointer);
     }
 }

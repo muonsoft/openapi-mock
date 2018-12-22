@@ -40,12 +40,12 @@ class TypeParserPassTest extends TestCase
 
         $pass->process($this->container);
 
-        $this->assertContainer_findDefinition_isCalledOnceWithId(self::TYPE_PARSER_SERVICE_LOCATOR);
-        $this->assertContainer_findTaggedServiceIds_isCalledOnceWithTag(self::TYPE_PARSER_TAG);
+        $this->assertContainer_findDefinition_wasCalledOnceWithId(self::TYPE_PARSER_SERVICE_LOCATOR);
+        $this->assertContainer_findTaggedServiceIds_wasCalledOnceWithTag(self::TYPE_PARSER_TAG);
         $this->assertDefinitionHasValidTypeParserMap($definition);
     }
 
-    private function assertContainer_findDefinition_isCalledOnceWithId(string $id): void
+    private function assertContainer_findDefinition_wasCalledOnceWithId(string $id): void
     {
         \Phake::verify($this->container)
             ->findDefinition($id);
@@ -58,7 +58,7 @@ class TypeParserPassTest extends TestCase
             ->thenReturn(true);
     }
 
-    private function assertContainer_findTaggedServiceIds_isCalledOnceWithTag(string $tag): void
+    private function assertContainer_findTaggedServiceIds_wasCalledOnceWithTag(string $tag): void
     {
         \Phake::verify($this->container)
             ->findTaggedServiceIds($tag);

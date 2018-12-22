@@ -15,10 +15,13 @@ use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
+use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Utility\StringList;
 
 /**
@@ -26,43 +29,47 @@ use App\Utility\StringList;
  */
 class ObjectTypeParser implements TypeParserInterface
 {
-    /** @var SchemaTransformingParser */
-    private $schemaTransformingParser;
+    /** @var DelegatingSchemaParser */
+    private $delegatingSchemaParser;
 
-    public function __construct(SchemaTransformingParser $schemaTransformingParser)
+    public function __construct(ContextualParserInterface $delegatingSchemaParser)
     {
-        $this->schemaTransformingParser = $schemaTransformingParser;
+        $this->delegatingSchemaParser = $delegatingSchemaParser;
     }
 
-    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
+        $schema = $specification->getSchema($pointer);
+
         if (array_key_exists('additionalProperties', $schema)) {
-            $object = $this->parseFreeFormOrHashMap($schema, $pointer);
+            $object = $this->parseFreeFormOrHashMap($specification, $pointer);
         } else {
-            $object = $this->parseObjectType($schema, $pointer);
+            $object = $this->parseObjectType($specification, $pointer);
         }
 
         return $object;
     }
 
-    private function parseObjectType(array $schema, SpecificationPointer $context): ObjectType
+    private function parseObjectType(SpecificationAccessor $specification, SpecificationPointer $pointer): ObjectType
     {
         $object = new ObjectType();
 
-        $object->properties = $this->parseProperties($schema, $context);
-        $object->required = $this->parseRequiredProperties($schema, $context, $object->properties);
+        $object->properties = $this->parseProperties($specification, $pointer);
+        $object->required = $this->parseRequiredProperties($specification, $pointer, $object->properties);
 
         return $object;
     }
 
-    private function parseFreeFormOrHashMap(array $schema, SpecificationPointer $context): TypeMarkerInterface
+    private function parseFreeFormOrHashMap(SpecificationAccessor $specification, SpecificationPointer $pointer): TypeMarkerInterface
     {
-        $additionalProperties = $this->getAdditionalPropertiesFromSchema($schema, $context);
+        $schema = $specification->getSchema($pointer);
+
+        $additionalProperties = $this->getAdditionalPropertiesFromSchema($schema, $pointer);
 
         if (\count($additionalProperties) === 0) {
             $object = new FreeFormObjectType();
         } else {
-            $object = $this->parseHashMap($schema, $context);
+            $object = $this->parseHashMap($specification, $pointer);
         }
 
         $object->minProperties = $this->readIntegerValue($schema, 'minProperties');
@@ -71,73 +78,75 @@ class ObjectTypeParser implements TypeParserInterface
         return $object;
     }
 
-    private function getAdditionalPropertiesFromSchema(array $schema, SpecificationPointer $context): array
+    private function getAdditionalPropertiesFromSchema(array $schema, SpecificationPointer $pointer): array
     {
         if ($schema['additionalProperties'] === true) {
             $additionalProperties = [];
         } elseif (\is_array($schema['additionalProperties'])) {
             $additionalProperties = $schema['additionalProperties'];
         } else {
-            throw new ParsingException('Invalid value of option "additionalProperties"', $context);
+            throw new ParsingException('Invalid value of option "additionalProperties"', $pointer);
         }
 
         return $additionalProperties;
     }
 
-    private function parseHashMap(array $schema, SpecificationPointer $context): HashMapType
+    private function parseHashMap(SpecificationAccessor $specification, SpecificationPointer $pointer): HashMapType
     {
         $object = new HashMapType();
 
-        $propertyContext = $context->withPathElement('additionalProperties');
-        $object->value = $this->schemaTransformingParser->parsePointedSchema($schema['additionalProperties'], $propertyContext);
+        $propertyPointer = $pointer->withPathElement('additionalProperties');
+        $object->value = $this->delegatingSchemaParser->parsePointedSchema($specification, $propertyPointer);
 
-        $object->properties = $this->parseProperties($schema, $context);
-        $object->required = $this->parseRequiredProperties($schema, $context, $object->properties);
+        $object->properties = $this->parseProperties($specification, $pointer);
+        $object->required = $this->parseRequiredProperties($specification, $pointer, $object->properties);
 
         return $object;
     }
 
-    private function parseProperties(array $schema, SpecificationPointer $context): TypeCollection
+    private function parseProperties(SpecificationAccessor $specification, SpecificationPointer $pointer): TypeCollection
     {
         $properties = new TypeCollection();
 
+        $schema = $specification->getSchema($pointer);
         $schemaProperties = $schema['properties'] ?? [];
-        $propertiesContext = $context->withPathElement('properties');
+        $propertiesPointer = $pointer->withPathElement('properties');
 
         foreach ($schemaProperties as $propertyName => $propertySchema) {
-            $propertyContext = $propertiesContext->withPathElement($propertyName);
-            $property = $this->schemaTransformingParser->parsePointedSchema($propertySchema, $propertyContext);
+            $propertyPointer = $propertiesPointer->withPathElement($propertyName);
+            $property = $this->delegatingSchemaParser->parsePointedSchema($specification, $propertyPointer);
             $properties->set($propertyName, $property);
         }
 
         return $properties;
     }
 
-    private function parseRequiredProperties(array $schema, SpecificationPointer $context, TypeCollection $properties): StringList
+    private function parseRequiredProperties(SpecificationAccessor $specification, SpecificationPointer $pointer, TypeCollection $properties): StringList
     {
         $requiredProperties = new StringList();
+        $schema = $specification->getSchema($pointer);
 
         $schemaRequiredProperties = $schema['required'] ?? [];
-        $requiredContext = $context->withPathElement('required');
+        $requiredPointer = $pointer->withPathElement('required');
 
         foreach ($schemaRequiredProperties as $propertyName) {
-            $this->validateProperty($propertyName, $properties, $requiredContext);
+            $this->validateProperty($propertyName, $properties, $requiredPointer);
             $requiredProperties->add($propertyName);
         }
 
         return $requiredProperties;
     }
 
-    private function validateProperty($propertyName, TypeCollection $properties, SpecificationPointer $context): void
+    private function validateProperty($propertyName, TypeCollection $properties, SpecificationPointer $pointer): void
     {
         if (!\is_string($propertyName)) {
-            throw new ParsingException('Invalid required property', $context);
+            throw new ParsingException('Invalid required property', $pointer);
         }
 
         if (!$properties->containsKey($propertyName)) {
             throw new ParsingException(
                 sprintf('Required property "%s" does not exist', $propertyName),
-                $context
+                $pointer
             );
         }
     }

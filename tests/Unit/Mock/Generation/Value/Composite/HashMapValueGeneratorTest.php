@@ -48,8 +48,8 @@ class HashMapValueGeneratorTest extends TestCase
 
         $hashMap = $generator->generateValue($type);
 
-        $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($type->value);
-        $this->assertValueGenerator_generateValue_isCalledAtLeastOnceWithType($type->value);
+        $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->value);
+        $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
         $this->assertGreaterThanOrEqual(self::DEFAULT_MIN_PROPERTIES, \count($hashMap));
         $this->assertLessThanOrEqual(self::DEFAULT_MAX_PROPERTIES, \count($hashMap));
         $this->assertFaker_method_wasCalledAtLeastOnce('unique');
@@ -70,8 +70,8 @@ class HashMapValueGeneratorTest extends TestCase
 
         $hashMap = $generator->generateValue($type);
 
-        $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($type->value);
-        $this->assertValueGenerator_generateValue_isCalledAtLeastOnceWithType($type->value);
+        $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->value);
+        $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
         $this->assertCount(self::PROPERTIES_COUNT, $hashMap);
     }
 
@@ -91,9 +91,9 @@ class HashMapValueGeneratorTest extends TestCase
 
         $hashMap = $generator->generateValue($type);
 
-        $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($type->value);
-        $this->assertValueGenerator_generateValue_isCalledAtLeastOnceWithType($type->value);
-        $this->assertValueGenerator_generateValue_isCalledAtLeastOnceWithType($defaultValueType);
+        $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->value);
+        $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
+        $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($defaultValueType);
         $this->assertCount(self::PROPERTIES_COUNT, $hashMap);
         $this->assertArraySubset(['default' => $value], $hashMap);
     }

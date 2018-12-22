@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -25,26 +26,27 @@ class ResponseParser implements ContextualParserInterface
         $this->schemaParser = $schemaParser;
     }
 
-    public function parsePointedSchema(array $responseSpecification, SpecificationPointer $pointer): MockResponse
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $response = new MockResponse();
-        $content = $responseSpecification['content'] ?? [];
-        $contentContext = $pointer->withPathElement('content');
-        $this->validateContent($content, $contentContext);
+        $responseSchema = $specification->getSchema($pointer);
+        $content = $responseSchema['content'] ?? [];
+        $contentPointer = $pointer->withPathElement('content');
+        $this->validateContent($content, $contentPointer);
 
         foreach ($content as $mediaType => $schema) {
-            $mediaTypeContext = $contentContext->withPathElement($mediaType);
-            $parsedSchema = $this->schemaParser->parsePointedSchema($schema, $mediaTypeContext);
+            $mediaTypePointer = $contentPointer->withPathElement($mediaType);
+            $parsedSchema = $this->schemaParser->parsePointedSchema($specification, $mediaTypePointer);
             $response->content->set($mediaType, $parsedSchema);
         }
 
         return $response;
     }
 
-    private function validateContent($content, SpecificationPointer $context): void
+    private function validateContent($content, SpecificationPointer $pointer): void
     {
         if (!\is_array($content)) {
-            throw new ParsingException('Invalid response content', $context);
+            throw new ParsingException('Invalid response content', $pointer);
         }
     }
 }

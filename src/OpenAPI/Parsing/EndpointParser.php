@@ -11,6 +11,8 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockResponse;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -25,17 +27,19 @@ class EndpointParser implements ContextualParserInterface
         $this->responseParser = $responseParser;
     }
 
-    public function parsePointedSchema(array $schema, SpecificationPointer $pointer): MockParameters
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $mockParameters = new MockParameters();
+        $schema = $specification->getSchema($pointer);
 
         if (array_key_exists('responses', $schema)) {
-            $responsesContext = $pointer->withPathElement('responses');
+            $responsesPointer = $pointer->withPathElement('responses');
             foreach ($schema['responses'] as $statusCode => $responseSpecification) {
-                $responseContext = $responsesContext->withPathElement($statusCode);
-                $this->validateResponse($statusCode, $responseSpecification, $responseContext);
+                $responsePointer = $responsesPointer->withPathElement($statusCode);
+                $this->validateResponse($statusCode, $responseSpecification, $responsePointer);
 
-                $response = $this->responseParser->parsePointedSchema($responseSpecification, $responseContext);
+                /** @var MockResponse $response */
+                $response = $this->responseParser->parsePointedSchema($specification, $responsePointer);
                 $response->statusCode = (int) $statusCode;
                 $mockParameters->responses->set((int) $statusCode, $response);
             }
@@ -44,13 +48,13 @@ class EndpointParser implements ContextualParserInterface
         return $mockParameters;
     }
 
-    private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $context): void
+    private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $pointer): void
     {
         if (!\is_int($statusCode)) {
-            throw new ParsingException('Invalid status code. Must be integer.', $context);
+            throw new ParsingException('Invalid status code. Must be integer.', $pointer);
         }
         if (!\is_array($responseSpecification)) {
-            throw new ParsingException('Invalid response specification.', $context);
+            throw new ParsingException('Invalid response specification.', $pointer);
         }
     }
 }

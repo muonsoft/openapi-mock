@@ -40,12 +40,12 @@ class ValueGeneratorPassTest extends TestCase
 
         $pass->process($this->container);
 
-        $this->assertContainer_findDefinition_isCalledOnceWithId(self::VALUE_GENERATOR_SERVICE_LOCATOR);
-        $this->assertContainer_findTaggedServiceIds_isCalledOnceWithTag(self::VALUE_GENERATOR_TAG);
+        $this->assertContainer_findDefinition_wasCalledOnceWithId(self::VALUE_GENERATOR_SERVICE_LOCATOR);
+        $this->assertContainer_findTaggedServiceIds_wasCalledOnceWithTag(self::VALUE_GENERATOR_TAG);
         $this->assertDefinitionHasValidValueGeneratorMap($definition);
     }
 
-    private function assertContainer_findDefinition_isCalledOnceWithId(string $id): void
+    private function assertContainer_findDefinition_wasCalledOnceWithId(string $id): void
     {
         \Phake::verify($this->container)
             ->findDefinition($id);
@@ -58,7 +58,7 @@ class ValueGeneratorPassTest extends TestCase
             ->thenReturn(true);
     }
 
-    private function assertContainer_findTaggedServiceIds_isCalledOnceWithTag(string $tag): void
+    private function assertContainer_findTaggedServiceIds_wasCalledOnceWithTag(string $tag): void
     {
         \Phake::verify($this->container)
             ->findTaggedServiceIds($tag);

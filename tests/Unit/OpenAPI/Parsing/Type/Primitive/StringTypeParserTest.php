@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\StringTypeParser;
 use App\Tests\Utility\TestCase\LoggerTestCaseTrait;
@@ -52,12 +53,13 @@ class StringTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_stringTypeWithValidParametersSchema_stringTypeWithParametersReturned(): void
+    public function parsePointedSchema_stringTypeWithValidParametersSchema_stringTypeWithParametersReturned(): void
     {
         $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor(self::VALID_STRING_SCHEMA);
 
         /** @var StringType $type */
-        $type = $parser->parsePointedSchema(self::VALID_STRING_SCHEMA, new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(StringType::class, $type);
         $this->assertTrue($type->nullable);
@@ -71,12 +73,13 @@ class StringTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_stringTypeWithoutParametersSchema_stringTypeWithDefaultParametersReturned(): void
+    public function parsePointedSchema_stringTypeWithoutParametersSchema_stringTypeWithDefaultParametersReturned(): void
     {
         $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor([]);
 
         /** @var StringType $type */
-        $type = $parser->parsePointedSchema([], new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(StringType::class, $type);
         $this->assertFalse($type->nullable);
@@ -88,30 +91,29 @@ class StringTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_stringTypeWithInvalidEnumSchema_warningLogged(): void
+    public function parsePointedSchema_stringTypeWithInvalidEnumSchema_warningLogged(): void
     {
         $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor(self::SCHEMA_WITH_INVALID_ENUM);
 
         /** @var StringType $type */
-        $type = $parser->parsePointedSchema(self::SCHEMA_WITH_INVALID_ENUM, new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertCount(0, $type->enum);
         $this->assertLogger_warning_wasCalledOnce();
     }
 
     /** @test */
-    public function parse_stringTypeWithInvalidLengthsSchema_warningLogged(): void
+    public function parsePointedSchema_stringTypeWithInvalidLengthsSchema_warningLogged(): void
     {
         $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor([
+            'minLength' => -2,
+            'maxLength' => -1,
+        ]);
 
         /** @var StringType $type */
-        $type = $parser->parsePointedSchema(
-            [
-                'minLength' => -2,
-                'maxLength' => -1,
-            ],
-            new SpecificationPointer()
-        );
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertSame(self::DEFAULT_LENGTH, $type->minLength);
         $this->assertSame(self::DEFAULT_LENGTH, $type->maxLength);
@@ -119,30 +121,29 @@ class StringTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_stringTypeWithInvalidMaxLengthSchema_warningLogged(): void
+    public function parsePointedSchema_stringTypeWithInvalidMaxLengthSchema_warningLogged(): void
     {
         $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor([
+            'minLength' => 10,
+            'maxLength' => 9,
+        ]);
 
         /** @var StringType $type */
-        $type = $parser->parsePointedSchema(
-            [
-                'minLength' => 10,
-                'maxLength' => 9,
-            ],
-            new SpecificationPointer()
-        );
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertSame(10, $type->maxLength);
         $this->assertLogger_warning_wasCalledOnce();
     }
 
     /** @test */
-    public function parse_stringTypeWithInvalidEnumValueSchema_warningLogged(): void
+    public function parsePointedSchema_stringTypeWithInvalidEnumValueSchema_warningLogged(): void
     {
         $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor(self::SCHEMA_WITH_INVALID_ENUM_VALUE);
 
         /** @var StringType $type */
-        $type = $parser->parsePointedSchema(self::SCHEMA_WITH_INVALID_ENUM_VALUE, new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertCount(1, $type->enum);
         $this->assertContains(self::ENUM_VALUE_1, $type->enum);

@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\IntegerTypeParser;
 use PHPUnit\Framework\TestCase;
@@ -30,12 +31,13 @@ class IntegerTypeParserTest extends TestCase
     ];
 
     /** @test */
-    public function parse_integerSchemaWithoutParameters_integerTypeWithDefaultsReturned(): void
+    public function parsePointedSchema_integerSchemaWithoutParameters_integerTypeWithDefaultsReturned(): void
     {
         $parser = new IntegerTypeParser();
+        $specification = new SpecificationAccessor([]);
 
         /** @var IntegerType $type */
-        $type = $parser->parsePointedSchema([], new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(IntegerType::class, $type);
         $this->assertFalse($type->nullable);
@@ -47,12 +49,13 @@ class IntegerTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_integerSchemaWithParameters_integerTypeWithParametersReturned(): void
+    public function parsePointedSchema_integerSchemaWithParameters_integerTypeWithParametersReturned(): void
     {
         $parser = new IntegerTypeParser();
+        $specification = new SpecificationAccessor(self::NUMBER_SCHEMA);
 
         /** @var IntegerType $type */
-        $type = $parser->parsePointedSchema(self::NUMBER_SCHEMA, new SpecificationPointer());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(IntegerType::class, $type);
         $this->assertTrue($type->nullable);

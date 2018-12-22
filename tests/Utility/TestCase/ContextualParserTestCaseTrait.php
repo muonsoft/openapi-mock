@@ -13,6 +13,7 @@ namespace App\Tests\Utility\TestCase;
 use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Parsing\Type\TypeParserLocator;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -24,9 +25,13 @@ trait ContextualParserTestCaseTrait
     /** @var ContextualParserInterface */
     protected $contextualParser;
 
+    /** @var TypeParserLocator */
+    protected $typeParserLocator;
+
     protected function setUpContextualParser(): void
     {
         $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
+        $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
     }
 
     protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
@@ -37,6 +42,18 @@ trait ContextualParserTestCaseTrait
         \Phake::verify($this->contextualParser)
             ->parsePointedSchema($specification, \Phake::capture($pointer));
         Assert::assertSame($path, $pointer->getPathElements());
+    }
+
+    protected function assertContextualParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
+        SpecificationAccessor $specification,
+        array $firstPath,
+        array $secondPath
+    ): void {
+        /** @var SpecificationPointer[] $pointers */
+        \Phake::verify($this->contextualParser, \Phake::times(2))
+            ->parsePointedSchema($specification, \Phake::captureAll($pointers));
+        Assert::assertSame($firstPath, $pointers[0]->getPathElements());
+        Assert::assertSame($secondPath, $pointers[1]->getPathElements());
     }
 
     protected function assertContextualParser_parsePointedSchema_wasNeverCalledWithAnyParameters(): void
@@ -66,5 +83,18 @@ trait ContextualParserTestCaseTrait
         $this->givenContextualParser_parsePointedSchema_returns($object);
 
         return $object;
+    }
+
+    protected function assertTypeParserLocator_getTypeParser_wasCalledOnceWithType(string $type): void
+    {
+        \Phake::verify($this->typeParserLocator)
+            ->getTypeParser($type);
+    }
+
+    protected function givenTypeParserLocator_getTypeParser_returnsContextualParser(): void
+    {
+        \Phake::when($this->typeParserLocator)
+            ->getTypeParser(\Phake::anyParameters())
+            ->thenReturn($this->contextualParser);
     }
 }
