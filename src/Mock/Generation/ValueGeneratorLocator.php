@@ -10,6 +10,7 @@
 
 namespace App\Mock\Generation;
 
+use App\Mock\Exception\MockGenerationException;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use Psr\Container\ContainerInterface;
@@ -33,7 +34,15 @@ class ValueGeneratorLocator
 
     public function getValueGenerator(TypeMarkerInterface $type): ValueGeneratorInterface
     {
-        $generatorServiceId = $this->valueGeneratorMap[\get_class($type)];
+        $typeClass = \get_class($type);
+
+        if (!array_key_exists($typeClass, $this->valueGeneratorMap)) {
+            throw new MockGenerationException(
+                sprintf('Value generator for class "%s" not found.', $typeClass)
+            );
+        }
+
+        $generatorServiceId = $this->valueGeneratorMap[$typeClass];
 
         return $this->container->get($generatorServiceId);
     }

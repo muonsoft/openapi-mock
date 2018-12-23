@@ -16,6 +16,9 @@ use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
 use App\Mock\Parameters\Schema\Schema;
 use App\Mock\Parameters\Schema\SchemaCollection;
+use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
+use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
+use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
@@ -97,6 +100,9 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
                     ObjectType::class,
                     FreeFormObjectType::class,
                     HashMapType::class,
+                    OneOfType::class,
+                    AnyOfType::class,
+                    AllOfType::class,
                 ]
             ]
         );

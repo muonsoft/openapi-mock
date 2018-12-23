@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Parsing\Type;
 
 use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -20,6 +21,12 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class DelegatingSchemaParser implements ContextualParserInterface
 {
+    private const COMBINED_TYPES = [
+        'oneOf',
+        'anyOf',
+        'allOf',
+    ];
+
     /** @var TypeParserLocator */
     private $typeParserLocator;
 
@@ -31,9 +38,42 @@ class DelegatingSchemaParser implements ContextualParserInterface
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $schema = $specification->getSchema($pointer);
-
-        $typeParser = $this->typeParserLocator->getTypeParser($schema['type']);
+        $type = $this->getSchemaType($schema, $pointer);
+        $typeParser = $this->typeParserLocator->getTypeParser($type);
 
         return $typeParser->parsePointedSchema($specification, $pointer);
+    }
+
+    private function getSchemaType(array $schema, SpecificationPointer $pointer): string
+    {
+        $type = $this->detectSchemaType($schema);
+
+        if ($type === null) {
+            throw new ParsingException(
+                'Invalid schema: must contain one of properties: "type", "oneOf", "anyOf" or "allOf".',
+                $pointer
+            );
+        }
+
+        return $type;
+    }
+
+    private function detectSchemaType(array $schema): ?string
+    {
+        $type = null;
+
+        if (array_key_exists('type', $schema)) {
+            $type = $schema['type'];
+        } else {
+            foreach (self::COMBINED_TYPES as $combinedType) {
+                if (array_key_exists($combinedType, $schema)) {
+                    $type = $combinedType;
+
+                    break;
+                }
+            }
+        }
+
+        return $type;
     }
 }
