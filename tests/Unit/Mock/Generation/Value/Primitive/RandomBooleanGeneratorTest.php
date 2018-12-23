@@ -26,4 +26,22 @@ class RandomBooleanGeneratorTest extends TestCase
 
         $this->assertNotNull($value);
     }
+
+    /** @test */
+    public function generateValue_booleanTypeWithNullableParameters_nullValueReturned(): void
+    {
+        $generator = new RandomBooleanGenerator();
+        $type = new BooleanType();
+        $type->nullable = true;
+
+        for ($i = 0; $i < 100; $i++) {
+            $value = $generator->generateValue($type);
+
+            if (null === $value) {
+                break;
+            }
+        }
+
+        $this->assertNull($value);
+    }
 }
