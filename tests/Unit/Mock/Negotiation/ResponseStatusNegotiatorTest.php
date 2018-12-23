@@ -10,6 +10,7 @@
 
 namespace App\Tests\Unit\Mock\Negotiation;
 
+use App\Mock\Exception\MockGenerationException;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockResponse;
@@ -35,15 +36,14 @@ class ResponseStatusNegotiatorTest extends TestCase
         $this->assertSame($bestResponseStatusCode, $statusCode);
     }
 
-    /**
-     * @test
-     * @expectedException \App\Mock\Exception\MockGenerationException
-     * @expectedExceptionMessage Mock response not found
-     */
+    /** @test */
     public function negotiateResponseStatus_noResponsesInMockParameters_exceptionThrown(): void
     {
         $negotiator = new ResponseStatusNegotiator();
         $parameters = new MockParameters();
+
+        $this->expectException(MockGenerationException::class);
+        $this->expectExceptionMessage('Mock response not found');
 
         $negotiator->negotiateResponseStatus(new Request(), $parameters);
     }

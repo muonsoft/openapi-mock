@@ -44,8 +44,9 @@ class EndpointParser implements ContextualParserInterface
 
                 /** @var MockResponse $response */
                 $response = $this->resolvingParser->resolveReferenceAndParsePointedSchema($specification, $responsePointer, $this->responseParser);
-                $response->statusCode = (int) $statusCode;
-                $mockParameters->responses->set((int) $statusCode, $response);
+                $parsedStatusCode = $this->parseStatusCode($statusCode);
+                $response->statusCode = $parsedStatusCode;
+                $mockParameters->responses->set($parsedStatusCode, $response);
             }
         }
 
@@ -54,11 +55,22 @@ class EndpointParser implements ContextualParserInterface
 
     private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $pointer): void
     {
-        if (!\is_int($statusCode)) {
-            throw new ParsingException('Invalid status code. Must be integer.', $pointer);
+        if (!\is_int($statusCode) && $statusCode !== 'default') {
+            throw new ParsingException('Invalid status code. Must be integer or "default".', $pointer);
         }
         if (!\is_array($responseSpecification)) {
             throw new ParsingException('Invalid response specification.', $pointer);
         }
+    }
+
+    private function parseStatusCode($statusCode): int
+    {
+        $parsedStatusCode = (int)$statusCode;
+
+        if ($parsedStatusCode === 0) {
+            $parsedStatusCode = MockResponse::DEFAULT_STATUS_CODE;
+        }
+
+        return $parsedStatusCode;
     }
 }

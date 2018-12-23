@@ -12,14 +12,17 @@ namespace App\Mock\Parameters;
 
 use App\Mock\Parameters\Schema\SchemaCollection;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class MockResponse implements SpecificationObjectMarkerInterface
 {
+    public const DEFAULT_STATUS_CODE = Response::HTTP_INTERNAL_SERVER_ERROR;
+
     /** @var int */
-    public $statusCode;
+    public $statusCode = self::DEFAULT_STATUS_CODE;
 
     /** @var SchemaCollection */
     public $content;

@@ -25,9 +25,14 @@ class EndpointParserTest extends TestCase
 
     private const RESPONSE_SPECIFICATION = ['response_specification'];
     private const RESPONSE_STATUS_CODE = '200';
-    private const VALID_ENDPOINT_SPECIFICATION = [
+    private const VALID_ENDPOINT_SCHEMA = [
         'responses' => [
             self::RESPONSE_STATUS_CODE => self::RESPONSE_SPECIFICATION
+        ],
+    ];
+    private const VALID_ENDPOINT_SCHEMA_WITH_DEFAULT_RESPONSE = [
+        'responses' => [
+            'default' => self::RESPONSE_SPECIFICATION
         ],
     ];
     private const ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE = [
@@ -52,7 +57,7 @@ class EndpointParserTest extends TestCase
         $parser = $this->createEndpointParser();
         $expectedMockResponse = new MockResponse();
         $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedMockResponse);
-        $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SPECIFICATION);
+        $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA);
 
         /** @var MockParameters $mockParameters */
         $mockParameters = $parser->parsePointedSchema($specification, new SpecificationPointer());
@@ -70,13 +75,36 @@ class EndpointParserTest extends TestCase
     }
 
     /** @test */
+    public function parsePointedSchema_validResponseSpecificationWithDefaultResponse_mockParametersWithResponses(): void
+    {
+        $parser = $this->createEndpointParser();
+        $expectedMockResponse = new MockResponse();
+        $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedMockResponse);
+        $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA_WITH_DEFAULT_RESPONSE);
+
+        /** @var MockParameters $mockParameters */
+        $mockParameters = $parser->parsePointedSchema($specification, new SpecificationPointer());
+
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
+            $specification,
+            ['responses', 'default']
+        );
+        $this->assertCount(1, $mockParameters->responses);
+        $this->assertSame([MockResponse::DEFAULT_STATUS_CODE], $mockParameters->responses->getKeys());
+        /** @var MockResponse $mockResponse */
+        $mockResponse = $mockParameters->responses->first();
+        $this->assertSame($expectedMockResponse, $mockResponse);
+        $this->assertSame(MockResponse::DEFAULT_STATUS_CODE, $mockResponse->statusCode);
+    }
+
+    /** @test */
     public function parsePointedSchema_specificationWithInvalidStatusCode_exceptionThrown(): void
     {
         $parser = $this->createEndpointParser();
         $specification = new SpecificationAccessor(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE);
 
         $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Invalid status code. Must be integer.');
+        $this->expectExceptionMessage('Invalid status code. Must be integer or "default".');
 
         $parser->parsePointedSchema($specification, new SpecificationPointer());
     }
