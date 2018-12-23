@@ -15,9 +15,9 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SpecificationObjectParser
+class ReferenceResolvingParser
 {
-    public function parseObject(
+    public function resolveReferenceAndParsePointedSchema(
         SpecificationAccessor $specification,
         SpecificationPointer $pointer,
         ContextualParserInterface $parser

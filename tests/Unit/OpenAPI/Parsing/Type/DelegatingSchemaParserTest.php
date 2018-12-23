@@ -13,12 +13,12 @@ namespace App\Tests\Unit\OpenAPI\Parsing\Type;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class DelegatingSchemaParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const VALUE_TYPE = 'value_type';
     private const SCHEMA_DEFINITION = [
@@ -27,7 +27,7 @@ class DelegatingSchemaParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */

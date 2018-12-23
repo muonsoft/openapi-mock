@@ -11,6 +11,7 @@
 namespace App\Tests\Utility\TestCase;
 
 use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserLocator;
@@ -20,7 +21,7 @@ use PHPUnit\Framework\Assert;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-trait ContextualParserTestCaseTrait
+trait ParsingTestCaseTrait
 {
     /** @var ContextualParserInterface */
     protected $contextualParser;
@@ -28,10 +29,14 @@ trait ContextualParserTestCaseTrait
     /** @var TypeParserLocator */
     protected $typeParserLocator;
 
-    protected function setUpContextualParser(): void
+    /** @var ReferenceResolvingParser */
+    protected $resolvingParser;
+
+    protected function setUpParsingContext(): void
     {
         $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
         $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
+        $this->resolvingParser = \Phake::mock(ReferenceResolvingParser::class);
     }
 
     protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
@@ -96,5 +101,30 @@ trait ContextualParserTestCaseTrait
         \Phake::when($this->typeParserLocator)
             ->getTypeParser(\Phake::anyParameters())
             ->thenReturn($this->contextualParser);
+    }
+
+    protected function assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
+        SpecificationAccessor $specification,
+        array $path
+    ): void {
+        /** @var SpecificationPointer $pointer */
+        \Phake::verify($this->resolvingParser)
+            ->resolveReferenceAndParsePointedSchema($specification, \Phake::capture($pointer), $this->contextualParser);
+        Assert::assertSame($path, $pointer->getPathElements());
+    }
+
+    protected function assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerAndContextualParser(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer
+    ): void {
+        \Phake::verify($this->resolvingParser)
+            ->resolveReferenceAndParsePointedSchema($specification, $pointer, $this->contextualParser);
+    }
+
+    protected function givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns(SpecificationObjectMarkerInterface $object): void
+    {
+        \Phake::when($this->resolvingParser)
+            ->resolveReferenceAndParsePointedSchema(\Phake::anyParameters())
+            ->thenReturn($object);
     }
 }

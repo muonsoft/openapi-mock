@@ -86,5 +86,8 @@ class SpecificationParser
         if (!\is_array($endpointSpecification) || \count($endpointSpecification) === 0) {
             throw new ParsingException('Empty or invalid endpoint specification', $pointer);
         }
+        if (array_key_exists('$ref', $endpointSpecification)) {
+            throw new ParsingException('References on paths is not supported', $pointer);
+        }
     }
 }

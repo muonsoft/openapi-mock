@@ -22,9 +22,13 @@ class EndpointParser implements ContextualParserInterface
     /** @var ContextualParserInterface */
     private $responseParser;
 
-    public function __construct(ContextualParserInterface $responseParser)
+    /** @var ReferenceResolvingParser */
+    private $resolvingParser;
+
+    public function __construct(ContextualParserInterface $responseParser, ReferenceResolvingParser $resolvingParser)
     {
         $this->responseParser = $responseParser;
+        $this->resolvingParser = $resolvingParser;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -39,7 +43,7 @@ class EndpointParser implements ContextualParserInterface
                 $this->validateResponse($statusCode, $responseSpecification, $responsePointer);
 
                 /** @var MockResponse $response */
-                $response = $this->responseParser->parsePointedSchema($specification, $responsePointer);
+                $response = $this->resolvingParser->resolveReferenceAndParsePointedSchema($specification, $responsePointer, $this->responseParser);
                 $response->statusCode = (int) $statusCode;
                 $mockParameters->responses->set((int) $statusCode, $response);
             }

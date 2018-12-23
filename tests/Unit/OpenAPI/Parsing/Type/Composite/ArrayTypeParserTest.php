@@ -15,12 +15,12 @@ use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ArrayTypeParser;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ArrayTypeParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const ITEMS_SCHEMA_TYPE = 'itemsSchemaType';
     private const ITEMS_SCHEMA = [
@@ -45,7 +45,7 @@ class ArrayTypeParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */

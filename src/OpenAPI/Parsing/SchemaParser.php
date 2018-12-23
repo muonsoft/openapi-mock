@@ -19,11 +19,11 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 class SchemaParser implements ContextualParserInterface
 {
     /** @var ContextualParserInterface */
-    private $delegatingSchemaParser;
+    private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $delegatingSchemaParser)
+    public function __construct(ContextualParserInterface $resolvingSchemaParser)
     {
-        $this->delegatingSchemaParser = $delegatingSchemaParser;
+        $this->resolvingSchemaParser = $resolvingSchemaParser;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -33,7 +33,7 @@ class SchemaParser implements ContextualParserInterface
         $this->validateSchema($schema, $pointer);
 
         $schemaContext = $pointer->withPathElement('schema');
-        $schemaType->value = $this->delegatingSchemaParser->parsePointedSchema($specification, $schemaContext);
+        $schemaType->value = $this->resolvingSchemaParser->parsePointedSchema($specification, $schemaContext);
 
         return $schemaType;
     }

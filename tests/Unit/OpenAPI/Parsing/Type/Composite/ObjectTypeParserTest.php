@@ -18,12 +18,12 @@ use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ObjectTypeParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const PROPERTY_TYPE = 'propertyType';
     private const PROPERTY_NAME = 'propertyName';
@@ -80,7 +80,7 @@ class ObjectTypeParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */

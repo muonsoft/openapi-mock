@@ -19,7 +19,7 @@ use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
+use App\OpenAPI\Parsing\Type\ReferenceResolvingSchemaParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Utility\StringList;
@@ -29,12 +29,12 @@ use App\Utility\StringList;
  */
 class ObjectTypeParser implements TypeParserInterface
 {
-    /** @var DelegatingSchemaParser */
-    private $delegatingSchemaParser;
+    /** @var ReferenceResolvingSchemaParser */
+    private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $delegatingSchemaParser)
+    public function __construct(ContextualParserInterface $resolvingSchemaParser)
     {
-        $this->delegatingSchemaParser = $delegatingSchemaParser;
+        $this->resolvingSchemaParser = $resolvingSchemaParser;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -96,7 +96,7 @@ class ObjectTypeParser implements TypeParserInterface
         $object = new HashMapType();
 
         $propertyPointer = $pointer->withPathElement('additionalProperties');
-        $object->value = $this->delegatingSchemaParser->parsePointedSchema($specification, $propertyPointer);
+        $object->value = $this->resolvingSchemaParser->parsePointedSchema($specification, $propertyPointer);
 
         $object->properties = $this->parseProperties($specification, $pointer);
         $object->required = $this->parseRequiredProperties($specification, $pointer, $object->properties);
@@ -114,7 +114,7 @@ class ObjectTypeParser implements TypeParserInterface
 
         foreach ($schemaProperties as $propertyName => $propertySchema) {
             $propertyPointer = $propertiesPointer->withPathElement($propertyName);
-            $property = $this->delegatingSchemaParser->parsePointedSchema($specification, $propertyPointer);
+            $property = $this->resolvingSchemaParser->parsePointedSchema($specification, $propertyPointer);
             $properties->set($propertyName, $property);
         }
 

@@ -14,12 +14,12 @@ use App\Mock\Parameters\MockParameters;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class SpecificationParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const PATH = '/entity';
     private const HTTP_METHOD = 'get';
@@ -35,7 +35,7 @@ class SpecificationParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */
@@ -133,6 +133,25 @@ class SpecificationParserTest extends TestCase
 
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage('Empty or invalid endpoint specification');
+
+        $parser->parseSpecification($specification);
+    }
+
+    /** @test */
+    public function parseSpecification_pathWithReference_parsingExceptionThrown(): void
+    {
+        $parser = $this->createSpecificationParser();
+        $specification = new SpecificationAccessor([
+            'openapi' => '3.0',
+            'paths' => [
+                '/entity' => [
+                    '$ref' => 'anything'
+                ],
+            ],
+        ]);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('References on paths is not supported');
 
         $parser->parseSpecification($specification);
     }

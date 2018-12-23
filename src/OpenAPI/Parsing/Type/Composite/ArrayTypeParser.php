@@ -25,11 +25,11 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 class ArrayTypeParser implements TypeParserInterface
 {
     /** @var DelegatingSchemaParser */
-    private $delegatingSchemaParser;
+    private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $delegatingSchemaParser)
+    public function __construct(ContextualParserInterface $resolvingSchemaParser)
     {
-        $this->delegatingSchemaParser = $delegatingSchemaParser;
+        $this->resolvingSchemaParser = $resolvingSchemaParser;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -56,7 +56,7 @@ class ArrayTypeParser implements TypeParserInterface
     private function readItemsSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $itemsPointer = $pointer->withPathElement('items');
-        $itemsSchema = $this->delegatingSchemaParser->parsePointedSchema($specification, $itemsPointer);
+        $itemsSchema = $this->resolvingSchemaParser->parsePointedSchema($specification, $itemsPointer);
 
         return $itemsSchema;
     }

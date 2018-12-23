@@ -15,12 +15,12 @@ use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SchemaParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class SchemaParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const VALUE_TYPE = 'value_type';
     private const SCHEMA_DEFINITION = [
@@ -32,7 +32,7 @@ class SchemaParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */

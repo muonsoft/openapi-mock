@@ -16,12 +16,12 @@ use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class EndpointParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const RESPONSE_SPECIFICATION = ['response_specification'];
     private const RESPONSE_STATUS_CODE = '200';
@@ -43,7 +43,7 @@ class EndpointParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */
@@ -51,13 +51,13 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
         $expectedMockResponse = new MockResponse();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedMockResponse);
+        $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedMockResponse);
         $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SPECIFICATION);
 
         /** @var MockParameters $mockParameters */
         $mockParameters = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
             $specification,
             ['responses', '200']
         );
@@ -95,6 +95,6 @@ class EndpointParserTest extends TestCase
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->contextualParser);
+        return new EndpointParser($this->contextualParser, $this->resolvingParser);
     }
 }

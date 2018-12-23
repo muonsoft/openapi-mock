@@ -16,12 +16,12 @@ use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\ResponseParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ResponseParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const SCHEMA = ['schema'];
     private const MEDIA_TYPE = 'application/json';
@@ -34,7 +34,7 @@ class ResponseParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */

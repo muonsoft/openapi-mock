@@ -11,16 +11,17 @@
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
-use App\OpenAPI\Parsing\SpecificationObjectParser;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
-class SpecificationObjectParserTest extends TestCase
+class ReferenceResolvingParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
+    
     private const REFERENCE = '#/reference';
 
     /** @var SpecificationAccessor */
@@ -29,18 +30,18 @@ class SpecificationObjectParserTest extends TestCase
     protected function setUp(): void
     {
         $this->specificationAccessor = \Phake::mock(SpecificationAccessor::class);
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */
-    public function parseObject_schemaIsNotReference_contextualParserParsesSchemaAndReturnsObject(): void
+    public function resolveReferenceAndParsePointedSchema_schemaIsNotReference_contextualParserParsesSchemaAndReturnsObject(): void
     {
-        $objectParser = new SpecificationObjectParser();
+        $resolvingParser = new ReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['schema']);
         $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
 
-        $object = $objectParser->parseObject($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
 
         $this->assertSpecificationAccessor_getSchema_wasCalledOnceWithPointer($pointer);
         $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($this->specificationAccessor, $pointer);
@@ -51,16 +52,16 @@ class SpecificationObjectParserTest extends TestCase
      * @test
      * @dataProvider referenceAndReferencedPointerPath
      */
-    public function parseObject_schemaWithNotResolvedReference_contextualParserParsesReferencedSchemaAndReturnsObject(
+    public function resolveReferenceAndParsePointedSchema_schemaWithNotResolvedReference_contextualParserParsesReferencedSchemaAndReturnsObject(
         string $reference,
         array $referencedPointerPath
     ): void {
-        $objectParser = new SpecificationObjectParser();
+        $resolvingParser = new ReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
         $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
 
-        $object = $objectParser->parseObject($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
 
         $this->assertSpecificationAccessor_getSchema_wasCalledOnceWithPointer($pointer);
         $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($this->specificationAccessor, $referencedPointerPath);
@@ -80,28 +81,28 @@ class SpecificationObjectParserTest extends TestCase
      * @test
      * @dataProvider invalidReferenceAndExceptionMessageProvider
      */
-    public function parseObject_schemaWithInvalidReference_exceptionThrown(string $reference, string $exceptionMessage): void
+    public function resolveReferenceAndParsePointedSchema_schemaWithInvalidReference_exceptionThrown(string $reference, string $exceptionMessage): void
     {
-        $objectParser = new SpecificationObjectParser();
+        $resolvingParser = new ReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
 
         $this->expectException(ParsingException::class);
         $this->expectExceptionMessage($exceptionMessage);
 
-        $objectParser->parseObject($this->specificationAccessor, $pointer, $this->contextualParser);
+        $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
     }
 
     /** @test */
-    public function parseObject_schemaWithNotResolvedReference_parsedObjectSetToSpecification(): void
+    public function resolveReferenceAndParsePointedSchema_schemaWithNotResolvedReference_parsedObjectSetToSpecification(): void
     {
-        $objectParser = new SpecificationObjectParser();
+        $resolvingParser = new ReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => self::REFERENCE]);
         $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
         $this->givenSpecificationAccessor_findResolvedObject_returnsNull();
 
-        $object = $objectParser->parseObject($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
 
         $this->assertSpecificationAccessor_findResolvedObject_wasCalledOnceWithReference(self::REFERENCE);
         $this->assertSpecificationAccessor_setResolvedObject_wasCalledOnceWithReferenceAndObject(self::REFERENCE, $object);
@@ -110,14 +111,14 @@ class SpecificationObjectParserTest extends TestCase
     }
 
     /** @test */
-    public function parseObject_schemaWithResolvedReference_objectReturnedFromSpecification(): void
+    public function resolveReferenceAndParsePointedSchema_schemaWithResolvedReference_objectReturnedFromSpecification(): void
     {
-        $objectParser = new SpecificationObjectParser();
+        $resolvingParser = new ReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => self::REFERENCE]);
         $expectedObject = $this->givenSpecificationAccessor_findResolvedObject_returnsObject();
 
-        $object = $objectParser->parseObject($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
 
         $this->assertSpecificationAccessor_findResolvedObject_wasCalledOnceWithReference(self::REFERENCE);
         $this->assertSpecificationAccessor_setResolvedObject_wasNeverCalledOnceWithAnyParameters();
