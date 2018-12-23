@@ -11,31 +11,34 @@
 namespace App\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\ParsingException;
-use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
+use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class ArrayTypeParser implements TypeParserInterface
 {
-    /** @var SchemaTransformingParser */
-    private $schemaTransformingParser;
+    /** @var DelegatingSchemaParser */
+    private $resolvingSchemaParser;
 
-    public function __construct(SchemaTransformingParser $schemaTransformingParser)
+    public function __construct(ContextualParserInterface $resolvingSchemaParser)
     {
-        $this->schemaTransformingParser = $schemaTransformingParser;
+        $this->resolvingSchemaParser = $resolvingSchemaParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $this->validateSchema($schema, $context);
+        $schema = $specification->getSchema($pointer);
+        $this->validateSchema($schema, $pointer);
 
         $type = new ArrayType();
-        $type->items = $this->readItemsSchema($schema, $context);
+        $type->items = $this->readItemsSchema($specification, $pointer);
         $type->minItems = $this->readIntegerValue($schema, 'minItems');
         $type->maxItems = $this->readIntegerValue($schema, 'maxItems');
         $type->uniqueItems = $this->readBoolValue($schema, 'uniqueItems');
@@ -43,17 +46,17 @@ class ArrayTypeParser implements TypeParserInterface
         return $type;
     }
 
-    private function validateSchema(array $schema, ParsingContext $context): void
+    private function validateSchema(array $schema, SpecificationPointer $pointer): void
     {
         if (!array_key_exists('items', $schema)) {
-            throw new ParsingException('Section "items" is required', $context);
+            throw new ParsingException('Section "items" is required', $pointer);
         }
     }
 
-    private function readItemsSchema(array $schema, ParsingContext $context): TypeMarkerInterface
+    private function readItemsSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $itemsContext = $context->withSubPath('items');
-        $itemsSchema = $this->schemaTransformingParser->parse($schema['items'], $itemsContext);
+        $itemsPointer = $pointer->withPathElement('items');
+        $itemsSchema = $this->resolvingSchemaParser->parsePointedSchema($specification, $itemsPointer);
 
         return $itemsSchema;
     }

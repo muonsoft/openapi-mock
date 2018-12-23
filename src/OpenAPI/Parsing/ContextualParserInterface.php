@@ -10,10 +10,12 @@
 
 namespace App\OpenAPI\Parsing;
 
+use App\OpenAPI\SpecificationObjectMarkerInterface;
+
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 interface ContextualParserInterface
 {
-    public function parse(array $schema, ParsingContext $context);
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface;
 }

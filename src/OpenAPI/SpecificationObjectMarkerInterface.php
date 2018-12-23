@@ -8,16 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters\Schema;
-
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\SpecificationObjectMarkerInterface;
+namespace App\OpenAPI;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class Schema implements SpecificationObjectMarkerInterface
+interface SpecificationObjectMarkerInterface
 {
-    /** @var TypeMarkerInterface */
-    public $value;
+
 }

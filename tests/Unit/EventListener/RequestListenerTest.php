@@ -40,24 +40,24 @@ class RequestListenerTest extends TestCase
 
         $listener->onKernelRequest($this->event);
 
-        $this->assertGetResponseEvent_getRequest_isCalledOnce();
-        $this->assertRequestHandler_handleRequest_isCalledOnceWithRequest($request);
-        $this->assertGetResponseEvent_setResponse_isCalledOnceWithResponse($response);
+        $this->assertGetResponseEvent_getRequest_wasCalledOnce();
+        $this->assertRequestHandler_handleRequest_wasCalledOnceWithRequest($request);
+        $this->assertGetResponseEvent_setResponse_wasCalledOnceWithResponse($response);
     }
 
-    private function assertGetResponseEvent_getRequest_isCalledOnce(): void
+    private function assertGetResponseEvent_getRequest_wasCalledOnce(): void
     {
         \Phake::verify($this->event)
             ->getRequest();
     }
 
-    private function assertRequestHandler_handleRequest_isCalledOnceWithRequest(Request $request): void
+    private function assertRequestHandler_handleRequest_wasCalledOnceWithRequest(Request $request): void
     {
         \Phake::verify($this->requestHandler)
             ->handleRequest($request);
     }
 
-    private function assertGetResponseEvent_setResponse_isCalledOnceWithResponse(Response $response): void
+    private function assertGetResponseEvent_setResponse_wasCalledOnceWithResponse(Response $response): void
     {
         \Phake::verify($this->event)
             ->setResponse($response);

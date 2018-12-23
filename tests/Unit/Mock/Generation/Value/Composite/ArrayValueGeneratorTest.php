@@ -42,8 +42,8 @@ class ArrayValueGeneratorTest extends TestCase
 
         $array = $generator->generateValue($type);
 
-        $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($type->items);
-        $this->assertValueGenerator_generateValue_isCalledAtLeastOnceWithType($type->items);
+        $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->items);
+        $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->items);
         $this->assertContains($value, $array);
         $this->assertGreaterThanOrEqual(self::DEFAULT_MIN_ITEMS, \count($array));
         $this->assertLessThanOrEqual(self::DEFAULT_MAX_ITEMS, \count($array));

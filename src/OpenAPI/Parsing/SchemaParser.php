@@ -11,33 +11,34 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Schema\Schema;
-use App\OpenAPI\Parsing\Type\SchemaTransformingParser;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class SchemaParser implements ContextualParserInterface
 {
-    /** @var SchemaTransformingParser */
-    private $schemaTransformingParser;
+    /** @var ContextualParserInterface */
+    private $resolvingSchemaParser;
 
-    public function __construct(SchemaTransformingParser $schemaTransformingParser)
+    public function __construct(ContextualParserInterface $resolvingSchemaParser)
     {
-        $this->schemaTransformingParser = $schemaTransformingParser;
+        $this->resolvingSchemaParser = $resolvingSchemaParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): Schema
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $parsedSchema = new Schema();
-        $this->validateSchema($schema, $context);
+        $schema = $specification->getSchema($pointer);
+        $schemaType = new Schema();
+        $this->validateSchema($schema, $pointer);
 
-        $schemaContext = $context->withSubPath('schema');
-        $parsedSchema->value = $this->schemaTransformingParser->parse($schema['schema'], $schemaContext);
+        $schemaContext = $pointer->withPathElement('schema');
+        $schemaType->value = $this->resolvingSchemaParser->parsePointedSchema($specification, $schemaContext);
 
-        return $parsedSchema;
+        return $schemaType;
     }
 
-    private function validateSchema(array $schema, ParsingContext $context): void
+    private function validateSchema(array $schema, SpecificationPointer $context): void
     {
         if (!\array_key_exists('schema', $schema)) {
             throw new ParsingException('Invalid schema', $context);

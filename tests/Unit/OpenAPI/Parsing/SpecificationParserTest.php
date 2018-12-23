@@ -11,13 +11,15 @@
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockParameters;
+use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class SpecificationParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const PATH = '/entity';
     private const HTTP_METHOD = 'get';
@@ -33,7 +35,7 @@ class SpecificationParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */
@@ -41,13 +43,14 @@ class SpecificationParserTest extends TestCase
     {
         $parser = $this->createSpecificationParser();
         $expectedMockParameters = new MockParameters();
-        $this->givenContextualParser_parse_returns($expectedMockParameters);
+        $this->givenContextualParser_parsePointedSchema_returns($expectedMockParameters);
+        $specification = new SpecificationAccessor(self::VALID_SPECIFICATION);
 
-        $mockParametersCollection = $parser->parseSpecification(self::VALID_SPECIFICATION);
+        $mockParametersCollection = $parser->parseSpecification($specification);
 
-        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
-            self::ENDPOINT_SPECIFICATION,
-            'paths.'.self::PATH.'.'.self::HTTP_METHOD
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+            $specification,
+            ['paths', self::PATH, self::HTTP_METHOD]
         );
         $this->assertCount(1, $mockParametersCollection);
         /** @var MockParameters $mockParameters */
@@ -57,74 +60,69 @@ class SpecificationParserTest extends TestCase
         $this->assertSame(strtoupper(self::HTTP_METHOD), $mockParameters->httpMethod);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Cannot detect OpenAPI specification version: tag "openapi" does not exist
-     */
+    /** @test */
     public function parseSpecification_noVersionTag_parsingExceptionThrown(): void
     {
         $parser = $this->createSpecificationParser();
+        $specification = new SpecificationAccessor([]);
 
-        $parser->parseSpecification([]);
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Cannot detect OpenAPI specification version: tag "openapi" does not exist');
+
+        $parser->parseSpecification($specification);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage OpenAPI specification version is not supported. Supports only 3.*.
-     */
+    /** @test */
     public function parseSpecification_invalidVersionTag_parsingExceptionThrown(): void
     {
         $parser = $this->createSpecificationParser();
-
-        $parser->parseSpecification([
+        $specification = new SpecificationAccessor([
             'openapi' => '2.0'
         ]);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('OpenAPI specification version is not supported. Supports only 3.*.');
+
+        $parser->parseSpecification($specification);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Section "paths" is empty or does not exist
-     */
+    /** @test */
     public function parseSpecification_noPaths_parsingExceptionThrown(): void
     {
         $parser = $this->createSpecificationParser();
-
-        $parser->parseSpecification([
+        $specification = new SpecificationAccessor([
             'openapi' => '3.0',
             'paths' => [],
         ]);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Section "paths" is empty or does not exist');
+
+        $parser->parseSpecification($specification);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Empty or invalid endpoint specification
-     */
+    /** @test */
     public function parseSpecification_noEndpoints_parsingExceptionThrown(): void
     {
         $parser = $this->createSpecificationParser();
-
-        $parser->parseSpecification([
+        $specification = new SpecificationAccessor([
             'openapi' => '3.0',
             'paths' => [
                 '/entity' => 'invalid'
             ],
         ]);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Empty or invalid endpoint specification');
+
+        $parser->parseSpecification($specification);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Empty or invalid endpoint specification
-     */
+    /** @test */
     public function parseSpecification_invalidEndpoint_parsingExceptionThrown(): void
     {
         $parser = $this->createSpecificationParser();
-
-        $parser->parseSpecification([
+        $specification = new SpecificationAccessor([
             'openapi' => '3.0',
             'paths' => [
                 '/entity' => [
@@ -132,6 +130,30 @@ class SpecificationParserTest extends TestCase
                 ],
             ],
         ]);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Empty or invalid endpoint specification');
+
+        $parser->parseSpecification($specification);
+    }
+
+    /** @test */
+    public function parseSpecification_pathWithReference_parsingExceptionThrown(): void
+    {
+        $parser = $this->createSpecificationParser();
+        $specification = new SpecificationAccessor([
+            'openapi' => '3.0',
+            'paths' => [
+                '/entity' => [
+                    '$ref' => 'anything'
+                ],
+            ],
+        ]);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('References on paths is not supported');
+
+        $parser->parseSpecification($specification);
     }
 
     private function createSpecificationParser(): SpecificationParser

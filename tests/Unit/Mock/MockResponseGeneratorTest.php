@@ -65,13 +65,13 @@ class MockResponseGeneratorTest extends TestCase
         $response = $generator->generateResponse($request, $parameters);
 
         $this->assertNotNull($response);
-        $this->assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndMockResponse(
+        $this->assertMediaTypeGenerator_negotiateMediaType_wasCalledOnceWithRequestAndMockResponse(
             $request,
             $parameters->responses->get(self::STATUS_CODE)
         );
-        $this->assertResponseStatusNegotiator_negotiateResponseStatus_isCalledOnceWithRequestAndParameters($request, $parameters);
-        $this->assertDataGenerator_generateData_isCalledOnceWithSchema($schema);
-        $this->assertResponder_createResponse_isCalledOnceWithStatusCodeAndMediaTypeAndData(
+        $this->assertResponseStatusNegotiator_negotiateResponseStatus_wasCalledOnceWithRequestAndParameters($request, $parameters);
+        $this->assertDataGenerator_generateData_wasCalledOnceWithSchema($schema);
+        $this->assertResponder_createResponse_wasCalledOnceWithStatusCodeAndMediaTypeAndData(
             self::STATUS_CODE,
             self::MEDIA_TYPE,
             self::RESPONSE_DATA
@@ -89,7 +89,7 @@ class MockResponseGeneratorTest extends TestCase
         );
     }
 
-    private function assertMediaTypeGenerator_negotiateMediaType_isCalledOnceWithRequestAndMockResponse(
+    private function assertMediaTypeGenerator_negotiateMediaType_wasCalledOnceWithRequestAndMockResponse(
         Request $request,
         MockResponse $response
     ): void {
@@ -97,7 +97,7 @@ class MockResponseGeneratorTest extends TestCase
             ->negotiateMediaType($request, $response);
     }
 
-    private function assertResponseStatusNegotiator_negotiateResponseStatus_isCalledOnceWithRequestAndParameters(
+    private function assertResponseStatusNegotiator_negotiateResponseStatus_wasCalledOnceWithRequestAndParameters(
         Request $request,
         MockParameters $parameters
     ): void {
@@ -119,7 +119,7 @@ class MockResponseGeneratorTest extends TestCase
             ->thenReturn($statusCode);
     }
 
-    private function assertDataGenerator_generateData_isCalledOnceWithSchema(Schema $schema): void
+    private function assertDataGenerator_generateData_wasCalledOnceWithSchema(Schema $schema): void
     {
         \Phake::verify($this->dataGenerator)
             ->generateData($schema);
@@ -132,7 +132,7 @@ class MockResponseGeneratorTest extends TestCase
             ->thenReturn($responseData);
     }
 
-    private function assertResponder_createResponse_isCalledOnceWithStatusCodeAndMediaTypeAndData(
+    private function assertResponder_createResponse_wasCalledOnceWithStatusCodeAndMediaTypeAndData(
         int $statusCode,
         string $mediaType,
         string $responseData

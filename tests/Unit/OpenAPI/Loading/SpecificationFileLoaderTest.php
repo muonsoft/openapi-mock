@@ -12,7 +12,9 @@ namespace App\Tests\Unit\OpenAPI\Loading;
 
 use App\Mock\Parameters\MockParametersCollection;
 use App\OpenAPI\Loading\SpecificationFileLoader;
+use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Utility\FileLoader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
@@ -50,9 +52,9 @@ class SpecificationFileLoaderTest extends TestCase
 
         $mockParameters = $loader->loadMockParameters($url);
 
-        $this->assertFileLoader_loadFileContents_isCalledOnceWithUrl($url);
-        $this->assertDecoder_decode_isCalledOnceWithDataAndFormat($fileContents, $format);
-        $this->assertSpecificationParser_parseSpecification_isCalledOnceWithRawSpecification($specification);
+        $this->assertFileLoader_loadFileContents_wasCalledOnceWithUrl($url);
+        $this->assertDecoder_decode_wasCalledOnceWithDataAndFormat($fileContents, $format);
+        $this->assertSpecificationParser_parseSpecification_wasCalledOnceWithSpecification($specification);
         $this->assertSame($parsedSpecification, $mockParameters);
     }
 
@@ -78,22 +80,26 @@ class SpecificationFileLoaderTest extends TestCase
         $loader->loadMockParameters('unsupported_url');
     }
 
-    private function assertFileLoader_loadFileContents_isCalledOnceWithUrl(string $url): void
+    private function assertFileLoader_loadFileContents_wasCalledOnceWithUrl(string $url): void
     {
         \Phake::verify($this->fileLoader)
             ->loadFileContents($url);
     }
 
-    private function assertDecoder_decode_isCalledOnceWithDataAndFormat(string $fileContents, $format): void
+    private function assertDecoder_decode_wasCalledOnceWithDataAndFormat(string $fileContents, $format): void
     {
         \Phake::verify($this->decoder)
             ->decode($fileContents, $format);
     }
 
-    private function assertSpecificationParser_parseSpecification_isCalledOnceWithRawSpecification(array $specification): void
+    private function assertSpecificationParser_parseSpecification_wasCalledOnceWithSpecification(array $specification): void
     {
+        /** @var SpecificationAccessor $specificationAccessor */
         \Phake::verify($this->parser)
-            ->parseSpecification($specification);
+            ->parseSpecification(\Phake::capture($specificationAccessor));
+        $this->assertInstanceOf(SpecificationAccessor::class, $specificationAccessor);
+        $schema = $specificationAccessor->getSchema(new SpecificationPointer());
+        $this->assertSame($specification, $schema);
     }
 
     private function givenFileLoader_loadFileContents_returnsContents(): string

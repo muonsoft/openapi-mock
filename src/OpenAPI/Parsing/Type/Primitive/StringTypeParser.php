@@ -11,9 +11,10 @@
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -32,9 +33,10 @@ class StringTypeParser implements TypeParserInterface
         $this->logger = $logger;
     }
 
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $this->type = new StringType();
+        $schema = $specification->getSchema($pointer);
 
         $this->type->nullable = $this->readBoolValue($schema, 'nullable');
         $this->type->minLength = $this->readIntegerValue($schema, 'minLength');
@@ -42,9 +44,9 @@ class StringTypeParser implements TypeParserInterface
         $this->type->format = $this->readStringValue($schema, 'format');
         $this->type->pattern = $this->readStringValue($schema, 'pattern');
 
-        $this->lengthsAutoCorrection($context);
+        $this->lengthsAutoCorrection($pointer);
 
-        $this->processEnumProperty($schema, $context);
+        $this->processEnumProperty($schema, $pointer);
 
         return $this->type;
     }
@@ -64,7 +66,7 @@ class StringTypeParser implements TypeParserInterface
         return (string) ($schema[$key] ?? '');
     }
 
-    private function lengthsAutoCorrection(ParsingContext $context): void
+    private function lengthsAutoCorrection(SpecificationPointer $pointer): void
     {
         if ($this->type->minLength < 0) {
             $this->type->minLength = 0;
@@ -72,7 +74,7 @@ class StringTypeParser implements TypeParserInterface
             $this->logger->warning(
                 sprintf(
                     'Property "minLength" cannot be less than 0 at path "%s". Value is ignored.',
-                    $context->getPath()
+                    $pointer->getPath()
                 )
             );
         }
@@ -83,7 +85,7 @@ class StringTypeParser implements TypeParserInterface
             $this->logger->warning(
                 sprintf(
                     'Property "maxLength" cannot be less than 0 at path "%s". Value is ignored.',
-                    $context->getPath()
+                    $pointer->getPath()
                 )
             );
         }
@@ -94,13 +96,13 @@ class StringTypeParser implements TypeParserInterface
             $this->logger->warning(
                 sprintf(
                     'Property "maxLength" cannot be greater than "minLength" as path "%s". Value is set to "minLength".',
-                    $context->getPath()
+                    $pointer->getPath()
                 )
             );
         }
     }
 
-    private function processEnumProperty(array $schema, ParsingContext $context): void
+    private function processEnumProperty(array $schema, SpecificationPointer $pointer): void
     {
         $enumValues = $schema['enum'] ?? [];
 
@@ -109,15 +111,15 @@ class StringTypeParser implements TypeParserInterface
                 sprintf(
                     'Invalid enum value "%s" detected in path "%s". Expected to be array of strings.',
                     json_encode($enumValues),
-                    $context->getPath()
+                    $pointer->getPath()
                 )
             );
         } else {
-            $this->processEnumValues($enumValues, $context);
+            $this->processEnumValues($enumValues, $pointer);
         }
     }
 
-    private function processEnumValues(array $enumValues, ParsingContext $context): void
+    private function processEnumValues(array $enumValues, SpecificationPointer $pointer): void
     {
         foreach ($enumValues as $enumValue) {
             if (\is_string($enumValue)) {
@@ -127,7 +129,7 @@ class StringTypeParser implements TypeParserInterface
                     sprintf(
                         'Invalid enum value "%s" ignored in path "%s". Value must be valid string.',
                         json_encode($enumValue),
-                        $context->getPath()
+                        $pointer->getPath()
                     )
                 );
             }

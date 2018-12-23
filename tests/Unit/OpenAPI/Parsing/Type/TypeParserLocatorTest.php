@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\Type\TypeParserLocator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -35,7 +35,7 @@ class TypeParserLocatorTest extends TestCase
 
         $parser = $locator->getTypeParser('type');
 
-        $this->assertContainer_get_isCalledOnceWithServiceId(self::TYPE_PARSER_SERVICE_ID);
+        $this->assertContainer_get_wasCalledOnceWithServiceId(self::TYPE_PARSER_SERVICE_ID);
         $this->assertSame($containerParser, $parser);
     }
 
@@ -51,15 +51,15 @@ class TypeParserLocatorTest extends TestCase
         $locator->getTypeParser('invalid');
     }
 
-    private function assertContainer_get_isCalledOnceWithServiceId(string $serviceId): void
+    private function assertContainer_get_wasCalledOnceWithServiceId(string $serviceId): void
     {
         \Phake::verify($this->container)
             ->get($serviceId);
     }
 
-    private function givenContainer_get_returnsTypeParser(): TypeParserInterface
+    private function givenContainer_get_returnsTypeParser(): ContextualParserInterface
     {
-        $valueGenerator = \Phake::mock(TypeParserInterface::class);
+        $valueGenerator = \Phake::mock(ContextualParserInterface::class);
 
         \Phake::when($this->container)
             ->get(\Phake::anyParameters())

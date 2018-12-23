@@ -11,14 +11,16 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ArrayTypeParser;
-use App\Tests\Utility\TestCase\SchemaTransformingParserTestCase;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ArrayTypeParserTest extends TestCase
 {
-    use SchemaTransformingParserTestCase;
+    use ParsingTestCaseTrait;
 
     private const ITEMS_SCHEMA_TYPE = 'itemsSchemaType';
     private const ITEMS_SCHEMA = [
@@ -43,23 +45,21 @@ class ArrayTypeParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpSchemaTransformingParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */
-    public function parse_validSchemaWithItemsAndParameters_itemSchemaParsedByTypeParser(): void
+    public function parsePointedSchema_validSchemaWithItemsAndParameters_itemSchemaParsedByTypeParser(): void
     {
         $parser = $this->createArrayTypeParser();
-        $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
+        $itemsType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $specification = new SpecificationAccessor(self::VALID_SCHEMA_WITH_PARAMETERS);
 
         /** @var ArrayType $type */
-        $type = $parser->parse(self::VALID_SCHEMA_WITH_PARAMETERS, new ParsingContext());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(ArrayType::class, $type);
-        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
-            self::ITEMS_SCHEMA,
-            'items'
-        );
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($specification, ['items']);
         $this->assertSame($itemsType, $type->items);
         $this->assertSame(self::MIN_ITEMS, $type->minItems);
         $this->assertSame(self::MAX_ITEMS, $type->maxItems);
@@ -67,39 +67,37 @@ class ArrayTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parse_validSchemaWithItemsAndNoParameters_itemSchemaParsedByTypeParserAndParametersSetToDefaults(): void
+    public function parsePointedSchema_validSchemaWithItemsAndNoParameters_itemSchemaParsedByTypeParserAndParametersSetToDefaults(): void
     {
         $parser = $this->createArrayTypeParser();
-        $itemsType = $this->givenSchemaTransformingParser_parse_returnsType();
+        $itemsType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $specification = new SpecificationAccessor(self::VALID_SCHEMA_WITHOUT_PARAMETERS);
 
         /** @var ArrayType $type */
-        $type = $parser->parse(self::VALID_SCHEMA_WITHOUT_PARAMETERS, new ParsingContext());
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(ArrayType::class, $type);
-        $this->assertSchemaTransformingParser_parse_isCalledOnceWithSchemaAndContextWithPath(
-            self::ITEMS_SCHEMA,
-            'items'
-        );
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($specification, ['items']);
         $this->assertSame($itemsType, $type->items);
         $this->assertSame(0, $type->minItems);
         $this->assertSame(0, $type->maxItems);
         $this->assertFalse($type->uniqueItems);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Section "items" is required
-     */
-    public function parse_noItemsInSchema_exceptionThrown(): void
+    /** @test */
+    public function parsePointedSchema_noItemsInSchema_exceptionThrown(): void
     {
         $parser = $this->createArrayTypeParser();
+        $specification = new SpecificationAccessor(self::SCHEMA_WITHOUT_ITEMS);
 
-        $parser->parse(self::SCHEMA_WITHOUT_ITEMS, new ParsingContext());
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Section "items" is required');
+
+        $parser->parsePointedSchema($specification, new SpecificationPointer());
     }
 
     private function createArrayTypeParser(): ArrayTypeParser
     {
-        return new ArrayTypeParser($this->schemaTransformingParser);
+        return new ArrayTypeParser($this->contextualParser);
     }
 }

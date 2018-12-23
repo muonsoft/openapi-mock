@@ -11,6 +11,8 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockResponse;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -20,22 +22,28 @@ class EndpointParser implements ContextualParserInterface
     /** @var ContextualParserInterface */
     private $responseParser;
 
-    public function __construct(ContextualParserInterface $responseParser)
+    /** @var ReferenceResolvingParser */
+    private $resolvingParser;
+
+    public function __construct(ContextualParserInterface $responseParser, ReferenceResolvingParser $resolvingParser)
     {
         $this->responseParser = $responseParser;
+        $this->resolvingParser = $resolvingParser;
     }
 
-    public function parse(array $schema, ParsingContext $context): MockParameters
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $mockParameters = new MockParameters();
+        $schema = $specification->getSchema($pointer);
 
         if (array_key_exists('responses', $schema)) {
-            $responsesContext = $context->withSubPath('responses');
+            $responsesPointer = $pointer->withPathElement('responses');
             foreach ($schema['responses'] as $statusCode => $responseSpecification) {
-                $responseContext = $responsesContext->withSubPath($statusCode);
-                $this->validateResponse($statusCode, $responseSpecification, $responseContext);
+                $responsePointer = $responsesPointer->withPathElement($statusCode);
+                $this->validateResponse($statusCode, $responseSpecification, $responsePointer);
 
-                $response = $this->responseParser->parse($responseSpecification, $responseContext);
+                /** @var MockResponse $response */
+                $response = $this->resolvingParser->resolveReferenceAndParsePointedSchema($specification, $responsePointer, $this->responseParser);
                 $response->statusCode = (int) $statusCode;
                 $mockParameters->responses->set((int) $statusCode, $response);
             }
@@ -44,13 +52,13 @@ class EndpointParser implements ContextualParserInterface
         return $mockParameters;
     }
 
-    private function validateResponse($statusCode, $responseSpecification, ParsingContext $context): void
+    private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $pointer): void
     {
         if (!\is_int($statusCode)) {
-            throw new ParsingException('Invalid status code. Must be integer.', $context);
+            throw new ParsingException('Invalid status code. Must be integer.', $pointer);
         }
         if (!\is_array($responseSpecification)) {
-            throw new ParsingException('Invalid response specification.', $context);
+            throw new ParsingException('Invalid response specification.', $pointer);
         }
     }
 }

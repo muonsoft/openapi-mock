@@ -31,6 +31,8 @@ services:
       $endpointParser: '@App\OpenAPI\Parsing\EndpointParser'
       $responseParser: '@App\OpenAPI\Parsing\ResponseParser'
       $schemaParser: '@App\OpenAPI\Parsing\SchemaParser'
+      $delegatingSchemaParser: '@App\OpenAPI\Parsing\Type\DelegatingSchemaParser'
+      $resolvingSchemaParser: '@App\OpenAPI\Parsing\Type\ReferenceResolvingSchemaParser'
 
   App\:
     resource: '../src/*'

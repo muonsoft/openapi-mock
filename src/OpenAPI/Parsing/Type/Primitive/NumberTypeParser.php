@@ -11,18 +11,20 @@
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class NumberTypeParser implements TypeParserInterface
 {
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $type = new NumberType();
+        $schema = $specification->getSchema($pointer);
 
         $type->nullable = $this->readBoolValue($schema, 'nullable');
         $type->exclusiveMinimum = $this->readBoolValue($schema, 'exclusiveMinimum');

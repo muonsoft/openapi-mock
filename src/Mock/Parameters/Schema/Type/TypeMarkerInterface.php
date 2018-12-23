@@ -10,10 +10,12 @@
 
 namespace App\Mock\Parameters\Schema\Type;
 
+use App\OpenAPI\SpecificationObjectMarkerInterface;
+
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface TypeMarkerInterface
+interface TypeMarkerInterface extends SpecificationObjectMarkerInterface
 {
 
 }

@@ -10,15 +10,18 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
+use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockResponse;
 use App\OpenAPI\Parsing\EndpointParser;
-use App\OpenAPI\Parsing\ParsingContext;
-use App\Tests\Utility\TestCase\ContextualParserTestCaseTrait;
+use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationPointer;
+use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class EndpointParserTest extends TestCase
 {
-    use ContextualParserTestCaseTrait;
+    use ParsingTestCaseTrait;
 
     private const RESPONSE_SPECIFICATION = ['response_specification'];
     private const RESPONSE_STATUS_CODE = '200';
@@ -40,21 +43,23 @@ class EndpointParserTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpContextualParser();
+        $this->setUpParsingContext();
     }
 
     /** @test */
-    public function parse_validResponseSpecification_mockParametersWithResponses(): void
+    public function parsePointedSchema_validResponseSpecification_mockParametersWithResponses(): void
     {
         $parser = $this->createEndpointParser();
         $expectedMockResponse = new MockResponse();
-        $this->givenContextualParser_parse_returns($expectedMockResponse);
+        $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedMockResponse);
+        $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SPECIFICATION);
 
-        $mockParameters = $parser->parse(self::VALID_ENDPOINT_SPECIFICATION, new ParsingContext());
+        /** @var MockParameters $mockParameters */
+        $mockParameters = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parse_isCalledOnceWithSchemaAndContextWithPath(
-            self::RESPONSE_SPECIFICATION,
-            'responses.200'
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
+            $specification,
+            ['responses', '200']
         );
         $this->assertCount(1, $mockParameters->responses);
         $this->assertSame([(int) self::RESPONSE_STATUS_CODE], $mockParameters->responses->getKeys());
@@ -64,32 +69,32 @@ class EndpointParserTest extends TestCase
         $this->assertSame((int) self::RESPONSE_STATUS_CODE, $mockResponse->statusCode);
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Invalid status code. Must be integer.
-     */
-    public function parse_specificationWithInvalidStatusCode_exceptionThrown(): void
+    /** @test */
+    public function parsePointedSchema_specificationWithInvalidStatusCode_exceptionThrown(): void
     {
         $parser = $this->createEndpointParser();
+        $specification = new SpecificationAccessor(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE);
 
-        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE, new ParsingContext());
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Invalid status code. Must be integer.');
+
+        $parser->parsePointedSchema($specification, new SpecificationPointer());
     }
 
-    /**
-     * @test
-     * @expectedException \App\OpenAPI\Parsing\ParsingException
-     * @expectedExceptionMessage Invalid response specification
-     */
-    public function parse_invalidResponseSpecification_exceptionThrown(): void
+    /** @test */
+    public function parsePointedSchema_invalidResponseSpecification_exceptionThrown(): void
     {
         $parser = $this->createEndpointParser();
+        $specification = new SpecificationAccessor(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION);
 
-        $parser->parse(self::ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION, new ParsingContext());
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Invalid response specification');
+
+        $parser->parsePointedSchema($specification, new SpecificationPointer());
     }
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->contextualParser);
+        return new EndpointParser($this->contextualParser, $this->resolvingParser);
     }
 }

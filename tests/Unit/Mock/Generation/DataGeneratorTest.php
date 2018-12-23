@@ -37,8 +37,8 @@ class DataGeneratorTest extends TestCase
 
         $value = $generator->generateData($schema);
 
-        $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($type);
-        $this->assertValueGenerator_generateValue_isCalledOnceWithType($type);
+        $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type);
+        $this->assertValueGenerator_generateValue_wasCalledOnceWithType($type);
         $this->assertSame($generatedValue, $value);
     }
 

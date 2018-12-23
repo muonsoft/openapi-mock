@@ -10,10 +10,12 @@
 
 namespace App\Mock\Parameters;
 
+use App\OpenAPI\SpecificationObjectMarkerInterface;
+
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters
+class MockParameters implements SpecificationObjectMarkerInterface
 {
     /** @var string */
     public $httpMethod;

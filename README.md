@@ -21,13 +21,21 @@ Swagger mock server with fake data generation support
   * [x] free-form object
   * [x] hash-map
   * [x] hash-map fixed keys
+* [x] local reference resolving
+* [ ] default response support
 * [ ] complex types (oneOf, anyOf, allOf)
-* [ ] reference resolving
 * [ ] support of readOnly, writeOnly fields
 * [x] caching loader for OpenAPI specification
 * [ ] cache invalidation by timestamp/hash
 * [ ] logging
 * [ ] docker build in ci
 * [ ] try spiral/roadrunner server instead of nginx
+* [ ] make supported features table
+
+## TODO for v0.2
+
+* [ ] response cache
 * [ ] faker expression extension for numbers
 * [ ] faker expression extension for strings
+* [ ] remote reference support
+* [ ] url reference support

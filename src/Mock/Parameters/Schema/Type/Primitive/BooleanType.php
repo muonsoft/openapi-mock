@@ -17,5 +17,6 @@ use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
  */
 class BooleanType implements TypeMarkerInterface
 {
-
+    /** @var bool */
+    public $nullable = false;
 }

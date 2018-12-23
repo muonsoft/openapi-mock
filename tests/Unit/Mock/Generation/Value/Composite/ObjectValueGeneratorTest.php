@@ -42,8 +42,8 @@ class ObjectValueGeneratorTest extends TestCase
 
         $value = $generator->generateValue($type);
 
-        $this->assertValueGeneratorLocator_getValueGenerator_isCalledOnceWithType($propertyType);
-        $this->assertValueGenerator_generateValue_isCalledOnceWithType($propertyType);
+        $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($propertyType);
+        $this->assertValueGenerator_generateValue_wasCalledOnceWithType($propertyType);
         $this->assertSame([self::PROPERTY_NAME => $propertyValue], $value);
     }
 }

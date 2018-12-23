@@ -11,17 +11,23 @@
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
-use App\OpenAPI\Parsing\ParsingContext;
+use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class BooleanTypeParser implements TypeParserInterface
 {
-    public function parse(array $schema, ParsingContext $context): TypeMarkerInterface
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        return new BooleanType();
+        $type = new BooleanType();
+
+        $schema = $specification->getSchema($pointer);
+        $type->nullable = array_key_exists('nullable', $schema) && $schema['nullable'];
+
+        return $type;
     }
 }
