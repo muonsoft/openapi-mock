@@ -11,7 +11,6 @@
 namespace App\Tests\Unit\Mock\Generation\Value\Combined;
 
 use App\Mock\Generation\Value\Combined\AllOfValueGenerator;
-use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
@@ -54,16 +53,5 @@ class AllOfValueGeneratorTest extends TestCase
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type2);
         $this->assertExpectedValueGenerator_generateValue_wasCalledOnceWithType($internalGenerator1, $type1);
         $this->assertExpectedValueGenerator_generateValue_wasCalledOnceWithType($internalGenerator2, $type2);
-    }
-
-    private function givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator(TypeMarkerInterface $type): ValueGeneratorInterface
-    {
-        $generator = \Phake::mock(ValueGeneratorInterface::class);
-
-        \Phake::when($this->valueGeneratorLocator)
-            ->getValueGenerator($type)
-            ->thenReturn($generator);
-
-        return $generator;
     }
 }

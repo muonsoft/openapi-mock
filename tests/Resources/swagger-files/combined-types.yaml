@@ -11,6 +11,7 @@ paths:
                 required:
                   - oneOfProperty
                   - allOfProperty
+                  - anyOfProperty
                 properties:
                   oneOfProperty:
                     oneOf:
@@ -34,6 +35,26 @@ paths:
                             type: string
                   allOfProperty:
                     allOf:
+                      - type: object
+                        required:
+                          - id
+                          - name
+                        properties:
+                          id:
+                            type: integer
+                          name:
+                            type: string
+                      - type: object
+                        required:
+                          - id
+                          - title
+                        properties:
+                          id:
+                            type: integer
+                          title:
+                            type: string
+                  anyOfProperty:
+                    anyOf:
                       - type: object
                         required:
                           - id

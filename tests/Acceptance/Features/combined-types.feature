@@ -11,3 +11,5 @@ Feature: Combined types
     And the JSON node "allOfProperty.id" should exist
     And the JSON node "allOfProperty.name" should exist
     And the JSON node "allOfProperty.title" should exist
+    And the JSON node "anyOfProperty" should exist
+    And the JSON node "anyOfProperty.id" should exist

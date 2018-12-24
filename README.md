@@ -23,9 +23,9 @@ Swagger mock server with fake data generation support
   * [x] hash-map fixed keys
 * [x] local reference resolving
 * [x] default response support
-* [ ] combined types
+* [x] combined types
   * [x] oneOf
-  * [ ] anyOf
+  * [x] anyOf
   * [x] allOf
 * [ ] support of readOnly, writeOnly fields
 * [x] caching loader for OpenAPI specification

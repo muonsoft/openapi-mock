@@ -25,6 +25,7 @@ parameters:
     App\Mock\Parameters\Schema\Type\Composite\ArrayType: 'App\Mock\Generation\Value\Composite\ArrayValueGenerator'
     App\Mock\Parameters\Schema\Type\Combined\OneOfType: 'App\Mock\Generation\Value\Combined\OneOfValueGenerator'
     App\Mock\Parameters\Schema\Type\Combined\AllOfType: 'App\Mock\Generation\Value\Combined\AllOfValueGenerator'
+    App\Mock\Parameters\Schema\Type\Combined\AnyOfType: 'App\Mock\Generation\Value\Combined\AnyOfValueGenerator'
 
 
 services:

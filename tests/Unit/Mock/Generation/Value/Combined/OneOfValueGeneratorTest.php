@@ -43,22 +43,4 @@ class OneOfValueGeneratorTest extends TestCase
         $this->assertValueGenerator_generateValue_wasCalledOnceWithOneOfTypes($type1, $type2);
         $this->assertSame($expectedValue, $value);
     }
-
-    private function assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithOneOfTypes(
-        TypeMarkerInterface $type1,
-        TypeMarkerInterface $type2
-    ): void {
-        \Phake::verify($this->valueGeneratorLocator)
-            ->getValueGenerator(\Phake::capture($type));
-        $this->assertTrue($type === $type1 || $type === $type2);
-    }
-
-    private function assertValueGenerator_generateValue_wasCalledOnceWithOneOfTypes(
-        TypeMarkerInterface $type1,
-        TypeMarkerInterface $type2
-    ): void {
-        \Phake::verify($this->valueGenerator)
-            ->generateValue(\Phake::capture($type));
-        $this->assertTrue($type === $type1 || $type === $type2);
-    }
 }
