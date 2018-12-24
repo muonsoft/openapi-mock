@@ -14,6 +14,7 @@ use App\Mock\Parameters\Schema\Type\Combined\AbstractCombinedType;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
+use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -53,6 +54,9 @@ class CombinedTypeParser implements TypeParserInterface
         foreach ($schema[$typeName] as $index => $typeSchema) {
             $internalTypePointer = $typePointer->withPathElement($index);
             $internalType = $this->resolvingSchemaParser->parsePointedSchema($specification, $internalTypePointer);
+
+            $this->validateInternalType($typeName, $internalType, $internalTypePointer);
+
             $type->types->add($internalType);
         }
 
@@ -90,5 +94,12 @@ class CombinedTypeParser implements TypeParserInterface
         $typeClass = self::COMBINED_TYPES[$typeName];
 
         return new $typeClass;
+    }
+
+    private function validateInternalType(string $typeName, SpecificationObjectMarkerInterface $internalType, SpecificationPointer $internalTypePointer): void
+    {
+        if (($typeName === 'anyOf' || $typeName === 'allOf') && !$internalType instanceof ObjectType) {
+            throw new ParsingException('All internal types of "anyOf" or "allOf" schema must be objects', $internalTypePointer);
+        }
     }
 }

@@ -54,13 +54,21 @@ trait ValueGeneratorCaseTrait
             ->generateValue($type);
     }
 
+    protected function assertExpectedValueGenerator_generateValue_wasCalledOnceWithType(
+        ValueGeneratorInterface $generator,
+        TypeMarkerInterface $type
+    ): void {
+        \Phake::verify($generator)
+            ->generateValue($type);
+    }
+
     protected function assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType(TypeMarkerInterface $type): void
     {
         \Phake::verify($this->valueGenerator, \Phake::atLeast(1))
             ->generateValue($type);
     }
 
-    protected function givenValueGenerator_generateValue_returnsValue(): string
+    protected function givenValueGenerator_generateValue_returnsGeneratedValue(): string
     {
         $generatedValue = 'generated_value';
 
@@ -69,5 +77,12 @@ trait ValueGeneratorCaseTrait
             ->thenReturn($generatedValue);
 
         return $generatedValue;
+    }
+
+    protected function givenValueGenerator_generateValue_returnsValue(ValueGeneratorInterface $generator, $value): void
+    {
+        \Phake::when($generator)
+            ->generateValue(\Phake::anyParameters())
+            ->thenReturn($value);
     }
 }

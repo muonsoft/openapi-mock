@@ -38,7 +38,7 @@ class ObjectValueGeneratorTest extends TestCase
         ]);
         $generator = new ObjectValueGenerator($this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $propertyValue = $this->givenValueGenerator_generateValue_returnsValue();
+        $propertyValue = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
         $value = $generator->generateValue($type);
 

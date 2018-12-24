@@ -38,7 +38,7 @@ class ArrayValueGeneratorTest extends TestCase
         $type = new ArrayType();
         $type->items = new DummyType();
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $value = $this->givenValueGenerator_generateValue_returnsValue();
+        $value = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
         $array = $generator->generateValue($type);
 
@@ -58,7 +58,7 @@ class ArrayValueGeneratorTest extends TestCase
         $type->minItems = self::ARRAY_SIZE;
         $type->maxItems = self::ARRAY_SIZE;
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $this->givenValueGenerator_generateValue_returnsValue();
+        $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
         $array = $generator->generateValue($type);
 

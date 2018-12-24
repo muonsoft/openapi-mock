@@ -26,7 +26,7 @@ Swagger mock server with fake data generation support
 * [ ] combined types
   * [x] oneOf
   * [ ] anyOf
-  * [ ] allOf
+  * [x] allOf
 * [ ] support of readOnly, writeOnly fields
 * [x] caching loader for OpenAPI specification
 * [ ] cache invalidation by timestamp/hash

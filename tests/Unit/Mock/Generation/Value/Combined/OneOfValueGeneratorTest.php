@@ -35,7 +35,7 @@ class OneOfValueGeneratorTest extends TestCase
         $oneOf->types->add($type1);
         $oneOf->types->add($type2);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $expectedValue = $this->givenValueGenerator_generateValue_returnsValue();
+        $expectedValue = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
         $value = $generator->generateValue($oneOf);
 

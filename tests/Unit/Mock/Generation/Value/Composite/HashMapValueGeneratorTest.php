@@ -42,7 +42,7 @@ class HashMapValueGeneratorTest extends TestCase
         $type->value = new DummyType();
         $generator = new HashMapValueGenerator($this->faker, $this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $hashMapValue = $this->givenValueGenerator_generateValue_returnsValue();
+        $hashMapValue = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
         $faker = $this->givenFaker_method_returnsNewFaker('unique');
         $this->givenFakerMock_method_returnsValue($faker, 'word', 'key');
 
@@ -66,7 +66,7 @@ class HashMapValueGeneratorTest extends TestCase
         $type->maxProperties = self::PROPERTIES_COUNT;
         $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $this->givenValueGenerator_generateValue_returnsValue();
+        $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
         $hashMap = $generator->generateValue($type);
 
@@ -87,7 +87,7 @@ class HashMapValueGeneratorTest extends TestCase
         $type->properties->set('default', $defaultValueType);
         $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
-        $value = $this->givenValueGenerator_generateValue_returnsValue();
+        $value = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
         $hashMap = $generator->generateValue($type);
 

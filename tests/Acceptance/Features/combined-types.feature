@@ -7,3 +7,7 @@ Feature: Combined types
     And the response should be in JSON
     And the JSON node "oneOfProperty" should exist
     And the JSON node "oneOfProperty.id" should exist
+    And the JSON node "allOfProperty" should exist
+    And the JSON node "allOfProperty.id" should exist
+    And the JSON node "allOfProperty.name" should exist
+    And the JSON node "allOfProperty.title" should exist

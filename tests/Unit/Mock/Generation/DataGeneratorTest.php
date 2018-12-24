@@ -32,7 +32,7 @@ class DataGeneratorTest extends TestCase
         $generator = new DataGenerator($this->valueGeneratorLocator);
         $type = new DummyType();
         $schema = $this->givenSchemaWithValueType($type);
-        $generatedValue = $this->givenValueGenerator_generateValue_returnsValue();
+        $generatedValue = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
 
         $value = $generator->generateData($schema);

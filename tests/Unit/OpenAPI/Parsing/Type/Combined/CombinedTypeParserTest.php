@@ -13,6 +13,7 @@ namespace App\Tests\Unit\OpenAPI\Parsing\Type\Combined;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
+use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -46,7 +47,7 @@ class CombinedTypeParserTest extends TestCase
                 self::TYPE_SCHEMA
             ]
         ]);
-        $internalType = \Phake::mock(TypeMarkerInterface::class);
+        $internalType = new ObjectType();
         $this->givenContextualParser_parsePointedSchema_returns($internalType);
 
         /** @var OneOfType $type */
@@ -95,5 +96,34 @@ class CombinedTypeParserTest extends TestCase
         $this->expectExceptionMessage('Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"');
 
         $typeParser->parsePointedSchema($specification, new SpecificationPointer());
+    }
+
+    /**
+     * @test
+     * @dataProvider objectiveCombinedTypeNameProvider
+     */
+    public function parsePointedSchema_combinedTypeSchemaWithInternalTypeThatIsNotObject_exceptionThrown(string $combinedTypeName): void
+    {
+        $typeParser = new CombinedTypeParser($this->contextualParser);
+        $specification = new SpecificationAccessor([
+            $combinedTypeName => [
+                self::TYPE_SCHEMA
+            ]
+        ]);
+        $internalType = \Phake::mock(TypeMarkerInterface::class);
+        $this->givenContextualParser_parsePointedSchema_returns($internalType);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('All internal types of "anyOf" or "allOf" schema must be objects');
+
+        $typeParser->parsePointedSchema($specification, new SpecificationPointer());
+    }
+
+    public function objectiveCombinedTypeNameProvider(): array
+    {
+        return [
+            ['anyOf'],
+            ['allOf'],
+        ];
     }
 }
