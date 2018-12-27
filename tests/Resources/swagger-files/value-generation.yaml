@@ -25,6 +25,12 @@ paths:
                   - longString
                   - array
                   - freeForm
+                  - writeOnlyBoolean
+                  - writeOnlyInteger
+                  - writeOnlyNumber
+                  - writeOnlyString
+                  - writeOnlyArray
+                  - writeOnlyObject
                 properties:
                   rangedInteger:
                     type: integer
@@ -104,3 +110,24 @@ paths:
                       type: string
                       enum:
                         - value
+                  writeOnlyBoolean:
+                    type: boolean
+                    writeOnly: true
+                  writeOnlyInteger:
+                    type: integer
+                    writeOnly: true
+                  writeOnlyNumber:
+                    type: number
+                    writeOnly: true
+                  writeOnlyString:
+                    type: string
+                    writeOnly: true
+                  writeOnlyArray:
+                    type: array
+                    writeOnly: true
+                    items:
+                      type: string
+                  writeOnlyObject:
+                    type: object
+                    writeOnly: true
+                    additionalProperties: true

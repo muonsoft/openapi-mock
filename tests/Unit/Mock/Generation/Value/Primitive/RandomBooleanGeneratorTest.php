@@ -12,10 +12,13 @@ namespace App\Tests\Unit\Mock\Generation\Value\Primitive;
 
 use App\Mock\Generation\Value\Primitive\RandomBooleanGenerator;
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class RandomBooleanGeneratorTest extends TestCase
 {
+    use ProbabilityTestCaseTrait;
+
     /** @test */
     public function generateValue_booleanType_randomBooleanValueReturned(): void
     {
@@ -34,14 +37,10 @@ class RandomBooleanGeneratorTest extends TestCase
         $type = new BooleanType();
         $type->nullable = true;
 
-        for ($i = 0; $i < 100; $i++) {
-            $value = $generator->generateValue($type);
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
 
-            if (null === $value) {
-                break;
-            }
-        }
-
-        $this->assertNull($value);
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 }

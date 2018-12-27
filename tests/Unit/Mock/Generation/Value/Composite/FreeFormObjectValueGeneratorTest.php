@@ -13,12 +13,14 @@ namespace App\Tests\Unit\Mock\Generation\Value\Composite;
 use App\Mock\Generation\Value\Composite\FreeFormObjectValueGenerator;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Tests\Utility\TestCase\FakerCaseTrait;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 class FreeFormObjectValueGeneratorTest extends TestCase
 {
     use FakerCaseTrait;
+    use ProbabilityTestCaseTrait;
 
     private const DEFAULT_MIN_PROPERTIES = 1;
     private const DEFAULT_MAX_PROPERTIES = 20;
@@ -59,5 +61,19 @@ class FreeFormObjectValueGeneratorTest extends TestCase
         $value = $generator->generateValue($type);
 
         $this->assertCount(self::PROPERTIES_COUNT, $value);
+    }
+
+    /** @test */
+    public function generateValue_freeFormObjectTypeIsNullable_nullReturned(): void
+    {
+        $type = new FreeFormObjectType();
+        $type->setNullable(true);
+        $generator = new FreeFormObjectValueGenerator(Factory::create());
+
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
+
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 }

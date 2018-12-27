@@ -15,12 +15,14 @@ use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ArrayValueGeneratorTest extends TestCase
 {
     use ValueGeneratorCaseTrait;
+    use ProbabilityTestCaseTrait;
 
     private const DEFAULT_MIN_ITEMS = 1;
     private const DEFAULT_MAX_ITEMS = 20;
@@ -29,6 +31,23 @@ class ArrayValueGeneratorTest extends TestCase
     protected function setUp(): void
     {
         $this->setUpValueGenerator();
+    }
+
+    /** @test */
+    public function generateValue_arrayTypeIsNullable_nullReturned(): void
+    {
+        $generator = $this->createArrayValueGenerator();
+        $type = new ArrayType();
+        $type->nullable = true;
+        $type->items = new DummyType();
+        $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
+        $this->givenValueGenerator_generateValue_returnsGeneratedValue();
+
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
+
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 
     /** @test */

@@ -23,3 +23,9 @@ Feature: Value generation
     And the JSON node "freeForm" should exist
     And the JSON node "hashMap" should exist
     And the JSON node "fixedHashMap.default" should be equal to the string "value"
+    And the JSON node "writeOnlyBoolean" should not exist
+    And the JSON node "writeOnlyInteger" should not exist
+    And the JSON node "writeOnlyNumber" should not exist
+    And the JSON node "writeOnlyString" should not exist
+    And the JSON node "writeOnlyArray" should not exist
+    And the JSON node "writeOnlyObject" should not exist

@@ -15,6 +15,7 @@ use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\FakerCaseTrait;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use App\Utility\StringList;
 use Faker\Factory;
@@ -24,6 +25,7 @@ class HashMapValueGeneratorTest extends TestCase
 {
     use FakerCaseTrait;
     use ValueGeneratorCaseTrait;
+    use ProbabilityTestCaseTrait;
 
     private const DEFAULT_MIN_PROPERTIES = 1;
     private const DEFAULT_MAX_PROPERTIES = 20;
@@ -96,5 +98,25 @@ class HashMapValueGeneratorTest extends TestCase
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($defaultValueType);
         $this->assertCount(self::PROPERTIES_COUNT, $hashMap);
         $this->assertArraySubset(['default' => $value], $hashMap);
+    }
+
+
+    /** @test */
+    public function generateValue_hashMapTypeIsNullable_nullReturned(): void
+    {
+        $type = new HashMapType();
+        $type->setNullable(true);
+        $type->value = new DummyType();
+        $type->minProperties = self::PROPERTIES_COUNT;
+        $type->maxProperties = self::PROPERTIES_COUNT;
+        $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
+        $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
+        $this->givenValueGenerator_generateValue_returnsGeneratedValue();
+
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
+
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 }

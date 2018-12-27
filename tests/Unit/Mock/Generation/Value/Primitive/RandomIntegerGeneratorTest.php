@@ -12,10 +12,13 @@ namespace App\Tests\Unit\Mock\Generation\Value\Primitive;
 
 use App\Mock\Generation\Value\Primitive\RandomIntegerGenerator;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class RandomIntegerGeneratorTest extends TestCase
 {
+    use ProbabilityTestCaseTrait;
+
     private const MINIMUM = 5;
     private const MAXIMUM = 10;
     private const MULTIPLE_OF = 10;
@@ -58,15 +61,11 @@ class RandomIntegerGeneratorTest extends TestCase
         $type = new IntegerType();
         $type->nullable = true;
 
-        for ($i = 0; $i < 100; $i++) {
-            $value = $generator->generateValue($type);
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
 
-            if (null === $value) {
-                break;
-            }
-        }
-
-        $this->assertNull($value);
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 
     private function createFakerIntegerGenerator(): RandomIntegerGenerator

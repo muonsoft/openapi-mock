@@ -31,11 +31,18 @@ class FreeFormObjectValueGenerator implements ValueGeneratorInterface
         $this->faker = $faker;
     }
 
-    /**
-     * @param FreeFormObjectType $type
-     * @return array
-     */
-    public function generateValue(TypeInterface $type): array
+    public function generateValue(TypeInterface $type): ?array
+    {
+        if ($type->isNullable() && random_int(0, 1) === 0) {
+            $value = null;
+        } else {
+            $value = $this->generateObject($type);
+        }
+
+        return $value;
+    }
+
+    private function generateObject(FreeFormObjectType $type): array
     {
         $properties = [];
 

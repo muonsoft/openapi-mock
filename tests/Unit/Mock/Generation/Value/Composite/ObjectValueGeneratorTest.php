@@ -14,12 +14,14 @@ use App\Mock\Generation\Value\Composite\ObjectValueGenerator;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Tests\Utility\Dummy\DummyType;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
 
 class ObjectValueGeneratorTest extends TestCase
 {
     use ValueGeneratorCaseTrait;
+    use ProbabilityTestCaseTrait;
 
     private const PROPERTY_NAME = 'name';
 
@@ -45,5 +47,36 @@ class ObjectValueGeneratorTest extends TestCase
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($propertyType);
         $this->assertValueGenerator_generateValue_wasCalledOnceWithType($propertyType);
         $this->assertSame([self::PROPERTY_NAME => $propertyValue], $value);
+    }
+
+    /** @test */
+    public function generateValue_objectTypeWithWriteOnlyProperty_emptyObjectReturned(): void
+    {
+        $type = new ObjectType();
+        $propertyType = new DummyType();
+        $propertyType->setWriteOnly(true);
+        $type->properties = new TypeCollection([
+            self::PROPERTY_NAME => $propertyType,
+        ]);
+        $generator = new ObjectValueGenerator($this->valueGeneratorLocator);
+
+        $value = $generator->generateValue($type);
+
+        $this->assertSame([], $value);
+        \Phake::verifyNoInteraction($this->valueGeneratorLocator);
+    }
+
+    /** @test */
+    public function generateValue_objectTypeIsNullable_nullReturned(): void
+    {
+        $type = new ObjectType();
+        $type->setNullable(true);
+        $generator = new ObjectValueGenerator($this->valueGeneratorLocator);
+
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
+
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 }

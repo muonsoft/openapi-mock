@@ -41,11 +41,18 @@ class ArrayValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    /**
-     * @param ArrayType $type
-     * @return array
-     */
-    public function generateValue(TypeInterface $type): array
+    public function generateValue(TypeInterface $type): ?array
+    {
+        if ($type->isNullable() && random_int(0, 1) === 0) {
+            $value = null;
+        } else {
+            $value = $this->generateArray($type);
+        }
+
+        return $value;
+    }
+
+    private function generateArray(ArrayType $type): array
     {
         $this->initializeValueGenerator($type->items);
 

@@ -41,14 +41,9 @@ class FakerStringGenerator implements ValueGeneratorInterface
         $this->faker = $faker;
     }
 
-    /**
-     * @param StringType $type
-     * @return null|string
-     * @throws \Exception
-     */
     public function generateValue(TypeInterface $type): ?string
     {
-        if ($type->nullable && random_int(0, 1) === 0) {
+        if ($type->isNullable() && random_int(0, 1) === 0) {
             $value = null;
         } else {
             $value = $this->generateStringValue($type);

@@ -19,12 +19,9 @@ use App\Mock\Parameters\Schema\Type\TypeInterface;
  */
 class RandomNumberGenerator implements ValueGeneratorInterface
 {
-    /**
-     * @param NumberType $type
-     */
     public function generateValue(TypeInterface $type): ?float
     {
-        if ($type->nullable && random_int(0, 1) === 0) {
+        if ($type->isNullable() && random_int(0, 1) === 0) {
             $value = null;
         } else {
             $value = $this->generateFloatValue($type);

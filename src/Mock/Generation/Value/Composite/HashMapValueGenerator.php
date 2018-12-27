@@ -45,11 +45,18 @@ class HashMapValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    /**
-     * @param HashMapType $type
-     * @return array
-     */
-    public function generateValue(TypeInterface $type): array
+    public function generateValue(TypeInterface $type): ?array
+    {
+        if ($type->isNullable() && random_int(0, 1) === 0) {
+            $value = null;
+        } else {
+            $value = $this->generateHashMap($type);
+        }
+
+        return $value;
+    }
+
+    private function generateHashMap(HashMapType $type): array
     {
         $this->initializeValueGenerator($type->value);
 

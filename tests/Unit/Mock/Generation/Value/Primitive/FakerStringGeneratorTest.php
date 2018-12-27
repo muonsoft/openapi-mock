@@ -13,12 +13,14 @@ namespace App\Tests\Unit\Mock\Generation\Value\Primitive;
 use App\Mock\Generation\Value\Primitive\FakerStringGenerator;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Tests\Utility\TestCase\FakerCaseTrait;
+use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use Faker\Factory;
 use PHPUnit\Framework\TestCase;
 
 class FakerStringGeneratorTest extends TestCase
 {
     use FakerCaseTrait;
+    use ProbabilityTestCaseTrait;
 
     private const ENUM_VALUE = 'enumValue';
     private const PATTERN = '^\d{3}-\d{2}-\d{4}$';
@@ -40,15 +42,11 @@ class FakerStringGeneratorTest extends TestCase
         $type->nullable = true;
         $this->givenFaker_method_returnsValue('rangedText', '');
 
-        for ($i = 0; $i < 100; $i++) {
-            $value = $generator->generateValue($type);
+        $test = function () use ($generator, $type) {
+            return $generator->generateValue($type);
+        };
 
-            if (null === $value) {
-                break;
-            }
-        }
-
-        $this->assertNull($value);
+        $this->expectClosureOccasionallyReturnsNull($test);
     }
 
     /** @test */

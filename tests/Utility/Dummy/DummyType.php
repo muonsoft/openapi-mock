@@ -10,6 +10,7 @@
 
 namespace App\Tests\Utility\Dummy;
 
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
@@ -17,4 +18,5 @@ use App\Mock\Parameters\Schema\Type\TypeInterface;
  */
 class DummyType implements TypeInterface
 {
+    use FixedFieldsTrait;
 }
