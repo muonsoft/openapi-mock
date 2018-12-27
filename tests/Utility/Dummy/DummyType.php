@@ -10,11 +10,11 @@
 
 namespace App\Tests\Utility\Dummy;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class DummyType implements TypeMarkerInterface
+class DummyType implements TypeInterface
 {
 }

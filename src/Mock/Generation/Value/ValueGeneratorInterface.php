@@ -10,12 +10,12 @@
 
 namespace App\Mock\Generation\Value;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 interface ValueGeneratorInterface
 {
-    public function generateValue(TypeMarkerInterface $type);
+    public function generateValue(TypeInterface $type);
 }

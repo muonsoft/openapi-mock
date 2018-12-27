@@ -12,7 +12,7 @@ namespace App\Mock\Generation\Value\Primitive;
 
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -22,7 +22,7 @@ class RandomIntegerGenerator implements ValueGeneratorInterface
     /**
      * @param IntegerType $type
      */
-    public function generateValue(TypeMarkerInterface $type): ?int
+    public function generateValue(TypeInterface $type): ?int
     {
         if ($type->nullable && random_int(0, 1) === 0) {
             $value = null;

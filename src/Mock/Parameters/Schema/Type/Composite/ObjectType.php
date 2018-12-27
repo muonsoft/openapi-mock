@@ -10,15 +10,18 @@
 
 namespace App\Mock\Parameters\Schema\Type\Composite;
 
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Utility\StringList;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ObjectType implements TypeMarkerInterface
+class ObjectType implements TypeInterface
 {
+    use FixedFieldsTrait;
+
     /** @var StringList */
     public $required;
 

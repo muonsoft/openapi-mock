@@ -16,6 +16,7 @@ use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
+use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
@@ -24,6 +25,8 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class ArrayTypeParser implements TypeParserInterface
 {
+    use FieldParserTrait;
+
     /** @var DelegatingSchemaParser */
     private $resolvingSchemaParser;
 
@@ -38,6 +41,7 @@ class ArrayTypeParser implements TypeParserInterface
         $this->validateSchema($schema, $pointer);
 
         $type = new ArrayType();
+        $this->readFixedFieldsValues($type, $schema);
         $type->items = $this->readItemsSchema($specification, $pointer);
         $type->minItems = $this->readIntegerValue($schema, 'minItems');
         $type->maxItems = $this->readIntegerValue($schema, 'maxItems');
@@ -59,15 +63,5 @@ class ArrayTypeParser implements TypeParserInterface
         $itemsSchema = $this->resolvingSchemaParser->parsePointedSchema($specification, $itemsPointer);
 
         return $itemsSchema;
-    }
-
-    private function readBoolValue(array $schema, string $key): bool
-    {
-        return (bool) ($schema[$key] ?? false);
-    }
-
-    private function readIntegerValue(array $schema, string $key): int
-    {
-        return (int) ($schema[$key] ?? 0);
     }
 }

@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation\Value\Composite;
 
 use App\Mock\Generation\Value\Composite\HashMapValueGenerator;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\FakerCaseTrait;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
@@ -83,7 +83,7 @@ class HashMapValueGeneratorTest extends TestCase
         $type->minProperties = self::PROPERTIES_COUNT;
         $type->maxProperties = self::PROPERTIES_COUNT;
         $type->required = new StringList(['default']);
-        $defaultValueType = \Phake::mock(TypeMarkerInterface::class);
+        $defaultValueType = \Phake::mock(TypeInterface::class);
         $type->properties->set('default', $defaultValueType);
         $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();

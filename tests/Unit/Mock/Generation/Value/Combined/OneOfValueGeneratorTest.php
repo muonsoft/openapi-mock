@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation\Value\Combined;
 
 use App\Mock\Generation\Value\Combined\OneOfValueGenerator;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -30,8 +30,8 @@ class OneOfValueGeneratorTest extends TestCase
     {
         $generator = new OneOfValueGenerator($this->valueGeneratorLocator);
         $oneOf = new OneOfType();
-        $type1 = \Phake::mock(TypeMarkerInterface::class);
-        $type2 = \Phake::mock(TypeMarkerInterface::class);
+        $type1 = \Phake::mock(TypeInterface::class);
+        $type2 = \Phake::mock(TypeInterface::class);
         $oneOf->types->add($type1);
         $oneOf->types->add($type2);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();

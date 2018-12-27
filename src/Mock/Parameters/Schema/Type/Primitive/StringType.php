@@ -10,16 +10,16 @@
 
 namespace App\Mock\Parameters\Schema\Type\Primitive;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Utility\StringList;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class StringType implements TypeMarkerInterface
+class StringType implements TypeInterface
 {
-    /** @var bool */
-    public $nullable = false;
+    use FixedFieldsTrait;
 
     /** @var int */
     public $minLength = 0;

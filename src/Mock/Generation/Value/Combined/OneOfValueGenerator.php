@@ -13,7 +13,7 @@ namespace App\Mock\Generation\Value\Combined;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -28,7 +28,7 @@ class OneOfValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    public function generateValue(TypeMarkerInterface $type)
+    public function generateValue(TypeInterface $type)
     {
         $generatingType = $this->getRandomInternalType($type);
         $generator = $this->generatorLocator->getValueGenerator($generatingType);
@@ -36,7 +36,7 @@ class OneOfValueGenerator implements ValueGeneratorInterface
         return $generator->generateValue($generatingType);
     }
 
-    private function getRandomInternalType(OneOfType $type): TypeMarkerInterface
+    private function getRandomInternalType(OneOfType $type): TypeInterface
     {
         $typesCount = $type->types->count();
         $typeIndex = random_int(0, $typesCount - 1);

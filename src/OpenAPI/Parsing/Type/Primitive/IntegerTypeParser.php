@@ -13,6 +13,7 @@ namespace App\OpenAPI\Parsing\Type\Primitive;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
@@ -21,12 +22,14 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class IntegerTypeParser implements TypeParserInterface
 {
+    use FieldParserTrait;
+
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $type = new IntegerType();
         $schema = $specification->getSchema($pointer);
 
-        $type->nullable = $this->readBoolValue($schema, 'nullable');
+        $this->readFixedFieldsValues($type, $schema);
         $type->exclusiveMinimum = $this->readBoolValue($schema, 'exclusiveMinimum');
         $type->exclusiveMaximum = $this->readBoolValue($schema, 'exclusiveMaximum');
         $type->minimum = $this->readIntegerOrNullValue($schema, 'minimum');
@@ -34,21 +37,5 @@ class IntegerTypeParser implements TypeParserInterface
         $type->multipleOf = $this->readIntegerOrNullValue($schema, 'multipleOf');
 
         return $type;
-    }
-
-    private function readBoolValue(array $schema, string $key): bool
-    {
-        return (bool) ($schema[$key] ?? false);
-    }
-
-    private function readIntegerOrNullValue(array $schema, string $key): ?int
-    {
-        $value = null;
-
-        if (array_key_exists($key, $schema)) {
-            $value = (int) $schema[$key];
-        }
-
-        return $value;
     }
 }

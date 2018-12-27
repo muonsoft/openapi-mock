@@ -14,11 +14,12 @@ use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\ReferenceResolvingSchemaParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -29,6 +30,8 @@ use App\Utility\StringList;
  */
 class ObjectTypeParser implements TypeParserInterface
 {
+    use FieldParserTrait;
+
     /** @var ReferenceResolvingSchemaParser */
     private $resolvingSchemaParser;
 
@@ -47,6 +50,8 @@ class ObjectTypeParser implements TypeParserInterface
             $object = $this->parseObjectType($specification, $pointer);
         }
 
+        $this->readFixedFieldsValues($object, $schema);
+
         return $object;
     }
 
@@ -60,7 +65,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $object;
     }
 
-    private function parseFreeFormOrHashMap(SpecificationAccessor $specification, SpecificationPointer $pointer): TypeMarkerInterface
+    private function parseFreeFormOrHashMap(SpecificationAccessor $specification, SpecificationPointer $pointer): TypeInterface
     {
         $schema = $specification->getSchema($pointer);
 
@@ -149,10 +154,5 @@ class ObjectTypeParser implements TypeParserInterface
                 $pointer
             );
         }
-    }
-
-    private function readIntegerValue(array $schema, string $key): int
-    {
-        return (int) ($schema[$key] ?? 0);
     }
 }

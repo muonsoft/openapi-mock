@@ -13,7 +13,7 @@ namespace App\Tests\Unit\Mock\Generation\Value\Composite;
 use App\Mock\Generation\Value\Composite\ArrayValueGenerator;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -124,7 +124,7 @@ class ArrayValueGeneratorTest extends TestCase
                 $this->max = $max;
             }
 
-            public function generateValue(TypeMarkerInterface $type): int
+            public function generateValue(TypeInterface $type): int
             {
                 return random_int($this->min, $this->max);
             }

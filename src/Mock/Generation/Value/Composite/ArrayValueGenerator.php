@@ -13,7 +13,7 @@ namespace App\Mock\Generation\Value\Composite;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -30,7 +30,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
     /** @var ValueGeneratorInterface */
     private $valueGenerator;
 
-    /** @var TypeMarkerInterface */
+    /** @var TypeInterface */
     private $valueType;
 
     /** @var array */
@@ -45,7 +45,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
      * @param ArrayType $type
      * @return array
      */
-    public function generateValue(TypeMarkerInterface $type): array
+    public function generateValue(TypeInterface $type): array
     {
         $this->initializeValueGenerator($type->items);
 
@@ -68,7 +68,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
         return random_int($minItems, $maxItems);
     }
 
-    private function initializeValueGenerator(TypeMarkerInterface $type): void
+    private function initializeValueGenerator(TypeInterface $type): void
     {
         $this->valueType = $type;
         $this->valueGenerator = $this->generatorLocator->getValueGenerator($this->valueType);
@@ -86,7 +86,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
         return $value;
     }
 
-    private function generateUniqueValue(TypeMarkerInterface $itemsType)
+    private function generateUniqueValue(TypeInterface $itemsType)
     {
         $attempts = 0;
 

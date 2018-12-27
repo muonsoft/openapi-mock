@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -94,6 +95,26 @@ class ArrayTypeParserTest extends TestCase
         $this->expectExceptionMessage('Section "items" is required');
 
         $parser->parsePointedSchema($specification, new SpecificationPointer());
+    }
+
+    /** @test */
+    public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
+    {
+        $parser = $this->createArrayTypeParser();
+        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $specification = new SpecificationAccessor([
+            'items' => self::ITEMS_SCHEMA,
+            'nullable' => true,
+            'readOnly' => true,
+            'writeOnly' => true,
+        ]);
+
+        /** @var TypeInterface $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
+
+        $this->assertTrue($type->isNullable());
+        $this->assertTrue($type->isReadOnly());
+        $this->assertTrue($type->isWriteOnly());
     }
 
     private function createArrayTypeParser(): ArrayTypeParser

@@ -13,7 +13,7 @@ namespace App\Tests\Unit\OpenAPI\Parsing\Type\Composite;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -87,7 +87,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_validSchemaWithProperties_propertiesParsedByTypeParsers(): void
     {
         $parser = $this->createObjectTypeParser();
-        $expectedPropertyType = \Phake::mock(TypeMarkerInterface::class);
+        $expectedPropertyType = \Phake::mock(TypeInterface::class);
         $this->givenContextualParser_parsePointedSchema_returns($expectedPropertyType);
         $specification = new SpecificationAccessor(self::VALID_OBJECT_SCHEMA);
 
@@ -207,7 +207,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_validSchemaWithDefaultProperties_hashMapTypeWithDefaultPropertiesReturned(): void
     {
         $parser = $this->createObjectTypeParser();
-        $type = \Phake::mock(TypeMarkerInterface::class);
+        $type = \Phake::mock(TypeInterface::class);
         $this->givenContextualParser_parsePointedSchema_returns($type);
         $specification = new SpecificationAccessor(self::HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES);
 
@@ -242,7 +242,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_requiredPropertyDoesNotExist_exceptionThrown(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeMarkerInterface::class));
+        $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
         $specification = new SpecificationAccessor([
             'type' => 'object',
             'properties' => [
@@ -263,7 +263,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_invalidRequiredProperty_exceptionThrown(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeMarkerInterface::class));
+        $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
         $specification = new SpecificationAccessor(['required' => [[]]]);
 
         $this->expectException(ParsingException::class);
@@ -272,12 +272,31 @@ class ObjectTypeParserTest extends TestCase
         $parser->parsePointedSchema($specification, new SpecificationPointer());
     }
 
+    /** @test */
+    public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
+    {
+        $parser = $this->createObjectTypeParser();
+        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $specification = new SpecificationAccessor([
+            'nullable' => true,
+            'readOnly' => true,
+            'writeOnly' => true,
+        ]);
+
+        /** @var TypeInterface $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
+
+        $this->assertTrue($type->isNullable());
+        $this->assertTrue($type->isReadOnly());
+        $this->assertTrue($type->isWriteOnly());
+    }
+
     private function createObjectTypeParser(): ObjectTypeParser
     {
         return new ObjectTypeParser($this->contextualParser);
     }
 
-    private function assertObjectIsValidAndHasProperty(ObjectType $object, TypeMarkerInterface $propertyType): void
+    private function assertObjectIsValidAndHasProperty(ObjectType $object, TypeInterface $propertyType): void
     {
         $this->assertCount(1, $object->properties);
         $this->assertSame($propertyType, $object->properties->first());
@@ -285,7 +304,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertSame([self::PROPERTY_NAME], $object->required->toArray());
     }
 
-    private function assertHashMapHasValidDefaultProperty(HashMapType $type, TypeMarkerInterface $propertyType): void
+    private function assertHashMapHasValidDefaultProperty(HashMapType $type, TypeInterface $propertyType): void
     {
         $this->assertCount(1, $type->properties);
         $this->assertSame($propertyType, $type->properties->first());

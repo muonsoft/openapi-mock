@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\IntegerTypeParser;
@@ -64,5 +65,23 @@ class IntegerTypeParserTest extends TestCase
         $this->assertTrue($type->exclusiveMinimum);
         $this->assertTrue($type->exclusiveMaximum);
         $this->assertSame(self::MULTIPLE_OF, $type->multipleOf);
+    }
+
+    /** @test */
+    public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
+    {
+        $parser = new IntegerTypeParser();
+        $specification = new SpecificationAccessor([
+            'nullable' => true,
+            'readOnly' => true,
+            'writeOnly' => true,
+        ]);
+
+        /** @var TypeInterface $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
+
+        $this->assertTrue($type->isNullable());
+        $this->assertTrue($type->isReadOnly());
+        $this->assertTrue($type->isWriteOnly());
     }
 }

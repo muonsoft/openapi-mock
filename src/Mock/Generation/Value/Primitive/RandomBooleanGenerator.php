@@ -12,7 +12,7 @@ namespace App\Mock\Generation\Value\Primitive;
 
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -22,7 +22,7 @@ class RandomBooleanGenerator implements ValueGeneratorInterface
     /**
      * @param BooleanType $type
      */
-    public function generateValue(TypeMarkerInterface $type): ?bool
+    public function generateValue(TypeInterface $type): ?bool
     {
         if ($type->nullable && random_int(0, 1) === 0) {
             $value = null;

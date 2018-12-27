@@ -13,6 +13,7 @@ namespace App\OpenAPI\Parsing\Type\Primitive;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
@@ -22,6 +23,8 @@ use Psr\Log\LoggerInterface;
  */
 class StringTypeParser implements TypeParserInterface
 {
+    use FieldParserTrait;
+
     /** @var LoggerInterface */
     private $logger;
 
@@ -38,7 +41,7 @@ class StringTypeParser implements TypeParserInterface
         $this->type = new StringType();
         $schema = $specification->getSchema($pointer);
 
-        $this->type->nullable = $this->readBoolValue($schema, 'nullable');
+        $this->readFixedFieldsValues($this->type, $schema);
         $this->type->minLength = $this->readIntegerValue($schema, 'minLength');
         $this->type->maxLength = $this->readIntegerValue($schema, 'maxLength');
         $this->type->format = $this->readStringValue($schema, 'format');
@@ -49,21 +52,6 @@ class StringTypeParser implements TypeParserInterface
         $this->processEnumProperty($schema, $pointer);
 
         return $this->type;
-    }
-
-    private function readBoolValue(array $schema, string $key): bool
-    {
-        return (bool) ($schema[$key] ?? false);
-    }
-
-    private function readIntegerValue(array $schema, string $key): int
-    {
-        return (int) ($schema[$key] ?? 0);
-    }
-
-    private function readStringValue(array $schema, string $key): string
-    {
-        return (string) ($schema[$key] ?? '');
     }
 
     private function lengthsAutoCorrection(SpecificationPointer $pointer): void

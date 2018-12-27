@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\StringTypeParser;
@@ -148,6 +149,24 @@ class StringTypeParserTest extends TestCase
         $this->assertCount(1, $type->enum);
         $this->assertContains(self::ENUM_VALUE_1, $type->enum);
         $this->assertLogger_warning_wasCalledOnce();
+    }
+
+    /** @test */
+    public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
+    {
+        $parser = $this->createStringTypeParser();
+        $specification = new SpecificationAccessor([
+            'nullable' => true,
+            'readOnly' => true,
+            'writeOnly' => true,
+        ]);
+
+        /** @var TypeInterface $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
+
+        $this->assertTrue($type->isNullable());
+        $this->assertTrue($type->isReadOnly());
+        $this->assertTrue($type->isWriteOnly());
     }
 
     private function createStringTypeParser(): StringTypeParser

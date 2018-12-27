@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation\Value\Combined;
 
 use App\Mock\Generation\Value\Combined\AllOfValueGenerator;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -37,8 +37,8 @@ class AllOfValueGeneratorTest extends TestCase
     {
         $generator = new AllOfValueGenerator($this->valueGeneratorLocator);
         $allOf = new AllOfType();
-        $type1 = \Phake::mock(TypeMarkerInterface::class);
-        $type2 = \Phake::mock(TypeMarkerInterface::class);
+        $type1 = \Phake::mock(TypeInterface::class);
+        $type2 = \Phake::mock(TypeInterface::class);
         $allOf->types->add($type1);
         $allOf->types->add($type2);
         $internalGenerator1 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type1);

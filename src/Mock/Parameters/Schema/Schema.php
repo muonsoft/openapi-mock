@@ -10,7 +10,7 @@
 
 namespace App\Mock\Parameters\Schema;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -18,6 +18,6 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class Schema implements SpecificationObjectMarkerInterface
 {
-    /** @var TypeMarkerInterface */
+    /** @var TypeInterface */
     public $value;
 }

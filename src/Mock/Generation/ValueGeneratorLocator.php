@@ -12,7 +12,7 @@ namespace App\Mock\Generation;
 
 use App\Mock\Exception\MockGenerationException;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -32,7 +32,7 @@ class ValueGeneratorLocator
         $this->valueGeneratorMap = $valueGeneratorMap;
     }
 
-    public function getValueGenerator(TypeMarkerInterface $type): ValueGeneratorInterface
+    public function getValueGenerator(TypeInterface $type): ValueGeneratorInterface
     {
         $typeClass = \get_class($type);
 

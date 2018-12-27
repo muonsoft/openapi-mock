@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Primitive\BooleanTypeParser;
@@ -31,17 +32,20 @@ class BooleanTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_validNullableBooleanSchema_booleanTypeReturned(): void
+    public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
     {
         $parser = new BooleanTypeParser();
         $specification = new SpecificationAccessor([
-            'nullable' => true
+            'nullable' => true,
+            'readOnly' => true,
+            'writeOnly' => true,
         ]);
 
-        /** @var BooleanType $type */
+        /** @var TypeInterface $type */
         $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertInstanceOf(BooleanType::class, $type);
-        $this->assertTrue($type->nullable);
+        $this->assertTrue($type->isNullable());
+        $this->assertTrue($type->isReadOnly());
+        $this->assertTrue($type->isWriteOnly());
     }
 }

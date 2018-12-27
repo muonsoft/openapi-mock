@@ -19,6 +19,6 @@ class TypeCollection extends AbstractClassCollection
 {
     protected function getElementClassName(): string
     {
-        return TypeMarkerInterface::class;
+        return TypeInterface::class;
     }
 }

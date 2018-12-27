@@ -13,7 +13,7 @@ namespace App\Tests\Unit\Mock\Generation;
 use App\Mock\Exception\MockGenerationException;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -51,7 +51,7 @@ class ValueGeneratorLocatorTest extends TestCase
         $locator = new ValueGeneratorLocator($this->container, [
             DummyType::class => self::VALUE_GENERATOR_SERVICE_ID
         ]);
-        $type = \Phake::mock(TypeMarkerInterface::class);
+        $type = \Phake::mock(TypeInterface::class);
 
         $this->expectException(MockGenerationException::class);
         $this->expectExceptionMessageRegExp('/Value generator for class .* not found/');

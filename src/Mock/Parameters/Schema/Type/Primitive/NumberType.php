@@ -10,15 +10,15 @@
 
 namespace App\Mock\Parameters\Schema\Type\Primitive;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class NumberType implements TypeMarkerInterface
+class NumberType implements TypeInterface
 {
-    /** @var bool */
-    public $nullable = false;
+    use FixedFieldsTrait;
 
     /** @var float|null */
     public $minimum;

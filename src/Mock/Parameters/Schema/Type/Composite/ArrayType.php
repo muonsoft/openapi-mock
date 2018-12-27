@@ -10,14 +10,17 @@
 
 namespace App\Mock\Parameters\Schema\Type\Composite;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ArrayType implements TypeMarkerInterface
+class ArrayType implements TypeInterface
 {
-    /** @var TypeMarkerInterface */
+    use FixedFieldsTrait;
+
+    /** @var TypeInterface */
     public $items;
 
     /** @var int */

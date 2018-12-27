@@ -15,7 +15,17 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface TypeMarkerInterface extends SpecificationObjectMarkerInterface
+interface TypeInterface extends SpecificationObjectMarkerInterface
 {
+    public function isNullable(): bool;
 
+    public function isReadOnly(): bool;
+
+    public function isWriteOnly(): bool;
+
+    public function setNullable(bool $nullable): void;
+
+    public function setReadOnly(bool $readOnly): void;
+
+    public function setWriteOnly(bool $writeOnly): void;
 }

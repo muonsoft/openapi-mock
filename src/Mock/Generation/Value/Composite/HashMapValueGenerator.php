@@ -13,7 +13,7 @@ namespace App\Mock\Generation\Value\Composite;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use Faker\Generator;
 
 /**
@@ -33,7 +33,7 @@ class HashMapValueGenerator implements ValueGeneratorInterface
     /** @var ValueGeneratorInterface */
     private $valueGenerator;
 
-    /** @var TypeMarkerInterface */
+    /** @var TypeInterface */
     private $valueType;
 
     /** @var array */
@@ -49,7 +49,7 @@ class HashMapValueGenerator implements ValueGeneratorInterface
      * @param HashMapType $type
      * @return array
      */
-    public function generateValue(TypeMarkerInterface $type): array
+    public function generateValue(TypeInterface $type): array
     {
         $this->initializeValueGenerator($type->value);
 
@@ -59,7 +59,7 @@ class HashMapValueGenerator implements ValueGeneratorInterface
         return $this->properties;
     }
 
-    private function initializeValueGenerator(TypeMarkerInterface $type): void
+    private function initializeValueGenerator(TypeInterface $type): void
     {
         $this->valueType = $type;
         $this->valueGenerator = $this->generatorLocator->getValueGenerator($this->valueType);

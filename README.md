@@ -33,6 +33,10 @@ Swagger mock server with fake data generation support
 * [ ] logging
 * [ ] docker build in ci
 * [ ] try spiral/roadrunner server instead of nginx
+* [ ] code enhancements
+ * [ ] use of easy coding standard
+ * [ ] type assertions
+* [ ] container acceptance test in ci 
 * [ ] make supported features table in README
 
 ## TODO for v0.2

@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation\Value\Combined;
 
 use App\Mock\Generation\Value\Combined\AnyOfValueGenerator;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -47,8 +47,8 @@ class AnyOfValueGeneratorTest extends TestCase
     {
         $generator = new AnyOfValueGenerator($this->valueGeneratorLocator);
         $anyOf = new AnyOfType();
-        $type1 = \Phake::mock(TypeMarkerInterface::class);
-        $type2 = \Phake::mock(TypeMarkerInterface::class);
+        $type1 = \Phake::mock(TypeInterface::class);
+        $type2 = \Phake::mock(TypeInterface::class);
         $anyOf->types->add($type1);
         $anyOf->types->add($type2);
         $internalGenerator1 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type1);
@@ -73,8 +73,8 @@ class AnyOfValueGeneratorTest extends TestCase
     {
         $generator = new AnyOfValueGenerator($this->valueGeneratorLocator);
         $anyOf = new AnyOfType();
-        $type1 = \Phake::mock(TypeMarkerInterface::class);
-        $type2 = \Phake::mock(TypeMarkerInterface::class);
+        $type1 = \Phake::mock(TypeInterface::class);
+        $type2 = \Phake::mock(TypeInterface::class);
         $anyOf->types->add($type1);
         $anyOf->types->add($type2);
         $internalGenerator1 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type1);

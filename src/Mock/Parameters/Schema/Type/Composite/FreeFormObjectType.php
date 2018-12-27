@@ -10,13 +10,16 @@
 
 namespace App\Mock\Parameters\Schema\Type\Composite;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class FreeFormObjectType implements TypeMarkerInterface
+class FreeFormObjectType implements TypeInterface
 {
+    use FixedFieldsTrait;
+
     /** @var int */
     public $minProperties = 0;
 

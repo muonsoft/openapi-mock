@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation;
 
 use App\Mock\Generation\DataGenerator;
 use App\Mock\Parameters\Schema\Schema;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -42,7 +42,7 @@ class DataGeneratorTest extends TestCase
         $this->assertSame($generatedValue, $value);
     }
 
-    private function givenSchemaWithValueType(TypeMarkerInterface $type): Schema
+    private function givenSchemaWithValueType(TypeInterface $type): Schema
     {
         $schema = new Schema();
         $schema->value = $type;

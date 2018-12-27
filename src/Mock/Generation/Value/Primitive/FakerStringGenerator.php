@@ -12,7 +12,7 @@ namespace App\Mock\Generation\Value\Primitive;
 
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use Faker\Generator;
 
 /**
@@ -46,7 +46,7 @@ class FakerStringGenerator implements ValueGeneratorInterface
      * @return null|string
      * @throws \Exception
      */
-    public function generateValue(TypeMarkerInterface $type): ?string
+    public function generateValue(TypeInterface $type): ?string
     {
         if ($type->nullable && random_int(0, 1) === 0) {
             $value = null;

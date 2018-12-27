@@ -13,7 +13,7 @@ namespace App\Mock\Generation\Value\Combined;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -28,7 +28,7 @@ class AllOfValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    public function generateValue(TypeMarkerInterface $type): array
+    public function generateValue(TypeInterface $type): array
     {
         $values = $this->generateValues($type);
 

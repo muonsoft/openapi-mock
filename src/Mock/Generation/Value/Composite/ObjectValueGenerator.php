@@ -13,7 +13,7 @@ namespace App\Mock\Generation\Value\Composite;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -32,7 +32,7 @@ class ObjectValueGenerator implements ValueGeneratorInterface
      * @param ObjectType $type
      * @return array
      */
-    public function generateValue(TypeMarkerInterface $type): array
+    public function generateValue(TypeInterface $type): array
     {
         $object = [];
 
@@ -43,7 +43,7 @@ class ObjectValueGenerator implements ValueGeneratorInterface
         return $object;
     }
 
-    private function generateValueByType(TypeMarkerInterface $type)
+    private function generateValueByType(TypeInterface $type)
     {
         $propertyValueGenerator = $this->generatorLocator->getValueGenerator($type);
 

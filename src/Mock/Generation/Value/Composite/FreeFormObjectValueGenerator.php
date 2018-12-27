@@ -12,7 +12,7 @@ namespace App\Mock\Generation\Value\Composite;
 
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 use Faker\Generator;
 
 /**
@@ -35,7 +35,7 @@ class FreeFormObjectValueGenerator implements ValueGeneratorInterface
      * @param FreeFormObjectType $type
      * @return array
      */
-    public function generateValue(TypeMarkerInterface $type): array
+    public function generateValue(TypeInterface $type): array
     {
         $properties = [];
 

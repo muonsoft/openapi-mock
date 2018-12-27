@@ -10,13 +10,13 @@
 
 namespace App\Mock\Parameters\Schema\Type\Primitive;
 
-use App\Mock\Parameters\Schema\Type\TypeMarkerInterface;
+use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
+use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class BooleanType implements TypeMarkerInterface
+class BooleanType implements TypeInterface
 {
-    /** @var bool */
-    public $nullable = false;
+    use FixedFieldsTrait;
 }

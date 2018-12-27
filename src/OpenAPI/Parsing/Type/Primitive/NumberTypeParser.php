@@ -13,6 +13,7 @@ namespace App\OpenAPI\Parsing\Type\Primitive;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
@@ -21,11 +22,14 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class NumberTypeParser implements TypeParserInterface
 {
+    use FieldParserTrait;
+
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $type = new NumberType();
         $schema = $specification->getSchema($pointer);
 
+        $this->readFixedFieldsValues($type, $schema);
         $type->nullable = $this->readBoolValue($schema, 'nullable');
         $type->exclusiveMinimum = $this->readBoolValue($schema, 'exclusiveMinimum');
         $type->exclusiveMaximum = $this->readBoolValue($schema, 'exclusiveMaximum');
@@ -34,21 +38,5 @@ class NumberTypeParser implements TypeParserInterface
         $type->multipleOf = $this->readFloatOrNullValue($schema, 'multipleOf');
 
         return $type;
-    }
-
-    private function readBoolValue(array $schema, string $key): bool
-    {
-        return (bool) ($schema[$key] ?? false);
-    }
-
-    private function readFloatOrNullValue(array $schema, string $key): ?float
-    {
-        $value = null;
-
-        if (array_key_exists($key, $schema)) {
-            $value = (float) $schema[$key];
-        }
-
-        return $value;
     }
 }
