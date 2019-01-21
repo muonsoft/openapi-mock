@@ -53,6 +53,15 @@
     "fzaninotto/faker": {
         "version": "v1.8.0"
     },
+    "guzzlehttp/guzzle": {
+        "version": "6.3.3"
+    },
+    "guzzlehttp/promises": {
+        "version": "v1.3.1"
+    },
+    "guzzlehttp/psr7": {
+        "version": "1.5.2"
+    },
     "justinrainbow/json-schema": {
         "version": "5.x-dev"
     },
@@ -110,11 +119,17 @@
     "psr/container": {
         "version": "1.0.0"
     },
+    "psr/http-message": {
+        "version": "1.0.1"
+    },
     "psr/log": {
         "version": "1.0.2"
     },
     "psr/simple-cache": {
         "version": "1.0.1"
+    },
+    "ralouphie/getallheaders": {
+        "version": "2.0.5"
     },
     "sebastian/code-unit-reverse-lookup": {
         "version": "1.0.1"
@@ -166,6 +181,9 @@
             "version": "3.3",
             "ref": "e3868d2f4a5104f19f844fe551099a00c6562527"
         }
+    },
+    "symfony/contracts": {
+        "version": "v1.0.2"
     },
     "symfony/css-selector": {
         "version": "4.1.x-dev"
@@ -250,6 +268,9 @@
             "version": "3.3",
             "ref": "1fb02a6e1c8f3d4232cce485c9afa868d63b115a"
         }
+    },
+    "symfony/var-exporter": {
+        "version": "v4.2.2"
     },
     "symfony/yaml": {
         "version": "v4.1.3"

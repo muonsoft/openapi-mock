@@ -14,7 +14,7 @@ use App\Mock\Parameters\MockParametersCollection;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\SpecificationLoaderInterface;
-use App\Utility\FileLoader;
+use App\Utility\UriLoader;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 /**
@@ -28,8 +28,8 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
         'json' => 'json',
     ];
 
-    /** @var FileLoader */
-    private $fileLoader;
+    /** @var UriLoader */
+    private $uriLoader;
 
     /** @var DecoderInterface */
     private $decoder;
@@ -37,9 +37,9 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
     /** @var SpecificationParser */
     private $parser;
 
-    public function __construct(FileLoader $fileLoader, DecoderInterface $decoder, SpecificationParser $parser)
+    public function __construct(UriLoader $uriLoader, DecoderInterface $decoder, SpecificationParser $parser)
     {
-        $this->fileLoader = $fileLoader;
+        $this->uriLoader = $uriLoader;
         $this->decoder = $decoder;
         $this->parser = $parser;
     }
@@ -47,7 +47,7 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
     public function loadMockParameters(string $url): MockParametersCollection
     {
         $format = $this->guessFormatByExtension($url);
-        $fileContents = $this->fileLoader->loadFileContents($url);
+        $fileContents = $this->uriLoader->loadFileContents($url);
         $specificationSchema = $this->decoder->decode($fileContents, $format);
         $specification = new SpecificationAccessor($specificationSchema);
 

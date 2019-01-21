@@ -15,14 +15,14 @@ use App\OpenAPI\Loading\SpecificationFileLoader;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\Utility\FileLoader;
+use App\Utility\UriLoader;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class SpecificationFileLoaderTest extends TestCase
 {
-    /** @var FileLoader */
-    private $fileLoader;
+    /** @var UriLoader */
+    private $uriLoader;
 
     /** @var DecoderInterface */
     private $decoder;
@@ -32,7 +32,7 @@ class SpecificationFileLoaderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->fileLoader = \Phake::mock(FileLoader::class);
+        $this->uriLoader = \Phake::mock(UriLoader::class);
         $this->decoder = \Phake::mock(DecoderInterface::class);
         $this->parser = \Phake::mock(SpecificationParser::class);
     }
@@ -46,13 +46,13 @@ class SpecificationFileLoaderTest extends TestCase
         string $format
     ): void {
         $loader = $this->createSpecificationLoader();
-        $fileContents = $this->givenFileLoader_loadFileContents_returnsContents();
+        $fileContents = $this->givenUriLoader_loadFileContents_returnsContents();
         $specification = $this->givenDecoder_decode_returnsRawSpecification();
         $parsedSpecification = $this->givenSpecificationParser_parseSpecification_returnsParsedSpecification();
 
         $mockParameters = $loader->loadMockParameters($url);
 
-        $this->assertFileLoader_loadFileContents_wasCalledOnceWithUrl($url);
+        $this->assertUriLoader_loadFileContents_wasCalledOnceWithUrl($url);
         $this->assertDecoder_decode_wasCalledOnceWithDataAndFormat($fileContents, $format);
         $this->assertSpecificationParser_parseSpecification_wasCalledOnceWithSpecification($specification);
         $this->assertSame($parsedSpecification, $mockParameters);
@@ -80,9 +80,9 @@ class SpecificationFileLoaderTest extends TestCase
         $loader->loadMockParameters('unsupported_url');
     }
 
-    private function assertFileLoader_loadFileContents_wasCalledOnceWithUrl(string $url): void
+    private function assertUriLoader_loadFileContents_wasCalledOnceWithUrl(string $url): void
     {
-        \Phake::verify($this->fileLoader)
+        \Phake::verify($this->uriLoader)
             ->loadFileContents($url);
     }
 
@@ -102,11 +102,11 @@ class SpecificationFileLoaderTest extends TestCase
         $this->assertSame($specification, $schema);
     }
 
-    private function givenFileLoader_loadFileContents_returnsContents(): string
+    private function givenUriLoader_loadFileContents_returnsContents(): string
     {
         $fileContents = 'specification_raw_contents';
 
-        \Phake::when($this->fileLoader)
+        \Phake::when($this->uriLoader)
             ->loadFileContents(\Phake::anyParameters())
             ->thenReturn($fileContents);
 
@@ -137,6 +137,6 @@ class SpecificationFileLoaderTest extends TestCase
 
     private function createSpecificationLoader(): SpecificationFileLoader
     {
-        return new SpecificationFileLoader($this->fileLoader, $this->decoder, $this->parser);
+        return new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser);
     }
 }

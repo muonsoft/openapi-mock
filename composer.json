@@ -8,6 +8,7 @@
         "ext-json": "*",
         "doctrine/collections": "1.*",
         "fzaninotto/faker": "1.*",
+        "guzzlehttp/guzzle": "6.*",
         "symfony/cache": "4.*",
         "symfony/console": "4.*",
         "symfony/flex": "1.*",

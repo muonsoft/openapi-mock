@@ -1,4 +1,4 @@
-FROM php:fpm-alpine
+FROM php:7.2-fpm-alpine
 LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
 ENV APP_ENV=prod \
