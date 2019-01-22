@@ -10,6 +10,7 @@
 
 namespace App\OpenAPI\Loading;
 
+use App\Cache\CacheKeyGeneratorInterface;
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockParametersCollection;
 use App\Mock\Parameters\MockResponse;
@@ -40,20 +41,25 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
     /** @var SpecificationLoaderInterface */
     private $specificationLoader;
 
+    /** @var CacheKeyGeneratorInterface */
+    private $cacheKeyGenerator;
+
     /** @var CacheInterface */
     private $cache;
 
     public function __construct(
         SpecificationLoaderInterface $specificationLoader,
+        CacheKeyGeneratorInterface $cacheKeyGenerator,
         CacheInterface $cache
     ) {
         $this->specificationLoader = $specificationLoader;
+        $this->cacheKeyGenerator = $cacheKeyGenerator;
         $this->cache = $cache;
     }
 
     public function loadMockParameters(string $url): MockParametersCollection
     {
-        $cacheKey = $this->createCacheKeyByUrl($url);
+        $cacheKey = $this->cacheKeyGenerator->generateKey($url);
 
         if ($this->cache->has($cacheKey)) {
             $specification = $this->loadFromCache($cacheKey);
@@ -67,13 +73,8 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
 
     public function resetCache(string $url): void
     {
-        $cacheKey = $this->createCacheKeyByUrl($url);
+        $cacheKey = $this->cacheKeyGenerator->generateKey($url);
         $this->cache->delete($cacheKey);
-    }
-
-    private function createCacheKeyByUrl(string $url): string
-    {
-        return md5($url);
     }
 
     private function loadFromCache($cacheKey): MockParametersCollection

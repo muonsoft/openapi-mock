@@ -1,7 +1,11 @@
 parameters:
+  env(SWAGGER_MOCK_CACHE_TTL): 0
+  env(SWAGGER_MOCK_CACHE_STRATEGY): 'DISABLED'
+
   locale: 'en'
-#  specification_url: '%env(SPECIFICATION_URL)%'
-  specification_url: '%kernel.project_dir%/tests/Resources/swagger-files/combined-types.yaml'
+  specification_url: '%env(SWAGGER_MOCK_SPECIFICATION_URL)%'
+  cache_strategy: '%env(SWAGGER_MOCK_CACHE_STRATEGY)%'
+  cache_ttl: '%env(SWAGGER_MOCK_CACHE_TTL)%'
 
   type_parser_map:
     object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
@@ -53,17 +57,22 @@ services:
       - '@specification_loader'
       - '%specification_url%'
 
-  specification_loader:
-    class: App\OpenAPI\Loading\CachedSpecificationLoader
+  specification_loader_factory:
+    class: App\OpenAPI\SpecificationLoaderFactory
     arguments:
-      - '@App\OpenAPI\Loading\SpecificationFileLoader'
-      - '@specification_cache'
+      $cache: '@specification_cache'
+
+  specification_loader:
+    class: App\OpenAPI\SpecificationLoaderInterface
+    factory: ['@specification_loader_factory', 'createSpecificationLoader']
+    arguments:
+      - '%cache_strategy%'
 
   specification_cache:
     class: Symfony\Component\Cache\Simple\FilesystemCache
     arguments:
       - 'openapi'
-      - 0
+      - '%cache_ttl%'
       - '%kernel.project_dir%/var/file-cache'
 
   type_parser_service_locator:
@@ -85,6 +94,9 @@ services:
   Faker\Generator:
     class: Faker\Generator
     factory: ['App\Faker\FakerGeneratorFactory', 'createGenerator']
+
+  GuzzleHttp\ClientInterface:
+    class: GuzzleHttp\Client
 
   Negotiation\Negotiator:
     class: Negotiation\Negotiator

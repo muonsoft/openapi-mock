@@ -10,6 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Loading;
 
+use App\Cache\CacheKeyGeneratorInterface;
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockParametersCollection;
 use App\Mock\Parameters\MockResponse;
@@ -36,12 +37,16 @@ class CachedSpecificationLoaderTest extends TestCase
 
     private const OPENAPI_FILE = 'openapi_file';
 
+    /** @var CacheKeyGeneratorInterface */
+    private $cacheKeyGenerator;
+
     /** @var CacheInterface */
     private $cache;
 
     protected function setUp(): void
     {
         $this->setUpSpecificationLoader();
+        $this->cacheKeyGenerator = \Phake::mock(CacheKeyGeneratorInterface::class);
         $this->cache = \Phake::mock(CacheInterface::class);
     }
 
@@ -50,13 +55,14 @@ class CachedSpecificationLoaderTest extends TestCase
     {
         $cachedSpecificationLoader = $this->createCachedSpecificationLoader();
         $cachedSpecification = $this->givenMockParametersCollection();
-        $cacheKey = md5(self::OPENAPI_FILE);
+        $cacheKey = $this->givenCacheKeyGenerator_generateKey_returnsCacheKey();
         $this->givenCache_has_returns(true);
         $this->givenCache_get_returnsSerializedObject($cachedSpecification);
 
         $specification = $cachedSpecificationLoader->loadMockParameters(self::OPENAPI_FILE);
 
         $this->assertNotNull($specification);
+        $this->assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(self::OPENAPI_FILE);
         $this->assertCache_has_wasCalledOnceWithKey($cacheKey);
         $this->assertCache_get_wasCalledOnceWithKey($cacheKey);
         $this->assertEquals($cachedSpecification, $specification);
@@ -66,7 +72,7 @@ class CachedSpecificationLoaderTest extends TestCase
     public function loadMockParameters_cacheItemNotExists_mockParametersLoadedByLoaderAndSavedToCacheAndReturned(): void
     {
         $cachedSpecificationLoader = $this->createCachedSpecificationLoader();
-        $cacheKey = md5(self::OPENAPI_FILE);
+        $cacheKey = $this->givenCacheKeyGenerator_generateKey_returnsCacheKey();
         $this->givenCache_has_returns(false);
         $loadedSpecification = $this->givenMockParametersCollection();
         $this->givenSpecificationLoader_loadMockParameters_returnsMockParametersCollection($loadedSpecification);
@@ -74,6 +80,7 @@ class CachedSpecificationLoaderTest extends TestCase
         $specification = $cachedSpecificationLoader->loadMockParameters(self::OPENAPI_FILE);
 
         $this->assertNotNull($specification);
+        $this->assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(self::OPENAPI_FILE);
         $this->assertCache_has_wasCalledOnceWithKey($cacheKey);
         $this->assertCache_get_wasNeverCalledWithAnyParameters();
         $this->assertSpecificationLoader_loadMockParameters_wasCalledOnceWithUrl(self::OPENAPI_FILE);
@@ -85,10 +92,11 @@ class CachedSpecificationLoaderTest extends TestCase
     public function resetCache_url_cacheCleared(): void
     {
         $cachedSpecificationLoader = $this->createCachedSpecificationLoader();
-        $cacheKey = md5(self::OPENAPI_FILE);
+        $cacheKey = $this->givenCacheKeyGenerator_generateKey_returnsCacheKey();
 
         $cachedSpecificationLoader->resetCache(self::OPENAPI_FILE);
 
+        $this->assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(self::OPENAPI_FILE);
         $this->assertCache_delete_wasCalledOnceWithKey($cacheKey);
     }
 
@@ -154,6 +162,7 @@ class CachedSpecificationLoaderTest extends TestCase
     {
         return new CachedSpecificationLoader(
             $this->specificationLoader,
+            $this->cacheKeyGenerator,
             $this->cache
         );
     }
@@ -168,5 +177,20 @@ class CachedSpecificationLoaderTest extends TestCase
     {
         \Phake::verify($this->cache)
             ->delete($cacheKey);
+    }
+
+    private function assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(string $url): void
+    {
+        \Phake::verify($this->cacheKeyGenerator)
+            ->generateKey($url);
+    }
+
+    private function givenCacheKeyGenerator_generateKey_returnsCacheKey(): string
+    {
+        $cacheKey = 'cache_key';
+        \Phake::when($this->cacheKeyGenerator)
+            ->generateKey(\Phake::anyParameters())
+            ->thenReturn($cacheKey);
+        return $cacheKey;
     }
 }

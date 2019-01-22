@@ -29,7 +29,7 @@ Swagger mock server with fake data generation support
   * [x] allOf
 * [x] support of readOnly, writeOnly fields
 * [x] caching loader for OpenAPI specification
-* [ ] cache invalidation by timestamp/hash
+* [x] cache invalidation by timestamp/hash
 * [ ] logging
 * [ ] docker build in ci
 * [ ] try spiral/roadrunner server instead of nginx

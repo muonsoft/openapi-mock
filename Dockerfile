@@ -2,7 +2,9 @@ FROM php:7.2-fpm-alpine
 LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
 ENV APP_ENV=prod \
-    SPECIFICATION_URL=''
+    SWAGGER_MOCK_SPECIFICATION_URL='' \
+    SWAGGER_MOCK_CACHE_TTL='0' \
+    SWAGGER_MOCK_CACHE_STRATEGY='DISABLED'
 
 RUN set -xe \
     && apk --no-cache add --update \

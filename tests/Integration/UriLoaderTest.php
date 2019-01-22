@@ -35,8 +35,7 @@ class UriLoaderTest extends TestCase
 
         $timestamp = $loader->getTimestamp(self::REMOTE_FILE_NAME);
 
-        $timestamp1 = $timestamp->getTimestamp();
-        $this->assertGreaterThan(0, $timestamp1);
+        $this->assertGreaterThan(0, $timestamp->getTimestamp());
     }
 
     private function createUriLoader(): UriLoader
