@@ -21,6 +21,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class DelegatingSchemaParser implements ContextualParserInterface
 {
+    private const DEFAULT_TYPE = 'object';
     private const COMBINED_TYPES = [
         'oneOf',
         'anyOf',
@@ -38,24 +39,10 @@ class DelegatingSchemaParser implements ContextualParserInterface
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $schema = $specification->getSchema($pointer);
-        $type = $this->getSchemaType($schema, $pointer);
+        $type = $this->detectSchemaType($schema) ?? self::DEFAULT_TYPE;
         $typeParser = $this->typeParserLocator->getTypeParser($type);
 
         return $typeParser->parsePointedSchema($specification, $pointer);
-    }
-
-    private function getSchemaType(array $schema, SpecificationPointer $pointer): string
-    {
-        $type = $this->detectSchemaType($schema);
-
-        if ($type === null) {
-            throw new ParsingException(
-                'Invalid schema: must contain one of properties: "type", "oneOf", "anyOf" or "allOf".',
-                $pointer
-            );
-        }
-
-        return $type;
     }
 
     private function detectSchemaType(array $schema): ?string
@@ -65,12 +52,21 @@ class DelegatingSchemaParser implements ContextualParserInterface
         if (array_key_exists('type', $schema)) {
             $type = $schema['type'];
         } else {
-            foreach (self::COMBINED_TYPES as $combinedType) {
-                if (array_key_exists($combinedType, $schema)) {
-                    $type = $combinedType;
+            $type = $this->detectCombinedType($schema);
+        }
 
-                    break;
-                }
+        return $type;
+    }
+
+    private function detectCombinedType(array $schema): ?string
+    {
+        $type = null;
+
+        foreach (self::COMBINED_TYPES as $combinedType) {
+            if (array_key_exists($combinedType, $schema)) {
+                $type = $combinedType;
+
+                break;
             }
         }
 

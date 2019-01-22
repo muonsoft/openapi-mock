@@ -1,3 +1,6 @@
+parameters:
+  env(SWAGGER_MOCK_SPECIFICATION_URL): ''
+
 services:
   specification_loader:
     public: true

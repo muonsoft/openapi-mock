@@ -25,6 +25,7 @@ class DelegatingSchemaParserTest extends TestCase
     private const SCHEMA_DEFINITION = [
         'type' => self::VALUE_TYPE
     ];
+    private const DEFAULT_TYPE = 'object';
 
     protected function setUp(): void
     {
@@ -77,16 +78,19 @@ class DelegatingSchemaParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_emptySchemaWithType_exceptionThrown(): void
+    public function parsePointedSchema_emptySchemaWithType_defaultObjectTypeReturned(): void
     {
         $parser = $this->createDelegatingSchemaParser();
+        $this->givenTypeParserLocator_getTypeParser_returnsContextualParser();
         $pointer = new SpecificationPointer();
         $specification = new SpecificationAccessor([]);
+        $expectedType = $this->givenContextualParser_parsePointedSchema_returnsObject();
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Invalid schema: must contain one of properties: "type", "oneOf", "anyOf" or "allOf".');
+        $type = $parser->parsePointedSchema($specification, $pointer);
 
-        $parser->parsePointedSchema($specification, $pointer);
+        $this->assertTypeParserLocator_getTypeParser_wasCalledOnceWithType(self::DEFAULT_TYPE);
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
+        $this->assertSame($expectedType, $type);
     }
 
     private function createDelegatingSchemaParser(): DelegatingSchemaParser
