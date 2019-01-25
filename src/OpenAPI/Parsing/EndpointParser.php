@@ -68,7 +68,7 @@ class EndpointParser implements ContextualParserInterface
 
     private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $pointer): void
     {
-        if (!\is_int($statusCode) && $statusCode !== 'default') {
+        if (!\is_int($statusCode) && 'default' !== $statusCode) {
             throw new ParsingException('Invalid status code. Must be integer or "default".', $pointer);
         }
         if (!\is_array($responseSpecification)) {
@@ -78,9 +78,9 @@ class EndpointParser implements ContextualParserInterface
 
     private function parseStatusCode($statusCode): int
     {
-        $parsedStatusCode = (int)$statusCode;
+        $parsedStatusCode = (int) $statusCode;
 
-        if ($parsedStatusCode === 0) {
+        if (0 === $parsedStatusCode) {
             $parsedStatusCode = MockResponse::DEFAULT_STATUS_CODE;
         }
 

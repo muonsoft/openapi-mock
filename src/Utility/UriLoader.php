@@ -59,7 +59,7 @@ class UriLoader
     {
         $scheme = parse_url($uri, PHP_URL_SCHEME);
 
-        return $scheme === 'http' || $scheme === 'https';
+        return 'http' === $scheme || 'https' === $scheme;
     }
 
     private function getLastModified(ResponseInterface $response): \DateTime

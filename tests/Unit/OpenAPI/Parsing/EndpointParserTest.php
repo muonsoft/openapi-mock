@@ -28,22 +28,22 @@ class EndpointParserTest extends TestCase
     private const RESPONSE_STATUS_CODE = '200';
     private const VALID_ENDPOINT_SCHEMA = [
         'responses' => [
-            self::RESPONSE_STATUS_CODE => self::RESPONSE_SPECIFICATION
+            self::RESPONSE_STATUS_CODE => self::RESPONSE_SPECIFICATION,
         ],
     ];
     private const VALID_ENDPOINT_SCHEMA_WITH_DEFAULT_RESPONSE = [
         'responses' => [
-            'default' => self::RESPONSE_SPECIFICATION
+            'default' => self::RESPONSE_SPECIFICATION,
         ],
     ];
     private const ENDPOINT_SPECIFICATION_WITH_INVALID_STATUS_CODE = [
         'responses' => [
-            'invalid' => []
+            'invalid' => [],
         ],
     ];
     private const ENDPOINT_SPECIFICATION_WITH_INVALID_RESPONSE_SPECIFICATION = [
         'responses' => [
-            '200' => 'invalid'
+            '200' => 'invalid',
         ],
     ];
 

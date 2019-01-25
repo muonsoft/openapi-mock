@@ -50,8 +50,7 @@ class RequestHandler
     {
         $httpMethod = $request->getMethod();
         $requestUri = $request->getPathInfo();
-        $mockParameters = $this->repository->findMockParameters($httpMethod, $requestUri);
 
-        return $mockParameters;
+        return $this->repository->findMockParameters($httpMethod, $requestUri);
     }
 }

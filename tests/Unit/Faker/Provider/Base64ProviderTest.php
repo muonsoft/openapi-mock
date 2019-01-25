@@ -35,7 +35,7 @@ class Base64ProviderTest extends TestCase
         $value = $provider->base64();
 
         $this->assertFaker_method_wasCalledOnceWithParameter('text', self::DEFAULT_LENGTH);
-        $this->assertSame(self::GENERATED_TEXT, base64_decode($value));
+        $this->assertSame(self::GENERATED_TEXT, base64_decode($value, true));
     }
 
     /**

@@ -18,7 +18,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
  */
 class MockGenerationException extends HttpException
 {
-    public function __construct(string $message = null, \Exception $previous = null)
+    public function __construct(string $message = null, \Throwable $previous = null)
     {
         parent::__construct(Response::HTTP_INTERNAL_SERVER_ERROR, $message, $previous);
     }

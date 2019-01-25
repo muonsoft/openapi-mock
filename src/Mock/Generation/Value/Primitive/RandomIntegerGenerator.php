@@ -21,7 +21,7 @@ class RandomIntegerGenerator implements ValueGeneratorInterface
 {
     public function generateValue(TypeInterface $type): ?int
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateIntegerValue($type);
@@ -36,11 +36,11 @@ class RandomIntegerGenerator implements ValueGeneratorInterface
         $maximum = $type->maximum ?? mt_getrandmax();
 
         if ($type->exclusiveMinimum) {
-            $minimum++;
+            ++$minimum;
         }
 
         if ($type->exclusiveMaximum) {
-            $maximum--;
+            --$maximum;
         }
 
         $value = random_int($minimum, $maximum);

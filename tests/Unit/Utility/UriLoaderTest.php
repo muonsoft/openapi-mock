@@ -18,7 +18,7 @@ use Psr\Http\Message\StreamInterface;
 
 class UriLoaderTest extends TestCase
 {
-    private const DUMMY_JSON_FILE = __DIR__ . '/../../Resources/dummy.json';
+    private const DUMMY_JSON_FILE = __DIR__.'/../../Resources/dummy.json';
     private const REMOTE_FILE_NAME = 'http://example.com/remote.log';
     private const REMOTE_FILE_UNIX_TIMESTAMP = 1376092475;
     private const REMOTE_FILE_LAST_MODIFIED = 'Fri, 09 Aug 2013 23:54:35 GMT';

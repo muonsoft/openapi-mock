@@ -73,7 +73,7 @@ class TypeParserLocatorTest extends TestCase
         return new TypeParserLocator(
             $this->container,
             [
-                'type' => self::TYPE_PARSER_SERVICE_ID
+                'type' => self::TYPE_PARSER_SERVICE_ID,
             ]
         );
     }

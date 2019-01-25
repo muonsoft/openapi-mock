@@ -100,7 +100,6 @@ class HashMapValueGeneratorTest extends TestCase
         $this->assertArraySubset(['default' => $value], $hashMap);
     }
 
-
     /** @test */
     public function generateValue_hashMapTypeIsNullable_nullReturned(): void
     {

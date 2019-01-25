@@ -23,7 +23,7 @@ class AbstractClassCollectionTest extends TestCase
      */
     public function construct_givenInvalidClassName_exceptionThrown(): void
     {
-        new class ([]) extends AbstractClassCollection {
+        new class([]) extends AbstractClassCollection {
             protected function getElementClassName(): string
             {
                 return '';
@@ -38,7 +38,7 @@ class AbstractClassCollectionTest extends TestCase
      */
     public function construct_givenInvalidClassInstance_exceptionThrown(): void
     {
-        new class (['']) extends AbstractClassCollection {
+        new class(['']) extends AbstractClassCollection {
             protected function getElementClassName(): string
             {
                 return self::class;
@@ -94,7 +94,7 @@ class AbstractClassCollectionTest extends TestCase
 
     private function createCollection(): AbstractClassCollection
     {
-        return new class ([]) extends AbstractClassCollection {
+        return new class([]) extends AbstractClassCollection {
             protected function getElementClassName(): string
             {
                 return DummyClass::class;

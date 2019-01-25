@@ -45,7 +45,7 @@ class StringTypeParserTest extends TestCase
         'enum' => [
             self::ENUM_VALUE_1,
             ['invalid'],
-        ]
+        ],
     ];
 
     protected function setUp(): void

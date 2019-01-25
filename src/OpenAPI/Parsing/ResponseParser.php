@@ -39,7 +39,7 @@ class ResponseParser implements ContextualParserInterface
         $contentPointer = $pointer->withPathElement('content');
         $this->validateContent($content, $contentPointer);
 
-        foreach ($content as $mediaType => $schema) {
+        foreach (array_keys($content) as $mediaType) {
             $mediaTypePointer = $contentPointer->withPathElement($mediaType);
             $parsedSchema = $this->schemaParser->parsePointedSchema($specification, $mediaTypePointer);
             $response->content->set($mediaType, $parsedSchema);

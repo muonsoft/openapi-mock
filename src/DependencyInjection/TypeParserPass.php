@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class TypeParserPass implements CompilerPassInterface
 {
-    public const TYPE_PARSER_TAG  = 'app.type_parser';
+    public const TYPE_PARSER_TAG = 'app.type_parser';
 
     private const TYPE_PARSER_SERVICE_LOCATOR = 'type_parser_service_locator';
 

@@ -36,6 +36,7 @@ class FakerGeneratorFactoryTest extends TestCase
         foreach ($providers as $provider) {
             if (\get_class($provider) === $class) {
                 $contains = true;
+
                 break;
             }
         }

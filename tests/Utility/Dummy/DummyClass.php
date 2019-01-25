@@ -15,5 +15,4 @@ namespace App\Tests\Utility\Dummy;
  */
 class DummyClass
 {
-
 }

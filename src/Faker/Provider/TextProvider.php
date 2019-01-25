@@ -49,7 +49,7 @@ class TextProvider extends Base
     {
         $s = '';
 
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; ++$i) {
             $s .= '?';
         }
 
@@ -60,7 +60,7 @@ class TextProvider extends Base
     {
         $value = '';
 
-        for ($attempts = 0; $attempts < self::MAX_ATTEMPTS; $attempts++) {
+        for ($attempts = 0; $attempts < self::MAX_ATTEMPTS; ++$attempts) {
             $value = $this->generator->text($maxLength);
 
             if (\strlen($value) > $minLength) {

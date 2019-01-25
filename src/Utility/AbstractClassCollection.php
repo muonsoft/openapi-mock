@@ -21,7 +21,6 @@ abstract class AbstractClassCollection extends ArrayCollection
     private $className;
 
     /**
-     * @param array $elements
      * @throws \DomainException
      */
     public function __construct(array $elements = [])
@@ -41,10 +40,9 @@ abstract class AbstractClassCollection extends ArrayCollection
         parent::__construct($elements);
     }
 
-    abstract protected function getElementClassName(): string;
-
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @throws \DomainException
      */
     public function set($key, $value): void
@@ -54,17 +52,20 @@ abstract class AbstractClassCollection extends ArrayCollection
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
+     *
      * @throws \DomainException
      */
     public function add($element): bool
     {
         $this->validateElement($element);
+
         return parent::add($element);
     }
 
+    abstract protected function getElementClassName(): string;
+
     /**
-     * @param $value
      * @throws \DomainException
      */
     private function validateElement($value): void

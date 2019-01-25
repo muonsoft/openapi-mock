@@ -17,10 +17,9 @@ use PHPUnit\Framework\Assert;
  */
 trait ProbabilityTestCaseTrait
 {
-
     protected function expectClosureOccasionallyReturnsNull(\Closure $test): void
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $value = $test();
 
             if (null === $value) {

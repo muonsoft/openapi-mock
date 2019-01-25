@@ -78,7 +78,7 @@ class SpecificationParserTest extends TestCase
     {
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
-            'openapi' => '2.0'
+            'openapi' => '2.0',
         ]);
 
         $this->expectException(ParsingException::class);
@@ -109,7 +109,7 @@ class SpecificationParserTest extends TestCase
         $specification = new SpecificationAccessor([
             'openapi' => '3.0',
             'paths' => [
-                '/entity' => 'invalid'
+                '/entity' => 'invalid',
             ],
         ]);
 
@@ -127,7 +127,7 @@ class SpecificationParserTest extends TestCase
             'openapi' => '3.0',
             'paths' => [
                 '/entity' => [
-                    'get' => 'invalid'
+                    'get' => 'invalid',
                 ],
             ],
         ]);
@@ -146,7 +146,7 @@ class SpecificationParserTest extends TestCase
             'openapi' => '3.0',
             'paths' => [
                 '/entity' => [
-                    '$ref' => 'anything'
+                    '$ref' => 'anything',
                 ],
             ],
         ]);

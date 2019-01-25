@@ -118,7 +118,6 @@ class RequestHandlerTest extends TestCase
 
     private function createRequestHandler(): RequestHandler
     {
-        $handler = new RequestHandler($this->repository, $this->responseGenerator);
-        return $handler;
+        return new RequestHandler($this->repository, $this->responseGenerator);
     }
 }

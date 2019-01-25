@@ -27,7 +27,6 @@ class StringList extends ArrayCollection
 
     /**
      * @param string $element
-     * @return bool
      */
     public function add($element): bool
     {

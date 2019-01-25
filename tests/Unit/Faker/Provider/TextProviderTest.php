@@ -53,7 +53,8 @@ class TextProviderTest extends TestCase
     }
 
     /** @test */
-    public function rangedText_maxLengthAndTextGenerated_textReturned(): void {
+    public function rangedText_maxLengthAndTextGenerated_textReturned(): void
+    {
         $provider = new TextProvider($this->faker);
         $this->givenFaker_method_returnsValue('text', self::GENERATED_VALUE);
 
@@ -64,7 +65,8 @@ class TextProviderTest extends TestCase
     }
 
     /** @test */
-    public function rangedText_minLengthAndTextCannotBeGeneratedByTextGenerator_lexifyGeneratorUsedInstead(): void {
+    public function rangedText_minLengthAndTextCannotBeGeneratedByTextGenerator_lexifyGeneratorUsedInstead(): void
+    {
         $provider = new TextProvider($this->faker);
         $this->givenFaker_method_returnsValue('text', 'abc');
         $this->givenFaker_method_returnsValue('lexify', self::LEXIFY_VALUE);

@@ -19,7 +19,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class ValueGeneratorPass implements CompilerPassInterface
 {
-    public const VALUE_GENERATOR_TAG  = 'app.value_generator';
+    public const VALUE_GENERATOR_TAG = 'app.value_generator';
 
     private const VALUE_GENERATOR_SERVICE_LOCATOR = 'value_generator_service_locator';
 

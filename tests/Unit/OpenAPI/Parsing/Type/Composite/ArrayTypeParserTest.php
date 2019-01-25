@@ -25,7 +25,7 @@ class ArrayTypeParserTest extends TestCase
 
     private const ITEMS_SCHEMA_TYPE = 'itemsSchemaType';
     private const ITEMS_SCHEMA = [
-        'type' => self::ITEMS_SCHEMA_TYPE
+        'type' => self::ITEMS_SCHEMA_TYPE,
     ];
     private const VALID_SCHEMA_WITH_PARAMETERS = [
         'type' => 'array',

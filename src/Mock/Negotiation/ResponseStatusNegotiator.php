@@ -43,9 +43,9 @@ class ResponseStatusNegotiator
             }
         }
 
-        if (\count($successCodes) !== 0) {
+        if (0 !== \count($successCodes)) {
             $bestStatusCode = $successCodes[0];
-        } elseif (\count($errorsCodes) !== 0) {
+        } elseif (0 !== \count($errorsCodes)) {
             $bestStatusCode = $errorsCodes[0];
         } else {
             throw new MockGenerationException('Mock response not found.');

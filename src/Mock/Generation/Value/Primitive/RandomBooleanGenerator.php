@@ -20,10 +20,10 @@ class RandomBooleanGenerator implements ValueGeneratorInterface
 {
     public function generateValue(TypeInterface $type): ?bool
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
-            $value = (bool)random_int(0, 1);
+            $value = (bool) random_int(0, 1);
         }
 
         return $value;

@@ -28,26 +28,26 @@ class ObjectTypeParserTest extends TestCase
     private const PROPERTY_TYPE = 'propertyType';
     private const PROPERTY_NAME = 'propertyName';
     private const PROPERTY_SCHEMA = [
-        'type' => self::PROPERTY_TYPE
+        'type' => self::PROPERTY_TYPE,
     ];
     private const DEFAULT_PROPERTY_NAME = 'defaultPropertyName';
     private const DEFAULT_PROPERTY_SCHEMA = [
-        'type' => 'defaultPropertyType'
+        'type' => 'defaultPropertyType',
     ];
     private const VALID_OBJECT_SCHEMA = [
         'type' => 'object',
         'properties' => [
-            self::PROPERTY_NAME => self::PROPERTY_SCHEMA
+            self::PROPERTY_NAME => self::PROPERTY_SCHEMA,
         ],
         'required' => [
             self::PROPERTY_NAME,
-        ]
+        ],
     ];
     private const PROPERTY_POINTER_PATH = ['properties', 'propertyName'];
     private const DEFAULT_PROPERTY_POINTER_PATH = ['properties', 'defaultPropertyName'];
     private const HASH_MAP_SCHEMA = [
         'type' => 'object',
-        'additionalProperties' => self::PROPERTY_SCHEMA
+        'additionalProperties' => self::PROPERTY_SCHEMA,
     ];
     private const HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES = [
         'type' => 'object',
@@ -111,7 +111,7 @@ class ObjectTypeParserTest extends TestCase
         $parser = $this->createObjectTypeParser();
         $specification = new SpecificationAccessor([
             'type' => 'object',
-            'additionalProperties' => $additionalProperties
+            'additionalProperties' => $additionalProperties,
         ]);
 
         $object = $parser->parsePointedSchema($specification, new SpecificationPointer());
@@ -225,11 +225,12 @@ class ObjectTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_invalidSchemaWithFreeFormAdditionalProperties_exceptionThrown(): void {
+    public function parsePointedSchema_invalidSchemaWithFreeFormAdditionalProperties_exceptionThrown(): void
+    {
         $parser = $this->createObjectTypeParser();
         $specification = new SpecificationAccessor([
             'type' => 'object',
-            'additionalProperties' => 'invalid'
+            'additionalProperties' => 'invalid',
         ]);
 
         $this->expectException(ParsingException::class);
@@ -246,11 +247,11 @@ class ObjectTypeParserTest extends TestCase
         $specification = new SpecificationAccessor([
             'type' => 'object',
             'properties' => [
-                self::PROPERTY_NAME => self::PROPERTY_SCHEMA
+                self::PROPERTY_NAME => self::PROPERTY_SCHEMA,
             ],
             'required' => [
                 'not_exist',
-            ]
+            ],
         ]);
 
         $this->expectException(ParsingException::class);

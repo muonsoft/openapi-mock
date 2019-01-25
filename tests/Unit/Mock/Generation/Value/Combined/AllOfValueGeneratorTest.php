@@ -24,7 +24,7 @@ class AllOfValueGeneratorTest extends TestCase
     private const GENERATED_VALUE_2 = ['property2' => 'value2'];
     private const MERGED_GENERATED_VALUE = [
         'property1' => 'value1',
-        'property2' => 'value2'
+        'property2' => 'value2',
     ];
 
     protected function setUp(): void

@@ -25,6 +25,6 @@ class MD5KeyGenerator implements CacheKeyGeneratorInterface
 
     public function generateKey(string $url): string
     {
-        return $this->keyPrefix . md5($url);
+        return $this->keyPrefix.md5($url);
     }
 }

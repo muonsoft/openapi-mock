@@ -60,8 +60,7 @@ class ArrayTypeParser implements TypeParserInterface
     private function readItemsSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $itemsPointer = $pointer->withPathElement('items');
-        $itemsSchema = $this->resolvingSchemaParser->parsePointedSchema($specification, $itemsPointer);
 
-        return $itemsSchema;
+        return $this->resolvingSchemaParser->parsePointedSchema($specification, $itemsPointer);
     }
 }

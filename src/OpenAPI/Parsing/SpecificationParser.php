@@ -79,7 +79,7 @@ class SpecificationParser
             );
         }
 
-        if (((int)$schema['openapi']) !== 3) {
+        if (3 !== ((int) $schema['openapi'])) {
             throw new ParsingException(
                 'OpenAPI specification version is not supported. Supports only 3.*.',
                 $pointer
@@ -89,7 +89,7 @@ class SpecificationParser
         if (
             !array_key_exists('paths', $schema)
             || !\is_array($schema['paths'])
-            || \count($schema['paths']) === 0
+            || 0 === \count($schema['paths'])
         ) {
             throw new ParsingException('Section "paths" is empty or does not exist', $pointer);
         }
@@ -97,7 +97,7 @@ class SpecificationParser
 
     private function validateEndpointSpecificationAtPath($endpointSpecification, SpecificationPointer $pointer): void
     {
-        if (!\is_array($endpointSpecification) || \count($endpointSpecification) === 0) {
+        if (!\is_array($endpointSpecification) || 0 === \count($endpointSpecification)) {
             throw new ParsingException('Empty or invalid endpoint specification', $pointer);
         }
         if (array_key_exists('$ref', $endpointSpecification)) {

@@ -22,7 +22,7 @@ use Psr\Log\NullLogger;
 class ReferenceResolvingParserTest extends TestCase
 {
     use ParsingTestCaseTrait;
-    
+
     private const REFERENCE = '#/reference';
 
     /** @var SpecificationAccessor */

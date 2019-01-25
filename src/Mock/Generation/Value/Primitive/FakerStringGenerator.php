@@ -43,7 +43,7 @@ class FakerStringGenerator implements ValueGeneratorInterface
 
     public function generateValue(TypeInterface $type): ?string
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateStringValue($type);
@@ -56,7 +56,7 @@ class FakerStringGenerator implements ValueGeneratorInterface
     {
         if ($type->enum->count() > 0) {
             $value = $this->generateRandomEnumValue($type);
-        } elseif ($type->pattern !== '') {
+        } elseif ('' !== $type->pattern) {
             $value = $this->generateValueByPattern($type);
         } elseif ($this->typeHasSupportedFormat($type)) {
             $value = $this->generateValueByFormat($type);
@@ -81,7 +81,7 @@ class FakerStringGenerator implements ValueGeneratorInterface
 
     private function typeHasSupportedFormat(StringType $type): bool
     {
-        return $type->format !== '' && array_key_exists($type->format, self::FAKER_METHOD_MAP);
+        return '' !== $type->format && array_key_exists($type->format, self::FAKER_METHOD_MAP);
     }
 
     private function generateValueByFormat(StringType $type): string
@@ -89,14 +89,14 @@ class FakerStringGenerator implements ValueGeneratorInterface
         $fakerMethod = self::FAKER_METHOD_MAP[$type->format];
         $fakerMethodParameters = [];
 
-        if ($type->format === 'byte') {
+        if ('byte' === $type->format) {
             $fakerMethodParameters[] = $type->maxLength;
         }
 
         $value = \call_user_func_array([$this->faker, $fakerMethod], $fakerMethodParameters);
 
         if ($value instanceof \DateTime) {
-            $dateFormat = $type->format === 'date' ? 'Y-m-d' : \DateTime::ATOM;
+            $dateFormat = 'date' === $type->format ? 'Y-m-d' : \DateTime::ATOM;
             $value = $value->format($dateFormat);
         }
 

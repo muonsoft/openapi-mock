@@ -51,7 +51,7 @@ class CombinedTypeParser implements TypeParserInterface
         $typePointer = $pointer->withPathElement($typeName);
         $this->validateSchema($schema, $typeName, $typePointer);
 
-        foreach ($schema[$typeName] as $index => $typeSchema) {
+        foreach (array_keys($schema[$typeName]) as $index) {
             $internalTypePointer = $typePointer->withPathElement($index);
             $internalType = $this->resolvingSchemaParser->parsePointedSchema($specification, $internalTypePointer);
 
@@ -65,7 +65,7 @@ class CombinedTypeParser implements TypeParserInterface
 
     private function validateSchema(array $schema, string $typeName, SpecificationPointer $pointer): void
     {
-        if (!\is_array($schema[$typeName]) || \count($schema[$typeName]) === 0) {
+        if (!\is_array($schema[$typeName]) || 0 === \count($schema[$typeName])) {
             throw new ParsingException('Value must be not empty array', $pointer);
         }
     }
@@ -82,7 +82,7 @@ class CombinedTypeParser implements TypeParserInterface
             }
         }
 
-        if ($typeName === null) {
+        if (null === $typeName) {
             throw new ParsingException('Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"', $pointer);
         }
 
@@ -93,12 +93,12 @@ class CombinedTypeParser implements TypeParserInterface
     {
         $typeClass = self::COMBINED_TYPES[$typeName];
 
-        return new $typeClass;
+        return new $typeClass();
     }
 
     private function validateInternalType(string $typeName, SpecificationObjectMarkerInterface $internalType, SpecificationPointer $internalTypePointer): void
     {
-        if (($typeName === 'anyOf' || $typeName === 'allOf') && !$internalType instanceof ObjectType) {
+        if (('anyOf' === $typeName || 'allOf' === $typeName) && !$internalType instanceof ObjectType) {
             throw new ParsingException('All internal types of "anyOf" or "allOf" schema must be objects', $internalTypePointer);
         }
     }

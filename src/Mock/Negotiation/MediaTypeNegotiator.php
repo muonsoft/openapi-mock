@@ -39,7 +39,7 @@ class MediaTypeNegotiator
         $contentTypes = $this->collectContentTypesFromResponse($response);
         $acceptHeader = $request->headers->get('Accept', '');
 
-        if ($acceptHeader === '') {
+        if ('' === $acceptHeader) {
             $bestMediaType = $contentTypes[0];
         } else {
             $bestMediaType = $this->getBestMediaType($acceptHeader, $contentTypes);
@@ -72,7 +72,7 @@ class MediaTypeNegotiator
         /** @var Accept $mediaType */
         $mediaType = $this->negotiator->getBest($acceptHeader, $contentTypes);
 
-        if ($mediaType === null) {
+        if (null === $mediaType) {
             throw new UnsupportedMediaTypeHttpException();
         }
 

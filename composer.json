@@ -36,7 +36,8 @@
         "behatch/contexts": "3.*",
         "phake/phake": "3.*",
         "phpunit/phpunit": "7.*",
-        "symfony/expression-language": "4.*"
+        "symfony/expression-language": "4.*",
+        "symplify/easy-coding-standard": "^5.3"
     },
     "config": {
         "preferred-install": {

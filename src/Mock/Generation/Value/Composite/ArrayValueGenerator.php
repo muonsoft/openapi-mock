@@ -43,7 +43,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
     public function generateValue(TypeInterface $type): ?array
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateArray($type);
@@ -60,7 +60,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
         $values = [];
 
-        for ($i = 1; $i <= $count; $i++) {
+        for ($i = 1; $i <= $count; ++$i) {
             $values[] = $this->generateArrayValue($type);
         }
 
@@ -99,7 +99,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
         do {
             $value = $this->valueGenerator->generateValue($itemsType);
-            $attempts++;
+            ++$attempts;
 
             if ($attempts > self::MAX_ATTEMPTS) {
                 throw new \RuntimeException('Cannot generate array with unique values, attempts limit exceeded');

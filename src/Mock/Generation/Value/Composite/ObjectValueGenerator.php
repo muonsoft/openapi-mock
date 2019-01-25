@@ -30,7 +30,7 @@ class ObjectValueGenerator implements ValueGeneratorInterface
 
     public function generateValue(TypeInterface $type): ?array
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateObject($type);
@@ -51,7 +51,7 @@ class ObjectValueGenerator implements ValueGeneratorInterface
         $object = [];
 
         /**
-         * @var string $propertyName
+         * @var string
          * @var TypeInterface $propertyType
          */
         foreach ($type->properties as $propertyName => $propertyType) {

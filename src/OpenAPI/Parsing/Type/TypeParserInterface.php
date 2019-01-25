@@ -17,5 +17,4 @@ use App\OpenAPI\Parsing\ContextualParserInterface;
  */
 interface TypeParserInterface extends ContextualParserInterface
 {
-
 }

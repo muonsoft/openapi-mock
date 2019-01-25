@@ -23,7 +23,7 @@ class DelegatingSchemaParserTest extends TestCase
 
     private const VALUE_TYPE = 'value_type';
     private const SCHEMA_DEFINITION = [
-        'type' => self::VALUE_TYPE
+        'type' => self::VALUE_TYPE,
     ];
     private const DEFAULT_TYPE = 'object';
 

@@ -19,7 +19,7 @@ trait LoggerTestCaseTrait
 {
     /** @var LoggerInterface */
     protected $logger;
-    
+
     protected function setUpLogger(): void
     {
         $this->logger = \Phake::mock(LoggerInterface::class);

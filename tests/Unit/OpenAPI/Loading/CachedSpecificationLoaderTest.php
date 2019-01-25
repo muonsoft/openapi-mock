@@ -66,7 +66,6 @@ class CachedSpecificationLoaderTest extends TestCase
         $this->assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(self::OPENAPI_FILE);
         $this->assertCache_has_wasCalledOnceWithKey($cacheKey);
         $this->assertCache_get_wasCalledOnceWithKey($cacheKey);
-        $this->assertEquals($cachedSpecification, $specification);
     }
 
     /** @test */
@@ -193,6 +192,7 @@ class CachedSpecificationLoaderTest extends TestCase
         \Phake::when($this->cacheKeyGenerator)
             ->generateKey(\Phake::anyParameters())
             ->thenReturn($cacheKey);
+
         return $cacheKey;
     }
 }

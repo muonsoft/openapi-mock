@@ -78,7 +78,7 @@ class StringTypeParser implements TypeParserInterface
             );
         }
 
-        if ($this->type->maxLength < $this->type->minLength && $this->type->maxLength !== 0) {
+        if ($this->type->maxLength < $this->type->minLength && 0 !== $this->type->maxLength) {
             $this->type->maxLength = $this->type->minLength;
 
             $this->logger->warning(

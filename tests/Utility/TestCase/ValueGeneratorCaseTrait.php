@@ -46,7 +46,7 @@ trait ValueGeneratorCaseTrait
 
     protected function givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator(ValueGeneratorInterface $generator = null): void
     {
-        if ($generator === null) {
+        if (null === $generator) {
             $generator = $this->valueGenerator;
         }
 
@@ -104,8 +104,7 @@ trait ValueGeneratorCaseTrait
     protected function assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithOneOfTypes(
         TypeInterface $type1,
         TypeInterface $type2
-    ): void
-    {
+    ): void {
         \Phake::verify($this->valueGeneratorLocator)
             ->getValueGenerator(\Phake::capture($type));
         Assert::assertTrue($type === $type1 || $type === $type2);
@@ -114,8 +113,7 @@ trait ValueGeneratorCaseTrait
     protected function assertValueGenerator_generateValue_wasCalledOnceWithOneOfTypes(
         TypeInterface $type1,
         TypeInterface $type2
-    ): void
-    {
+    ): void {
         \Phake::verify($this->valueGenerator)
             ->generateValue(\Phake::capture($type));
         Assert::assertTrue($type === $type1 || $type === $type2);

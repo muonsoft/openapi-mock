@@ -44,8 +44,8 @@ class CombinedTypeParserTest extends TestCase
         $typeParser = new CombinedTypeParser($this->contextualParser);
         $specification = new SpecificationAccessor([
             $combinedTypeName => [
-                self::TYPE_SCHEMA
-            ]
+                self::TYPE_SCHEMA,
+            ],
         ]);
         $internalType = new ObjectType();
         $this->givenContextualParser_parsePointedSchema_returns($internalType);
@@ -107,8 +107,8 @@ class CombinedTypeParserTest extends TestCase
         $typeParser = new CombinedTypeParser($this->contextualParser);
         $specification = new SpecificationAccessor([
             $combinedTypeName => [
-                self::TYPE_SCHEMA
-            ]
+                self::TYPE_SCHEMA,
+            ],
         ]);
         $internalType = \Phake::mock(TypeInterface::class);
         $this->givenContextualParser_parsePointedSchema_returns($internalType);

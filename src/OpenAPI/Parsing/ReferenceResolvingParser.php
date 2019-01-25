@@ -55,7 +55,7 @@ class ReferenceResolvingParser
 
         $object = $specification->findResolvedObject($reference);
 
-        if ($object === null) {
+        if (null === $object) {
             $referencePointer = $this->createReferencePointer($reference);
             $object = $parser->parsePointedSchema($specification, $referencePointer);
             $specification->setResolvedObject($reference, $object);
@@ -93,11 +93,11 @@ class ReferenceResolvingParser
     {
         $referencePointer = $pointer->withPathElement('$ref');
 
-        if ($reference === '') {
+        if ('' === $reference) {
             throw new ParsingException('reference cannot be empty', $referencePointer);
         }
 
-        if (strpos($reference, '#/') !== 0) {
+        if (0 !== strpos($reference, '#/')) {
             throw new ParsingException('only local references is supported - reference must start with "#/"', $referencePointer);
         }
     }

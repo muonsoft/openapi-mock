@@ -26,7 +26,7 @@ trait FieldParserTrait
 
     protected function readBoolValue(array $schema, string $key): bool
     {
-        return (bool)($schema[$key] ?? false);
+        return (bool) ($schema[$key] ?? false);
     }
 
     protected function readIntegerOrNullValue(array $schema, string $key): ?int
@@ -34,7 +34,7 @@ trait FieldParserTrait
         $value = null;
 
         if (array_key_exists($key, $schema)) {
-            $value = (int)$schema[$key];
+            $value = (int) $schema[$key];
         }
 
         return $value;
@@ -45,7 +45,7 @@ trait FieldParserTrait
         $value = null;
 
         if (array_key_exists($key, $schema)) {
-            $value = (float)$schema[$key];
+            $value = (float) $schema[$key];
         }
 
         return $value;
@@ -53,11 +53,11 @@ trait FieldParserTrait
 
     protected function readIntegerValue(array $schema, string $key): int
     {
-        return (int)($schema[$key] ?? 0);
+        return (int) ($schema[$key] ?? 0);
     }
 
     protected function readStringValue(array $schema, string $key): string
     {
-        return (string)($schema[$key] ?? '');
+        return (string) ($schema[$key] ?? '');
     }
 }

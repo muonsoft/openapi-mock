@@ -38,7 +38,7 @@ class Responder
         $encodedData = $this->encoder->encode($data, $format);
 
         $headers = [
-            'Content-Type' => sprintf('%s; charset=utf-8', $mediaType)
+            'Content-Type' => sprintf('%s; charset=utf-8', $mediaType),
         ];
 
         $this->logger->info(

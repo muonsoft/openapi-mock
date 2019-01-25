@@ -114,7 +114,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
                     OneOfType::class,
                     AnyOfType::class,
                     AllOfType::class,
-                ]
+                ],
             ]
         );
     }

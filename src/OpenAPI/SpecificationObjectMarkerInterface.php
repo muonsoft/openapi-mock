@@ -15,5 +15,4 @@ namespace App\OpenAPI;
  */
 interface SpecificationObjectMarkerInterface
 {
-
 }

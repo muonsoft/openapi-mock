@@ -158,10 +158,10 @@ class MockResponseGeneratorTest extends TestCase
         $mockResponse = new MockResponse();
 
         $mockResponse->content = new SchemaCollection([
-            self::MEDIA_TYPE => $schema
+            self::MEDIA_TYPE => $schema,
         ]);
         $parameters->responses = new MockResponseCollection([
-            self::STATUS_CODE => $mockResponse
+            self::STATUS_CODE => $mockResponse,
         ]);
 
         return $parameters;

@@ -29,7 +29,7 @@ class ResponseParserTest extends TestCase
     private const VALID_RESPONSE_SPECIFICATION = [
         'content' => [
             self::MEDIA_TYPE => self::SCHEMA,
-        ]
+        ],
     ];
     private const CONTEXT_PATH = ['content', self::MEDIA_TYPE];
 
@@ -85,7 +85,7 @@ class ResponseParserTest extends TestCase
         $this->assertCount(1, $response->content);
         $parsedSchema = $response->content->first();
         $this->assertSame($expectedSchema, $parsedSchema);
-        $this->assertEquals([self::MEDIA_TYPE], $response->content->getKeys());
+        $this->assertSame([self::MEDIA_TYPE], $response->content->getKeys());
     }
 
     private function createResponseParser(): ResponseParser

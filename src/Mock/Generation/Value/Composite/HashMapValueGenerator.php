@@ -47,7 +47,7 @@ class HashMapValueGenerator implements ValueGeneratorInterface
 
     public function generateValue(TypeInterface $type): ?array
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateHashMap($type);
@@ -86,7 +86,7 @@ class HashMapValueGenerator implements ValueGeneratorInterface
     {
         $length = $this->generateRandomArrayLength($type);
 
-        for ($i = \count($this->properties); $i < $length; $i++) {
+        for ($i = \count($this->properties); $i < $length; ++$i) {
             $key = $this->faker->unique()->word();
             $this->properties[$key] = $this->valueGenerator->generateValue($type->value);
         }

@@ -83,7 +83,7 @@ class AnyOfValueGeneratorTest extends TestCase
         $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, self::GENERATED_VALUE_2);
 
         $actualValueEqualsExpectedValue = false;
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             $value = $generator->generateValue($anyOf);
             $actualValueEqualsExpectedValue = $value === $expectedValue;
 

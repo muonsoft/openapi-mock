@@ -21,7 +21,7 @@ class RandomNumberGenerator implements ValueGeneratorInterface
 {
     public function generateValue(TypeInterface $type): ?float
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateFloatValue($type);
@@ -52,6 +52,6 @@ class RandomNumberGenerator implements ValueGeneratorInterface
         $minimum = $exclusiveMinimum ? 1 : 0;
         $maximum = mt_getrandmax() - ($exclusiveMaximum ? 1 : 0);
 
-        return ((float) random_int($minimum, $maximum)) / mt_getrandmax();
+        return (float) random_int($minimum, $maximum) / mt_getrandmax();
     }
 }

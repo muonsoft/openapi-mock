@@ -34,7 +34,7 @@ class ValueGeneratorLocatorTest extends TestCase
     public function getValueGenerator_typeClass_generatorReturned(): void
     {
         $locator = new ValueGeneratorLocator($this->container, [
-            DummyType::class => self::VALUE_GENERATOR_SERVICE_ID
+            DummyType::class => self::VALUE_GENERATOR_SERVICE_ID,
         ]);
         $type = new DummyType();
         $containerGenerator = $this->givenContainer_get_returnsValueGenerator();
@@ -49,7 +49,7 @@ class ValueGeneratorLocatorTest extends TestCase
     public function getValueGenerator_noClassInMap_exceptionThrown(): void
     {
         $locator = new ValueGeneratorLocator($this->container, [
-            DummyType::class => self::VALUE_GENERATOR_SERVICE_ID
+            DummyType::class => self::VALUE_GENERATOR_SERVICE_ID,
         ]);
         $type = \Phake::mock(TypeInterface::class);
 

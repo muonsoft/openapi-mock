@@ -129,8 +129,7 @@ class ArrayValueGeneratorTest extends TestCase
 
     private function givenRandomRangeValueGenerator(int $min, int $max): ValueGeneratorInterface
     {
-        return new class ($min, $max) implements ValueGeneratorInterface
-        {
+        return new class($min, $max) implements ValueGeneratorInterface {
             /** @var int */
             private $min;
 

@@ -40,6 +40,7 @@ class MockParametersRepository
         foreach ($collection as $collectionParameters) {
             if ($httpMethod === $collectionParameters->httpMethod && $uri === $collectionParameters->path) {
                 $parameters = $collectionParameters;
+
                 break;
             }
         }

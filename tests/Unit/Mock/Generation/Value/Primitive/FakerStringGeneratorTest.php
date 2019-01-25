@@ -58,7 +58,7 @@ class FakerStringGeneratorTest extends TestCase
 
         $value = $generator->generateValue($type);
 
-        $this->assertEquals(self::ENUM_VALUE, $value);
+        $this->assertSame(self::ENUM_VALUE, $value);
     }
 
     /** @test */
@@ -75,7 +75,7 @@ class FakerStringGeneratorTest extends TestCase
         $value = $generator->generateValue($type);
 
         $this->assertFaker_method_wasCalledOnceWithParameter('regexify', self::PATTERN);
-        $this->assertRegExp('/' . self::PATTERN . '/', $value);
+        $this->assertRegExp('/'.self::PATTERN.'/', $value);
     }
 
     /** @test */
@@ -178,7 +178,7 @@ class FakerStringGeneratorTest extends TestCase
 
         $value = $generator->generateValue($type);
 
-        $this->assertFaker_method_wasCalledOnceWithTwoParameters('rangedText', 0,self::DEFAULT_MAX_LENGTH);
+        $this->assertFaker_method_wasCalledOnceWithTwoParameters('rangedText', 0, self::DEFAULT_MAX_LENGTH);
         $this->assertSame(self::FORMATTED_VALUE, $value);
     }
 

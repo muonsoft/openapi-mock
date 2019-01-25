@@ -24,7 +24,7 @@ class FeatureContext implements Context
      */
     public function iHaveOpenApiSpecificationFile(string $filename): void
     {
-        $swaggerFile = $this->swaggerFilesDirectory . $filename;
+        $swaggerFile = $this->swaggerFilesDirectory.$filename;
         $this->specificationLoader->setSpecificationFilename($swaggerFile);
     }
 }

@@ -71,7 +71,7 @@ class ObjectTypeParser implements TypeParserInterface
 
         $additionalProperties = $this->getAdditionalPropertiesFromSchema($schema, $pointer);
 
-        if (\count($additionalProperties) === 0) {
+        if (0 === \count($additionalProperties)) {
             $object = new FreeFormObjectType();
         } else {
             $object = $this->parseHashMap($specification, $pointer);
@@ -85,7 +85,7 @@ class ObjectTypeParser implements TypeParserInterface
 
     private function getAdditionalPropertiesFromSchema(array $schema, SpecificationPointer $pointer): array
     {
-        if ($schema['additionalProperties'] === true) {
+        if (true === $schema['additionalProperties']) {
             $additionalProperties = [];
         } elseif (\is_array($schema['additionalProperties'])) {
             $additionalProperties = $schema['additionalProperties'];
@@ -117,7 +117,7 @@ class ObjectTypeParser implements TypeParserInterface
         $schemaProperties = $schema['properties'] ?? [];
         $propertiesPointer = $pointer->withPathElement('properties');
 
-        foreach ($schemaProperties as $propertyName => $propertySchema) {
+        foreach (array_keys($schemaProperties) as $propertyName) {
             $propertyPointer = $propertiesPointer->withPathElement($propertyName);
             $property = $this->resolvingSchemaParser->parsePointedSchema($specification, $propertyPointer);
             $properties->set($propertyName, $property);

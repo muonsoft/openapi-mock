@@ -68,7 +68,7 @@ class SpecificationLoaderFactory
 
         $loader = new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser, $this->logger);
 
-        if ($cacheStrategy !== 'DISABLED') {
+        if ('DISABLED' !== $cacheStrategy) {
             $generator = $this->createCacheKeyGenerator($cacheStrategy);
             $loader = new CachedSpecificationLoader($loader, $generator, $this->cache, $this->logger);
         }
@@ -93,7 +93,7 @@ class SpecificationLoaderFactory
 
     private function createCacheKeyGenerator(string $cacheStrategy): CacheKeyGeneratorInterface
     {
-        if ($cacheStrategy === 'MD5') {
+        if ('MD5' === $cacheStrategy) {
             $generator = new MD5KeyGenerator(self::KEY_PREFIX);
         } else {
             $generator = new MD5AndTimestampKeyGenerator($this->uriLoader, self::KEY_PREFIX);

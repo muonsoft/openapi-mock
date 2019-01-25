@@ -1,0 +1,18 @@
+imports:
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/clean-code.yml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/common.yml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/php71.yml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/psr12.yml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/symfony.yml' }
+
+services:
+  PhpCsFixer\Fixer\PhpUnit\PhpUnitTestAnnotationFixer:
+    style: 'annotation'
+
+parameters:
+  exclude_checkers:
+    - PhpCsFixer\Fixer\PhpUnit\PhpUnitMethodCasingFixer
+    - PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer
+    - SlevomatCodingStandard\Sniffs\TypeHints\NullableTypeForNullDefaultValueSniff
+    - PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer
+    - SlevomatCodingStandard\Sniffs\TypeHints\TypeHintDeclarationSniff

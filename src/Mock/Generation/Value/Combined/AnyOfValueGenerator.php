@@ -40,12 +40,12 @@ class AnyOfValueGenerator implements ValueGeneratorInterface
         $values = [];
 
         foreach ($type->types as $internalType) {
-            if (random_int(0, 1) === 0) {
+            if (0 === random_int(0, 1)) {
                 $values[] = $this->generateValueOfType($internalType);
             }
         }
 
-        if (\count($values) === 0) {
+        if (0 === \count($values)) {
             $values[] = $this->generateOneOfValues($type);
         }
 

@@ -40,7 +40,7 @@ class SpecificationPointer
         $this->pathElements[] = $pathElement;
     }
 
-    public function withPathElement(string $pathElement): SpecificationPointer
+    public function withPathElement(string $pathElement): self
     {
         $newPointer = clone $this;
         $newPointer->addPathElement($pathElement);

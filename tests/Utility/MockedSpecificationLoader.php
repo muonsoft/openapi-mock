@@ -27,6 +27,11 @@ class MockedSpecificationLoader implements SpecificationLoaderInterface
     /** @var string */
     private $specificationFilename;
 
+    public function __construct(SpecificationLoaderInterface $specificationLoader)
+    {
+        $this->specificationLoader = $specificationLoader;
+    }
+
     public static function getInstance(SpecificationLoaderInterface $specificationLoader): self
     {
         if (null === self::$instance) {
@@ -34,11 +39,6 @@ class MockedSpecificationLoader implements SpecificationLoaderInterface
         }
 
         return self::$instance;
-    }
-
-    public function __construct(SpecificationLoaderInterface $specificationLoader)
-    {
-        $this->specificationLoader = $specificationLoader;
     }
 
     public function setSpecificationFilename(string $specificationFilename): void

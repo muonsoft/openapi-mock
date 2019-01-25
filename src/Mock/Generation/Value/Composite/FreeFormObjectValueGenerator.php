@@ -33,7 +33,7 @@ class FreeFormObjectValueGenerator implements ValueGeneratorInterface
 
     public function generateValue(TypeInterface $type): ?array
     {
-        if ($type->isNullable() && random_int(0, 1) === 0) {
+        if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
         } else {
             $value = $this->generateObject($type);
@@ -48,7 +48,7 @@ class FreeFormObjectValueGenerator implements ValueGeneratorInterface
 
         $length = $this->generateRandomArrayLength($type);
 
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; ++$i) {
             $key = $this->faker->unique()->word();
             $properties[$key] = $this->faker->word();
         }
