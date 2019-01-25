@@ -43,7 +43,7 @@ trait ParsingTestCaseTrait
         SpecificationAccessor $specification,
         array $path
     ): void {
-        /** @var SpecificationPointer $pointer */
+        /* @var SpecificationPointer $pointer */
         \Phake::verify($this->contextualParser)
             ->parsePointedSchema($specification, \Phake::capture($pointer));
         Assert::assertSame($path, $pointer->getPathElements());
@@ -54,7 +54,7 @@ trait ParsingTestCaseTrait
         array $firstPath,
         array $secondPath
     ): void {
-        /** @var SpecificationPointer[] $pointers */
+        /* @var SpecificationPointer[] $pointers */
         \Phake::verify($this->contextualParser, \Phake::times(2))
             ->parsePointedSchema($specification, \Phake::captureAll($pointers));
         Assert::assertSame($firstPath, $pointers[0]->getPathElements());
@@ -107,7 +107,7 @@ trait ParsingTestCaseTrait
         SpecificationAccessor $specification,
         array $path
     ): void {
-        /** @var SpecificationPointer $pointer */
+        /* @var SpecificationPointer $pointer */
         \Phake::verify($this->resolvingParser)
             ->resolveReferenceAndParsePointedSchema($specification, \Phake::capture($pointer), $this->contextualParser);
         Assert::assertSame($path, $pointer->getPathElements());

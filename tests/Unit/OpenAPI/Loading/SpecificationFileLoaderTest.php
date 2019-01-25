@@ -95,7 +95,7 @@ class SpecificationFileLoaderTest extends TestCase
 
     private function assertSpecificationParser_parseSpecification_wasCalledOnceWithSpecification(array $specification): void
     {
-        /** @var SpecificationAccessor $specificationAccessor */
+        /* @var SpecificationAccessor $specificationAccessor */
         \Phake::verify($this->parser)
             ->parseSpecification(\Phake::capture($specificationAccessor));
         $this->assertInstanceOf(SpecificationAccessor::class, $specificationAccessor);

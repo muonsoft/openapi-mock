@@ -20,3 +20,4 @@ parameters:
     - PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer
     - SlevomatCodingStandard\Sniffs\TypeHints\NullableTypeForNullDefaultValueSniff
     - SlevomatCodingStandard\Sniffs\TypeHints\TypeHintDeclarationSniff
+    - Symplify\CodingStandard\Fixer\Commenting\ParamReturnAndVarTagMalformsFixer
