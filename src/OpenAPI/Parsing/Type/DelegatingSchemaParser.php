@@ -50,7 +50,7 @@ class DelegatingSchemaParser implements ContextualParserInterface
         $this->logger->debug(
             sprintf('Object "%s" was parsed by "%s"', \get_class($object), \get_class($typeParser)),
             [
-                'path' => $pointer->getPath(),
+                'path'   => $pointer->getPath(),
                 'object' => $object,
             ]
         );

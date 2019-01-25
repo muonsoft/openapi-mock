@@ -23,12 +23,12 @@ class NumberTypeParserTest extends TestCase
     private const MAXIMUM = 100.5;
     private const MULTIPLE_OF = 2.5;
     private const NUMBER_SCHEMA = [
-        'nullable' => true,
-        'minimum' => self::MINIMUM,
-        'maximum' => self::MAXIMUM,
+        'nullable'         => true,
+        'minimum'          => self::MINIMUM,
+        'maximum'          => self::MAXIMUM,
         'exclusiveMinimum' => true,
         'exclusiveMaximum' => true,
-        'multipleOf' => self::MULTIPLE_OF,
+        'multipleOf'       => self::MULTIPLE_OF,
     ];
 
     /** @test */
@@ -72,8 +72,8 @@ class NumberTypeParserTest extends TestCase
     {
         $parser = new NumberTypeParser();
         $specification = new SpecificationAccessor([
-            'nullable' => true,
-            'readOnly' => true,
+            'nullable'  => true,
+            'readOnly'  => true,
             'writeOnly' => true,
         ]);
 

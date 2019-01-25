@@ -29,12 +29,12 @@ class StringTypeParserTest extends TestCase
     private const ENUM_VALUE_1 = 'enumValue1';
     private const ENUM_VALUE_2 = 'enumValue2';
     private const VALID_STRING_SCHEMA = [
-        'nullable' => true,
+        'nullable'  => true,
         'minLength' => self::MIN_LENGTH,
         'maxLength' => self::MAX_LENGTH,
-        'format' => self::FORMAT_VALUE,
-        'pattern' => self::PATTERN_VALUE,
-        'enum' => [
+        'format'    => self::FORMAT_VALUE,
+        'pattern'   => self::PATTERN_VALUE,
+        'enum'      => [
             self::ENUM_VALUE_1,
             self::ENUM_VALUE_2,
         ],
@@ -156,8 +156,8 @@ class StringTypeParserTest extends TestCase
     {
         $parser = $this->createStringTypeParser();
         $specification = new SpecificationAccessor([
-            'nullable' => true,
-            'readOnly' => true,
+            'nullable'  => true,
+            'readOnly'  => true,
             'writeOnly' => true,
         ]);
 

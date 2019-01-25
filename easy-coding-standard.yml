@@ -8,11 +8,15 @@ imports:
 services:
   PhpCsFixer\Fixer\PhpUnit\PhpUnitTestAnnotationFixer:
     style: 'annotation'
+  PhpCsFixer\Fixer\Operator\BinaryOperatorSpacesFixer:
+    align_double_arrow: true
+  PhpCsFixer\Fixer\Operator\IncrementStyleFixer:
+    style: 'post'
 
 parameters:
   exclude_checkers:
     - PhpCsFixer\Fixer\PhpUnit\PhpUnitMethodCasingFixer
     - PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer
-    - SlevomatCodingStandard\Sniffs\TypeHints\NullableTypeForNullDefaultValueSniff
     - PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer
+    - SlevomatCodingStandard\Sniffs\TypeHints\NullableTypeForNullDefaultValueSniff
     - SlevomatCodingStandard\Sniffs\TypeHints\TypeHintDeclarationSniff

@@ -28,14 +28,14 @@ class ArrayTypeParserTest extends TestCase
         'type' => self::ITEMS_SCHEMA_TYPE,
     ];
     private const VALID_SCHEMA_WITH_PARAMETERS = [
-        'type' => 'array',
-        'items' => self::ITEMS_SCHEMA,
-        'minItems' => self::MIN_ITEMS,
-        'maxItems' => self::MAX_ITEMS,
+        'type'        => 'array',
+        'items'       => self::ITEMS_SCHEMA,
+        'minItems'    => self::MIN_ITEMS,
+        'maxItems'    => self::MAX_ITEMS,
         'uniqueItems' => true,
     ];
     private const VALID_SCHEMA_WITHOUT_PARAMETERS = [
-        'type' => 'array',
+        'type'  => 'array',
         'items' => self::ITEMS_SCHEMA,
     ];
     private const SCHEMA_WITHOUT_ITEMS = [
@@ -103,9 +103,9 @@ class ArrayTypeParserTest extends TestCase
         $parser = $this->createArrayTypeParser();
         $this->givenContextualParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor([
-            'items' => self::ITEMS_SCHEMA,
-            'nullable' => true,
-            'readOnly' => true,
+            'items'     => self::ITEMS_SCHEMA,
+            'nullable'  => true,
+            'readOnly'  => true,
             'writeOnly' => true,
         ]);
 

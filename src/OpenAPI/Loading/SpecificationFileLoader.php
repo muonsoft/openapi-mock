@@ -25,7 +25,7 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
 {
     private const FORMAT_BY_EXTENSION_MAP = [
         'yaml' => 'yaml',
-        'yml' => 'yaml',
+        'yml'  => 'yaml',
         'json' => 'json',
     ];
 

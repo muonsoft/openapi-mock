@@ -22,16 +22,16 @@ class AnyOfValueGeneratorTest extends TestCase
 
     private const GENERATED_VALUE_1 = [
         'commonProperty' => 'commonPropertyValue',
-        'property1' => 'value1',
+        'property1'      => 'value1',
     ];
     private const GENERATED_VALUE_2 = [
         'commonProperty' => 'commonPropertyValue',
-        'property2' => 'value2',
+        'property2'      => 'value2',
     ];
     private const MERGED_GENERATED_VALUE = [
         'commonProperty' => 'commonPropertyValue',
-        'property1' => 'value1',
-        'property2' => 'value2',
+        'property1'      => 'value1',
+        'property2'      => 'value2',
     ];
     private const COMMON_PROPERTY_PAIR = [
         'commonProperty' => 'commonPropertyValue',
@@ -83,7 +83,7 @@ class AnyOfValueGeneratorTest extends TestCase
         $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, self::GENERATED_VALUE_2);
 
         $actualValueEqualsExpectedValue = false;
-        for ($i = 0; $i < 100; ++$i) {
+        for ($i = 0; $i < 100; $i++) {
             $value = $generator->generateValue($anyOf);
             $actualValueEqualsExpectedValue = $value === $expectedValue;
 

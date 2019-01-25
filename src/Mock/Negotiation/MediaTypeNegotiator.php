@@ -48,7 +48,7 @@ class MediaTypeNegotiator
         $this->logger->info(
             sprintf('Best media type "%s" was negotiated for request.', $bestMediaType),
             [
-                'request' => $request->getUri(),
+                'request'      => $request->getUri(),
                 'acceptHeader' => $acceptHeader,
             ]
         );

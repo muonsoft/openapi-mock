@@ -36,8 +36,8 @@ class BooleanTypeParserTest extends TestCase
     {
         $parser = new BooleanTypeParser();
         $specification = new SpecificationAccessor([
-            'nullable' => true,
-            'readOnly' => true,
+            'nullable'  => true,
+            'readOnly'  => true,
             'writeOnly' => true,
         ]);
 

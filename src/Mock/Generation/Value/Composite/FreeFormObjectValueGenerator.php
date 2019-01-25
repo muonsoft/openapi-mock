@@ -48,7 +48,7 @@ class FreeFormObjectValueGenerator implements ValueGeneratorInterface
 
         $length = $this->generateRandomArrayLength($type);
 
-        for ($i = 0; $i < $length; ++$i) {
+        for ($i = 0; $i < $length; $i++) {
             $key = $this->faker->unique()->word();
             $properties[$key] = $this->faker->word();
         }

@@ -86,7 +86,7 @@ class HashMapValueGenerator implements ValueGeneratorInterface
     {
         $length = $this->generateRandomArrayLength($type);
 
-        for ($i = \count($this->properties); $i < $length; ++$i) {
+        for ($i = \count($this->properties); $i < $length; $i++) {
             $key = $this->faker->unique()->word();
             $this->properties[$key] = $this->valueGenerator->generateValue($type->value);
         }

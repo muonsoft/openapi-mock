@@ -63,7 +63,7 @@ class ReferenceResolvingParser
             $this->logger->debug(
                 sprintf('Object "%s" was resolved and set to specification.', \get_class($object)),
                 [
-                    'path' => $pointer->getPath(),
+                    'path'          => $pointer->getPath(),
                     'referencePath' => $referencePointer->getPath(),
                 ]
             );

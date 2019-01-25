@@ -60,7 +60,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
         $values = [];
 
-        for ($i = 1; $i <= $count; ++$i) {
+        for ($i = 1; $i <= $count; $i++) {
             $values[] = $this->generateArrayValue($type);
         }
 
@@ -99,7 +99,7 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
         do {
             $value = $this->valueGenerator->generateValue($itemsType);
-            ++$attempts;
+            $attempts++;
 
             if ($attempts > self::MAX_ATTEMPTS) {
                 throw new \RuntimeException('Cannot generate array with unique values, attempts limit exceeded');

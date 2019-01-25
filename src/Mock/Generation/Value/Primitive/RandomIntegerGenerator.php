@@ -36,11 +36,11 @@ class RandomIntegerGenerator implements ValueGeneratorInterface
         $maximum = $type->maximum ?? mt_getrandmax();
 
         if ($type->exclusiveMinimum) {
-            ++$minimum;
+            $minimum++;
         }
 
         if ($type->exclusiveMaximum) {
-            --$maximum;
+            $maximum--;
         }
 
         $value = random_int($minimum, $maximum);

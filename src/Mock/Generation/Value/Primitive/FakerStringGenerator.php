@@ -22,15 +22,15 @@ class FakerStringGenerator implements ValueGeneratorInterface
 {
     private const DEFAULT_MAX_LENGTH = 200;
     private const FAKER_METHOD_MAP = [
-        'date' => 'date',
+        'date'      => 'date',
         'date-time' => 'dateTime',
-        'uuid' => 'uuid',
-        'email' => 'email',
-        'uri' => 'url',
-        'hostname' => 'domainName',
-        'ipv4' => 'ipv4',
-        'ipv6' => 'ipv6',
-        'byte' => 'base64',
+        'uuid'      => 'uuid',
+        'email'     => 'email',
+        'uri'       => 'url',
+        'hostname'  => 'domainName',
+        'ipv4'      => 'ipv4',
+        'ipv6'      => 'ipv6',
+        'byte'      => 'base64',
     ];
 
     /** @var Generator */

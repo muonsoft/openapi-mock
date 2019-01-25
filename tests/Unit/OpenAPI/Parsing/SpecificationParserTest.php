@@ -27,7 +27,7 @@ class SpecificationParserTest extends TestCase
     private const ENDPOINT_SPECIFICATION = ['endpoint_specification'];
     private const VALID_SPECIFICATION = [
         'openapi' => '3.0',
-        'paths' => [
+        'paths'   => [
             self::PATH => [
                 self::HTTP_METHOD => self::ENDPOINT_SPECIFICATION,
             ],
@@ -93,7 +93,7 @@ class SpecificationParserTest extends TestCase
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
             'openapi' => '3.0',
-            'paths' => [],
+            'paths'   => [],
         ]);
 
         $this->expectException(ParsingException::class);
@@ -108,7 +108,7 @@ class SpecificationParserTest extends TestCase
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
             'openapi' => '3.0',
-            'paths' => [
+            'paths'   => [
                 '/entity' => 'invalid',
             ],
         ]);
@@ -125,7 +125,7 @@ class SpecificationParserTest extends TestCase
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
             'openapi' => '3.0',
-            'paths' => [
+            'paths'   => [
                 '/entity' => [
                     'get' => 'invalid',
                 ],
@@ -144,7 +144,7 @@ class SpecificationParserTest extends TestCase
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
             'openapi' => '3.0',
-            'paths' => [
+            'paths'   => [
                 '/entity' => [
                     '$ref' => 'anything',
                 ],

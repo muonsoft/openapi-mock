@@ -35,7 +35,7 @@ class ObjectTypeParserTest extends TestCase
         'type' => 'defaultPropertyType',
     ];
     private const VALID_OBJECT_SCHEMA = [
-        'type' => 'object',
+        'type'       => 'object',
         'properties' => [
             self::PROPERTY_NAME => self::PROPERTY_SCHEMA,
         ],
@@ -46,13 +46,13 @@ class ObjectTypeParserTest extends TestCase
     private const PROPERTY_POINTER_PATH = ['properties', 'propertyName'];
     private const DEFAULT_PROPERTY_POINTER_PATH = ['properties', 'defaultPropertyName'];
     private const HASH_MAP_SCHEMA = [
-        'type' => 'object',
+        'type'                 => 'object',
         'additionalProperties' => self::PROPERTY_SCHEMA,
     ];
     private const HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES = [
-        'type' => 'object',
+        'type'                 => 'object',
         'additionalProperties' => self::PROPERTY_SCHEMA,
-        'properties' => [
+        'properties'           => [
             self::DEFAULT_PROPERTY_NAME => self::DEFAULT_PROPERTY_SCHEMA,
         ],
         'required' => [
@@ -60,20 +60,20 @@ class ObjectTypeParserTest extends TestCase
         ],
     ];
     private const HASH_MAP_SCHEMA_WITH_MIN_MAX = [
-        'type' => 'object',
+        'type'                 => 'object',
         'additionalProperties' => self::PROPERTY_SCHEMA,
-        'minProperties' => self::MIN_PROPERTIES,
-        'maxProperties' => self::MAX_PROPERTIES,
+        'minProperties'        => self::MIN_PROPERTIES,
+        'maxProperties'        => self::MAX_PROPERTIES,
     ];
     private const FREE_FORM_SCHEMA = [
-        'type' => 'object',
+        'type'                 => 'object',
         'additionalProperties' => true,
     ];
     private const FREE_FORM_SCHEMA_WITH_MIN_MAX = [
-        'type' => 'object',
+        'type'                 => 'object',
         'additionalProperties' => true,
-        'minProperties' => self::MIN_PROPERTIES,
-        'maxProperties' => self::MAX_PROPERTIES,
+        'minProperties'        => self::MIN_PROPERTIES,
+        'maxProperties'        => self::MAX_PROPERTIES,
     ];
     private const MIN_PROPERTIES = 1;
     private const MAX_PROPERTIES = 2;
@@ -110,7 +110,7 @@ class ObjectTypeParserTest extends TestCase
     ): void {
         $parser = $this->createObjectTypeParser();
         $specification = new SpecificationAccessor([
-            'type' => 'object',
+            'type'                 => 'object',
             'additionalProperties' => $additionalProperties,
         ]);
 
@@ -229,7 +229,7 @@ class ObjectTypeParserTest extends TestCase
     {
         $parser = $this->createObjectTypeParser();
         $specification = new SpecificationAccessor([
-            'type' => 'object',
+            'type'                 => 'object',
             'additionalProperties' => 'invalid',
         ]);
 
@@ -245,7 +245,7 @@ class ObjectTypeParserTest extends TestCase
         $parser = $this->createObjectTypeParser();
         $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
         $specification = new SpecificationAccessor([
-            'type' => 'object',
+            'type'       => 'object',
             'properties' => [
                 self::PROPERTY_NAME => self::PROPERTY_SCHEMA,
             ],
@@ -279,8 +279,8 @@ class ObjectTypeParserTest extends TestCase
         $parser = $this->createObjectTypeParser();
         $this->givenContextualParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor([
-            'nullable' => true,
-            'readOnly' => true,
+            'nullable'  => true,
+            'readOnly'  => true,
             'writeOnly' => true,
         ]);
 
