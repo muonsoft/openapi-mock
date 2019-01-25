@@ -2,6 +2,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/strider2038/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/strider2038/swagger-mock/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/strider2038/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/strider2038/swagger-mock/?branch=master)
+[![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)]
 
 Swagger mock server with fake data generation support
 
@@ -32,7 +33,7 @@ Swagger mock server with fake data generation support
 * [x] cache invalidation by timestamp/hash
 * [x] logging
 * [ ] code enhancements
- * [ ] use of easy coding standard
+ * [x] use of easy coding standard
  * [ ] type assertions
 * [ ] try spiral/roadrunner server instead of nginx
 * [ ] docker build in ci
