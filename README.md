@@ -2,7 +2,7 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/strider2038/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/strider2038/swagger-mock/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/strider2038/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/strider2038/swagger-mock/?branch=master)
-[![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)]
+[![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)](https://github.styleci.io/repos/145602302)
 
 Swagger mock server with fake data generation support
 
