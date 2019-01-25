@@ -11,12 +11,21 @@
 namespace App\OpenAPI\Parsing;
 
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class ReferenceResolvingParser
 {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function resolveReferenceAndParsePointedSchema(
         SpecificationAccessor $specification,
         SpecificationPointer $pointer,
@@ -40,6 +49,8 @@ class ReferenceResolvingParser
         ContextualParserInterface $parser,
         string $reference
     ): SpecificationObjectMarkerInterface {
+        $this->logger->debug(sprintf('Reference "%s" detected.', $reference), ['path' => $pointer->getPath()]);
+
         $this->validateReference($reference, $pointer);
 
         $object = $specification->findResolvedObject($reference);
@@ -48,6 +59,19 @@ class ReferenceResolvingParser
             $referencePointer = $this->createReferencePointer($reference);
             $object = $parser->parsePointedSchema($specification, $referencePointer);
             $specification->setResolvedObject($reference, $object);
+
+            $this->logger->debug(
+                sprintf('Object "%s" was resolved and set to specification.', \get_class($object)),
+                [
+                    'path' => $pointer->getPath(),
+                    'referencePath' => $referencePointer->getPath(),
+                ]
+            );
+        } else {
+            $this->logger->debug(
+                sprintf('Resolved object "%s" was found in specification.', \get_class($object)),
+                ['path' => $pointer->getPath()]
+            );
         }
 
         return $object;

@@ -17,6 +17,7 @@ use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class ReferenceResolvingParserTest extends TestCase
 {
@@ -36,7 +37,7 @@ class ReferenceResolvingParserTest extends TestCase
     /** @test */
     public function resolveReferenceAndParsePointedSchema_schemaIsNotReference_contextualParserParsesSchemaAndReturnsObject(): void
     {
-        $resolvingParser = new ReferenceResolvingParser();
+        $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['schema']);
         $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
@@ -56,7 +57,7 @@ class ReferenceResolvingParserTest extends TestCase
         string $reference,
         array $referencedPointerPath
     ): void {
-        $resolvingParser = new ReferenceResolvingParser();
+        $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
         $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
@@ -83,7 +84,7 @@ class ReferenceResolvingParserTest extends TestCase
      */
     public function resolveReferenceAndParsePointedSchema_schemaWithInvalidReference_exceptionThrown(string $reference, string $exceptionMessage): void
     {
-        $resolvingParser = new ReferenceResolvingParser();
+        $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
 
@@ -96,7 +97,7 @@ class ReferenceResolvingParserTest extends TestCase
     /** @test */
     public function resolveReferenceAndParsePointedSchema_schemaWithNotResolvedReference_parsedObjectSetToSpecification(): void
     {
-        $resolvingParser = new ReferenceResolvingParser();
+        $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => self::REFERENCE]);
         $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
@@ -113,7 +114,7 @@ class ReferenceResolvingParserTest extends TestCase
     /** @test */
     public function resolveReferenceAndParsePointedSchema_schemaWithResolvedReference_objectReturnedFromSpecification(): void
     {
-        $resolvingParser = new ReferenceResolvingParser();
+        $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => self::REFERENCE]);
         $expectedObject = $this->givenSpecificationAccessor_findResolvedObject_returnsObject();
@@ -181,5 +182,10 @@ class ReferenceResolvingParserTest extends TestCase
             ->thenReturn($object);
 
         return $object;
+    }
+
+    private function createReferenceResolvingParser(): ReferenceResolvingParser
+    {
+        return new ReferenceResolvingParser(new NullLogger());
     }
 }

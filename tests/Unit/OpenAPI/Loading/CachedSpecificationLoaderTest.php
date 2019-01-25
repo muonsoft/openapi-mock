@@ -29,6 +29,7 @@ use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\OpenAPI\Loading\CachedSpecificationLoader;
 use App\Tests\Utility\TestCase\SpecificationLoaderTestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Psr\SimpleCache\CacheInterface;
 
 class CachedSpecificationLoaderTest extends TestCase
@@ -163,7 +164,8 @@ class CachedSpecificationLoaderTest extends TestCase
         return new CachedSpecificationLoader(
             $this->specificationLoader,
             $this->cacheKeyGenerator,
-            $this->cache
+            $this->cache,
+            new NullLogger()
         );
     }
 

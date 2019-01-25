@@ -15,6 +15,7 @@ use App\Mock\Negotiation\ResponseStatusNegotiator;
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockResponse;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,7 +29,7 @@ class ResponseStatusNegotiatorTest extends TestCase
         array $responseStatusCodes,
         int $bestResponseStatusCode
     ): void {
-        $negotiator = new ResponseStatusNegotiator();
+        $negotiator = $this->createResponseStatusNegotiator();
         $parameters = $this->givenMockParametersWithResponsesWithStatusCodes($responseStatusCodes);
 
         $statusCode = $negotiator->negotiateResponseStatus(new Request(), $parameters);
@@ -39,7 +40,7 @@ class ResponseStatusNegotiatorTest extends TestCase
     /** @test */
     public function negotiateResponseStatus_noResponsesInMockParameters_exceptionThrown(): void
     {
-        $negotiator = new ResponseStatusNegotiator();
+        $negotiator = $this->createResponseStatusNegotiator();
         $parameters = new MockParameters();
 
         $this->expectException(MockGenerationException::class);
@@ -81,5 +82,10 @@ class ResponseStatusNegotiatorTest extends TestCase
         }
 
         return $parameters;
+    }
+
+    private function createResponseStatusNegotiator(): ResponseStatusNegotiator
+    {
+        return new ResponseStatusNegotiator(new NullLogger());
     }
 }

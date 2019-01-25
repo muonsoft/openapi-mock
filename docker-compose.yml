@@ -11,6 +11,7 @@ services:
     environment:
       APP_ENV: dev
       SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
+      SWAGGER_MOCK_LOG_LEVEL: 'debug'
     volumes:
       - .:/app
       - composer_data:/var/run/composer

@@ -18,6 +18,7 @@ use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class EndpointParserTest extends TestCase
 {
@@ -123,6 +124,6 @@ class EndpointParserTest extends TestCase
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->contextualParser, $this->resolvingParser);
+        return new EndpointParser($this->contextualParser, $this->resolvingParser, new NullLogger());
     }
 }

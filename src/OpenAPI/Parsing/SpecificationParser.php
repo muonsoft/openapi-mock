@@ -12,6 +12,7 @@ namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockParametersCollection;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -21,9 +22,13 @@ class SpecificationParser
     /** @var ContextualParserInterface */
     private $endpointParser;
 
-    public function __construct(ContextualParserInterface $endpointParser)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(ContextualParserInterface $endpointParser, LoggerInterface $logger)
     {
         $this->endpointParser = $endpointParser;
+        $this->logger = $logger;
     }
 
     public function parseSpecification(SpecificationAccessor $specification): MockParametersCollection
@@ -48,6 +53,15 @@ class SpecificationParser
                 $mockParameters->path = $path;
                 $mockParameters->httpMethod = strtoupper($httpMethod);
                 $collection->add($mockParameters);
+
+                $this->logger->debug(
+                    sprintf(
+                        'Endpoint with method "%s" and path "%s" was successfully parsed.',
+                        $mockParameters->httpMethod,
+                        $mockParameters->path
+                    ),
+                    ['path' => $endpointPointer->getPath()]
+                );
             }
         }
 

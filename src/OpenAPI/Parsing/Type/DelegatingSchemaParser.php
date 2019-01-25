@@ -11,10 +11,10 @@
 namespace App\OpenAPI\Parsing\Type;
 
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -31,9 +31,13 @@ class DelegatingSchemaParser implements ContextualParserInterface
     /** @var TypeParserLocator */
     private $typeParserLocator;
 
-    public function __construct(TypeParserLocator $typeParserLocator)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(TypeParserLocator $typeParserLocator, LoggerInterface $logger)
     {
         $this->typeParserLocator = $typeParserLocator;
+        $this->logger = $logger;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -41,8 +45,17 @@ class DelegatingSchemaParser implements ContextualParserInterface
         $schema = $specification->getSchema($pointer);
         $type = $this->detectSchemaType($schema) ?? self::DEFAULT_TYPE;
         $typeParser = $this->typeParserLocator->getTypeParser($type);
+        $object = $typeParser->parsePointedSchema($specification, $pointer);
 
-        return $typeParser->parsePointedSchema($specification, $pointer);
+        $this->logger->debug(
+            sprintf('Object "%s" was parsed by "%s"', \get_class($object), \get_class($typeParser)),
+            [
+                'path' => $pointer->getPath(),
+                'object' => $object,
+            ]
+        );
+
+        return $object;
     }
 
     private function detectSchemaType(array $schema): ?string

@@ -16,6 +16,7 @@ use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class DataGeneratorTest extends TestCase
 {
@@ -29,7 +30,7 @@ class DataGeneratorTest extends TestCase
     /** @test */
     public function generateData_valueTypeInSchema_valueGeneratedByConcreteGeneratorAndReturned(): void
     {
-        $generator = new DataGenerator($this->valueGeneratorLocator);
+        $generator = new DataGenerator($this->valueGeneratorLocator, new NullLogger());
         $type = new DummyType();
         $schema = $this->givenSchemaWithValueType($type);
         $generatedValue = $this->givenValueGenerator_generateValue_returnsGeneratedValue();

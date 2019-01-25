@@ -15,6 +15,7 @@ use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\SpecificationLoaderInterface;
 use App\Utility\UriLoader;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 /**
@@ -37,21 +38,34 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
     /** @var SpecificationParser */
     private $parser;
 
-    public function __construct(UriLoader $uriLoader, DecoderInterface $decoder, SpecificationParser $parser)
-    {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(
+        UriLoader $uriLoader,
+        DecoderInterface $decoder,
+        SpecificationParser $parser,
+        LoggerInterface $logger
+    ) {
         $this->uriLoader = $uriLoader;
         $this->decoder = $decoder;
         $this->parser = $parser;
+        $this->logger = $logger;
     }
 
     public function loadMockParameters(string $url): MockParametersCollection
     {
+        $this->logger->debug(sprintf('Start loading OpenAPI specification from url "%s".', $url));
+
         $format = $this->guessFormatByExtension($url);
         $fileContents = $this->uriLoader->loadFileContents($url);
         $specificationSchema = $this->decoder->decode($fileContents, $format);
         $specification = new SpecificationAccessor($specificationSchema);
+        $parsedSpecification = $this->parser->parseSpecification($specification);
 
-        return $this->parser->parseSpecification($specification);
+        $this->logger->info(sprintf('OpenAPI specification was loaded and successfully parsed from url "%s".', $url));
+
+        return $parsedSpecification;
     }
 
     private function guessFormatByExtension(string $url)

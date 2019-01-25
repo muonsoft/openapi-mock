@@ -13,6 +13,7 @@ namespace App\Mock\Negotiation;
 use App\Mock\Exception\MockGenerationException;
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockResponse;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,6 +21,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ResponseStatusNegotiator
 {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
     public function negotiateResponseStatus(Request $request, MockParameters $parameters): int
     {
         $successCodes = [];
@@ -41,6 +50,11 @@ class ResponseStatusNegotiator
         } else {
             throw new MockGenerationException('Mock response not found.');
         }
+
+        $this->logger->info(
+            sprintf('Best status code "%s" was negotiated for request.', $bestStatusCode),
+            ['request' => $request->getUri()]
+        );
 
         return $bestStatusCode;
     }

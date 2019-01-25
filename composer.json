@@ -1,4 +1,13 @@
 {
+    "name": "strider2038/swagger-mock",
+    "description": "Swagger mock server with fake data generation support",
+    "keywords": ["Swagger", "OpenAPI", "OpenAPI3", "Mock", "Server", "Mock-Server"],
+    "authors": [
+        {
+            "name": "Igor Lazarev",
+            "email": "strider2038@yandex.ru"
+        }
+    ],
     "type": "project",
     "license": "MIT",
     "require": {
@@ -13,6 +22,7 @@
         "symfony/console": "4.*",
         "symfony/flex": "1.*",
         "symfony/framework-bundle": "4.*",
+        "symfony/monolog-bundle": "3.*",
         "symfony/serializer-pack": "1.*",
         "symfony/yaml": "4.*",
         "willdurand/negotiation": "2.*"
@@ -69,7 +79,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.1.*"
+            "require": "4.2.*"
         }
     }
 }

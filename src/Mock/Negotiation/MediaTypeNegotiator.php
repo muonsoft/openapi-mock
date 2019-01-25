@@ -13,6 +13,7 @@ namespace App\Mock\Negotiation;
 use App\Mock\Parameters\MockResponse;
 use Negotiation\Accept;
 use Negotiation\Negotiator;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
@@ -24,9 +25,13 @@ class MediaTypeNegotiator
     /** @var Negotiator */
     private $negotiator;
 
-    public function __construct(Negotiator $negotiator)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(Negotiator $negotiator, LoggerInterface $logger)
     {
         $this->negotiator = $negotiator;
+        $this->logger = $logger;
     }
 
     public function negotiateMediaType(Request $request, MockResponse $response): string
@@ -39,6 +44,14 @@ class MediaTypeNegotiator
         } else {
             $bestMediaType = $this->getBestMediaType($acceptHeader, $contentTypes);
         }
+
+        $this->logger->info(
+            sprintf('Best media type "%s" was negotiated for request.', $bestMediaType),
+            [
+                'request' => $request->getUri(),
+                'acceptHeader' => $acceptHeader,
+            ]
+        );
 
         return $bestMediaType;
     }

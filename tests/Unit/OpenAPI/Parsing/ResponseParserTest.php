@@ -18,6 +18,7 @@ use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class ResponseParserTest extends TestCase
 {
@@ -89,6 +90,6 @@ class ResponseParserTest extends TestCase
 
     private function createResponseParser(): ResponseParser
     {
-        return new ResponseParser($this->contextualParser);
+        return new ResponseParser($this->contextualParser, new NullLogger());
     }
 }

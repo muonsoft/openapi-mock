@@ -10,12 +10,12 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class DelegatingSchemaParserTest extends TestCase
 {
@@ -95,6 +95,6 @@ class DelegatingSchemaParserTest extends TestCase
 
     private function createDelegatingSchemaParser(): DelegatingSchemaParser
     {
-        return new DelegatingSchemaParser($this->typeParserLocator);
+        return new DelegatingSchemaParser($this->typeParserLocator, new NullLogger());
     }
 }

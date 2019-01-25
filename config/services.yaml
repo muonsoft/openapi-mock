@@ -1,4 +1,5 @@
 parameters:
+  env(SWAGGER_MOCK_LOG_LEVEL): 'error'
   env(SWAGGER_MOCK_CACHE_TTL): 0
   env(SWAGGER_MOCK_CACHE_STRATEGY): 'DISABLED'
 

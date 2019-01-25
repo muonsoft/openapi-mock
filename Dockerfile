@@ -3,6 +3,7 @@ LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
 ENV APP_ENV=prod \
     SWAGGER_MOCK_SPECIFICATION_URL='' \
+    SWAGGER_MOCK_LOG_LEVEL='error' \
     SWAGGER_MOCK_CACHE_TTL='0' \
     SWAGGER_MOCK_CACHE_STRATEGY='DISABLED'
 

@@ -11,6 +11,7 @@
 namespace App\API;
 
 use App\Mock\Exception\NotSupportedException;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
@@ -22,9 +23,13 @@ class Responder
     /** @var EncoderInterface */
     private $encoder;
 
-    public function __construct(EncoderInterface $encoder)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(EncoderInterface $encoder, LoggerInterface $logger)
     {
         $this->encoder = $encoder;
+        $this->logger = $logger;
     }
 
     public function createResponse(int $statusCode, string $mediaType, $data): Response
@@ -35,6 +40,14 @@ class Responder
         $headers = [
             'Content-Type' => sprintf('%s; charset=utf-8', $mediaType)
         ];
+
+        $this->logger->info(
+            sprintf(
+                'Response with status code "%d" and content type "%s" was generated.',
+                $statusCode,
+                $headers['Content-Type']
+            )
+        );
 
         return new Response($encodedData, $statusCode, $headers);
     }

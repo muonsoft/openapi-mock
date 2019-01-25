@@ -16,6 +16,7 @@ use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\SpecificationLoaderFactory;
 use App\Utility\UriLoader;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
@@ -78,6 +79,12 @@ class SpecificationLoaderFactoryTest extends TestCase
 
     private function createSpecificationLoaderFactory(): SpecificationLoaderFactory
     {
-        return new SpecificationLoaderFactory($this->uriLoader, $this->decoder, $this->parser, $this->cache);
+        return new SpecificationLoaderFactory(
+            $this->uriLoader,
+            $this->decoder,
+            $this->parser,
+            $this->cache,
+            new NullLogger()
+        );
     }
 }

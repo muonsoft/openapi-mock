@@ -17,6 +17,7 @@ use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Utility\UriLoader;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
 class SpecificationFileLoaderTest extends TestCase
@@ -137,6 +138,6 @@ class SpecificationFileLoaderTest extends TestCase
 
     private function createSpecificationLoader(): SpecificationFileLoader
     {
-        return new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser);
+        return new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser, new NullLogger());
     }
 }

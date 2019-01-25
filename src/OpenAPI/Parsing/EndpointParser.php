@@ -13,6 +13,7 @@ namespace App\OpenAPI\Parsing;
 use App\Mock\Parameters\MockParameters;
 use App\Mock\Parameters\MockResponse;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -25,10 +26,17 @@ class EndpointParser implements ContextualParserInterface
     /** @var ReferenceResolvingParser */
     private $resolvingParser;
 
-    public function __construct(ContextualParserInterface $responseParser, ReferenceResolvingParser $resolvingParser)
-    {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(
+        ContextualParserInterface $responseParser,
+        ReferenceResolvingParser $resolvingParser,
+        LoggerInterface $logger
+    ) {
         $this->responseParser = $responseParser;
         $this->resolvingParser = $resolvingParser;
+        $this->logger = $logger;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -47,6 +55,11 @@ class EndpointParser implements ContextualParserInterface
                 $parsedStatusCode = $this->parseStatusCode($statusCode);
                 $response->statusCode = $parsedStatusCode;
                 $mockParameters->responses->set($parsedStatusCode, $response);
+
+                $this->logger->debug(
+                    sprintf('Response with status code "%s" was parsed.', $response->statusCode),
+                    ['path' => $responsePointer->getPath()]
+                );
             }
         }
 

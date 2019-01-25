@@ -15,7 +15,9 @@ use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
 use Negotiation\Negotiator;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 class MediaTypeNegotiatorTest extends TestCase
 {
@@ -40,7 +42,7 @@ class MediaTypeNegotiatorTest extends TestCase
         array $responseContentTypes,
         string $bestContentType
     ): void {
-        $mediaTypeNegotiator = new MediaTypeNegotiator($this->negotiator);
+        $mediaTypeNegotiator = $this->createMediaTypeNegotiator();
         $request = $this->givenRequestWithAcceptHeader($acceptHeader);
         $response = $this->givenMockResponseWithContentTypes($responseContentTypes);
 
@@ -49,15 +51,14 @@ class MediaTypeNegotiatorTest extends TestCase
         $this->assertSame($bestContentType, $mediaType);
     }
 
-    /**
-     * @test
-     * @expectedException \Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException
-     */
+    /** @test */
     public function negotiateMediaType_requestWithJsonInAcceptHeaderAndResponseWithJson_jsonContentReturned(): void
     {
-        $mediaTypeNegotiator = new MediaTypeNegotiator($this->negotiator);
+        $mediaTypeNegotiator = $this->createMediaTypeNegotiator();
         $request = $this->givenRequestWithAcceptHeader(self::APPLICATION_XML);
         $response = $this->givenMockResponseWithContentTypes([self::APPLICATION_JSON]);
+
+        $this->expectException(UnsupportedMediaTypeHttpException::class);
 
         $mediaTypeNegotiator->negotiateMediaType($request, $response);
     }
@@ -105,5 +106,10 @@ class MediaTypeNegotiatorTest extends TestCase
         }
 
         return $response;
+    }
+
+    private function createMediaTypeNegotiator(): MediaTypeNegotiator
+    {
+        return new MediaTypeNegotiator($this->negotiator, new NullLogger());
     }
 }

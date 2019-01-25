@@ -17,6 +17,7 @@ use App\OpenAPI\Loading\CachedSpecificationLoader;
 use App\OpenAPI\Loading\SpecificationFileLoader;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\Utility\UriLoader;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use Symfony\Component\Serializer\Encoder\DecoderInterface;
 
@@ -44,28 +45,35 @@ class SpecificationLoaderFactory
     /** @var CacheInterface */
     private $cache;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         UriLoader $uriLoader,
         DecoderInterface $decoder,
         SpecificationParser $parser,
-        CacheInterface $cache
+        CacheInterface $cache,
+        LoggerInterface $logger
     ) {
         $this->uriLoader = $uriLoader;
         $this->decoder = $decoder;
         $this->parser = $parser;
         $this->cache = $cache;
+        $this->logger = $logger;
     }
 
     public function createSpecificationLoader(string $cacheStrategy): SpecificationLoaderInterface
     {
         $this->validateCacheStrategy($cacheStrategy);
 
-        $loader = new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser);
+        $loader = new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser, $this->logger);
 
         if ($cacheStrategy !== 'DISABLED') {
             $generator = $this->createCacheKeyGenerator($cacheStrategy);
-            $loader = new CachedSpecificationLoader($loader, $generator, $this->cache);
+            $loader = new CachedSpecificationLoader($loader, $generator, $this->cache, $this->logger);
         }
+
+        $this->logger->info(sprintf('Specification loader with caching strategy "%s" was created.', $cacheStrategy));
 
         return $loader;
     }

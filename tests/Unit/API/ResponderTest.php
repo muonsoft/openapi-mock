@@ -12,6 +12,7 @@ namespace App\Tests\Unit\API;
 
 use App\API\Responder;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Encoder\EncoderInterface;
 
@@ -37,7 +38,7 @@ class ResponderTest extends TestCase
         string $mediaType,
         string $expectedEncodingFormat
     ): void {
-        $responder = new Responder($this->encoder);
+        $responder = $this->creteResponder();
         $contentType = sprintf('%s; charset=utf-8', $mediaType);
         $this->givenEncoder_encode_returnsData(self::ENCODED_DATA);
 
@@ -56,7 +57,7 @@ class ResponderTest extends TestCase
      */
     public function createResponse_statusCodeAndNotSupportedMediaTypeAndData_exceptionThrown(): void
     {
-        $responder = new Responder($this->encoder);
+        $responder = $this->creteResponder();
 
         $responder->createResponse(Response::HTTP_OK, 'text/html', self::DATA);
     }
@@ -98,5 +99,10 @@ class ResponderTest extends TestCase
         \Phake::when($this->encoder)
             ->encode(\Phake::anyParameters())
             ->thenReturn($data);
+    }
+
+    private function creteResponder(): Responder
+    {
+        return new Responder($this->encoder, new NullLogger());
     }
 }

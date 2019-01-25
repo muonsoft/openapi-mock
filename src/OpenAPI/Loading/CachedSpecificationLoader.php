@@ -31,6 +31,7 @@ use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\OpenAPI\SpecificationLoaderInterface;
 use App\Utility\StringList;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -47,14 +48,19 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
     /** @var CacheInterface */
     private $cache;
 
+    /** @var LoggerInterface */
+    private $logger;
+
     public function __construct(
         SpecificationLoaderInterface $specificationLoader,
         CacheKeyGeneratorInterface $cacheKeyGenerator,
-        CacheInterface $cache
+        CacheInterface $cache,
+        LoggerInterface $logger
     ) {
         $this->specificationLoader = $specificationLoader;
         $this->cacheKeyGenerator = $cacheKeyGenerator;
         $this->cache = $cache;
+        $this->logger = $logger;
     }
 
     public function loadMockParameters(string $url): MockParametersCollection
@@ -63,9 +69,13 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
 
         if ($this->cache->has($cacheKey)) {
             $specification = $this->loadFromCache($cacheKey);
+
+            $this->logger->info(sprintf('OpenAPI specification "%s" loaded from cache "%s".', $url, $cacheKey));
         } else {
             $specification = $this->specificationLoader->loadMockParameters($url);
             $this->cache->set($cacheKey, serialize($specification));
+
+            $this->logger->info(sprintf('OpenAPI specification "%s" saved to cache "%s".', $url, $cacheKey));
         }
 
         return $specification;

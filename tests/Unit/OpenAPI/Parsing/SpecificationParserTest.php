@@ -16,6 +16,7 @@ use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class SpecificationParserTest extends TestCase
 {
@@ -158,6 +159,6 @@ class SpecificationParserTest extends TestCase
 
     private function createSpecificationParser(): SpecificationParser
     {
-        return new SpecificationParser($this->contextualParser);
+        return new SpecificationParser($this->contextualParser, new NullLogger());
     }
 }

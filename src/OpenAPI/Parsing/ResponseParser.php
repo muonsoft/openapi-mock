@@ -12,6 +12,7 @@ namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -21,9 +22,13 @@ class ResponseParser implements ContextualParserInterface
     /** @var ContextualParserInterface */
     private $schemaParser;
 
-    public function __construct(ContextualParserInterface $schemaParser)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(ContextualParserInterface $schemaParser, LoggerInterface $logger)
     {
         $this->schemaParser = $schemaParser;
+        $this->logger = $logger;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -38,6 +43,11 @@ class ResponseParser implements ContextualParserInterface
             $mediaTypePointer = $contentPointer->withPathElement($mediaType);
             $parsedSchema = $this->schemaParser->parsePointedSchema($specification, $mediaTypePointer);
             $response->content->set($mediaType, $parsedSchema);
+
+            $this->logger->debug(
+                sprintf('Response content scheme for media type "%s" was parsed.', $mediaType),
+                ['path' => $mediaTypePointer->getPath()]
+            );
         }
 
         return $response;
