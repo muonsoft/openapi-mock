@@ -1,12 +1,15 @@
 parameters:
   env(SWAGGER_MOCK_LOG_LEVEL): 'error'
-  env(SWAGGER_MOCK_CACHE_TTL): 0
   env(SWAGGER_MOCK_CACHE_STRATEGY): 'DISABLED'
+  env(SWAGGER_MOCK_CACHE_DIRECTORY): '/dev/shm/openapi-cache'
+  env(SWAGGER_MOCK_CACHE_TTL): 0
 
   locale: 'en'
   specification_url: '%env(SWAGGER_MOCK_SPECIFICATION_URL)%'
   cache_strategy: '%env(SWAGGER_MOCK_CACHE_STRATEGY)%'
+  cache_directory: '%env(SWAGGER_MOCK_CACHE_DIRECTORY)%'
   cache_ttl: '%env(SWAGGER_MOCK_CACHE_TTL)%'
+  log_level: '%env(SWAGGER_MOCK_LOG_LEVEL)%'
 
   type_parser_map:
     object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
@@ -74,7 +77,7 @@ services:
     arguments:
       - 'openapi'
       - '%cache_ttl%'
-      - '%kernel.project_dir%/var/file-cache'
+      - '%cache_directory%'
 
   type_parser_service_locator:
     class: Symfony\Component\DependencyInjection\ServiceLocator

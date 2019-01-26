@@ -2,8 +2,8 @@ monolog:
   handlers:
     main:
       type: stream
-      path: "php://stdout"
-      level: "%env(SWAGGER_MOCK_LOG_LEVEL)%"
+      path: "php://stderr"
+      level: debug
       excluded_404s:
         # regex: exclude all 404 errors from the logs
         - ^/

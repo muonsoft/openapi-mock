@@ -18,12 +18,15 @@
         "doctrine/collections": "1.*",
         "fzaninotto/faker": "1.*",
         "guzzlehttp/guzzle": "6.*",
+        "spiral/roadrunner": "1.*",
         "symfony/cache": "4.*",
         "symfony/console": "4.*",
         "symfony/flex": "1.*",
         "symfony/framework-bundle": "4.*",
         "symfony/monolog-bundle": "3.*",
+        "symfony/psr-http-message-bridge": "1.*",
         "symfony/serializer-pack": "1.*",
+        "symfony/translation": "4.*",
         "symfony/yaml": "4.*",
         "willdurand/negotiation": "2.*"
     },
@@ -37,7 +40,7 @@
         "phake/phake": "3.*",
         "phpunit/phpunit": "7.*",
         "symfony/expression-language": "4.*",
-        "symplify/easy-coding-standard": "^5.3"
+        "symplify/easy-coding-standard": "5.*"
     },
     "config": {
         "preferred-install": {
@@ -64,8 +67,7 @@
     },
     "scripts": {
         "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "cache:clear": "symfony-cmd"
         },
         "post-install-cmd": [
             "@auto-scripts"

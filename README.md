@@ -32,10 +32,9 @@ Swagger mock server with fake data generation support
 * [x] caching loader for OpenAPI specification
 * [x] cache invalidation by timestamp/hash
 * [x] logging
-* [ ] code enhancements
- * [x] use of easy coding standard
- * [ ] type assertions
-* [ ] try spiral/roadrunner server instead of nginx
+* [x] try spiral/roadrunner server instead of nginx
+* [x] use of easy coding standard
+* [ ] type assertions
 * [ ] docker build in ci
 * [ ] container acceptance test in ci 
 * [ ] make supported features table in README

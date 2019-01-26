@@ -1,0 +1,8 @@
+http:
+  address: 0.0.0.0:8080
+  maxRequest: 10
+  workers:
+    command: "php /app/bin/worker.php"
+    relay: "unix:///var/run/road-runner.sock"
+    pool:
+      numWorkers: 4

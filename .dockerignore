@@ -1,0 +1,15 @@
+/.dev
+/docs
+/examples
+/tests
+/var
+/vendor
+
+.scrutinizer.yml
+behat.yml.dist
+build.sh
+dev.sh
+docker-compose.yml
+Dockerfile
+easy-coding-standard.yml
+phpunit.xml.dist
