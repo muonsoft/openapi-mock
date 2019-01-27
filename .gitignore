@@ -17,6 +17,3 @@ behat.yml
 /.php_cs
 /.php_cs.cache
 ###< friendsofphp/php-cs-fixer ###
-
-### Spiral Roadrunner config
-.rr.yaml

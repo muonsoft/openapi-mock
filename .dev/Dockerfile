@@ -2,7 +2,7 @@ FROM strider2038/swagger-mock
 
 ENV APP_ENV=dev \
     COMPOSER_HOME=/var/run/composer \
-    XDEBUG_CONFIG="remote_enable=1 remote_mode=req remote_port=9001 remote_host=172.17.0.1 remote_log=/app/var/xdebug.log" \
+    XDEBUG_CONFIG="remote_enable=1 remote_mode=req remote_port=9000 remote_host=172.17.0.1" \
     PHP_IDE_CONFIG="serverName=default"
 
 RUN set -xe \
@@ -17,4 +17,6 @@ RUN set -xe \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && chmod -R 0777 $COMPOSER_HOME
 
-EXPOSE 80 9001
+COPY ./files /
+
+EXPOSE 8080 9000

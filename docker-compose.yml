@@ -9,12 +9,13 @@ services:
     build:
       context: ./.dev
     environment:
-      APP_ENV: dev
+      APP_ENV: prod
       SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
+      SWAGGER_MOCK_CACHE_STRATEGY: 'MD5'
       SWAGGER_MOCK_LOG_LEVEL: 'debug'
     volumes:
       - .:/app
       - composer_data:/var/run/composer
     ports:
-      - "80:80"
-      - "9002:9001"
+      - "8080:8080"
+      - "9000:9000"

@@ -8,7 +8,6 @@
 .scrutinizer.yml
 behat.yml.dist
 build.sh
-dev.sh
 docker-compose.yml
 Dockerfile
 easy-coding-standard.yml

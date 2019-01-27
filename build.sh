@@ -10,22 +10,16 @@ done
 container_name="swagger-mock"
 container_tag="strider2038/swagger-mock"
 
-echo "Starting to build image $container_tag..."
-echo "========================================================================="
+set -xe
 
 docker build --pull --tag "$container_tag" .
 
-echo "========================================================================="
-echo "Image $container_tag created"
-
-
 if [ ${docker_run} -eq 1 ]; then
-    echo "Starting container $container_name for image $container_tag..."
     docker stop "$container_name"
     docker rm "$container_name"
 
     docker run \
-        -p 80:80 \
+        -p 8080:8080 \
         --detach \
         --name "$container_name" \
         "$container_tag"

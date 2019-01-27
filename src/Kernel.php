@@ -21,10 +21,10 @@ class Kernel extends BaseKernel
 
     public function getCacheDir()
     {
-        if ($this->environment === 'prod') {
-            $cacheDirectory = '/dev/shm/swagger-app/cache/' . $this->environment;
+        if ('prod' === $this->environment) {
+            $cacheDirectory = '/dev/shm/swagger-app/cache/'.$this->environment;
         } else {
-            $cacheDirectory = $this->getProjectDir() . '/var/cache/' . $this->environment;
+            $cacheDirectory = $this->getProjectDir().'/var/cache/'.$this->environment;
         }
 
         return $cacheDirectory;

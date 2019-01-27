@@ -50,6 +50,6 @@ while ($req = $psr7->acceptRequest()) {
         $kernel->terminate($request, $response);
         $kernel->reboot(null);
     } catch (\Throwable $e) {
-        $psr7->getWorker()->error((string)$e);
+        $psr7->getWorker()->error((string) $e);
     }
 }
