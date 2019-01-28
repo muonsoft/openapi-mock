@@ -18,4 +18,4 @@ services:
       - composer_data:/var/run/composer
     ports:
       - "8080:8080"
-      - "9000:9000"
+      - "9001:9000"
