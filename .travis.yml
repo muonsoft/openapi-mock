@@ -6,6 +6,10 @@ language: php
 php:
   - '7.2'
 
+env:
+  global:
+    - APP_ENV=test
+
 services:
   - docker
 
@@ -13,6 +17,7 @@ install:
   - composer install
 
 script:
+  - ./vendor/bin/phpunit
   - docker build --pull --tag "swaggermock/swagger-mock" .
   - docker images
 
