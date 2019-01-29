@@ -1,6 +1,6 @@
 parameters:
   env(SWAGGER_MOCK_LOG_LEVEL): 'error'
-  env(SWAGGER_MOCK_CACHE_STRATEGY): 'DISABLED'
+  env(SWAGGER_MOCK_CACHE_STRATEGY): 'disabled'
   env(SWAGGER_MOCK_CACHE_DIRECTORY): '/dev/shm/openapi-cache'
   env(SWAGGER_MOCK_CACHE_TTL): 0
 

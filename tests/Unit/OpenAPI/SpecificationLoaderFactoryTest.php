@@ -60,9 +60,10 @@ class SpecificationLoaderFactoryTest extends TestCase
     public function cacheStrategyAndSpecificationLoaderClass(): array
     {
         return [
+            ['disabled', SpecificationFileLoader::class],
             ['DISABLED', SpecificationFileLoader::class],
-            ['MD5', CachedSpecificationLoader::class],
-            ['MD5_AND_TIMESTAMP', CachedSpecificationLoader::class],
+            ['md5', CachedSpecificationLoader::class],
+            ['md5_and_timestamp', CachedSpecificationLoader::class],
         ];
     }
 

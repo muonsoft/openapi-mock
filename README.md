@@ -31,53 +31,80 @@ Swagger API mock server with fake data generation with main features.
 
 ## How to use
 
-Recommended way is to use Docker container
+Recommended way is to use [Docker](https://www.docker.com/) container.
 
 ```bash
 docker pull strider2038/swagger-mock
 
 # with remote file
 docker run -p 8080:8080 -e "SWAGGER_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml" --rm strider2038/swagger-mock
+
+# with local file
+docker run -p 8080:8080 -v $PWD/examples/petstore.yaml:/openapi/petstore.yaml -e "SWAGGER_MOCK_SPECIFICATION_URL=/openapi/petstore.yaml" --rm strider2038/swagger-mock
 ```
 
-## TODO list
+Also, you can use [Docker Compose](https://docs.docker.com/compose/). Example of `docker-compose.yml`
 
-* [x] basic array type support
-* [x] basic number type support
-* [x] boolean type support
-* [x] parsing context (path) and better exceptions
-* [x] content negotiation
-* [x] xml/json encoding in responder
-* [x] using number parameters for generator
-* [x] using integer parameters for generator
-* [x] using string parameters for generator
-* [x] using array parameters for generator
-* [x] support of additionalProperties for object type
-  * [x] free-form object
-  * [x] hash-map
-  * [x] hash-map fixed keys
-* [x] local reference resolving
-* [x] default response support
-* [x] combined types
-  * [x] oneOf
-  * [x] anyOf
-  * [x] allOf
-* [x] support of readOnly, writeOnly fields
-* [x] caching loader for OpenAPI specification
-* [x] cache invalidation by timestamp/hash
-* [x] logging
-* [x] try spiral/roadrunner server instead of nginx
-* [x] use of easy coding standard
-* [x] make supported features table in README
-* [ ] type assertions
-* [ ] docker build in ci
-* [ ] container acceptance test in ci 
+```yaml
+version: '3.0'
 
-## TODO for v0.2
+services:
+  swagger_mock:
+    container_name: swagger_mock
+    image: strider2038/swagger-mock
+    environment:
+      SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
+    ports:
+      - "8080:8080"
+```
 
-* [ ] discriminator in combined types
+To start up container run command
+
+```bash
+docker-compose up -d
+```
+
+## Configuration
+
+### Environment variables
+
+Mock server options can be set via environment variables.
+
+| Environment variable | Description | Default value | Possible values |
+| --- | --- | --- | --- |
+| SWAGGER_MOCK_SPECIFICATION_URL | Path to file with OpenAPI v3 specification|  | Any valid URL or path to file |
+| SWAGGER_MOCK_LOG_LEVEL | Error log level | error | error, warning, info, debug |
+| SWAGGER_MOCK_CACHE_DIRECTORY | Directory for OpenAPI specification cache | /dev/shm/openapi-cache | Any valid path |
+| SWAGGER_MOCK_CACHE_TTL | Time to live for OpenAPI specification cache in seconds | 0 | Positive integer |
+| SWAGGER_MOCK_CACHE_STRATEGY | Caching strategy for OpenAPI specification cache | disabled | disabled, md5, md5_and_timestamp |
+
+### Specification cache
+
+To speed up server response time you can use caching mechanism for OpenAPI. There are several caching strategies. Specific strategy can be set by environment variable `SWAGGER_MOCK_CACHE_STRATEGY`.
+
+* `md5` calculates hash from specification URL and if specification URL was not changed uses parsed objects from cache.
+* `md5_and_timestamp` calculates hash from specification URL and timestamp (file timestamp or value of `Last-Modified` header). If you are using file from remote server make sure that valid `Last-Modified` header is present. 
+
+Recommended options for use with remote file (accessible by URL).
+
+* `SWAGGER_MOCK_CACHE_STRATEGY='md5'`
+* `SWAGGER_MOCK_CACHE_TTL=3600`
+
+Recommended options for use with local file (at local server).
+
+* `SWAGGER_MOCK_CACHE_STRATEGY='md5_and_timestamp'`
+* `SWAGGER_MOCK_CACHE_TTL=3600`
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Planned features for v0.2
+
 * [ ] response cache
 * [ ] faker expression extension for numbers
 * [ ] faker expression extension for strings
+* [ ] request body validation
 * [ ] remote reference support
 * [ ] url reference support
+* [ ] discriminator in combined types

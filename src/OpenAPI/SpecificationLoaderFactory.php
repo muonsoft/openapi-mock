@@ -27,9 +27,9 @@ use Symfony\Component\Serializer\Encoder\DecoderInterface;
 class SpecificationLoaderFactory
 {
     private const CACHE_STRATEGIES = [
-        'DISABLED',
-        'MD5',
-        'MD5_AND_TIMESTAMP',
+        'disabled',
+        'md5',
+        'md5_and_timestamp',
     ];
     private const KEY_PREFIX = 'specification_';
 
@@ -64,11 +64,12 @@ class SpecificationLoaderFactory
 
     public function createSpecificationLoader(string $cacheStrategy): SpecificationLoaderInterface
     {
+        $cacheStrategy = strtolower($cacheStrategy);
         $this->validateCacheStrategy($cacheStrategy);
 
         $loader = new SpecificationFileLoader($this->uriLoader, $this->decoder, $this->parser, $this->logger);
 
-        if ('DISABLED' !== $cacheStrategy) {
+        if ('disabled' !== $cacheStrategy) {
             $generator = $this->createCacheKeyGenerator($cacheStrategy);
             $loader = new CachedSpecificationLoader($loader, $generator, $this->cache, $this->logger);
         }
@@ -93,7 +94,7 @@ class SpecificationLoaderFactory
 
     private function createCacheKeyGenerator(string $cacheStrategy): CacheKeyGeneratorInterface
     {
-        if ('MD5' === $cacheStrategy) {
+        if ('md5' === $cacheStrategy) {
             $generator = new MD5KeyGenerator(self::KEY_PREFIX);
         } else {
             $generator = new MD5AndTimestampKeyGenerator($this->uriLoader, self::KEY_PREFIX);
