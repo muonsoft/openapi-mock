@@ -1,4 +1,4 @@
-FROM strider2038/swagger-mock
+FROM swaggermock/swagger-mock
 
 ENV APP_ENV=dev \
     COMPOSER_HOME=/var/run/composer \

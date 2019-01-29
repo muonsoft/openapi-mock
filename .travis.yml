@@ -1,0 +1,24 @@
+sudo: required
+dist: trusty
+group: stable
+
+language: php
+php:
+  - '7.2'
+
+services:
+  - docker
+
+install:
+  - composer install
+
+script:
+  - docker build --pull --tag "swaggermock/swagger-mock" .
+  - docker images
+
+deploy:
+  provider: script
+  script: bash deploy.sh
+  on:
+    branch:
+      - master
