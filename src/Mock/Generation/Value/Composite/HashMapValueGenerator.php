@@ -30,15 +30,6 @@ class HashMapValueGenerator implements ValueGeneratorInterface
     /** @var ValueGeneratorLocator */
     private $generatorLocator;
 
-    /** @var ValueGeneratorInterface */
-    private $valueGenerator;
-
-    /** @var TypeInterface */
-    private $valueType;
-
-    /** @var array */
-    private $properties = [];
-
     public function __construct(Generator $faker, ValueGeneratorLocator $generatorLocator)
     {
         $this->faker = $faker;
@@ -58,40 +49,35 @@ class HashMapValueGenerator implements ValueGeneratorInterface
 
     private function generateHashMap(HashMapType $type): array
     {
-        $this->initializeValueGenerator($type->value);
+        $defaultProperties = $this->generateDefaultProperties($type);
 
-        $this->generateDefaultProperties($type);
-        $this->generateRandomProperties($type);
-
-        return $this->properties;
+        return $this->generateAndAppendRandomProperties($type, $defaultProperties);
     }
 
-    private function initializeValueGenerator(TypeInterface $type): void
+    private function generateDefaultProperties(HashMapType $type): array
     {
-        $this->valueType = $type;
-        $this->valueGenerator = $this->generatorLocator->getValueGenerator($this->valueType);
-        $this->properties = [];
-    }
+        $properties = [];
 
-    private function generateDefaultProperties(HashMapType $type): void
-    {
         foreach ($type->required as $defaultPropertyName) {
             $defaultPropertyType = $type->properties[$defaultPropertyName];
             $valueGenerator = $this->generatorLocator->getValueGenerator($defaultPropertyType);
-            $this->properties[$defaultPropertyName] = $valueGenerator->generateValue($defaultPropertyType);
+            $properties[$defaultPropertyName] = $valueGenerator->generateValue($defaultPropertyType);
         }
+
+        return $properties;
     }
 
-    private function generateRandomProperties(HashMapType $type): array
+    private function generateAndAppendRandomProperties(HashMapType $type, array $properties): array
     {
+        $valueGenerator = $this->generatorLocator->getValueGenerator($type->value);
         $length = $this->generateRandomArrayLength($type);
 
-        for ($i = \count($this->properties); $i < $length; $i++) {
+        for ($i = \count($properties); $i < $length; $i++) {
             $key = $this->faker->unique()->word();
-            $this->properties[$key] = $this->valueGenerator->generateValue($type->value);
+            $properties[$key] = $valueGenerator->generateValue($type->value);
         }
 
-        return $this->properties;
+        return $properties;
     }
 
     private function generateRandomArrayLength(HashMapType $type): int

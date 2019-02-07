@@ -27,15 +27,6 @@ class ArrayValueGenerator implements ValueGeneratorInterface
     /** @var ValueGeneratorLocator */
     private $generatorLocator;
 
-    /** @var ValueGeneratorInterface */
-    private $valueGenerator;
-
-    /** @var TypeInterface */
-    private $valueType;
-
-    /** @var array */
-    private $uniqueValues;
-
     public function __construct(ValueGeneratorLocator $generatorLocator)
     {
         $this->generatorLocator = $generatorLocator;
@@ -54,14 +45,14 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
     private function generateArray(ArrayType $type): array
     {
-        $this->initializeValueGenerator($type->items);
-
         $count = $this->generateRandomArrayLength($type);
 
         $values = [];
+        $uniqueValues = [];
+        $valueGenerator = $this->generatorLocator->getValueGenerator($type->items);
 
         for ($i = 1; $i <= $count; $i++) {
-            $values[] = $this->generateArrayValue($type);
+            $values[] = $this->generateArrayValue($valueGenerator, $type, $uniqueValues);
         }
 
         return $values;
@@ -75,38 +66,31 @@ class ArrayValueGenerator implements ValueGeneratorInterface
         return random_int($minItems, $maxItems);
     }
 
-    private function initializeValueGenerator(TypeInterface $type): void
-    {
-        $this->valueType = $type;
-        $this->valueGenerator = $this->generatorLocator->getValueGenerator($this->valueType);
-        $this->uniqueValues = [];
-    }
-
-    private function generateArrayValue(ArrayType $type)
+    private function generateArrayValue(ValueGeneratorInterface $generator, ArrayType $type, array &$uniqueValues)
     {
         if ($type->uniqueItems) {
-            $value = $this->generateUniqueValue($type->items);
+            $value = $this->generateUniqueValue($generator, $type->items, $uniqueValues);
         } else {
-            $value = $this->valueGenerator->generateValue($type->items);
+            $value = $generator->generateValue($type->items);
         }
 
         return $value;
     }
 
-    private function generateUniqueValue(TypeInterface $itemsType)
+    private function generateUniqueValue(ValueGeneratorInterface $generator, TypeInterface $itemsType, array &$uniqueValues)
     {
         $attempts = 0;
 
         do {
-            $value = $this->valueGenerator->generateValue($itemsType);
+            $value = $generator->generateValue($itemsType);
             $attempts++;
 
             if ($attempts > self::MAX_ATTEMPTS) {
                 throw new \RuntimeException('Cannot generate array with unique values, attempts limit exceeded');
             }
-        } while (\in_array($value, $this->uniqueValues, true));
+        } while (\in_array($value, $uniqueValues, true));
 
-        $this->uniqueValues[] = $value;
+        $uniqueValues[] = $value;
 
         return $value;
     }

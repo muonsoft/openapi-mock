@@ -51,7 +51,7 @@ class ObjectValueGenerator implements ValueGeneratorInterface
         $object = [];
 
         /**
-         * @var string
+         * @var string $propertyName
          * @var TypeInterface $propertyType
          */
         foreach ($type->properties as $propertyName => $propertyType) {

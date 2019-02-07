@@ -26,12 +26,12 @@ use Symfony\Component\Serializer\Encoder\DecoderInterface;
  */
 class SpecificationLoaderFactory
 {
+    private const KEY_PREFIX = 'specification_';
     private const CACHE_STRATEGIES = [
         'disabled',
         'md5',
         'md5_and_timestamp',
     ];
-    private const KEY_PREFIX = 'specification_';
 
     /** @var UriLoader */
     private $uriLoader;

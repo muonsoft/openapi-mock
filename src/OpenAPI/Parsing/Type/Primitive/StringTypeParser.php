@@ -28,9 +28,6 @@ class StringTypeParser implements TypeParserInterface
     /** @var LoggerInterface */
     private $logger;
 
-    /** @var StringType */
-    private $type;
-
     public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
@@ -38,26 +35,25 @@ class StringTypeParser implements TypeParserInterface
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $this->type = new StringType();
+        $type = new StringType();
         $schema = $specification->getSchema($pointer);
 
-        $this->readFixedFieldsValues($this->type, $schema);
-        $this->type->minLength = $this->readIntegerValue($schema, 'minLength');
-        $this->type->maxLength = $this->readIntegerValue($schema, 'maxLength');
-        $this->type->format = $this->readStringValue($schema, 'format');
-        $this->type->pattern = $this->readStringValue($schema, 'pattern');
+        $this->readFixedFieldsValues($type, $schema);
+        $type->minLength = $this->readIntegerValue($schema, 'minLength');
+        $type->maxLength = $this->readIntegerValue($schema, 'maxLength');
+        $type->format = $this->readStringValue($schema, 'format');
+        $type->pattern = $this->readStringValue($schema, 'pattern');
 
-        $this->lengthsAutoCorrection($pointer);
+        $this->lengthsAutoCorrection($type, $pointer);
+        $this->processEnumProperty($type, $schema, $pointer);
 
-        $this->processEnumProperty($schema, $pointer);
-
-        return $this->type;
+        return $type;
     }
 
-    private function lengthsAutoCorrection(SpecificationPointer $pointer): void
+    private function lengthsAutoCorrection(StringType $type, SpecificationPointer $pointer): void
     {
-        if ($this->type->minLength < 0) {
-            $this->type->minLength = 0;
+        if ($type->minLength < 0) {
+            $type->minLength = 0;
 
             $this->logger->warning(
                 sprintf(
@@ -67,8 +63,8 @@ class StringTypeParser implements TypeParserInterface
             );
         }
 
-        if ($this->type->maxLength < 0) {
-            $this->type->maxLength = 0;
+        if ($type->maxLength < 0) {
+            $type->maxLength = 0;
 
             $this->logger->warning(
                 sprintf(
@@ -78,8 +74,8 @@ class StringTypeParser implements TypeParserInterface
             );
         }
 
-        if ($this->type->maxLength < $this->type->minLength && 0 !== $this->type->maxLength) {
-            $this->type->maxLength = $this->type->minLength;
+        if ($type->maxLength < $type->minLength && 0 !== $type->maxLength) {
+            $type->maxLength = $type->minLength;
 
             $this->logger->warning(
                 sprintf(
@@ -90,7 +86,7 @@ class StringTypeParser implements TypeParserInterface
         }
     }
 
-    private function processEnumProperty(array $schema, SpecificationPointer $pointer): void
+    private function processEnumProperty(StringType $type, array $schema, SpecificationPointer $pointer): void
     {
         $enumValues = $schema['enum'] ?? [];
 
@@ -103,15 +99,15 @@ class StringTypeParser implements TypeParserInterface
                 )
             );
         } else {
-            $this->processEnumValues($enumValues, $pointer);
+            $this->processEnumValues($type, $enumValues, $pointer);
         }
     }
 
-    private function processEnumValues(array $enumValues, SpecificationPointer $pointer): void
+    private function processEnumValues(StringType $type, array $enumValues, SpecificationPointer $pointer): void
     {
         foreach ($enumValues as $enumValue) {
             if (\is_string($enumValue)) {
-                $this->type->enum->add($enumValue);
+                $type->enum->add($enumValue);
             } else {
                 $this->logger->warning(
                     sprintf(

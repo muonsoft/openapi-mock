@@ -100,6 +100,13 @@ Recommended options for use with local file (at local server).
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## Features for first beta v0.1
+
+* [ ] not critical parsing errors should not fail mock server
+  * [ ] service for handling parsing errors
+  * [ ] make special invalid type instead of throwing exception on specification parsing
+* [ ] detect path for rest items
+
 ## Planned features for v0.2
 
 * [ ] response cache
