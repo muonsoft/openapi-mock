@@ -148,4 +148,28 @@ trait ParsingTestCaseTrait
             ->reportWarning($message, \Phake::capture($pointer));
         Assert::assertSame($path, $pointer->getPath());
     }
+
+    protected function givenParsingErrorHandler_reportError_returnsMessage(): string
+    {
+        $message = 'report message';
+
+        /** @var SpecificationPointer $pointer */
+        \Phake::when($this->errorHandler)
+            ->reportError(\Phake::anyParameters())
+            ->thenReturn($message);
+
+        return $message;
+    }
+
+    protected function givenParsingErrorHandler_reportWarning_returnsMessage(): string
+    {
+        $message = 'report message';
+
+        /** @var SpecificationPointer $pointer */
+        \Phake::when($this->errorHandler)
+            ->reportWarning(\Phake::anyParameters())
+            ->thenReturn($message);
+
+        return $message;
+    }
 }

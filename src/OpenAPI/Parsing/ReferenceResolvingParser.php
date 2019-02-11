@@ -75,9 +75,9 @@ class ReferenceResolvingParser
             $error = 'only local references is supported - reference must start with "#/"';
         }
 
-        if ($error !== null) {
+        if ($error) {
             $referencePointer = $pointer->withPathElement('$ref');
-            $this->errorHandler->reportError($error, $referencePointer);
+            $error = $this->errorHandler->reportError($error, $referencePointer);
         }
 
         return $error;

@@ -120,12 +120,13 @@ class ReferenceResolvingParserTest extends TestCase
         $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
+        $errorReport = $this->givenParsingErrorHandler_reportError_returnsMessage();
 
         /** @var InvalidType $object */
         $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
 
         $this->assertInstanceOf(InvalidType::class, $object);
-        $this->assertSame($errorMessage, $object->getError());
+        $this->assertSame($errorReport, $object->getError());
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath($errorMessage, '$ref');
     }
 

@@ -22,6 +22,8 @@ class LoggingErrorHandlerTest extends TestCase
 {
     use LoggerTestCaseTrait;
 
+    private const ERROR_MESSAGE = 'Parsing error "message" at path "path".';
+
     protected function setUp(): void
     {
         $this->setUpLogger();
@@ -33,9 +35,10 @@ class LoggingErrorHandlerTest extends TestCase
         $handler = $this->createLoggingErrorHandler();
         $pointer = new SpecificationPointer(['path']);
 
-        $handler->reportError('message', $pointer);
+        $error = $handler->reportError('message', $pointer);
 
-        $this->assertLogger_error_wasCalledOnce('Parsing error "message" at path "path".');
+        $this->assertLogger_error_wasCalledOnce(self::ERROR_MESSAGE);
+        $this->assertSame(self::ERROR_MESSAGE, $error);
     }
 
     /** @test */
@@ -44,9 +47,10 @@ class LoggingErrorHandlerTest extends TestCase
         $handler = $this->createLoggingErrorHandler();
         $pointer = new SpecificationPointer(['path']);
 
-        $handler->reportWarning('message', $pointer);
+        $warning = $handler->reportWarning('message', $pointer);
 
-        $this->assertLogger_warning_wasCalledOnce('Parsing error "message" at path "path".');
+        $this->assertLogger_warning_wasCalledOnce(self::ERROR_MESSAGE);
+        $this->assertSame(self::ERROR_MESSAGE, $warning);
     }
 
     private function createLoggingErrorHandler(): LoggingErrorHandler

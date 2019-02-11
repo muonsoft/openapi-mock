@@ -26,14 +26,20 @@ class LoggingErrorHandler implements ParsingErrorHandlerInterface
         $this->logger = $logger;
     }
 
-    public function reportError(string $message, SpecificationPointer $pointer): void
+    public function reportError(string $message, SpecificationPointer $pointer): string
     {
-        $this->logger->error($this->formatMessage($message, $pointer));
+        $formattedMessage = $this->formatMessage($message, $pointer);
+        $this->logger->error($formattedMessage);
+
+        return $formattedMessage;
     }
 
-    public function reportWarning(string $message, SpecificationPointer $pointer): void
+    public function reportWarning(string $message, SpecificationPointer $pointer): string
     {
-        $this->logger->warning($this->formatMessage($message, $pointer));
+        $formattedMessage = $this->formatMessage($message, $pointer);
+        $this->logger->warning($formattedMessage);
+
+        return $formattedMessage;
     }
 
     private function formatMessage(string $message, SpecificationPointer $pointer): string

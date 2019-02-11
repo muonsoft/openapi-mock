@@ -17,7 +17,7 @@ use App\OpenAPI\Parsing\SpecificationPointer;
  */
 interface ParsingErrorHandlerInterface
 {
-    public function reportError(string $message, SpecificationPointer $pointer): void;
+    public function reportError(string $message, SpecificationPointer $pointer): string;
 
-    public function reportWarning(string $message, SpecificationPointer $pointer): void;
+    public function reportWarning(string $message, SpecificationPointer $pointer): string;
 }
