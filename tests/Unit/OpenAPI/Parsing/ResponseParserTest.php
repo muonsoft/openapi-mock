@@ -12,7 +12,6 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
-use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\ResponseParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -69,15 +68,19 @@ class ResponseParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_invalidContentInResponseSpecification_exceptionThrown(): void
+    public function parsePointedSchema_invalidContentInResponseSpecification_errorReported(): void
     {
         $parser = $this->createResponseParser();
         $specification = new SpecificationAccessor(['content' => 'invalid']);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Invalid response content');
+        /** @var MockResponse $response */
+        $response = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $parser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertCount(0, $response->content);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Invalid response content',
+            'content'
+        );
     }
 
     private function assertResponseHasValidContentWithExpectedSchema(MockResponse $response, Schema $expectedSchema): void
@@ -90,6 +93,6 @@ class ResponseParserTest extends TestCase
 
     private function createResponseParser(): ResponseParser
     {
-        return new ResponseParser($this->contextualParser, new NullLogger());
+        return new ResponseParser($this->contextualParser, $this->errorHandler, new NullLogger());
     }
 }

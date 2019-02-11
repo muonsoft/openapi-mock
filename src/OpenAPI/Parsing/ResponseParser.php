@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -22,12 +23,16 @@ class ResponseParser implements ContextualParserInterface
     /** @var ContextualParserInterface */
     private $schemaParser;
 
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
+
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(ContextualParserInterface $schemaParser, LoggerInterface $logger)
+    public function __construct(ContextualParserInterface $schemaParser, ParsingErrorHandlerInterface $errorHandler, LoggerInterface $logger)
     {
         $this->schemaParser = $schemaParser;
+        $this->errorHandler = $errorHandler;
         $this->logger = $logger;
     }
 
@@ -35,11 +40,10 @@ class ResponseParser implements ContextualParserInterface
     {
         $response = new MockResponse();
         $responseSchema = $specification->getSchema($pointer);
-        $content = $responseSchema['content'] ?? [];
         $contentPointer = $pointer->withPathElement('content');
-        $this->validateContent($content, $contentPointer);
+        $mediaTypes = $this->getMediaTypes($responseSchema, $contentPointer);
 
-        foreach (array_keys($content) as $mediaType) {
+        foreach ($mediaTypes as $mediaType) {
             $mediaTypePointer = $contentPointer->withPathElement($mediaType);
             $parsedSchema = $this->schemaParser->parsePointedSchema($specification, $mediaTypePointer);
             $response->content->set($mediaType, $parsedSchema);
@@ -53,10 +57,27 @@ class ResponseParser implements ContextualParserInterface
         return $response;
     }
 
-    private function validateContent($content, SpecificationPointer $pointer): void
+    private function getMediaTypes(array $responseSchema, SpecificationPointer $contentPointer): array
     {
-        if (!\is_array($content)) {
-            throw new ParsingException('Invalid response content', $pointer);
+        $mediaTypes = [];
+        $content = $responseSchema['content'] ?? [];
+        $isValid = $this->validateContent($content, $contentPointer);
+
+        if ($isValid) {
+            $mediaTypes = array_keys($content);
         }
+
+        return $mediaTypes;
+    }
+
+    private function validateContent($content, SpecificationPointer $pointer): bool
+    {
+        $isValid = \is_array($content);
+
+        if (!$isValid) {
+            $this->errorHandler->reportError('Invalid response content', $pointer);
+        }
+
+        return $isValid;
     }
 }
