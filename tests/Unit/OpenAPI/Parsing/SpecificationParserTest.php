@@ -103,7 +103,7 @@ class SpecificationParserTest extends TestCase
     }
 
     /** @test */
-    public function parseSpecification_noEndpoints_parsingExceptionThrown(): void
+    public function parseSpecification_noEndpoints_errorReported(): void
     {
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
@@ -113,14 +113,17 @@ class SpecificationParserTest extends TestCase
             ],
         ]);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Empty or invalid endpoint specification');
+        $mockParametersCollection = $parser->parseSpecification($specification);
 
-        $parser->parseSpecification($specification);
+        $this->assertCount(0, $mockParametersCollection);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Empty or invalid endpoint specification',
+            'paths./entity'
+        );
     }
 
     /** @test */
-    public function parseSpecification_invalidEndpoint_parsingExceptionThrown(): void
+    public function parseSpecification_invalidEndpoint_errorReported(): void
     {
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
@@ -132,14 +135,17 @@ class SpecificationParserTest extends TestCase
             ],
         ]);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Empty or invalid endpoint specification');
+        $mockParametersCollection = $parser->parseSpecification($specification);
 
-        $parser->parseSpecification($specification);
+        $this->assertCount(0, $mockParametersCollection);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Empty or invalid endpoint specification',
+            'paths./entity.get'
+        );
     }
 
     /** @test */
-    public function parseSpecification_pathWithReference_parsingExceptionThrown(): void
+    public function parseSpecification_pathWithReference_errorReported(): void
     {
         $parser = $this->createSpecificationParser();
         $specification = new SpecificationAccessor([
@@ -151,14 +157,17 @@ class SpecificationParserTest extends TestCase
             ],
         ]);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('References on paths is not supported');
+        $mockParametersCollection = $parser->parseSpecification($specification);
 
-        $parser->parseSpecification($specification);
+        $this->assertCount(0, $mockParametersCollection);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'References on paths is not supported',
+            'paths./entity'
+        );
     }
 
     private function createSpecificationParser(): SpecificationParser
     {
-        return new SpecificationParser($this->contextualParser, new NullLogger());
+        return new SpecificationParser($this->contextualParser, $this->errorHandler, new NullLogger());
     }
 }

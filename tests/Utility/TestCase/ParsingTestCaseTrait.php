@@ -11,6 +11,7 @@
 namespace App\Tests\Utility\TestCase;
 
 use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -32,11 +33,15 @@ trait ParsingTestCaseTrait
     /** @var ReferenceResolvingParser */
     protected $resolvingParser;
 
+    /** @var ParsingErrorHandlerInterface */
+    protected $errorHandler;
+
     protected function setUpParsingContext(): void
     {
         $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
         $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
         $this->resolvingParser = \Phake::mock(ReferenceResolvingParser::class);
+        $this->errorHandler = \Phake::mock(ParsingErrorHandlerInterface::class);
     }
 
     protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
@@ -126,5 +131,21 @@ trait ParsingTestCaseTrait
         \Phake::when($this->resolvingParser)
             ->resolveReferenceAndParsePointedSchema(\Phake::anyParameters())
             ->thenReturn($object);
+    }
+
+    protected function assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
+    {
+        /** @var SpecificationPointer $pointer */
+        \Phake::verify($this->errorHandler)
+            ->reportError($message, \Phake::capture($pointer));
+        Assert::assertSame($path, $pointer->getPath());
+    }
+
+    protected function assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
+    {
+        /** @var SpecificationPointer $pointer */
+        \Phake::verify($this->errorHandler)
+            ->reportWarning($message, \Phake::capture($pointer));
+        Assert::assertSame($path, $pointer->getPath());
     }
 }
