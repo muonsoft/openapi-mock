@@ -44,51 +44,43 @@ class SpecificationParser
         $pointer = new SpecificationPointer();
         $this->validateSpecificationSchema($specification, $pointer);
 
-        $collection = new MockParametersCollection();
+        $context = new SpecificationParserContext($specification);
         $pathsPointer = $pointer->withPathElement('paths');
         $paths = $specification->getSchema($pathsPointer);
 
         foreach ($paths as $path => $endpoints) {
-            $pathPointer = $pathsPointer->withPathElement($path);
-            $isValid = $this->validateEndpointSpecificationAtPath($endpoints, $pathPointer);
+            $context->path = $path;
+            $context->pathPointer = $pathsPointer->withPathElement($path);
+            $isValid = $this->validateEndpointSpecificationAtPath($endpoints, $context->pathPointer);
 
             if ($isValid) {
-                $this->parseEndpointList($specification, $collection, $pathPointer, $path, $endpoints);
+                $this->parseEndpointList($endpoints, $context);
             }
         }
 
-        return $collection;
+        return $context->mockParametersCollection;
     }
 
-    private function parseEndpointList(
-        SpecificationAccessor $specification,
-        MockParametersCollection $collection,
-        SpecificationPointer $pathPointer,
-        $path,
-        $endpoints
-    ): void {
+    private function parseEndpointList(array $endpoints, SpecificationParserContext $context): void
+    {
         foreach ($endpoints as $httpMethod => $endpointSpecification) {
-            $endpointPointer = $pathPointer->withPathElement($httpMethod);
-            $isValid = $this->validateEndpointSpecificationAtPath($endpointSpecification, $endpointPointer);
+            $context->endpointPointer = $context->pathPointer->withPathElement($httpMethod);
+            $isValid = $this->validateEndpointSpecificationAtPath($endpointSpecification, $context->endpointPointer);
 
             if ($isValid) {
-                $this->parseEndpoint($specification, $collection, $endpointPointer, $path, $httpMethod);
+                $this->parseEndpoint($httpMethod, $context);
             }
         }
     }
 
-    private function parseEndpoint(
-        SpecificationAccessor $specification,
-        MockParametersCollection $collection,
-        SpecificationPointer $endpointPointer,
-        $path,
-        $httpMethod
-    ): void {
+    private function parseEndpoint(string $httpMethod, SpecificationParserContext $context): void
+    {
         /** @var MockParameters $mockParameters */
-        $mockParameters = $this->endpointParser->parsePointedSchema($specification, $endpointPointer);
-        $mockParameters->path = $path;
+        $mockParameters = $this->endpointParser->parsePointedSchema($context->specification, $context->endpointPointer);
+        $mockParameters->path = $context->path;
         $mockParameters->httpMethod = strtoupper($httpMethod);
-        $collection->add($mockParameters);
+
+        $context->mockParametersCollection->add($mockParameters);
 
         $this->logger->debug(
             sprintf(
@@ -96,7 +88,7 @@ class SpecificationParser
                 $mockParameters->httpMethod,
                 $mockParameters->path
             ),
-            ['path' => $endpointPointer->getPath()]
+            ['path' => $context->endpointPointer->getPath()]
         );
     }
 
