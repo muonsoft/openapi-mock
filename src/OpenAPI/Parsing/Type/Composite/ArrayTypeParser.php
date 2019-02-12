@@ -44,7 +44,7 @@ class ArrayTypeParser implements TypeParserInterface
         $schema = $specification->getSchema($pointer);
         $error = $this->validateSchema($schema, $pointer);
 
-        if ($error === null) {
+        if (null === $error) {
             $type = $this->parseArraySchema($specification, $pointer, $schema);
         } else {
             $type = new InvalidType($error);

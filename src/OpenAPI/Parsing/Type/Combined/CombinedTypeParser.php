@@ -52,7 +52,7 @@ class CombinedTypeParser implements TypeParserInterface
 
         $typeName = $this->findSchemaTypeName($schema);
 
-        if ($typeName === null) {
+        if (null === $typeName) {
             $type = $this->createInvalidType('Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"', $pointer);
         } else {
             $typePointer = $pointer->withPathElement($typeName);
@@ -82,7 +82,7 @@ class CombinedTypeParser implements TypeParserInterface
     {
         $error = $this->validateSchema($context->schema, $context->typeName);
 
-        if ($error !== null) {
+        if (null !== $error) {
             $type = $this->createInvalidType($error, $context->typePointer);
         } else {
             $type = $this->parseCombinedType($context);

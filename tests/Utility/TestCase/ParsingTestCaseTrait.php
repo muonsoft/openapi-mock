@@ -135,7 +135,7 @@ trait ParsingTestCaseTrait
 
     protected function assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
     {
-        /** @var SpecificationPointer $pointer */
+        /* @var SpecificationPointer $pointer */
         \Phake::verify($this->errorHandler)
             ->reportError($message, \Phake::capture($pointer));
         Assert::assertSame($path, $pointer->getPath());
@@ -143,7 +143,7 @@ trait ParsingTestCaseTrait
 
     protected function assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
     {
-        /** @var SpecificationPointer $pointer */
+        /* @var SpecificationPointer $pointer */
         \Phake::verify($this->errorHandler)
             ->reportWarning($message, \Phake::capture($pointer));
         Assert::assertSame($path, $pointer->getPath());
@@ -153,7 +153,7 @@ trait ParsingTestCaseTrait
     {
         $message = 'report message';
 
-        /** @var SpecificationPointer $pointer */
+        /* @var SpecificationPointer $pointer */
         \Phake::when($this->errorHandler)
             ->reportError(\Phake::anyParameters())
             ->thenReturn($message);
@@ -165,7 +165,7 @@ trait ParsingTestCaseTrait
     {
         $message = 'report message';
 
-        /** @var SpecificationPointer $pointer */
+        /* @var SpecificationPointer $pointer */
         \Phake::when($this->errorHandler)
             ->reportWarning(\Phake::anyParameters())
             ->thenReturn($message);
