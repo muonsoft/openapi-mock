@@ -14,7 +14,6 @@ use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
-use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser;
@@ -225,7 +224,7 @@ class ObjectTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_invalidSchemaWithFreeFormAdditionalProperties_exceptionThrown(): void
+    public function parsePointedSchema_invalidSchemaWithFreeFormAdditionalProperties_errorReportedAndFreeFormCreated(): void
     {
         $parser = $this->createObjectTypeParser();
         $specification = new SpecificationAccessor([
@@ -233,14 +232,18 @@ class ObjectTypeParserTest extends TestCase
             'additionalProperties' => 'invalid',
         ]);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Invalid value of option "additionalProperties"');
+        /** @var FreeFormObjectType $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $parser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(FreeFormObjectType::class, $type);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Invalid value of option "additionalProperties"',
+            ''
+        );
     }
 
     /** @test */
-    public function parsePointedSchema_requiredPropertyDoesNotExist_exceptionThrown(): void
+    public function parsePointedSchema_requiredPropertyDoesNotExist_errorReportedAndPropertyIgnored(): void
     {
         $parser = $this->createObjectTypeParser();
         $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
@@ -254,23 +257,33 @@ class ObjectTypeParserTest extends TestCase
             ],
         ]);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessageRegExp('/Required property .* does not exist/');
+        /** @var ObjectType $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $parser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(ObjectType::class, $type);
+        $this->assertCount(0, $type->required);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Required property "not_exist" does not exist',
+            'required'
+        );
     }
 
     /** @test */
-    public function parsePointedSchema_invalidRequiredProperty_exceptionThrown(): void
+    public function parsePointedSchema_invalidRequiredProperty_errorReportedAndPropertyIgnored(): void
     {
         $parser = $this->createObjectTypeParser();
         $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
         $specification = new SpecificationAccessor(['required' => [[]]]);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Invalid required property');
+        /** @var ObjectType $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $parser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(ObjectType::class, $type);
+        $this->assertCount(0, $type->required);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Invalid required property',
+            'required'
+        );
     }
 
     /** @test */
@@ -294,7 +307,7 @@ class ObjectTypeParserTest extends TestCase
 
     private function createObjectTypeParser(): ObjectTypeParser
     {
-        return new ObjectTypeParser($this->contextualParser);
+        return new ObjectTypeParser($this->contextualParser, $this->errorHandler);
     }
 
     private function assertObjectIsValidAndHasProperty(ObjectType $object, TypeInterface $propertyType): void

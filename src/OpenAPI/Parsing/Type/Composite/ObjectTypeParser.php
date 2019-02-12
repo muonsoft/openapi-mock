@@ -16,11 +16,10 @@ use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\FieldParserTrait;
-use App\OpenAPI\Parsing\Type\ReferenceResolvingSchemaParser;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Utility\StringList;
@@ -32,12 +31,16 @@ class ObjectTypeParser implements TypeParserInterface
 {
     use FieldParserTrait;
 
-    /** @var ReferenceResolvingSchemaParser */
+    /** @var ContextualParserInterface */
     private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $resolvingSchemaParser)
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
+
+    public function __construct(ContextualParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
+        $this->errorHandler = $errorHandler;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -85,12 +88,12 @@ class ObjectTypeParser implements TypeParserInterface
 
     private function getAdditionalPropertiesFromSchema(array $schema, SpecificationPointer $pointer): array
     {
-        if (true === $schema['additionalProperties']) {
-            $additionalProperties = [];
-        } elseif (\is_array($schema['additionalProperties'])) {
+        $additionalProperties = [];
+
+        if (\is_array($schema['additionalProperties'])) {
             $additionalProperties = $schema['additionalProperties'];
-        } else {
-            throw new ParsingException('Invalid value of option "additionalProperties"', $pointer);
+        } elseif (true !== $schema['additionalProperties']) {
+            $this->errorHandler->reportError('Invalid value of option "additionalProperties"', $pointer);
         }
 
         return $additionalProperties;
@@ -135,24 +138,31 @@ class ObjectTypeParser implements TypeParserInterface
         $requiredPointer = $pointer->withPathElement('required');
 
         foreach ($schemaRequiredProperties as $propertyName) {
-            $this->validateProperty($propertyName, $properties, $requiredPointer);
-            $requiredProperties->add($propertyName);
+            $isValid = $this->validateProperty($propertyName, $properties, $requiredPointer);
+
+            if ($isValid) {
+                $requiredProperties->add($propertyName);
+            }
         }
 
         return $requiredProperties;
     }
 
-    private function validateProperty($propertyName, TypeCollection $properties, SpecificationPointer $pointer): void
+    private function validateProperty($propertyName, TypeCollection $properties, SpecificationPointer $pointer): bool
     {
-        if (!\is_string($propertyName)) {
-            throw new ParsingException('Invalid required property', $pointer);
-        }
+        $isValid = false;
 
-        if (!$properties->containsKey($propertyName)) {
-            throw new ParsingException(
+        if (!\is_string($propertyName)) {
+            $this->errorHandler->reportError('Invalid required property', $pointer);
+        } elseif (!$properties->containsKey($propertyName)) {
+            $this->errorHandler->reportError(
                 sprintf('Required property "%s" does not exist', $propertyName),
                 $pointer
             );
+        } else {
+            $isValid = true;
         }
+
+        return $isValid;
     }
 }
