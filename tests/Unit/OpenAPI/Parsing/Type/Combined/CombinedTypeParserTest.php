@@ -10,12 +10,13 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Combined;
 
+use App\Mock\Parameters\Schema\Type\Combined\AbstractCombinedType;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
-use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Combined\CombinedTypeParser;
@@ -41,7 +42,7 @@ class CombinedTypeParserTest extends TestCase
         string $combinedTypeName,
         string $combinedTypeClass
     ): void {
-        $typeParser = new CombinedTypeParser($this->contextualParser);
+        $typeParser = $this->createCombinedTypeParser();
         $specification = new SpecificationAccessor([
             $combinedTypeName => [
                 self::TYPE_SCHEMA,
@@ -66,15 +67,21 @@ class CombinedTypeParserTest extends TestCase
      * @test
      * @dataProvider combinedTypeNameAndClassProvider
      */
-    public function parsePointedSchema_invalidCombinedTypeSchema_exceptionThrown(string $combinedTypeName): void
+    public function parsePointedSchema_invalidCombinedTypeSchema_errorReported(string $combinedTypeName): void
     {
-        $typeParser = new CombinedTypeParser($this->contextualParser);
+        $typeParser = $this->createCombinedTypeParser();
         $specification = new SpecificationAccessor([$combinedTypeName => 'invalid']);
+        $errorMessage = $this->givenParsingErrorHandler_reportError_returnsMessage();
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Value must be not empty array');
+        /** @var InvalidType $type */
+        $type = $typeParser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $typeParser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(InvalidType::class, $type);
+        $this->assertSame($errorMessage, $type->getError());
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Value must be not empty array',
+            $combinedTypeName
+        );
     }
 
     public function combinedTypeNameAndClassProvider(): array
@@ -87,24 +94,32 @@ class CombinedTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_schemaWithUnknownCombinedType_exceptionThrown(): void
+    public function parsePointedSchema_schemaWithUnknownCombinedType_errorReported(): void
     {
-        $typeParser = new CombinedTypeParser($this->contextualParser);
+        $typeParser = $this->createCombinedTypeParser();
         $specification = new SpecificationAccessor([]);
+        $errorMessage = $this->givenParsingErrorHandler_reportError_returnsMessage();
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"');
+        /** @var InvalidType $type */
+        $type = $typeParser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $typeParser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(InvalidType::class, $type);
+        $this->assertSame($errorMessage, $type->getError());
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"',
+            ''
+        );
     }
 
     /**
      * @test
-     * @dataProvider objectiveCombinedTypeNameProvider
+     * @dataProvider objectiveCombinedTypeNameAndClassProvider
      */
-    public function parsePointedSchema_combinedTypeSchemaWithInternalTypeThatIsNotObject_exceptionThrown(string $combinedTypeName): void
-    {
-        $typeParser = new CombinedTypeParser($this->contextualParser);
+    public function parsePointedSchema_combinedTypeSchemaWithInternalTypeThatIsNotObject_errorReported(
+        string $combinedTypeName,
+        string $combinedTypeClass
+    ): void {
+        $typeParser = $this->createCombinedTypeParser();
         $specification = new SpecificationAccessor([
             $combinedTypeName => [
                 self::TYPE_SCHEMA,
@@ -113,17 +128,27 @@ class CombinedTypeParserTest extends TestCase
         $internalType = \Phake::mock(TypeInterface::class);
         $this->givenContextualParser_parsePointedSchema_returns($internalType);
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('All internal types of "anyOf" or "allOf" schema must be objects');
+        /** @var AbstractCombinedType $type */
+        $type = $typeParser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $typeParser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf($combinedTypeClass, $type);
+        $this->assertCount(0, $type->types);
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'All internal types of "anyOf" or "allOf" schema must be objects',
+            $combinedTypeName.'.0'
+        );
     }
 
-    public function objectiveCombinedTypeNameProvider(): array
+    public function objectiveCombinedTypeNameAndClassProvider(): array
     {
         return [
-            ['anyOf'],
-            ['allOf'],
+            ['anyOf', AnyOfType::class],
+            ['allOf', AllOfType::class],
         ];
+    }
+
+    private function createCombinedTypeParser(): CombinedTypeParser
+    {
+        return new CombinedTypeParser($this->contextualParser, $this->errorHandler);
     }
 }

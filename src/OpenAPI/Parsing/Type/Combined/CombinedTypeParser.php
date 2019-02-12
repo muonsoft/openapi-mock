@@ -15,8 +15,9 @@ use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
@@ -36,41 +37,33 @@ class CombinedTypeParser implements TypeParserInterface
     /** @var ContextualParserInterface */
     private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $resolvingSchemaParser)
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
+
+    public function __construct(ContextualParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
+        $this->errorHandler = $errorHandler;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $schema = $specification->getSchema($pointer);
 
-        $typeName = $this->getSchemaTypeName($schema, $pointer);
-        $type = $this->createCombinedType($typeName);
+        $typeName = $this->findSchemaTypeName($schema);
 
-        $typePointer = $pointer->withPathElement($typeName);
-        $this->validateSchema($schema, $typeName, $typePointer);
-
-        foreach (array_keys($schema[$typeName]) as $index) {
-            $internalTypePointer = $typePointer->withPathElement($index);
-            $internalType = $this->resolvingSchemaParser->parsePointedSchema($specification, $internalTypePointer);
-
-            $this->validateInternalType($typeName, $internalType, $internalTypePointer);
-
-            $type->types->add($internalType);
+        if ($typeName === null) {
+            $type = $this->createInvalidType('Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"', $pointer);
+        } else {
+            $typePointer = $pointer->withPathElement($typeName);
+            $context = new CombinedTypeParserContext($specification, $typeName, $schema, $typePointer);
+            $type = $this->validateAndParseCombinedType($context);
         }
 
         return $type;
     }
 
-    private function validateSchema(array $schema, string $typeName, SpecificationPointer $pointer): void
-    {
-        if (!\is_array($schema[$typeName]) || 0 === \count($schema[$typeName])) {
-            throw new ParsingException('Value must be not empty array', $pointer);
-        }
-    }
-
-    private function getSchemaTypeName(array $schema, SpecificationPointer $pointer): string
+    private function findSchemaTypeName(array $schema): ?string
     {
         $typeName = null;
 
@@ -82,11 +75,60 @@ class CombinedTypeParser implements TypeParserInterface
             }
         }
 
-        if (null === $typeName) {
-            throw new ParsingException('Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"', $pointer);
+        return $typeName;
+    }
+
+    private function validateAndParseCombinedType(CombinedTypeParserContext $context): SpecificationObjectMarkerInterface
+    {
+        $error = $this->validateSchema($context->schema, $context->typeName);
+
+        if ($error !== null) {
+            $type = $this->createInvalidType($error, $context->typePointer);
+        } else {
+            $type = $this->parseCombinedType($context);
         }
 
-        return $typeName;
+        return $type;
+    }
+
+    private function parseCombinedType(CombinedTypeParserContext $context): AbstractCombinedType
+    {
+        $type = $this->createCombinedType($context->typeName);
+
+        foreach (array_keys($context->schema[$context->typeName]) as $index) {
+            $internalTypePointer = $context->typePointer->withPathElement($index);
+            $internalType = $this->resolvingSchemaParser->parsePointedSchema($context->specification, $internalTypePointer);
+
+            $isValid = $this->validateInternalType($context->typeName, $internalType, $internalTypePointer);
+
+            if ($isValid) {
+                $type->types->add($internalType);
+            }
+        }
+
+        return $type;
+    }
+
+    private function validateSchema(array $schema, string $typeName): ?string
+    {
+        $error = null;
+
+        if (!\is_array($schema[$typeName]) || 0 === \count($schema[$typeName])) {
+            $error = 'Value must be not empty array';
+        }
+
+        return $error;
+    }
+
+    private function validateInternalType(string $typeName, SpecificationObjectMarkerInterface $internalType, SpecificationPointer $internalTypePointer): bool
+    {
+        $isValid = 'oneOf' === $typeName || $internalType instanceof ObjectType;
+
+        if (!$isValid) {
+            $this->errorHandler->reportError('All internal types of "anyOf" or "allOf" schema must be objects', $internalTypePointer);
+        }
+
+        return $isValid;
     }
 
     private function createCombinedType(string $typeName): AbstractCombinedType
@@ -96,10 +138,10 @@ class CombinedTypeParser implements TypeParserInterface
         return new $typeClass();
     }
 
-    private function validateInternalType(string $typeName, SpecificationObjectMarkerInterface $internalType, SpecificationPointer $internalTypePointer): void
+    private function createInvalidType(string $message, SpecificationPointer $pointer): InvalidType
     {
-        if (('anyOf' === $typeName || 'allOf' === $typeName) && !$internalType instanceof ObjectType) {
-            throw new ParsingException('All internal types of "anyOf" or "allOf" schema must be objects', $internalTypePointer);
-        }
+        $error = $this->errorHandler->reportError($message, $pointer);
+
+        return new InvalidType($error);
     }
 }
