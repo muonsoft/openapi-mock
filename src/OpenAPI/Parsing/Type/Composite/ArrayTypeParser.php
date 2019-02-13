@@ -11,11 +11,11 @@
 namespace App\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\ParsingException;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
-use App\OpenAPI\Parsing\Type\DelegatingSchemaParser;
 use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -27,19 +27,45 @@ class ArrayTypeParser implements TypeParserInterface
 {
     use FieldParserTrait;
 
-    /** @var DelegatingSchemaParser */
+    /** @var ContextualParserInterface */
     private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $resolvingSchemaParser)
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
+
+    public function __construct(ContextualParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
+        $this->errorHandler = $errorHandler;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $schema = $specification->getSchema($pointer);
-        $this->validateSchema($schema, $pointer);
+        $error = $this->validateSchema($schema, $pointer);
 
+        if (null === $error) {
+            $type = $this->parseArraySchema($specification, $pointer, $schema);
+        } else {
+            $type = new InvalidType($error);
+        }
+
+        return $type;
+    }
+
+    private function validateSchema(array $schema, SpecificationPointer $pointer): ?string
+    {
+        $error = null;
+
+        if (!array_key_exists('items', $schema)) {
+            $error = $this->errorHandler->reportError('Section "items" is required', $pointer);
+        }
+
+        return $error;
+    }
+
+    private function parseArraySchema(SpecificationAccessor $specification, SpecificationPointer $pointer, array $schema): ArrayType
+    {
         $type = new ArrayType();
         $this->readFixedFieldsValues($type, $schema);
         $type->items = $this->readItemsSchema($specification, $pointer);
@@ -48,13 +74,6 @@ class ArrayTypeParser implements TypeParserInterface
         $type->uniqueItems = $this->readBoolValue($schema, 'uniqueItems');
 
         return $type;
-    }
-
-    private function validateSchema(array $schema, SpecificationPointer $pointer): void
-    {
-        if (!array_key_exists('items', $schema)) {
-            throw new ParsingException('Section "items" is required', $pointer);
-        }
     }
 
     private function readItemsSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface

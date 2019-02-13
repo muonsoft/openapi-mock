@@ -10,6 +10,8 @@
 
 namespace App\OpenAPI\Parsing;
 
+use App\Mock\Parameters\Schema\Type\InvalidType;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -18,11 +20,15 @@ use Psr\Log\LoggerInterface;
  */
 class ReferenceResolvingParser
 {
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
+
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ParsingErrorHandlerInterface $errorHandler, LoggerInterface $logger)
     {
+        $this->errorHandler = $errorHandler;
         $this->logger = $logger;
     }
 
@@ -34,8 +40,9 @@ class ReferenceResolvingParser
         $schema = $specification->getSchema($pointer);
 
         if (array_key_exists('$ref', $schema)) {
-            $reference = $schema['$ref'];
-            $object = $this->parseReferencedSchema($specification, $pointer, $parser, $reference);
+            $reference = trim($schema['$ref']);
+            $context = new ReferenceResolvingParserContext($specification, $pointer, $parser);
+            $object = $this->parseReferencedSchema($reference, $context);
         } else {
             $object = $parser->parsePointedSchema($specification, $pointer);
         }
@@ -43,34 +50,59 @@ class ReferenceResolvingParser
         return $object;
     }
 
-    private function parseReferencedSchema(
-        SpecificationAccessor $specification,
-        SpecificationPointer $pointer,
-        ContextualParserInterface $parser,
-        string $reference
-    ): SpecificationObjectMarkerInterface {
-        $this->logger->debug(sprintf('Reference "%s" detected.', $reference), ['path' => $pointer->getPath()]);
+    private function parseReferencedSchema(string $reference, ReferenceResolvingParserContext $context): SpecificationObjectMarkerInterface
+    {
+        $this->logger->debug(sprintf('Reference "%s" detected.', $reference), ['path' => $context->pointer->getPath()]);
 
-        $this->validateReference($reference, $pointer);
+        $error = $this->validateReference($reference, $context->pointer);
 
-        $object = $specification->findResolvedObject($reference);
+        if ($error) {
+            $object = new InvalidType($error);
+        } else {
+            $object = $this->parseOrLoadResolvedObject($reference, $context);
+        }
+
+        return $object;
+    }
+
+    private function validateReference(string $reference, SpecificationPointer $pointer): ?string
+    {
+        $error = null;
+
+        if ('' === $reference) {
+            $error = 'reference cannot be empty';
+        } elseif (0 !== strpos($reference, '#/')) {
+            $error = 'only local references is supported - reference must start with "#/"';
+        }
+
+        if ($error) {
+            $referencePointer = $pointer->withPathElement('$ref');
+            $error = $this->errorHandler->reportError($error, $referencePointer);
+        }
+
+        return $error;
+    }
+
+    private function parseOrLoadResolvedObject(string $reference, ReferenceResolvingParserContext $context): SpecificationObjectMarkerInterface
+    {
+        $object = $context->specification->findResolvedObject($reference);
 
         if (null === $object) {
             $referencePointer = $this->createReferencePointer($reference);
-            $object = $parser->parsePointedSchema($specification, $referencePointer);
-            $specification->setResolvedObject($reference, $object);
+            $object = $context->parser->parsePointedSchema($context->specification, $referencePointer);
+            $context->specification->setResolvedObject($reference, $object);
 
             $this->logger->debug(
                 sprintf('Object "%s" was resolved and set to specification.', \get_class($object)),
                 [
-                    'path'          => $pointer->getPath(),
+                    'path'          => $context->pointer->getPath(),
                     'referencePath' => $referencePointer->getPath(),
                 ]
             );
         } else {
             $this->logger->debug(
                 sprintf('Resolved object "%s" was found in specification.', \get_class($object)),
-                ['path' => $pointer->getPath()]
+                ['path' => $context->pointer->getPath()]
             );
         }
 
@@ -87,18 +119,5 @@ class ReferenceResolvingParser
         }
 
         return new SpecificationPointer($referenceElements);
-    }
-
-    private function validateReference(string $reference, SpecificationPointer $pointer): void
-    {
-        $referencePointer = $pointer->withPathElement('$ref');
-
-        if ('' === $reference) {
-            throw new ParsingException('reference cannot be empty', $referencePointer);
-        }
-
-        if (0 !== strpos($reference, '#/')) {
-            throw new ParsingException('only local references is supported - reference must start with "#/"', $referencePointer);
-        }
     }
 }

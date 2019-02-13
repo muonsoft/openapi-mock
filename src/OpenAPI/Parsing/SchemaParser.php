@@ -11,6 +11,8 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Schema\Schema;
+use App\Mock\Parameters\Schema\Type\InvalidType;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -21,27 +23,39 @@ class SchemaParser implements ContextualParserInterface
     /** @var ContextualParserInterface */
     private $resolvingSchemaParser;
 
-    public function __construct(ContextualParserInterface $resolvingSchemaParser)
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
+
+    public function __construct(ContextualParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
+        $this->errorHandler = $errorHandler;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
         $schema = $specification->getSchema($pointer);
         $schemaType = new Schema();
-        $this->validateSchema($schema, $pointer);
+        $error = $this->validateSchema($schema, $pointer);
 
-        $schemaContext = $pointer->withPathElement('schema');
-        $schemaType->value = $this->resolvingSchemaParser->parsePointedSchema($specification, $schemaContext);
+        if ($error) {
+            $schemaType->value = new InvalidType($error);
+        } else {
+            $schemaPointer = $pointer->withPathElement('schema');
+            $schemaType->value = $this->resolvingSchemaParser->parsePointedSchema($specification, $schemaPointer);
+        }
 
         return $schemaType;
     }
 
-    private function validateSchema(array $schema, SpecificationPointer $context): void
+    private function validateSchema(array $schema, SpecificationPointer $pointer): ?string
     {
+        $error = null;
+
         if (!\array_key_exists('schema', $schema)) {
-            throw new ParsingException('Invalid schema', $context);
+            $error = $this->errorHandler->reportError('Invalid schema', $pointer);
         }
+
+        return $error;
     }
 }

@@ -22,6 +22,7 @@ use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
@@ -139,6 +140,7 @@ class CachedSpecificationLoaderTest extends TestCase
         $objectType->properties->add(new OneOfType());
         $objectType->properties->add(new AnyOfType());
         $objectType->properties->add(new AllOfType());
+        $objectType->properties->add(new InvalidType(''));
         $schema = new Schema();
         $schema->value = $objectType;
         $mockResponse = new MockResponse();

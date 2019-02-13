@@ -11,7 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Schema\Schema;
-use App\OpenAPI\Parsing\ParsingException;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\OpenAPI\Parsing\SchemaParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -53,19 +53,22 @@ class SchemaParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_invalidSchema_exceptionThrown(): void
+    public function parsePointedSchema_invalidSchema_errorReported(): void
     {
         $parser = $this->createSchemaParser();
         $specification = new SpecificationAccessor([]);
+        $reportMessage = $this->givenParsingErrorHandler_reportError_returnsMessage();
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Invalid schema');
+        /** @var Schema $parsedSchema */
+        $parsedSchema = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $parser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(InvalidType::class, $parsedSchema->value);
+        $this->assertSame($reportMessage, $parsedSchema->value->getError());
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath('Invalid schema', '');
     }
 
     private function createSchemaParser(): SchemaParser
     {
-        return new SchemaParser($this->contextualParser);
+        return new SchemaParser($this->contextualParser, $this->errorHandler);
     }
 }

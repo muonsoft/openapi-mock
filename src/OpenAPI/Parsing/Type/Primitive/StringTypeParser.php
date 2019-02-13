@@ -11,12 +11,12 @@
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
+use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\FieldParserTrait;
 use App\OpenAPI\Parsing\Type\TypeParserInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -25,12 +25,12 @@ class StringTypeParser implements TypeParserInterface
 {
     use FieldParserTrait;
 
-    /** @var LoggerInterface */
-    private $logger;
+    /** @var ParsingErrorHandlerInterface */
+    private $errorHandler;
 
-    public function __construct(LoggerInterface $logger)
+    public function __construct(ParsingErrorHandlerInterface $errorHandler)
     {
-        $this->logger = $logger;
+        $this->errorHandler = $errorHandler;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -55,34 +55,19 @@ class StringTypeParser implements TypeParserInterface
         if ($type->minLength < 0) {
             $type->minLength = 0;
 
-            $this->logger->warning(
-                sprintf(
-                    'Property "minLength" cannot be less than 0 at path "%s". Value is ignored.',
-                    $pointer->getPath()
-                )
-            );
+            $this->errorHandler->reportWarning('Property "minLength" cannot be less than 0. Value is ignored.', $pointer);
         }
 
         if ($type->maxLength < 0) {
             $type->maxLength = 0;
 
-            $this->logger->warning(
-                sprintf(
-                    'Property "maxLength" cannot be less than 0 at path "%s". Value is ignored.',
-                    $pointer->getPath()
-                )
-            );
+            $this->errorHandler->reportWarning('Property "maxLength" cannot be less than 0. Value is ignored.', $pointer);
         }
 
         if ($type->maxLength < $type->minLength && 0 !== $type->maxLength) {
             $type->maxLength = $type->minLength;
 
-            $this->logger->warning(
-                sprintf(
-                    'Property "maxLength" cannot be greater than "minLength" as path "%s". Value is set to "minLength".',
-                    $pointer->getPath()
-                )
-            );
+            $this->errorHandler->reportWarning('Property "maxLength" cannot be greater than "minLength". Value is set to "minLength".', $pointer);
         }
     }
 
@@ -91,12 +76,9 @@ class StringTypeParser implements TypeParserInterface
         $enumValues = $schema['enum'] ?? [];
 
         if (!\is_array($enumValues)) {
-            $this->logger->warning(
-                sprintf(
-                    'Invalid enum value "%s" detected in path "%s". Expected to be array of strings.',
-                    json_encode($enumValues),
-                    $pointer->getPath()
-                )
+            $this->errorHandler->reportWarning(
+                sprintf('Invalid enum value "%s". Expected to be array of strings.', json_encode($enumValues)),
+                $pointer
             );
         } else {
             $this->processEnumValues($type, $enumValues, $pointer);
@@ -109,12 +91,9 @@ class StringTypeParser implements TypeParserInterface
             if (\is_string($enumValue)) {
                 $type->enum->add($enumValue);
             } else {
-                $this->logger->warning(
-                    sprintf(
-                        'Invalid enum value "%s" ignored in path "%s". Value must be valid string.',
-                        json_encode($enumValue),
-                        $pointer->getPath()
-                    )
+                $this->errorHandler->reportWarning(
+                    sprintf('Invalid enum value "%s" ignored. Value must be valid string.', json_encode($enumValue)),
+                    $pointer
                 );
             }
         }

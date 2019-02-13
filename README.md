@@ -102,9 +102,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Features for first beta v0.1
 
-* [ ] not critical parsing errors should not fail mock server
-  * [ ] service for handling parsing errors
-  * [ ] make special invalid type instead of throwing exception on specification parsing
+* [x] not critical parsing errors should not fail mock server
+  * [x] service for handling parsing errors
+  * [x] make special invalid type instead of throwing exception on specification parsing
+  * [x] exceptional error handler for test environment
 * [ ] detect path for rest items
 
 ## Planned features for v0.2

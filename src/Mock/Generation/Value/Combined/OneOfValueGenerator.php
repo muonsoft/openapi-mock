@@ -30,6 +30,19 @@ class OneOfValueGenerator implements ValueGeneratorInterface
 
     public function generateValue(TypeInterface $type)
     {
+        \assert($type instanceof OneOfType);
+
+        if ($type->types->count() > 0) {
+            $value = $this->generateOneOfValue($type);
+        } else {
+            $value = new \stdClass();
+        }
+
+        return $value;
+    }
+
+    private function generateOneOfValue(OneOfType $type)
+    {
         $generatingType = $this->getRandomInternalType($type);
         $generator = $this->generatorLocator->getValueGenerator($generatingType);
 

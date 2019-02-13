@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\OpenAPI\Parsing\ParsingException;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -78,22 +78,6 @@ class ReferenceResolvingParserTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @dataProvider invalidReferenceAndExceptionMessageProvider
-     */
-    public function resolveReferenceAndParsePointedSchema_schemaWithInvalidReference_exceptionThrown(string $reference, string $exceptionMessage): void
-    {
-        $resolvingParser = $this->createReferenceResolvingParser();
-        $pointer = new SpecificationPointer();
-        $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
-
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage($exceptionMessage);
-
-        $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
-    }
-
     /** @test */
     public function resolveReferenceAndParsePointedSchema_schemaWithNotResolvedReference_parsedObjectSetToSpecification(): void
     {
@@ -127,10 +111,30 @@ class ReferenceResolvingParserTest extends TestCase
         $this->assertSame($expectedObject, $object);
     }
 
-    public function invalidReferenceAndExceptionMessageProvider(): array
+    /**
+     * @test
+     * @dataProvider invalidReferenceAndErrorMessageProvider
+     */
+    public function resolveReferenceAndParsePointedSchema_schemaWithInvalidReference_exceptionThrown(string $reference, string $errorMessage): void
+    {
+        $resolvingParser = $this->createReferenceResolvingParser();
+        $pointer = new SpecificationPointer();
+        $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
+        $errorReport = $this->givenParsingErrorHandler_reportError_returnsMessage();
+
+        /** @var InvalidType $object */
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
+
+        $this->assertInstanceOf(InvalidType::class, $object);
+        $this->assertSame($errorReport, $object->getError());
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath($errorMessage, '$ref');
+    }
+
+    public function invalidReferenceAndErrorMessageProvider(): array
     {
         return [
             ['', 'reference cannot be empty'],
+            [' ', 'reference cannot be empty'],
             ['file', 'only local references is supported - reference must start with "#/"'],
         ];
     }
@@ -186,6 +190,6 @@ class ReferenceResolvingParserTest extends TestCase
 
     private function createReferenceResolvingParser(): ReferenceResolvingParser
     {
-        return new ReferenceResolvingParser(new NullLogger());
+        return new ReferenceResolvingParser($this->errorHandler, new NullLogger());
     }
 }

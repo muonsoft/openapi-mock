@@ -28,11 +28,17 @@ class AllOfValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    public function generateValue(TypeInterface $type): array
+    public function generateValue(TypeInterface $type)
     {
         $values = $this->generateValues($type);
 
-        return \array_merge(...$values);
+        if (0 === \count($values)) {
+            $value = new \stdClass();
+        } else {
+            $value = \array_merge(...$values);
+        }
+
+        return $value;
     }
 
     private function generateValues(AllOfType $type): array

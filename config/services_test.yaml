@@ -10,3 +10,5 @@ services:
       - getInstance
     arguments:
       - '@App\OpenAPI\Loading\SpecificationFileLoader'
+
+  App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface: '@App\OpenAPI\Parsing\Error\ExceptionalErrorHandler'

@@ -11,8 +11,8 @@
 namespace App\Tests\Unit\OpenAPI\Parsing\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+use App\Mock\Parameters\Schema\Type\InvalidType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
-use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\Composite\ArrayTypeParser;
@@ -86,15 +86,21 @@ class ArrayTypeParserTest extends TestCase
     }
 
     /** @test */
-    public function parsePointedSchema_noItemsInSchema_exceptionThrown(): void
+    public function parsePointedSchema_noItemsInSchema_errorReported(): void
     {
         $parser = $this->createArrayTypeParser();
         $specification = new SpecificationAccessor(self::SCHEMA_WITHOUT_ITEMS);
+        $errorMessage = $this->givenParsingErrorHandler_reportError_returnsMessage();
 
-        $this->expectException(ParsingException::class);
-        $this->expectExceptionMessage('Section "items" is required');
+        /** @var InvalidType $type */
+        $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $parser->parsePointedSchema($specification, new SpecificationPointer());
+        $this->assertInstanceOf(InvalidType::class, $type);
+        $this->assertSame($errorMessage, $type->getError());
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Section "items" is required',
+            ''
+        );
     }
 
     /** @test */
@@ -119,6 +125,6 @@ class ArrayTypeParserTest extends TestCase
 
     private function createArrayTypeParser(): ArrayTypeParser
     {
-        return new ArrayTypeParser($this->contextualParser);
+        return new ArrayTypeParser($this->contextualParser, $this->errorHandler);
     }
 }
