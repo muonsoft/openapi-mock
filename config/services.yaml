@@ -34,6 +34,7 @@ parameters:
     App\Mock\Parameters\Schema\Type\Combined\OneOfType: 'App\Mock\Generation\Value\Combined\OneOfValueGenerator'
     App\Mock\Parameters\Schema\Type\Combined\AllOfType: 'App\Mock\Generation\Value\Combined\AllOfValueGenerator'
     App\Mock\Parameters\Schema\Type\Combined\AnyOfType: 'App\Mock\Generation\Value\Combined\AnyOfValueGenerator'
+    App\Mock\Parameters\Schema\Type\InvalidType: 'App\Mock\Generation\Value\InvalidValueGenerator'
 
 
 services:
