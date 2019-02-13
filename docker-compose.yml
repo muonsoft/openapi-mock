@@ -10,7 +10,7 @@ services:
       context: ./.dev
     environment:
       APP_ENV: dev
-      SWAGGER_MOCK_SPECIFICATION_URL: '/app/var/swagger.yaml'
+      SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
       SWAGGER_MOCK_CACHE_STRATEGY: 'md5'
       SWAGGER_MOCK_LOG_LEVEL: 'debug'
     volumes:

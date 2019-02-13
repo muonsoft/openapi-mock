@@ -106,7 +106,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
   * [x] service for handling parsing errors
   * [x] make special invalid type instead of throwing exception on specification parsing
   * [x] exceptional error handler for test environment
-* [ ] tests in travis ci
 * [ ] detect path for rest items
 
 ## Planned features for v0.2

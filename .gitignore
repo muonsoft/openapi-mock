@@ -17,3 +17,5 @@ behat.yml
 /.php_cs
 /.php_cs.cache
 ###< friendsofphp/php-cs-fixer ###
+
+docker-compose.override.yml

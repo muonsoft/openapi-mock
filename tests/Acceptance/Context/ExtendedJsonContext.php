@@ -27,7 +27,7 @@ class ExtendedJsonContext extends JsonContext
 
         $actual = $this->inspector->evaluate($json, $node);
 
-        Assert::assertInternalType('numeric', $actual);
+        Assert::assertIsNumeric($actual);
         Assert::assertGreaterThanOrEqual($minimum, $actual);
         Assert::assertLessThanOrEqual($maximum, $actual);
     }
@@ -41,7 +41,7 @@ class ExtendedJsonContext extends JsonContext
 
         $actual = $this->inspector->evaluate($json, $node);
 
-        Assert::assertInternalType('string', $actual);
+        Assert::assertIsString($actual);
         Assert::assertGreaterThanOrEqual($minimum, \strlen($actual));
         Assert::assertLessThanOrEqual($maximum, \strlen($actual));
     }
