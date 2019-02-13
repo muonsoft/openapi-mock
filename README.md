@@ -105,6 +105,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 * [x] not critical parsing errors should not fail mock server
   * [x] service for handling parsing errors
   * [x] make special invalid type instead of throwing exception on specification parsing
+  * [ ] exceptional error handler for test environment
 * [ ] detect path for rest items
 * [ ] tests in travis ci
 

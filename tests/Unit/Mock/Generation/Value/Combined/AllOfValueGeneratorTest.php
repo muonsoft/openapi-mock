@@ -54,4 +54,15 @@ class AllOfValueGeneratorTest extends TestCase
         $this->assertExpectedValueGenerator_generateValue_wasCalledOnceWithType($internalGenerator1, $type1);
         $this->assertExpectedValueGenerator_generateValue_wasCalledOnceWithType($internalGenerator2, $type2);
     }
+
+    /** @test */
+    public function generateValue_allOfEmptyTypes_objectReturned(): void
+    {
+        $generator = new AllOfValueGenerator($this->valueGeneratorLocator);
+        $allOf = new AllOfType();
+
+        $value = $generator->generateValue($allOf);
+
+        $this->assertIsObject($value);
+    }
 }

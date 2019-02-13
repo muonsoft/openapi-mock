@@ -95,6 +95,17 @@ class AnyOfValueGeneratorTest extends TestCase
         $this->assertTrue($actualValueEqualsExpectedValue);
     }
 
+    /** @test */
+    public function generateValue_anyOfEmptyTypes_objectReturned(): void
+    {
+        $generator = new AnyOfValueGenerator($this->valueGeneratorLocator);
+        $anyOf = new AnyOfType();
+
+        $value = $generator->generateValue($anyOf);
+
+        $this->assertIsObject($value);
+    }
+
     public function possibleExpectedValuesProvider(): array
     {
         return [

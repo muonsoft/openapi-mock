@@ -43,4 +43,15 @@ class OneOfValueGeneratorTest extends TestCase
         $this->assertValueGenerator_generateValue_wasCalledOnceWithOneOfTypes($type1, $type2);
         $this->assertSame($expectedValue, $value);
     }
+
+    /** @test */
+    public function generateValue_anyOfEmptyTypes_objectReturned(): void
+    {
+        $generator = new OneOfValueGenerator($this->valueGeneratorLocator);
+        $oneOf = new OneOfType();
+
+        $value = $generator->generateValue($oneOf);
+
+        $this->assertIsObject($value);
+    }
 }
