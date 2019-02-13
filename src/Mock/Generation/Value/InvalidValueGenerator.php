@@ -27,7 +27,7 @@ class InvalidValueGenerator implements ValueGeneratorInterface
         $this->logger = $logger;
     }
 
-    public function generateValue(TypeInterface $type)
+    public function generateValue(TypeInterface $type): void
     {
         \assert($type instanceof InvalidType);
 
@@ -37,7 +37,5 @@ class InvalidValueGenerator implements ValueGeneratorInterface
                 $type->getError()
             )
         );
-
-        return null;
     }
 }

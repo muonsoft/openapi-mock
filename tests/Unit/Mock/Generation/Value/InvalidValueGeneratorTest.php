@@ -35,9 +35,8 @@ class InvalidValueGeneratorTest extends TestCase
         $generator = new InvalidValueGenerator($this->logger);
         $type = new InvalidType(self::ERROR);
 
-        $value = $generator->generateValue($type);
+        $generator->generateValue($type);
 
-        $this->assertNull($value);
         $this->assertLogger_warning_wasCalledOnce('Message generation was ignored due to invalid type with error: "error".');
     }
 }
