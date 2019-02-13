@@ -10,8 +10,8 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockEndpoint;
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -39,7 +39,7 @@ class SpecificationParser
         $this->logger = $logger;
     }
 
-    public function parseSpecification(SpecificationAccessor $specification): MockEndpointCollection
+    public function parseSpecification(SpecificationAccessor $specification): EndpointCollection
     {
         $pointer = new SpecificationPointer();
         $this->validateSpecificationSchema($specification, $pointer);
@@ -58,7 +58,7 @@ class SpecificationParser
             }
         }
 
-        return $context->mockEndpointCollection;
+        return $context->endpoints;
     }
 
     private function parseEndpointList(array $endpoints, SpecificationParserContext $context): void
@@ -75,12 +75,12 @@ class SpecificationParser
 
     private function parseEndpoint(string $httpMethod, SpecificationParserContext $context): void
     {
-        /** @var MockEndpoint $mockEndpoint */
+        /** @var Endpoint $mockEndpoint */
         $mockEndpoint = $this->endpointParser->parsePointedSchema($context->specification, $context->endpointPointer);
         $mockEndpoint->path = $context->path;
         $mockEndpoint->httpMethod = strtoupper($httpMethod);
 
-        $context->mockEndpointCollection->add($mockEndpoint);
+        $context->endpoints->add($mockEndpoint);
 
         $this->logger->debug(
             sprintf(

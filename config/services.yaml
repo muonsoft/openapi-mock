@@ -58,7 +58,7 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 48 }
 
-  App\Mock\MockEndpointRepository:
+  App\Mock\EndpointRepository:
     arguments:
       - '@specification_loader'
       - '%specification_url%'

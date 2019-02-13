@@ -11,8 +11,8 @@
 namespace App\OpenAPI\Loading;
 
 use App\Cache\CacheKeyGeneratorInterface;
-use App\Mock\Parameters\MockEndpoint;
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
 use App\Mock\Parameters\Schema\Schema;
@@ -64,7 +64,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         $this->logger = $logger;
     }
 
-    public function loadMockEndpoints(string $url): MockEndpointCollection
+    public function loadMockEndpoints(string $url): EndpointCollection
     {
         $cacheKey = $this->cacheKeyGenerator->generateKey($url);
 
@@ -88,7 +88,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         $this->cache->delete($cacheKey);
     }
 
-    private function loadFromCache($cacheKey): MockEndpointCollection
+    private function loadFromCache($cacheKey): EndpointCollection
     {
         $serializedSpecification = $this->cache->get($cacheKey);
 
@@ -97,8 +97,8 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
             [
                 'allowed_classes' => [
                     StringList::class,
-                    MockEndpointCollection::class,
-                    MockEndpoint::class,
+                    EndpointCollection::class,
+                    Endpoint::class,
                     MockResponseCollection::class,
                     MockResponse::class,
                     SchemaCollection::class,

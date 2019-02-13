@@ -15,7 +15,7 @@ use App\Mock\Generation\DataGenerator;
 use App\Mock\MockResponseGenerator;
 use App\Mock\Negotiation\MediaTypeNegotiator;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
 use App\Mock\Parameters\Schema\Schema;
@@ -99,7 +99,7 @@ class MockResponseGeneratorTest extends TestCase
 
     private function assertResponseStatusNegotiator_negotiateResponseStatus_wasCalledOnceWithRequestAndParameters(
         Request $request,
-        MockEndpoint $parameters
+        Endpoint $parameters
     ): void {
         \Phake::verify($this->responseStatusNegotiator)
             ->negotiateResponseStatus($request, $parameters);
@@ -152,9 +152,9 @@ class MockResponseGeneratorTest extends TestCase
         return $responderResponse;
     }
 
-    private function givenMockEndpointWithStatusCodeAndMediaTypeWithSchema(Schema $schema): MockEndpoint
+    private function givenMockEndpointWithStatusCodeAndMediaTypeWithSchema(Schema $schema): Endpoint
     {
-        $parameters = new MockEndpoint();
+        $parameters = new Endpoint();
         $mockResponse = new MockResponse();
 
         $mockResponse->content = new SchemaCollection([

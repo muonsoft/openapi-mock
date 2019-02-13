@@ -10,9 +10,9 @@
 
 namespace App\API;
 
-use App\Mock\MockEndpointRepository;
+use App\Mock\EndpointRepository;
 use App\Mock\MockResponseGenerator;
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,13 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RequestHandler
 {
-    /** @var MockEndpointRepository */
+    /** @var EndpointRepository */
     private $repository;
 
     /** @var MockResponseGenerator */
     private $responseGenerator;
 
-    public function __construct(MockEndpointRepository $repository, MockResponseGenerator $responseGenerator)
+    public function __construct(EndpointRepository $repository, MockResponseGenerator $responseGenerator)
     {
         $this->repository = $repository;
         $this->responseGenerator = $responseGenerator;
@@ -46,7 +46,7 @@ class RequestHandler
         return $response;
     }
 
-    private function findMockEndpointForRequest(Request $request): ?MockEndpoint
+    private function findMockEndpointForRequest(Request $request): ?Endpoint
     {
         $httpMethod = $request->getMethod();
         $requestUri = $request->getPathInfo();

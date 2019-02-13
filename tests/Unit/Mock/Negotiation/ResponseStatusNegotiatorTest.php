@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Negotiation;
 
 use App\Mock\Exception\MockGenerationException;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\MockResponse;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -41,7 +41,7 @@ class ResponseStatusNegotiatorTest extends TestCase
     public function negotiateResponseStatus_noResponsesInMockEndpoint_exceptionThrown(): void
     {
         $negotiator = $this->createResponseStatusNegotiator();
-        $parameters = new MockEndpoint();
+        $parameters = new Endpoint();
 
         $this->expectException(MockGenerationException::class);
         $this->expectExceptionMessage('Mock response not found');
@@ -71,9 +71,9 @@ class ResponseStatusNegotiatorTest extends TestCase
         ];
     }
 
-    private function givenMockEndpointWithResponsesWithStatusCodes(array $responseStatusCodes): MockEndpoint
+    private function givenMockEndpointWithResponsesWithStatusCodes(array $responseStatusCodes): Endpoint
     {
-        $parameters = new MockEndpoint();
+        $parameters = new Endpoint();
 
         foreach ($responseStatusCodes as $responseStatusCode) {
             $response = new MockResponse();

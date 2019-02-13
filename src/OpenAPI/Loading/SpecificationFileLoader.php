@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Loading;
 
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\OpenAPI\SpecificationLoaderInterface;
@@ -53,7 +53,7 @@ class SpecificationFileLoader implements SpecificationLoaderInterface
         $this->logger = $logger;
     }
 
-    public function loadMockEndpoints(string $url): MockEndpointCollection
+    public function loadMockEndpoints(string $url): EndpointCollection
     {
         $this->logger->debug(sprintf('Start loading OpenAPI specification from url "%s".', $url));
 

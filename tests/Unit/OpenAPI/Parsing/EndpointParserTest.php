@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\MockResponseCollection;
 use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -43,7 +43,7 @@ class EndpointParserTest extends TestCase
         $this->givenContextualParser_parsePointedSchema_returns($expectedMockResponses);
         $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA);
 
-        /** @var MockEndpoint $endpoint */
+        /** @var Endpoint $endpoint */
         $endpoint = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(

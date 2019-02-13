@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
@@ -43,7 +43,7 @@ class SpecificationParserTest extends TestCase
     public function parseSpecification_validSpecification_specificationParsedToMockEndpoint(): void
     {
         $parser = $this->createSpecificationParser();
-        $expectedMockEndpoint = new MockEndpoint();
+        $expectedMockEndpoint = new Endpoint();
         $this->givenContextualParser_parsePointedSchema_returns($expectedMockEndpoint);
         $specification = new SpecificationAccessor(self::VALID_SPECIFICATION);
 
@@ -54,7 +54,7 @@ class SpecificationParserTest extends TestCase
             ['paths', self::PATH, self::HTTP_METHOD]
         );
         $this->assertCount(1, $mockEndpointCollection);
-        /** @var MockEndpoint $mockEndpoint */
+        /** @var Endpoint $mockEndpoint */
         $mockEndpoint = $mockEndpointCollection->first();
         $this->assertSame($expectedMockEndpoint, $mockEndpoint);
         $this->assertSame(self::PATH, $mockEndpoint->path);

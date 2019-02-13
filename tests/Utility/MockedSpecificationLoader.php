@@ -10,7 +10,7 @@
 
 namespace App\Tests\Utility;
 
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\SpecificationLoaderInterface;
 
 /**
@@ -46,7 +46,7 @@ class MockedSpecificationLoader implements SpecificationLoaderInterface
         $this->specificationFilename = $specificationFilename;
     }
 
-    public function loadMockEndpoints(string $url): MockEndpointCollection
+    public function loadMockEndpoints(string $url): EndpointCollection
     {
         return $this->specificationLoader->loadMockEndpoints($this->specificationFilename);
     }

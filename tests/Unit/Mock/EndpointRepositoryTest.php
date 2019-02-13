@@ -10,13 +10,13 @@
 
 namespace App\Tests\Unit\Mock;
 
-use App\Mock\MockEndpointRepository;
-use App\Mock\Parameters\MockEndpoint;
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\EndpointRepository;
+use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointCollection;
 use App\Tests\Utility\TestCase\SpecificationLoaderTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
-class MockParametersRepositoryTest extends TestCase
+class EndpointRepositoryTest extends TestCase
 {
     use SpecificationLoaderTestCaseTrait;
 
@@ -58,17 +58,17 @@ class MockParametersRepositoryTest extends TestCase
         $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
     }
 
-    private function createMockEndpointRepository(): MockEndpointRepository
+    private function createMockEndpointRepository(): EndpointRepository
     {
-        return new MockEndpointRepository($this->specificationLoader, self::SPECIFICATION_URL);
+        return new EndpointRepository($this->specificationLoader, self::SPECIFICATION_URL);
     }
 
-    private function givenMockEndpointCollection(): MockEndpointCollection
+    private function givenMockEndpointCollection(): EndpointCollection
     {
-        $parameters = new MockEndpoint();
+        $parameters = new Endpoint();
         $parameters->path = self::PATH;
         $parameters->httpMethod = self::HTTP_METHOD;
 
-        return new MockEndpointCollection([$parameters]);
+        return new EndpointCollection([$parameters]);
     }
 }

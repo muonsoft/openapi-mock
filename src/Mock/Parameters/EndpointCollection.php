@@ -11,23 +11,15 @@
 namespace App\Mock\Parameters;
 
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use App\Utility\AbstractClassCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockEndpoint implements SpecificationObjectMarkerInterface
+class EndpointCollection extends AbstractClassCollection implements SpecificationObjectMarkerInterface
 {
-    /** @var string */
-    public $httpMethod;
-
-    /** @var string */
-    public $path;
-
-    /** @var MockResponseCollection */
-    public $responses;
-
-    public function __construct()
+    protected function getElementClassName(): string
     {
-        $this->responses = new MockResponseCollection();
+        return Endpoint::class;
     }
 }

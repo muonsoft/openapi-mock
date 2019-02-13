@@ -11,8 +11,8 @@
 namespace App\Tests\Unit\OpenAPI\Loading;
 
 use App\Cache\CacheKeyGeneratorInterface;
-use App\Mock\Parameters\MockEndpoint;
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
@@ -126,9 +126,9 @@ class CachedSpecificationLoaderTest extends TestCase
             ->thenReturn($cacheItemExists);
     }
 
-    private function givenMockEndpointCollection(): MockEndpointCollection
+    private function givenMockEndpointCollection(): EndpointCollection
     {
-        $cachedSpecification = new MockEndpointCollection();
+        $cachedSpecification = new EndpointCollection();
         $objectType = new ObjectType();
         $objectType->properties->add(new BooleanType());
         $objectType->properties->add(new IntegerType());
@@ -145,7 +145,7 @@ class CachedSpecificationLoaderTest extends TestCase
         $schema->value = $objectType;
         $mockResponse = new MockResponse();
         $mockResponse->content->set('application/json', $schema);
-        $mockEndpoint = new MockEndpoint();
+        $mockEndpoint = new Endpoint();
         $mockEndpoint->responses->set(200, $mockResponse);
         $cachedSpecification->add($mockEndpoint);
 

@@ -11,9 +11,9 @@
 namespace App\Tests\Unit\API;
 
 use App\API\RequestHandler;
-use App\Mock\MockEndpointRepository;
+use App\Mock\EndpointRepository;
 use App\Mock\MockResponseGenerator;
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +22,7 @@ class RequestHandlerTest extends TestCase
 {
     private const REQUEST_URI = '/request_uri';
 
-    /** @var MockEndpointRepository */
+    /** @var EndpointRepository */
     private $repository;
 
     /** @var MockResponseGenerator */
@@ -30,7 +30,7 @@ class RequestHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->repository = \Phake::mock(MockEndpointRepository::class);
+        $this->repository = \Phake::mock(EndpointRepository::class);
         $this->responseGenerator = \Phake::mock(MockResponseGenerator::class);
     }
 
@@ -73,7 +73,7 @@ class RequestHandlerTest extends TestCase
 
     private function assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockEndpoint(
         Request $request,
-        MockEndpoint $mockEndpoint
+        Endpoint $mockEndpoint
     ): void {
         \Phake::verify($this->responseGenerator)
             ->generateResponse($request, $mockEndpoint);
@@ -87,9 +87,9 @@ class RequestHandlerTest extends TestCase
         return $request;
     }
 
-    private function givenMockEndpointRepository_findMockEndpoint_returnsMockEndpoint(): MockEndpoint
+    private function givenMockEndpointRepository_findMockEndpoint_returnsMockEndpoint(): Endpoint
     {
-        $mockEndpoint = new MockEndpoint();
+        $mockEndpoint = new Endpoint();
 
         \Phake::when($this->repository)
             ->findMockEndpoint(\Phake::anyParameters())

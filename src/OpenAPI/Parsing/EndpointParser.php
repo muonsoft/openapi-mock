@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -28,7 +28,7 @@ class EndpointParser implements ContextualParserInterface
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $endpoint = new MockEndpoint();
+        $endpoint = new Endpoint();
 
         $responsesPointer = $pointer->withPathElement('responses');
         $endpoint->responses = $this->responseCollectionParser->parsePointedSchema($specification, $responsesPointer);

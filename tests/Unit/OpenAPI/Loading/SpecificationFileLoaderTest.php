@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Loading;
 
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\Loading\SpecificationFileLoader;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
@@ -125,9 +125,9 @@ class SpecificationFileLoaderTest extends TestCase
         return $specification;
     }
 
-    private function givenSpecificationParser_parseSpecification_returnsParsedSpecification(): MockEndpointCollection
+    private function givenSpecificationParser_parseSpecification_returnsParsedSpecification(): EndpointCollection
     {
-        $parsedSpecification = new MockEndpointCollection();
+        $parsedSpecification = new EndpointCollection();
 
         \Phake::when($this->parser)
             ->parseSpecification(\Phake::anyParameters())

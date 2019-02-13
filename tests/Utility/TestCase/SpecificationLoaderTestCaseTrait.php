@@ -10,7 +10,7 @@
 
 namespace App\Tests\Utility\TestCase;
 
-use App\Mock\Parameters\MockEndpointCollection;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\SpecificationLoaderInterface;
 
 /**
@@ -33,7 +33,7 @@ trait SpecificationLoaderTestCaseTrait
     }
 
     protected function givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection(
-        MockEndpointCollection $collection
+        EndpointCollection $collection
     ): void {
         \Phake::when($this->specificationLoader)
             ->loadMockEndpoints(\Phake::anyParameters())
