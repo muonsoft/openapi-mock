@@ -10,12 +10,13 @@
 
 namespace App\Mock\Parameters;
 
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Utility\AbstractClassCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockResponseCollection extends AbstractClassCollection
+class MockResponseCollection extends AbstractClassCollection implements SpecificationObjectMarkerInterface
 {
     protected function getElementClassName(): string
     {

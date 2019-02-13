@@ -16,7 +16,7 @@ use App\Mock\Parameters\MockEndpointCollection;
 use App\Tests\Utility\TestCase\SpecificationLoaderTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
-class MockEndpointRepositoryTest extends TestCase
+class MockParametersRepositoryTest extends TestCase
 {
     use SpecificationLoaderTestCaseTrait;
 

@@ -45,6 +45,7 @@ services:
     bind:
       $endpointParser: '@App\OpenAPI\Parsing\EndpointParser'
       $responseParser: '@App\OpenAPI\Parsing\ResponseParser'
+      $responseCollectionParser: '@App\OpenAPI\Parsing\ResponseCollectionParser'
       $schemaParser: '@App\OpenAPI\Parsing\SchemaParser'
       $delegatingSchemaParser: '@App\OpenAPI\Parsing\Type\DelegatingSchemaParser'
       $resolvingSchemaParser: '@App\OpenAPI\Parsing\Type\ReferenceResolvingSchemaParser'
