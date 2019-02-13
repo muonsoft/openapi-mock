@@ -15,10 +15,10 @@ use App\Utility\AbstractClassCollection;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParametersCollection extends AbstractClassCollection
+class MockEndpointCollection extends AbstractClassCollection
 {
     protected function getElementClassName(): string
     {
-        return MockParameters::class;
+        return MockEndpoint::class;
     }
 }

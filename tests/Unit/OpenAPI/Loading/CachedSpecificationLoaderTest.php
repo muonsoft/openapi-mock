@@ -11,8 +11,8 @@
 namespace App\Tests\Unit\OpenAPI\Loading;
 
 use App\Cache\CacheKeyGeneratorInterface;
-use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\MockEndpointCollection;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
@@ -53,15 +53,15 @@ class CachedSpecificationLoaderTest extends TestCase
     }
 
     /** @test */
-    public function loadMockParameters_cacheItemExists_mockParametersLoadedFromCacheAndReturned(): void
+    public function loadMockEndpoints_cacheItemExists_mockEndpointLoadedFromCacheAndReturned(): void
     {
         $cachedSpecificationLoader = $this->createCachedSpecificationLoader();
-        $cachedSpecification = $this->givenMockParametersCollection();
+        $cachedSpecification = $this->givenMockEndpointCollection();
         $cacheKey = $this->givenCacheKeyGenerator_generateKey_returnsCacheKey();
         $this->givenCache_has_returns(true);
         $this->givenCache_get_returnsSerializedObject($cachedSpecification);
 
-        $specification = $cachedSpecificationLoader->loadMockParameters(self::OPENAPI_FILE);
+        $specification = $cachedSpecificationLoader->loadMockEndpoints(self::OPENAPI_FILE);
 
         $this->assertNotNull($specification);
         $this->assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(self::OPENAPI_FILE);
@@ -70,21 +70,21 @@ class CachedSpecificationLoaderTest extends TestCase
     }
 
     /** @test */
-    public function loadMockParameters_cacheItemNotExists_mockParametersLoadedByLoaderAndSavedToCacheAndReturned(): void
+    public function loadMockEndpoints_cacheItemNotExists_mockEndpointLoadedByLoaderAndSavedToCacheAndReturned(): void
     {
         $cachedSpecificationLoader = $this->createCachedSpecificationLoader();
         $cacheKey = $this->givenCacheKeyGenerator_generateKey_returnsCacheKey();
         $this->givenCache_has_returns(false);
-        $loadedSpecification = $this->givenMockParametersCollection();
-        $this->givenSpecificationLoader_loadMockParameters_returnsMockParametersCollection($loadedSpecification);
+        $loadedSpecification = $this->givenMockEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($loadedSpecification);
 
-        $specification = $cachedSpecificationLoader->loadMockParameters(self::OPENAPI_FILE);
+        $specification = $cachedSpecificationLoader->loadMockEndpoints(self::OPENAPI_FILE);
 
         $this->assertNotNull($specification);
         $this->assertCacheKeyGenerator_generateKey_wasCalledOnceWithUrl(self::OPENAPI_FILE);
         $this->assertCache_has_wasCalledOnceWithKey($cacheKey);
         $this->assertCache_get_wasNeverCalledWithAnyParameters();
-        $this->assertSpecificationLoader_loadMockParameters_wasCalledOnceWithUrl(self::OPENAPI_FILE);
+        $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::OPENAPI_FILE);
         $this->assertCache_set_wasCalledOnceWithKeyAndSerializedObject($cacheKey, $loadedSpecification);
         $this->assertSame($loadedSpecification, $specification);
     }
@@ -126,9 +126,9 @@ class CachedSpecificationLoaderTest extends TestCase
             ->thenReturn($cacheItemExists);
     }
 
-    private function givenMockParametersCollection(): MockParametersCollection
+    private function givenMockEndpointCollection(): MockEndpointCollection
     {
-        $cachedSpecification = new MockParametersCollection();
+        $cachedSpecification = new MockEndpointCollection();
         $objectType = new ObjectType();
         $objectType->properties->add(new BooleanType());
         $objectType->properties->add(new IntegerType());
@@ -145,9 +145,9 @@ class CachedSpecificationLoaderTest extends TestCase
         $schema->value = $objectType;
         $mockResponse = new MockResponse();
         $mockResponse->content->set('application/json', $schema);
-        $mockParameters = new MockParameters();
-        $mockParameters->responses->set(200, $mockResponse);
-        $cachedSpecification->add($mockParameters);
+        $mockEndpoint = new MockEndpoint();
+        $mockEndpoint->responses->set(200, $mockResponse);
+        $cachedSpecification->add($mockEndpoint);
 
         return $cachedSpecification;
     }

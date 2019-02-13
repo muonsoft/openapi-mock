@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockEndpoint;
 use App\Mock\Parameters\MockResponse;
 use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -47,7 +47,7 @@ class EndpointParser implements ContextualParserInterface
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $mockParameters = new MockParameters();
+        $endpoint = new MockEndpoint();
         $schema = $specification->getSchema($pointer);
 
         $responses = $schema['responses'] ?? [];
@@ -62,7 +62,7 @@ class EndpointParser implements ContextualParserInterface
                 $response = $this->resolvingParser->resolveReferenceAndParsePointedSchema($specification, $responsePointer, $this->responseParser);
                 $parsedStatusCode = $this->parseStatusCode($statusCode);
                 $response->statusCode = $parsedStatusCode;
-                $mockParameters->responses->set($parsedStatusCode, $response);
+                $endpoint->responses->set($parsedStatusCode, $response);
 
                 $this->logger->debug(
                     sprintf('Response with status code "%s" was parsed.', $response->statusCode),
@@ -71,7 +71,7 @@ class EndpointParser implements ContextualParserInterface
             }
         }
 
-        return $mockParameters;
+        return $endpoint;
     }
 
     private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $pointer): bool

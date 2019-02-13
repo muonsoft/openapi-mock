@@ -10,8 +10,8 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\MockEndpointCollection;
 use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -39,7 +39,7 @@ class SpecificationParser
         $this->logger = $logger;
     }
 
-    public function parseSpecification(SpecificationAccessor $specification): MockParametersCollection
+    public function parseSpecification(SpecificationAccessor $specification): MockEndpointCollection
     {
         $pointer = new SpecificationPointer();
         $this->validateSpecificationSchema($specification, $pointer);
@@ -58,7 +58,7 @@ class SpecificationParser
             }
         }
 
-        return $context->mockParametersCollection;
+        return $context->mockEndpointCollection;
     }
 
     private function parseEndpointList(array $endpoints, SpecificationParserContext $context): void
@@ -75,18 +75,18 @@ class SpecificationParser
 
     private function parseEndpoint(string $httpMethod, SpecificationParserContext $context): void
     {
-        /** @var MockParameters $mockParameters */
-        $mockParameters = $this->endpointParser->parsePointedSchema($context->specification, $context->endpointPointer);
-        $mockParameters->path = $context->path;
-        $mockParameters->httpMethod = strtoupper($httpMethod);
+        /** @var MockEndpoint $mockEndpoint */
+        $mockEndpoint = $this->endpointParser->parsePointedSchema($context->specification, $context->endpointPointer);
+        $mockEndpoint->path = $context->path;
+        $mockEndpoint->httpMethod = strtoupper($httpMethod);
 
-        $context->mockParametersCollection->add($mockParameters);
+        $context->mockEndpointCollection->add($mockEndpoint);
 
         $this->logger->debug(
             sprintf(
                 'Endpoint with method "%s" and path "%s" was successfully parsed.',
-                $mockParameters->httpMethod,
-                $mockParameters->path
+                $mockEndpoint->httpMethod,
+                $mockEndpoint->path
             ),
             ['path' => $context->endpointPointer->getPath()]
         );

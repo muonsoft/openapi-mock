@@ -10,13 +10,13 @@
 
 namespace App\Mock;
 
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockEndpoint;
 use App\OpenAPI\SpecificationLoaderInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParametersRepository
+class MockEndpointRepository
 {
     /** @var SpecificationLoaderInterface */
     private $specificationLoader;
@@ -30,16 +30,16 @@ class MockParametersRepository
         $this->specificationUrl = $specificationUrl;
     }
 
-    public function findMockParameters(string $httpMethod, string $uri): ?MockParameters
+    public function findMockEndpoint(string $httpMethod, string $uri): ?MockEndpoint
     {
-        $collection = $this->specificationLoader->loadMockParameters($this->specificationUrl);
+        $endpoints = $this->specificationLoader->loadMockEndpoints($this->specificationUrl);
 
         $parameters = null;
 
-        /** @var MockParameters $collectionParameters */
-        foreach ($collection as $collectionParameters) {
-            if ($httpMethod === $collectionParameters->httpMethod && $uri === $collectionParameters->path) {
-                $parameters = $collectionParameters;
+        /** @var MockEndpoint $endpoint */
+        foreach ($endpoints as $endpoint) {
+            if ($httpMethod === $endpoint->httpMethod && $uri === $endpoint->path) {
+                $parameters = $endpoint;
 
                 break;
             }

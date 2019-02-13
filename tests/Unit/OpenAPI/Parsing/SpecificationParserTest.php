@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockEndpoint;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
@@ -40,25 +40,25 @@ class SpecificationParserTest extends TestCase
     }
 
     /** @test */
-    public function parseSpecification_validSpecification_specificationParsedToMockParameters(): void
+    public function parseSpecification_validSpecification_specificationParsedToMockEndpoint(): void
     {
         $parser = $this->createSpecificationParser();
-        $expectedMockParameters = new MockParameters();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedMockParameters);
+        $expectedMockEndpoint = new MockEndpoint();
+        $this->givenContextualParser_parsePointedSchema_returns($expectedMockEndpoint);
         $specification = new SpecificationAccessor(self::VALID_SPECIFICATION);
 
-        $mockParametersCollection = $parser->parseSpecification($specification);
+        $mockEndpointCollection = $parser->parseSpecification($specification);
 
         $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             ['paths', self::PATH, self::HTTP_METHOD]
         );
-        $this->assertCount(1, $mockParametersCollection);
-        /** @var MockParameters $mockParameters */
-        $mockParameters = $mockParametersCollection->first();
-        $this->assertSame($expectedMockParameters, $mockParameters);
-        $this->assertSame(self::PATH, $mockParameters->path);
-        $this->assertSame(strtoupper(self::HTTP_METHOD), $mockParameters->httpMethod);
+        $this->assertCount(1, $mockEndpointCollection);
+        /** @var MockEndpoint $mockEndpoint */
+        $mockEndpoint = $mockEndpointCollection->first();
+        $this->assertSame($expectedMockEndpoint, $mockEndpoint);
+        $this->assertSame(self::PATH, $mockEndpoint->path);
+        $this->assertSame(strtoupper(self::HTTP_METHOD), $mockEndpoint->httpMethod);
     }
 
     /** @test */
@@ -113,9 +113,9 @@ class SpecificationParserTest extends TestCase
             ],
         ]);
 
-        $mockParametersCollection = $parser->parseSpecification($specification);
+        $mockEndpointCollection = $parser->parseSpecification($specification);
 
-        $this->assertCount(0, $mockParametersCollection);
+        $this->assertCount(0, $mockEndpointCollection);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Empty or invalid endpoint specification',
             'paths./entity'
@@ -135,9 +135,9 @@ class SpecificationParserTest extends TestCase
             ],
         ]);
 
-        $mockParametersCollection = $parser->parseSpecification($specification);
+        $mockEndpointCollection = $parser->parseSpecification($specification);
 
-        $this->assertCount(0, $mockParametersCollection);
+        $this->assertCount(0, $mockEndpointCollection);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Empty or invalid endpoint specification',
             'paths./entity.get'
@@ -157,9 +157,9 @@ class SpecificationParserTest extends TestCase
             ],
         ]);
 
-        $mockParametersCollection = $parser->parseSpecification($specification);
+        $mockEndpointCollection = $parser->parseSpecification($specification);
 
-        $this->assertCount(0, $mockParametersCollection);
+        $this->assertCount(0, $mockEndpointCollection);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'References on paths is not supported',
             'paths./entity'

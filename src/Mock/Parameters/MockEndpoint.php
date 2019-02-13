@@ -15,7 +15,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters implements SpecificationObjectMarkerInterface
+class MockEndpoint implements SpecificationObjectMarkerInterface
 {
     /** @var string */
     public $httpMethod;

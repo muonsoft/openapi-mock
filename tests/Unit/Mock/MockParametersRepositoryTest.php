@@ -10,13 +10,13 @@
 
 namespace App\Tests\Unit\Mock;
 
-use App\Mock\MockParametersRepository;
-use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\MockEndpointRepository;
+use App\Mock\Parameters\MockEndpoint;
+use App\Mock\Parameters\MockEndpointCollection;
 use App\Tests\Utility\TestCase\SpecificationLoaderTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
-class MockParametersRepositoryTest extends TestCase
+class MockEndpointRepositoryTest extends TestCase
 {
     use SpecificationLoaderTestCaseTrait;
 
@@ -31,44 +31,44 @@ class MockParametersRepositoryTest extends TestCase
     }
 
     /** @test */
-    public function findMockParameters_existingPathAndHttpMethod_mockParametersReturned(): void
+    public function findMockEndpoint_existingPathAndHttpMethod_mockEndpointReturned(): void
     {
-        $repository = $this->createMockParametersRepository();
-        $parametersCollection = $this->givenMockParametersCollection();
-        $this->givenSpecificationLoader_loadMockParameters_returnsMockParametersCollection($parametersCollection);
+        $repository = $this->createMockEndpointRepository();
+        $parametersCollection = $this->givenMockEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($parametersCollection);
 
-        $parameters = $repository->findMockParameters(self::HTTP_METHOD, self::PATH);
+        $parameters = $repository->findMockEndpoint(self::HTTP_METHOD, self::PATH);
 
         $this->assertNotNull($parameters);
-        $this->assertSpecificationLoader_loadMockParameters_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
+        $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
         $this->assertSame(self::PATH, $parameters->path);
         $this->assertSame(self::HTTP_METHOD, $parameters->httpMethod);
     }
 
     /** @test */
-    public function findMockParameters_notExistingPathAndHttpMethod_nullReturned(): void
+    public function findMockEndpoint_notExistingPathAndHttpMethod_nullReturned(): void
     {
-        $repository = $this->createMockParametersRepository();
-        $parametersCollection = $this->givenMockParametersCollection();
-        $this->givenSpecificationLoader_loadMockParameters_returnsMockParametersCollection($parametersCollection);
+        $repository = $this->createMockEndpointRepository();
+        $parametersCollection = $this->givenMockEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($parametersCollection);
 
-        $parameters = $repository->findMockParameters('', '');
+        $parameters = $repository->findMockEndpoint('', '');
 
         $this->assertNull($parameters);
-        $this->assertSpecificationLoader_loadMockParameters_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
+        $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
     }
 
-    private function createMockParametersRepository(): MockParametersRepository
+    private function createMockEndpointRepository(): MockEndpointRepository
     {
-        return new MockParametersRepository($this->specificationLoader, self::SPECIFICATION_URL);
+        return new MockEndpointRepository($this->specificationLoader, self::SPECIFICATION_URL);
     }
 
-    private function givenMockParametersCollection(): MockParametersCollection
+    private function givenMockEndpointCollection(): MockEndpointCollection
     {
-        $parameters = new MockParameters();
+        $parameters = new MockEndpoint();
         $parameters->path = self::PATH;
         $parameters->httpMethod = self::HTTP_METHOD;
 
-        return new MockParametersCollection([$parameters]);
+        return new MockEndpointCollection([$parameters]);
     }
 }

@@ -15,7 +15,7 @@ use App\Mock\Generation\DataGenerator;
 use App\Mock\MockResponseGenerator;
 use App\Mock\Negotiation\MediaTypeNegotiator;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockEndpoint;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
 use App\Mock\Parameters\Schema\Schema;
@@ -51,12 +51,12 @@ class MockResponseGeneratorTest extends TestCase
     }
 
     /** @test */
-    public function generateResponse_requestCorrespondsMockParameters_mockResponseCreated(): void
+    public function generateResponse_requestCorrespondsMockEndpoint_mockResponseCreated(): void
     {
         $generator = $this->createMockResponseGenerator();
         $request = new Request();
         $schema = new Schema();
-        $parameters = $this->givenMockParametersWithStatusCodeAndMediaTypeWithSchema($schema);
+        $parameters = $this->givenMockEndpointWithStatusCodeAndMediaTypeWithSchema($schema);
         $this->givenMediaTypeNegotiator_negotiateMediaType_returnsMediaType(self::MEDIA_TYPE);
         $this->givenResponseStatusNegotiator_negotiateResponseStatus_returnsStatusCode(self::STATUS_CODE);
         $this->givenDataGenerator_generateData_returnsResponseData(self::RESPONSE_DATA);
@@ -99,7 +99,7 @@ class MockResponseGeneratorTest extends TestCase
 
     private function assertResponseStatusNegotiator_negotiateResponseStatus_wasCalledOnceWithRequestAndParameters(
         Request $request,
-        MockParameters $parameters
+        MockEndpoint $parameters
     ): void {
         \Phake::verify($this->responseStatusNegotiator)
             ->negotiateResponseStatus($request, $parameters);
@@ -152,9 +152,9 @@ class MockResponseGeneratorTest extends TestCase
         return $responderResponse;
     }
 
-    private function givenMockParametersWithStatusCodeAndMediaTypeWithSchema(Schema $schema): MockParameters
+    private function givenMockEndpointWithStatusCodeAndMediaTypeWithSchema(Schema $schema): MockEndpoint
     {
-        $parameters = new MockParameters();
+        $parameters = new MockEndpoint();
         $mockResponse = new MockResponse();
 
         $mockResponse->content = new SchemaCollection([

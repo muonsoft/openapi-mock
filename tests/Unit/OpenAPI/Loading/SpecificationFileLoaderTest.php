@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Loading;
 
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\Parameters\MockEndpointCollection;
 use App\OpenAPI\Loading\SpecificationFileLoader;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
@@ -42,7 +42,7 @@ class SpecificationFileLoaderTest extends TestCase
      * @test
      * @dataProvider urlAndFormatProvider
      */
-    public function loadMockParameters_fileExistsByUrlAndFormatIsSupported_specificationParsedToMockParameters(
+    public function loadMockEndpoints_fileExistsByUrlAndFormatIsSupported_specificationParsedToMockEndpoint(
         string $url,
         string $format
     ): void {
@@ -51,12 +51,12 @@ class SpecificationFileLoaderTest extends TestCase
         $specification = $this->givenDecoder_decode_returnsRawSpecification();
         $parsedSpecification = $this->givenSpecificationParser_parseSpecification_returnsParsedSpecification();
 
-        $mockParameters = $loader->loadMockParameters($url);
+        $mockEndpoint = $loader->loadMockEndpoints($url);
 
         $this->assertUriLoader_loadFileContents_wasCalledOnceWithUrl($url);
         $this->assertDecoder_decode_wasCalledOnceWithDataAndFormat($fileContents, $format);
         $this->assertSpecificationParser_parseSpecification_wasCalledOnceWithSpecification($specification);
-        $this->assertSame($parsedSpecification, $mockParameters);
+        $this->assertSame($parsedSpecification, $mockEndpoint);
     }
 
     public function urlAndFormatProvider(): array
@@ -74,11 +74,11 @@ class SpecificationFileLoaderTest extends TestCase
      * @expectedException \DomainException
      * @expectedExceptionMessage Unsupported OpenAPI specification format
      */
-    public function loadMockParameters_unsupportedFileFormat_exceptionThrown(): void
+    public function loadMockEndpoints_unsupportedFileFormat_exceptionThrown(): void
     {
         $loader = $this->createSpecificationLoader();
 
-        $loader->loadMockParameters('unsupported_url');
+        $loader->loadMockEndpoints('unsupported_url');
     }
 
     private function assertUriLoader_loadFileContents_wasCalledOnceWithUrl(string $url): void
@@ -125,9 +125,9 @@ class SpecificationFileLoaderTest extends TestCase
         return $specification;
     }
 
-    private function givenSpecificationParser_parseSpecification_returnsParsedSpecification(): MockParametersCollection
+    private function givenSpecificationParser_parseSpecification_returnsParsedSpecification(): MockEndpointCollection
     {
-        $parsedSpecification = new MockParametersCollection();
+        $parsedSpecification = new MockEndpointCollection();
 
         \Phake::when($this->parser)
             ->parseSpecification(\Phake::anyParameters())

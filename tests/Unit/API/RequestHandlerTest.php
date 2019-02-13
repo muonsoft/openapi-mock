@@ -11,9 +11,9 @@
 namespace App\Tests\Unit\API;
 
 use App\API\RequestHandler;
-use App\Mock\MockParametersRepository;
+use App\Mock\MockEndpointRepository;
 use App\Mock\MockResponseGenerator;
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\MockEndpoint;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +22,7 @@ class RequestHandlerTest extends TestCase
 {
     private const REQUEST_URI = '/request_uri';
 
-    /** @var MockParametersRepository */
+    /** @var MockEndpointRepository */
     private $repository;
 
     /** @var MockResponseGenerator */
@@ -30,53 +30,53 @@ class RequestHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->repository = \Phake::mock(MockParametersRepository::class);
+        $this->repository = \Phake::mock(MockEndpointRepository::class);
         $this->responseGenerator = \Phake::mock(MockResponseGenerator::class);
     }
 
     /** @test */
-    public function handleRequest_requestWithExpectedMethodAndUri_mockParametersFoundAndResponseGeneratedAndReturned(): void
+    public function handleRequest_requestWithExpectedMethodAndUri_mockEndpointFoundAndResponseGeneratedAndReturned(): void
     {
         $handler = $this->createRequestHandler();
         $request = $this->givenRequest(Request::METHOD_GET, self::REQUEST_URI);
-        $mockParameters = $this->givenMockParametersRepository_findMockParameters_returnsMockParameters();
+        $mockEndpoint = $this->givenMockEndpointRepository_findMockEndpoint_returnsMockEndpoint();
         $expectedResponse = $this->givenMockResponseGenerator_generateResponse_returnsResponse();
 
         $response = $handler->handleRequest($request);
 
-        $this->assertMockParametersRepository_findMockParameters_wasCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
-        $this->assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockParameters($request, $mockParameters);
+        $this->assertMockEndpointRepository_findMockEndpoint_wasCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
+        $this->assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockEndpoint($request, $mockEndpoint);
         $this->assertSame($expectedResponse, $response);
     }
 
     /** @test */
-    public function handleRequest_requestWithNotExpectedMethodOrUri_mockParametersNotFoundAndNotFoundResponseReturned(): void
+    public function handleRequest_requestWithNotExpectedMethodOrUri_mockEndpointNotFoundAndNotFoundResponseReturned(): void
     {
         $handler = $this->createRequestHandler();
         $request = $this->givenRequest(Request::METHOD_GET, self::REQUEST_URI);
-        $this->givenMockParametersRepository_findMockParameters_returnsNull();
+        $this->givenMockEndpointRepository_findMockEndpoint_returnsNull();
 
         $response = $handler->handleRequest($request);
 
-        $this->assertMockParametersRepository_findMockParameters_wasCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
+        $this->assertMockEndpointRepository_findMockEndpoint_wasCalledOnceWithHttpMethodAndRequestUri(Request::METHOD_GET, self::REQUEST_URI);
         $this->assertSame(Response::HTTP_NOT_FOUND, $response->getStatusCode());
         $this->assertSame('API endpoint not found.', $response->getContent());
     }
 
-    private function assertMockParametersRepository_findMockParameters_wasCalledOnceWithHttpMethodAndRequestUri(
+    private function assertMockEndpointRepository_findMockEndpoint_wasCalledOnceWithHttpMethodAndRequestUri(
         string $httpMethod,
         string $requestUri
     ): void {
         \Phake::verify($this->repository)
-            ->findMockParameters($httpMethod, $requestUri);
+            ->findMockEndpoint($httpMethod, $requestUri);
     }
 
-    private function assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockParameters(
+    private function assertMockResponseGenerator_generateResponse_wasCalledOnceWithRequestAndMockEndpoint(
         Request $request,
-        MockParameters $mockParameters
+        MockEndpoint $mockEndpoint
     ): void {
         \Phake::verify($this->responseGenerator)
-            ->generateResponse($request, $mockParameters);
+            ->generateResponse($request, $mockEndpoint);
     }
 
     private function givenRequest($httpMethod, $requestUri): Request
@@ -87,21 +87,21 @@ class RequestHandlerTest extends TestCase
         return $request;
     }
 
-    private function givenMockParametersRepository_findMockParameters_returnsMockParameters(): MockParameters
+    private function givenMockEndpointRepository_findMockEndpoint_returnsMockEndpoint(): MockEndpoint
     {
-        $mockParameters = new MockParameters();
+        $mockEndpoint = new MockEndpoint();
 
         \Phake::when($this->repository)
-            ->findMockParameters(\Phake::anyParameters())
-            ->thenReturn($mockParameters);
+            ->findMockEndpoint(\Phake::anyParameters())
+            ->thenReturn($mockEndpoint);
 
-        return $mockParameters;
+        return $mockEndpoint;
     }
 
-    private function givenMockParametersRepository_findMockParameters_returnsNull(): void
+    private function givenMockEndpointRepository_findMockEndpoint_returnsNull(): void
     {
         \Phake::when($this->repository)
-            ->findMockParameters(\Phake::anyParameters())
+            ->findMockEndpoint(\Phake::anyParameters())
             ->thenReturn(null);
     }
 

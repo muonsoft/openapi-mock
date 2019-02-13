@@ -10,7 +10,7 @@
 
 namespace App\Tests\Utility\TestCase;
 
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\Parameters\MockEndpointCollection;
 use App\OpenAPI\SpecificationLoaderInterface;
 
 /**
@@ -26,17 +26,17 @@ trait SpecificationLoaderTestCaseTrait
         $this->specificationLoader = \Phake::mock(SpecificationLoaderInterface::class);
     }
 
-    protected function assertSpecificationLoader_loadMockParameters_wasCalledOnceWithUrl(string $url): void
+    protected function assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(string $url): void
     {
         \Phake::verify($this->specificationLoader)
-            ->loadMockParameters($url);
+            ->loadMockEndpoints($url);
     }
 
-    protected function givenSpecificationLoader_loadMockParameters_returnsMockParametersCollection(
-        MockParametersCollection $collection
+    protected function givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection(
+        MockEndpointCollection $collection
     ): void {
         \Phake::when($this->specificationLoader)
-            ->loadMockParameters(\Phake::anyParameters())
+            ->loadMockEndpoints(\Phake::anyParameters())
             ->thenReturn($collection);
     }
 }
