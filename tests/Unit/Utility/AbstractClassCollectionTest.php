@@ -16,13 +16,12 @@ use PHPUnit\Framework\TestCase;
 
 class AbstractClassCollectionTest extends TestCase
 {
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessageRegExp /Collection element class .* does not exist/
-     */
+    /** @test */
     public function construct_givenInvalidClassName_exceptionThrown(): void
     {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessageRegExp('/Collection element class .* does not exist/');
+
         new class([]) extends AbstractClassCollection {
             protected function getElementClassName(): string
             {
@@ -31,13 +30,12 @@ class AbstractClassCollectionTest extends TestCase
         };
     }
 
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Collection element must be instance of
-     */
+    /** @test */
     public function construct_givenInvalidClassInstance_exceptionThrown(): void
     {
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Collection element must be instance of');
+
         new class(['']) extends AbstractClassCollection {
             protected function getElementClassName(): string
             {
@@ -46,14 +44,13 @@ class AbstractClassCollectionTest extends TestCase
         };
     }
 
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Collection element must be instance of
-     */
+    /** @test */
     public function set_givenInvalidClassInstance_exceptionThrown(): void
     {
         $collection = $this->createCollection();
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Collection element must be instance of');
 
         $collection->set(0, '');
     }
@@ -69,14 +66,13 @@ class AbstractClassCollectionTest extends TestCase
         $this->assertInstanceOf(DummyClass::class, $collection->first());
     }
 
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Collection element must be instance of
-     */
+    /** @test */
     public function add_givenInvalidClassInstance_exceptionThrown(): void
     {
         $collection = $this->createCollection();
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Collection element must be instance of');
 
         $collection->add('');
     }
@@ -90,6 +86,19 @@ class AbstractClassCollectionTest extends TestCase
 
         $this->assertCount(1, $collection);
         $this->assertInstanceOf(DummyClass::class, $collection->first());
+    }
+
+    /** @test */
+    public function append_givenCollection_collectionAppendedToGivenCollection(): void
+    {
+        $collection = $this->createCollection();
+        $collection->add(new DummyClass());
+        $appendingCollection = $this->createCollection();
+        $appendingCollection->add(new DummyClass());
+
+        $collection->append($appendingCollection);
+
+        $this->assertCount(2, $collection);
     }
 
     private function createCollection(): AbstractClassCollection

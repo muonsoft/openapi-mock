@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-abstract class AbstractClassCollection extends ArrayCollection
+abstract class AbstractClassMap extends ArrayCollection
 {
     /** @var string */
     private $className;
@@ -29,7 +29,7 @@ abstract class AbstractClassCollection extends ArrayCollection
 
         if (!class_exists($this->className) && !interface_exists($this->className)) {
             throw new \DomainException(
-                sprintf('Collection element class "%s" does not exist', $this->className)
+                sprintf('Map element class "%s" does not exist', $this->className)
             );
         }
 
@@ -59,15 +59,16 @@ abstract class AbstractClassCollection extends ArrayCollection
      */
     public function add($element): bool
     {
-        $this->validateElement($element);
-
-        return parent::add($element);
+        throw new \DomainException('Operation "add" cannot be applied to map.');
     }
 
-    public function append(self $collection): void
+    /**
+     * @throws \DomainException
+     */
+    public function merge(self $map): void
     {
-        foreach ($collection as $element) {
-            $this->add($element);
+        foreach ($map as $key => $value) {
+            $this->set($key, $value);
         }
     }
 
@@ -79,7 +80,7 @@ abstract class AbstractClassCollection extends ArrayCollection
     private function validateElement($value): void
     {
         if (!$value instanceof $this->className) {
-            throw new \DomainException(sprintf('Collection element must be instance of %s', $this->className));
+            throw new \DomainException(sprintf('Map element must be instance of %s', $this->className));
         }
     }
 }
