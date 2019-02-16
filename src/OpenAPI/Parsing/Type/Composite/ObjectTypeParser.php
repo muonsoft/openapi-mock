@@ -15,8 +15,8 @@ use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
-use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\FieldParserTrait;
@@ -31,13 +31,13 @@ class ObjectTypeParser implements TypeParserInterface
 {
     use FieldParserTrait;
 
-    /** @var ContextualParserInterface */
+    /** @var ParserInterface */
     private $resolvingSchemaParser;
 
     /** @var ParsingErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ContextualParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
         $this->errorHandler = $errorHandler;

@@ -35,17 +35,17 @@ class ReferenceResolvingParserTest extends TestCase
     }
 
     /** @test */
-    public function resolveReferenceAndParsePointedSchema_schemaIsNotReference_contextualParserParsesSchemaAndReturnsObject(): void
+    public function resolveReferenceAndParsePointedSchema_schemaIsNotReference_InternalParserParsesSchemaAndReturnsObject(): void
     {
         $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['schema']);
-        $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $expectedObject = $this->givenInternalParser_parsePointedSchema_returnsObject();
 
-        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->internalParser);
 
         $this->assertSpecificationAccessor_getSchema_wasCalledOnceWithPointer($pointer);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($this->specificationAccessor, $pointer);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($this->specificationAccessor, $pointer);
         $this->assertSame($expectedObject, $object);
     }
 
@@ -53,19 +53,19 @@ class ReferenceResolvingParserTest extends TestCase
      * @test
      * @dataProvider referenceAndReferencedPointerPath
      */
-    public function resolveReferenceAndParsePointedSchema_schemaWithNotResolvedReference_contextualParserParsesReferencedSchemaAndReturnsObject(
+    public function resolveReferenceAndParsePointedSchema_schemaWithNotResolvedReference_InternalParserParsesReferencedSchemaAndReturnsObject(
         string $reference,
         array $referencedPointerPath
     ): void {
         $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => $reference]);
-        $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $expectedObject = $this->givenInternalParser_parsePointedSchema_returnsObject();
 
-        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->internalParser);
 
         $this->assertSpecificationAccessor_getSchema_wasCalledOnceWithPointer($pointer);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($this->specificationAccessor, $referencedPointerPath);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($this->specificationAccessor, $referencedPointerPath);
         $this->assertSame($expectedObject, $object);
     }
 
@@ -84,14 +84,14 @@ class ReferenceResolvingParserTest extends TestCase
         $resolvingParser = $this->createReferenceResolvingParser();
         $pointer = new SpecificationPointer();
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => self::REFERENCE]);
-        $expectedObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $expectedObject = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $this->givenSpecificationAccessor_findResolvedObject_returnsNull();
 
-        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->internalParser);
 
         $this->assertSpecificationAccessor_findResolvedObject_wasCalledOnceWithReference(self::REFERENCE);
         $this->assertSpecificationAccessor_setResolvedObject_wasCalledOnceWithReferenceAndObject(self::REFERENCE, $object);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($this->specificationAccessor, ['reference']);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($this->specificationAccessor, ['reference']);
         $this->assertSame($expectedObject, $object);
     }
 
@@ -103,11 +103,11 @@ class ReferenceResolvingParserTest extends TestCase
         $this->givenSpecificationAccessor_getSchema_returnsSchema(['$ref' => self::REFERENCE]);
         $expectedObject = $this->givenSpecificationAccessor_findResolvedObject_returnsObject();
 
-        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->internalParser);
 
         $this->assertSpecificationAccessor_findResolvedObject_wasCalledOnceWithReference(self::REFERENCE);
         $this->assertSpecificationAccessor_setResolvedObject_wasNeverCalledOnceWithAnyParameters();
-        $this->assertContextualParser_parsePointedSchema_wasNeverCalledWithAnyParameters();
+        $this->assertInternalParser_parsePointedSchema_wasNeverCalledWithAnyParameters();
         $this->assertSame($expectedObject, $object);
     }
 
@@ -123,7 +123,7 @@ class ReferenceResolvingParserTest extends TestCase
         $errorReport = $this->givenParsingErrorHandler_reportError_returnsMessage();
 
         /** @var InvalidType $object */
-        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->contextualParser);
+        $object = $resolvingParser->resolveReferenceAndParsePointedSchema($this->specificationAccessor, $pointer, $this->internalParser);
 
         $this->assertInstanceOf(InvalidType::class, $object);
         $this->assertSame($errorReport, $object->getError());

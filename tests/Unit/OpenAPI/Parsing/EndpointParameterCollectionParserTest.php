@@ -42,10 +42,10 @@ class EndpointParameterCollectionParserTest extends TestCase
         string $in,
         bool $required
     ): void {
-        $parser = new EndpointParameterCollectionParser($this->contextualParser, $this->errorHandler);
+        $parser = new EndpointParameterCollectionParser($this->internalParser, $this->errorHandler);
         $specification = new SpecificationAccessor([$parameterSchema]);
         $pointer = new SpecificationPointer();
-        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $this->givenInternalParser_parsePointedSchema_returnsObject();
 
         /** @var EndpointParameterCollection $parametersCollection */
         $parametersCollection = $parser->parsePointedSchema($specification, $pointer);
@@ -104,7 +104,7 @@ class EndpointParameterCollectionParserTest extends TestCase
         $parameterSchema,
         string $errorMessage
     ): void {
-        $parser = new EndpointParameterCollectionParser($this->contextualParser, $this->errorHandler);
+        $parser = new EndpointParameterCollectionParser($this->internalParser, $this->errorHandler);
         $specification = new SpecificationAccessor([$parameterSchema]);
         $pointer = new SpecificationPointer();
 
@@ -158,7 +158,7 @@ class EndpointParameterCollectionParserTest extends TestCase
     /** @test */
     public function parsePointedSchema_parameterSchemaWithTypeSchema_parameterWithSchemaTypeReturned(): void
     {
-        $parser = new EndpointParameterCollectionParser($this->contextualParser, $this->errorHandler);
+        $parser = new EndpointParameterCollectionParser($this->internalParser, $this->errorHandler);
         $specification = new SpecificationAccessor([
             [
                 'name' => 'parameterName',
@@ -167,12 +167,12 @@ class EndpointParameterCollectionParserTest extends TestCase
             ],
         ]);
         $pointer = new SpecificationPointer();
-        $schemaObject = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $schemaObject = $this->givenInternalParser_parsePointedSchema_returnsObject();
 
         /** @var EndpointParameterCollection $parametersCollection */
         $parametersCollection = $parser->parsePointedSchema($specification, $pointer);
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             ['0', 'schema']
         );

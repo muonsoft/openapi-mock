@@ -19,9 +19,9 @@ use Psr\Log\LoggerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ResponseCollectionParser implements ContextualParserInterface
+class ResponseCollectionParser implements ParserInterface
 {
-    /** @var ContextualParserInterface */
+    /** @var ParserInterface */
     private $responseParser;
 
     /** @var ReferenceResolvingParser */
@@ -34,7 +34,7 @@ class ResponseCollectionParser implements ContextualParserInterface
     private $logger;
 
     public function __construct(
-        ContextualParserInterface $responseParser,
+        ParserInterface $responseParser,
         ReferenceResolvingParser $resolvingParser,
         ParsingErrorHandlerInterface $errorHandler,
         LoggerInterface $logger

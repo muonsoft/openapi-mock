@@ -43,12 +43,12 @@ class SpecificationParserTest extends TestCase
     {
         $parser = $this->createSpecificationParser();
         $expectedEndpoints = new EndpointCollection();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoints);
+        $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoints);
         $specification = new SpecificationAccessor(self::VALID_SPECIFICATION);
 
         $endpoints = $parser->parseSpecification($specification);
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             ['paths']
         );
@@ -98,6 +98,6 @@ class SpecificationParserTest extends TestCase
 
     private function createSpecificationParser(): SpecificationParser
     {
-        return new SpecificationParser($this->contextualParser);
+        return new SpecificationParser($this->internalParser);
     }
 }

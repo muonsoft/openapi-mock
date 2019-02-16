@@ -42,13 +42,13 @@ class EndpointParserTest extends TestCase
         $parser = $this->createEndpointParser();
         $expectedMockResponses = new MockResponseCollection();
         $expectedParameters = new EndpointParameterCollection();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedMockResponses, $expectedParameters);
+        $this->givenInternalParser_parsePointedSchema_returns($expectedMockResponses, $expectedParameters);
         $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA);
 
         /** @var Endpoint $endpoint */
         $endpoint = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
+        $this->assertInternalParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
             $specification,
             ['responses'],
             ['parameters']
@@ -59,6 +59,6 @@ class EndpointParserTest extends TestCase
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->contextualParser, $this->contextualParser);
+        return new EndpointParser($this->internalParser, $this->internalParser);
     }
 }

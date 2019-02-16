@@ -53,14 +53,14 @@ class ArrayTypeParserTest extends TestCase
     public function parsePointedSchema_validSchemaWithItemsAndParameters_itemSchemaParsedByTypeParser(): void
     {
         $parser = $this->createArrayTypeParser();
-        $itemsType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $itemsType = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::VALID_SCHEMA_WITH_PARAMETERS);
 
         /** @var ArrayType $type */
         $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(ArrayType::class, $type);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($specification, ['items']);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($specification, ['items']);
         $this->assertSame($itemsType, $type->items);
         $this->assertSame(self::MIN_ITEMS, $type->minItems);
         $this->assertSame(self::MAX_ITEMS, $type->maxItems);
@@ -71,14 +71,14 @@ class ArrayTypeParserTest extends TestCase
     public function parsePointedSchema_validSchemaWithItemsAndNoParameters_itemSchemaParsedByTypeParserAndParametersSetToDefaults(): void
     {
         $parser = $this->createArrayTypeParser();
-        $itemsType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $itemsType = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::VALID_SCHEMA_WITHOUT_PARAMETERS);
 
         /** @var ArrayType $type */
         $type = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(ArrayType::class, $type);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($specification, ['items']);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath($specification, ['items']);
         $this->assertSame($itemsType, $type->items);
         $this->assertSame(0, $type->minItems);
         $this->assertSame(0, $type->maxItems);
@@ -107,7 +107,7 @@ class ArrayTypeParserTest extends TestCase
     public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
     {
         $parser = $this->createArrayTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor([
             'items'     => self::ITEMS_SCHEMA,
             'nullable'  => true,
@@ -125,6 +125,6 @@ class ArrayTypeParserTest extends TestCase
 
     private function createArrayTypeParser(): ArrayTypeParser
     {
-        return new ArrayTypeParser($this->contextualParser, $this->errorHandler);
+        return new ArrayTypeParser($this->internalParser, $this->errorHandler);
     }
 }

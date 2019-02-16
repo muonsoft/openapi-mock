@@ -17,10 +17,10 @@ use App\Mock\Parameters\EndpointCollection;
  */
 class SpecificationParser
 {
-    /** @var ContextualParserInterface */
+    /** @var ParserInterface */
     private $pathCollectionParser;
 
-    public function __construct(ContextualParserInterface $pathCollectionParser)
+    public function __construct(ParserInterface $pathCollectionParser)
     {
         $this->pathCollectionParser = $pathCollectionParser;
     }

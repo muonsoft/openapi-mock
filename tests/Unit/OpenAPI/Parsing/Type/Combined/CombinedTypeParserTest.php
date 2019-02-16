@@ -49,13 +49,13 @@ class CombinedTypeParserTest extends TestCase
             ],
         ]);
         $internalType = new ObjectType();
-        $this->givenContextualParser_parsePointedSchema_returns($internalType);
+        $this->givenInternalParser_parsePointedSchema_returns($internalType);
 
         /** @var OneOfType $type */
         $type = $typeParser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf($combinedTypeClass, $type);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             [$combinedTypeName, '0']
         );
@@ -126,7 +126,7 @@ class CombinedTypeParserTest extends TestCase
             ],
         ]);
         $internalType = \Phake::mock(TypeInterface::class);
-        $this->givenContextualParser_parsePointedSchema_returns($internalType);
+        $this->givenInternalParser_parsePointedSchema_returns($internalType);
 
         /** @var AbstractCombinedType $type */
         $type = $typeParser->parsePointedSchema($specification, new SpecificationPointer());
@@ -149,6 +149,6 @@ class CombinedTypeParserTest extends TestCase
 
     private function createCombinedTypeParser(): CombinedTypeParser
     {
-        return new CombinedTypeParser($this->contextualParser, $this->errorHandler);
+        return new CombinedTypeParser($this->internalParser, $this->errorHandler);
     }
 }

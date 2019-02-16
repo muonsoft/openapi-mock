@@ -45,14 +45,14 @@ class PathCollectionParserTest extends TestCase
     {
         $parser = $this->createPathCollectionParser();
         $expectedEndpoint = new Endpoint();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
+        $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoint);
         $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
         $pointer = new SpecificationPointer();
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer);
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             [self::PATH, self::HTTP_METHOD]
         );
@@ -127,6 +127,6 @@ class PathCollectionParserTest extends TestCase
 
     private function createPathCollectionParser(): PathCollectionParser
     {
-        return new PathCollectionParser($this->contextualParser, $this->errorHandler, new NullLogger());
+        return new PathCollectionParser($this->internalParser, $this->errorHandler, new NullLogger());
     }
 }

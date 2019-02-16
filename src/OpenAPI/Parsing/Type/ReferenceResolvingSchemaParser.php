@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -19,7 +19,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ReferenceResolvingSchemaParser implements ContextualParserInterface
+class ReferenceResolvingSchemaParser implements ParserInterface
 {
     /** @var DelegatingSchemaParser */
     private $delegatingSchemaParser;
@@ -27,7 +27,7 @@ class ReferenceResolvingSchemaParser implements ContextualParserInterface
     /** @var ReferenceResolvingParser */
     private $resolvingParser;
 
-    public function __construct(ContextualParserInterface $delegatingSchemaParser, ReferenceResolvingParser $resolvingParser)
+    public function __construct(ParserInterface $delegatingSchemaParser, ReferenceResolvingParser $resolvingParser)
     {
         $this->delegatingSchemaParser = $delegatingSchemaParser;
         $this->resolvingParser = $resolvingParser;

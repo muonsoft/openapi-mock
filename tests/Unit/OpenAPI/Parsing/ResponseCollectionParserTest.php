@@ -57,7 +57,7 @@ class ResponseCollectionParserTest extends TestCase
         /** @var MockResponseCollection $responses */
         $responses = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
             $specification,
             ['200']
         );
@@ -80,7 +80,7 @@ class ResponseCollectionParserTest extends TestCase
         /** @var MockResponseCollection $responses */
         $responses = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
             $specification,
             ['default']
         );
@@ -126,6 +126,6 @@ class ResponseCollectionParserTest extends TestCase
 
     private function createResponseCollectionParser(): ResponseCollectionParser
     {
-        return new ResponseCollectionParser($this->contextualParser, $this->resolvingParser, $this->errorHandler, new NullLogger());
+        return new ResponseCollectionParser($this->internalParser, $this->resolvingParser, $this->errorHandler, new NullLogger());
     }
 }

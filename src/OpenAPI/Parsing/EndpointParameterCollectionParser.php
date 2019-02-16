@@ -19,15 +19,15 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointParameterCollectionParser implements ContextualParserInterface
+class EndpointParameterCollectionParser implements ParserInterface
 {
-    /** @var ContextualParserInterface */
+    /** @var ParserInterface */
     private $resolvingSchemaParser;
 
     /** @var ParsingErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ContextualParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
         $this->errorHandler = $errorHandler;

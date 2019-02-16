@@ -15,7 +15,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface ContextualParserInterface
+interface ParserInterface
 {
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface;
 }

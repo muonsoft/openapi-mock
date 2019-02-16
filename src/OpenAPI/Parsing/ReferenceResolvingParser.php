@@ -35,7 +35,7 @@ class ReferenceResolvingParser
     public function resolveReferenceAndParsePointedSchema(
         SpecificationAccessor $specification,
         SpecificationPointer $pointer,
-        ContextualParserInterface $parser
+        ParserInterface $parser
     ): SpecificationObjectMarkerInterface {
         $schema = $specification->getSchema($pointer);
 
