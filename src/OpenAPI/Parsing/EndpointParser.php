@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Endpoint;
+use App\OpenAPI\Routing\UrlMatcherFactory;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -25,16 +26,21 @@ class EndpointParser implements ContextualParserInterface
     /** @var ParserInterface */
     private $parameterCollectionParser;
 
+    /** @var UrlMatcherFactory */
+    private $urlMatcherFactory;
+
     /** @var LoggerInterface */
     private $logger;
 
     public function __construct(
         ParserInterface $responseCollectionParser,
         ParserInterface $parameterCollectionParser,
+        UrlMatcherFactory $urlMatcherFactory,
         LoggerInterface $logger
     ) {
         $this->responseCollectionParser = $responseCollectionParser;
         $this->parameterCollectionParser = $parameterCollectionParser;
+        $this->urlMatcherFactory = $urlMatcherFactory;
         $this->logger = $logger;
     }
 
@@ -55,6 +61,8 @@ class EndpointParser implements ContextualParserInterface
         $parametersPointer = $pointer->withPathElement('parameters');
         $endpoint->parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $parametersPointer);
         $endpoint->parameters->append($context->parameters);
+
+        $endpoint->urlMatcher = $this->urlMatcherFactory->createUrlMatcher($endpoint, $pointer);
 
         $this->logger->debug(
             sprintf(

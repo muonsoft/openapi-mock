@@ -16,9 +16,9 @@ use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\PathCollectionParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -46,12 +46,11 @@ class PathCollectionParserTest extends TestCase
     {
         $parser = $this->createPathCollectionParser();
         $expectedEndpoint = new Endpoint();
+        $expectedEndpoint->urlMatcher = \Phake::mock(UrlMatcherInterface::class);
         $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoint);
         $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
         $pointer = new SpecificationPointer();
-        $context = new EndpointContext();
-        $context->path = self::PATH;
-        $context->httpMethod = strtoupper(self::HTTP_METHOD);
+        $context = $this->expectedEndpointContext();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
 
         /** @var EndpointCollection $endpoints */
@@ -64,6 +63,32 @@ class PathCollectionParserTest extends TestCase
         );
         $this->assertCount(1, $endpoints);
         $this->assertSame($expectedEndpoint, $endpoints->first());
+    }
+
+    /** @test */
+    public function parsePointedSchema_parsedEndpointHasNullUrlMatcher_endpointIgnoredAndErrorReported(): void
+    {
+        $parser = $this->createPathCollectionParser();
+        $expectedEndpoint = new Endpoint();
+        $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoint);
+        $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
+        $pointer = new SpecificationPointer();
+        $context = $this->expectedEndpointContext();
+        $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
+
+        /** @var EndpointCollection $endpoints */
+        $endpoints = $parser->parsePointedSchema($specification, $pointer);
+
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
+            $specification,
+            [self::PATH, self::HTTP_METHOD],
+            $context
+        );
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
+            'Endpoint has invalid url matcher and is ignored.',
+            '/entity.get'
+        );
+        $this->assertCount(0, $endpoints);
     }
 
     /** @test */
@@ -129,6 +154,14 @@ class PathCollectionParserTest extends TestCase
 
     private function createPathCollectionParser(): PathCollectionParser
     {
-        return new PathCollectionParser($this->contextualParser, $this->errorHandler, new NullLogger());
+        return new PathCollectionParser($this->contextualParser, $this->errorHandler);
+    }
+
+    private function expectedEndpointContext(): EndpointContext
+    {
+        $context = new EndpointContext();
+        $context->path = self::PATH;
+        $context->httpMethod = strtoupper(self::HTTP_METHOD);
+        return $context;
     }
 }

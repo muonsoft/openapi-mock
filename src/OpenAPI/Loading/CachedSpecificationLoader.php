@@ -13,6 +13,8 @@ namespace App\OpenAPI\Loading;
 use App\Cache\CacheKeyGeneratorInterface;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
+use App\Mock\Parameters\EndpointParameter;
+use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
 use App\Mock\Parameters\Schema\Schema;
@@ -30,6 +32,8 @@ use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
+use App\OpenAPI\Routing\NullUrlMatcher;
+use App\OpenAPI\Routing\RegularExpressionUrlMatcher;
 use App\OpenAPI\SpecificationLoaderInterface;
 use App\Utility\StringList;
 use Psr\Log\LoggerInterface;
@@ -40,6 +44,33 @@ use Psr\SimpleCache\CacheInterface;
  */
 class CachedSpecificationLoader implements SpecificationLoaderInterface
 {
+    public const ALLOWED_CLASSES = [
+        StringList::class,
+        EndpointCollection::class,
+        Endpoint::class,
+        EndpointParameter::class,
+        EndpointParameterCollection::class,
+        NullUrlMatcher::class,
+        RegularExpressionUrlMatcher::class,
+        MockResponseCollection::class,
+        MockResponse::class,
+        SchemaCollection::class,
+        Schema::class,
+        TypeCollection::class,
+        BooleanType::class,
+        IntegerType::class,
+        NumberType::class,
+        StringType::class,
+        ArrayType::class,
+        ObjectType::class,
+        FreeFormObjectType::class,
+        HashMapType::class,
+        OneOfType::class,
+        AnyOfType::class,
+        AllOfType::class,
+        InvalidType::class,
+    ];
+
     /** @var SpecificationLoaderInterface */
     private $specificationLoader;
 
@@ -95,28 +126,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         return unserialize(
             $serializedSpecification,
             [
-                'allowed_classes' => [
-                    StringList::class,
-                    EndpointCollection::class,
-                    Endpoint::class,
-                    MockResponseCollection::class,
-                    MockResponse::class,
-                    SchemaCollection::class,
-                    Schema::class,
-                    TypeCollection::class,
-                    BooleanType::class,
-                    IntegerType::class,
-                    NumberType::class,
-                    StringType::class,
-                    ArrayType::class,
-                    ObjectType::class,
-                    FreeFormObjectType::class,
-                    HashMapType::class,
-                    OneOfType::class,
-                    AnyOfType::class,
-                    AllOfType::class,
-                    InvalidType::class,
-                ],
+                'allowed_classes' => self::ALLOWED_CLASSES,
             ]
         );
     }

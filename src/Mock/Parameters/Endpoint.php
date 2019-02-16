@@ -10,6 +10,8 @@
 
 namespace App\Mock\Parameters;
 
+use App\OpenAPI\Routing\NullUrlMatcher;
+use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -29,9 +31,13 @@ class Endpoint implements SpecificationObjectMarkerInterface
     /** @var EndpointParameterCollection */
     public $parameters;
 
+    /** @var UrlMatcherInterface */
+    public $urlMatcher;
+
     public function __construct()
     {
         $this->responses = new MockResponseCollection();
         $this->parameters = new EndpointParameterCollection();
+        $this->urlMatcher = new NullUrlMatcher();
     }
 }

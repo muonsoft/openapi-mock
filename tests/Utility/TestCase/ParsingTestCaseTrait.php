@@ -10,6 +10,7 @@
 
 namespace App\Tests\Utility\TestCase;
 
+use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\ContextMarkerInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
@@ -18,6 +19,8 @@ use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserLocator;
+use App\OpenAPI\Routing\UrlMatcherFactory;
+use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -41,6 +44,9 @@ trait ParsingTestCaseTrait
     /** @var ErrorHandlerInterface */
     protected $errorHandler;
 
+    /** @var UrlMatcherFactory */
+    protected $urlMatcherFactory;
+
     protected function setUpParsingContext(): void
     {
         $this->internalParser = \Phake::mock(ParserInterface::class);
@@ -48,6 +54,7 @@ trait ParsingTestCaseTrait
         $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
         $this->resolvingParser = \Phake::mock(ReferenceResolvingParser::class);
         $this->errorHandler = \Phake::mock(ErrorHandlerInterface::class);
+        $this->urlMatcherFactory = \Phake::mock(UrlMatcherFactory::class);
     }
 
     protected function assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
@@ -199,5 +206,22 @@ trait ParsingTestCaseTrait
             ->thenReturn($message);
 
         return $message;
+    }
+
+    protected function givenUrlMatcherFactory_createUrlMatcher_returnsUrlMatcher(): UrlMatcherInterface
+    {
+        $urlMatcher = \Phake::mock(UrlMatcherInterface::class);
+
+        \Phake::when($this->urlMatcherFactory)
+            ->createUrlMatcher(\Phake::anyParameters())
+            ->thenReturn($urlMatcher);
+
+        return $urlMatcher;
+    }
+
+    protected function assertUrlMatcherFactory_createUrlMatcher_wasCalledOnceWithEndpointAndPointer(Endpoint $endpoint, SpecificationPointer $pointer): void
+    {
+        \Phake::verify($this->urlMatcherFactory)
+            ->createUrlMatcher($endpoint, $pointer);
     }
 }

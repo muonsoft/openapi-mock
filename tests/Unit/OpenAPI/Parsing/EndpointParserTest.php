@@ -43,6 +43,7 @@ class EndpointParserTest extends TestCase
     public function parsePointedSchema_validResponseSpecification_mockEndpointWithResponses(): void
     {
         $parser = $this->createEndpointParser();
+        $pointer = new SpecificationPointer();
         $expectedMockResponses = new MockResponseCollection();
         $expectedEndpointParameter = new EndpointParameter();
         $expectedContextParameter = new EndpointParameter();
@@ -50,18 +51,21 @@ class EndpointParserTest extends TestCase
         $this->givenInternalParser_parsePointedSchema_returns($expectedMockResponses, $expectedParameters);
         $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA);
         $context = $this->givenEndpointContext($expectedContextParameter);
+        $urlMatcher = $this->givenUrlMatcherFactory_createUrlMatcher_returnsUrlMatcher();
 
         /** @var Endpoint $endpoint */
-        $endpoint = $parser->parsePointedSchema($specification, new SpecificationPointer(), $context);
+        $endpoint = $parser->parsePointedSchema($specification, $pointer, $context);
 
         $this->assertInternalParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
             $specification,
             ['responses'],
             ['parameters']
         );
+        $this->assertUrlMatcherFactory_createUrlMatcher_wasCalledOnceWithEndpointAndPointer($endpoint, $pointer);
         $this->assertSame($expectedMockResponses, $endpoint->responses);
         $this->assertSame($context->path, $endpoint->path);
         $this->assertSame($context->httpMethod, $endpoint->httpMethod);
+        $this->assertSame($urlMatcher, $endpoint->urlMatcher);
         $this->assertCount(2, $endpoint->parameters);
         $this->assertContains($expectedEndpointParameter, $endpoint->parameters);
         $this->assertContains($expectedContextParameter, $endpoint->parameters);
@@ -69,7 +73,12 @@ class EndpointParserTest extends TestCase
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->internalParser, $this->internalParser, new NullLogger());
+        return new EndpointParser(
+            $this->internalParser,
+            $this->internalParser,
+            $this->urlMatcherFactory,
+            new NullLogger()
+        );
     }
 
     private function givenEndpointContext(EndpointParameter $expectedContextParameter): EndpointContext

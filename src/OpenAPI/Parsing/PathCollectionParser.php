@@ -10,7 +10,9 @@
 
 namespace App\OpenAPI\Parsing;
 
+use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
+use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -83,12 +85,20 @@ class PathCollectionParser implements ParserInterface
         $endpointContext->path = $context->path;
         $endpointContext->httpMethod = strtoupper($httpMethod);
 
+        /** @var Endpoint $endpoint */
         $endpoint = $this->endpointParser->parsePointedSchema(
             $context->specification,
             $context->endpointPointer,
             $endpointContext
         );
 
-        $context->endpoints->add($endpoint);
+        if ($endpoint->urlMatcher instanceof NullUrlMatcher) {
+            $this->errorHandler->reportError(
+                'Endpoint has invalid url matcher and is ignored.',
+                $context->endpointPointer
+            );
+        } else {
+            $context->endpoints->add($endpoint);
+        }
     }
 }
