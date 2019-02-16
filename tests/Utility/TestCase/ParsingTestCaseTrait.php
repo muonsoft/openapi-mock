@@ -80,11 +80,13 @@ trait ParsingTestCaseTrait
             ->parsePointedSchema($specification, $pointer);
     }
 
-    protected function givenContextualParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface $object): void
+    protected function givenContextualParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface ...$objects): void
     {
-        \Phake::when($this->contextualParser)
-            ->parsePointedSchema(\Phake::anyParameters())
-            ->thenReturn($object);
+        $parser = \Phake::when($this->contextualParser)->parsePointedSchema(\Phake::anyParameters());
+
+        foreach ($objects as $object) {
+            $parser = $parser->thenReturn($object);
+        }
     }
 
     protected function givenContextualParser_parsePointedSchema_returnsObject(): SpecificationObjectMarkerInterface

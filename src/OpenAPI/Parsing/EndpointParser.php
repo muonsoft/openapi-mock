@@ -21,9 +21,13 @@ class EndpointParser implements ContextualParserInterface
     /** @var ContextualParserInterface */
     private $responseCollectionParser;
 
-    public function __construct(ContextualParserInterface $responseCollectionParser)
+    /** @var ContextualParserInterface */
+    private $parameterCollectionParser;
+
+    public function __construct(ContextualParserInterface $responseCollectionParser, ContextualParserInterface $parameterCollectionParser)
     {
         $this->responseCollectionParser = $responseCollectionParser;
+        $this->parameterCollectionParser = $parameterCollectionParser;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -32,6 +36,9 @@ class EndpointParser implements ContextualParserInterface
 
         $responsesPointer = $pointer->withPathElement('responses');
         $endpoint->responses = $this->responseCollectionParser->parsePointedSchema($specification, $responsesPointer);
+
+        $parametersPointer = $pointer->withPathElement('parameters');
+        $endpoint->parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $parametersPointer);
 
         return $endpoint;
     }

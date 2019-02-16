@@ -18,6 +18,7 @@
         "doctrine/collections": "1.*",
         "fzaninotto/faker": "1.*",
         "guzzlehttp/guzzle": "6.*",
+        "myclabs/php-enum": "^1.6",
         "spiral/roadrunner": "1.*",
         "symfony/cache": "4.*",
         "symfony/console": "4.*",

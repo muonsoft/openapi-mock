@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\MockResponseCollection;
 use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -40,21 +41,24 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
         $expectedMockResponses = new MockResponseCollection();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedMockResponses);
+        $expectedParameters = new EndpointParameterCollection();
+        $this->givenContextualParser_parsePointedSchema_returns($expectedMockResponses, $expectedParameters);
         $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA);
 
         /** @var Endpoint $endpoint */
         $endpoint = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertContextualParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
             $specification,
-            ['responses']
+            ['responses'],
+            ['parameters']
         );
         $this->assertSame($expectedMockResponses, $endpoint->responses);
+        $this->assertSame($expectedParameters, $endpoint->parameters);
     }
 
     private function createEndpointParser(): EndpointParser
     {
-        return new EndpointParser($this->contextualParser);
+        return new EndpointParser($this->contextualParser, $this->contextualParser);
     }
 }

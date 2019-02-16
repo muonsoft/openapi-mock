@@ -26,8 +26,12 @@ class Endpoint implements SpecificationObjectMarkerInterface
     /** @var MockResponseCollection */
     public $responses;
 
+    /** @var EndpointParameterCollection */
+    public $parameters;
+
     public function __construct()
     {
         $this->responses = new MockResponseCollection();
+        $this->parameters = new EndpointParameterCollection();
     }
 }
