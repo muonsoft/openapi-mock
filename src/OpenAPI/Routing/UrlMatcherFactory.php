@@ -52,7 +52,7 @@ class UrlMatcherFactory
 
         /** @var EndpointParameter $parameter */
         foreach ($endpoint->parameters as $parameter) {
-            if ($parameter->in->getValue() === EndpointParameterLocationEnum::PATH) {
+            if (EndpointParameterLocationEnum::PATH === $parameter->in->getValue()) {
                 $path = $this->injectSchemaPatternIntoPath($parameter, $path, $pointer);
             }
         }
@@ -62,7 +62,7 @@ class UrlMatcherFactory
 
     private function injectSchemaPatternIntoPath(EndpointParameter $parameter, string $path, SpecificationPointer $pointer): string
     {
-        $search = '{' . $parameter->name . '}';
+        $search = '{'.$parameter->name.'}';
 
         if ($parameter->schema instanceof IntegerType) {
             $replace = '(-?\d*)';

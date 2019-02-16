@@ -162,6 +162,7 @@ class PathCollectionParserTest extends TestCase
         $context = new EndpointContext();
         $context->path = self::PATH;
         $context->httpMethod = strtoupper(self::HTTP_METHOD);
+
         return $context;
     }
 }

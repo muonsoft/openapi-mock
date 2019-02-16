@@ -78,7 +78,7 @@ class EndpointParameterCollectionParser implements ParserInterface
             $this->errorHandler->reportError($error, $parameterPointer);
         }
 
-        return $error === null;
+        return null === $error;
     }
 
     private function parseEndpointParameter(
@@ -104,6 +104,6 @@ class EndpointParameterCollectionParser implements ParserInterface
 
     private function pathParameterIsNotRequired(EndpointParameter $parameter): bool
     {
-        return !$parameter->required && $parameter->in->getValue() === EndpointParameterLocationEnum::PATH;
+        return !$parameter->required && EndpointParameterLocationEnum::PATH === $parameter->in->getValue();
     }
 }

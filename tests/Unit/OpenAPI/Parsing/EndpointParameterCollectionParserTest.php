@@ -63,10 +63,10 @@ class EndpointParameterCollectionParserTest extends TestCase
     {
         yield [
             [
-                'name' => 'parameterName',
-                'in' => 'path',
+                'name'     => 'parameterName',
+                'in'       => 'path',
                 'required' => true,
-                'schema' => [],
+                'schema'   => [],
             ],
             'parameterName',
             'path',
@@ -74,10 +74,10 @@ class EndpointParameterCollectionParserTest extends TestCase
         ];
         yield [
             [
-                'name' => 'parameterName',
-                'in' => 'PATH',
+                'name'     => 'parameterName',
+                'in'       => 'PATH',
                 'required' => false,
-                'schema' => [],
+                'schema'   => [],
             ],
             'parameterName',
             'path',
@@ -85,10 +85,10 @@ class EndpointParameterCollectionParserTest extends TestCase
         ];
         yield [
             [
-                'name' => 'parameterName',
-                'in' => 'query',
+                'name'     => 'parameterName',
+                'in'       => 'query',
                 'required' => false,
-                'schema' => [],
+                'schema'   => [],
             ],
             'parameterName',
             'query',
@@ -134,21 +134,21 @@ class EndpointParameterCollectionParserTest extends TestCase
         yield [
             [
                 'name' => 'parameterName',
-                'in' => 'invalid',
+                'in'   => 'invalid',
             ],
             'Invalid parameter location "invalid". Must be one of: query, path, header, cookie.',
         ];
         yield [
             [
                 'name' => 'parameterName',
-                'in' => 'query',
+                'in'   => 'query',
             ],
             'Only parameters with "schema" tag are currently supported.',
         ];
         yield [
             [
-                'name' => 'parameterName',
-                'in' => 'query',
+                'name'   => 'parameterName',
+                'in'     => 'query',
                 'schema' => 'invalid',
             ],
             'Invalid schema provider for parameter.',
@@ -161,8 +161,8 @@ class EndpointParameterCollectionParserTest extends TestCase
         $parser = new EndpointParameterCollectionParser($this->internalParser, $this->errorHandler);
         $specification = new SpecificationAccessor([
             [
-                'name' => 'parameterName',
-                'in' => 'query',
+                'name'   => 'parameterName',
+                'in'     => 'query',
                 'schema' => self::TYPE_SCHEMA,
             ],
         ]);

@@ -66,7 +66,7 @@ class UrlMatcherFactoryTest extends TestCase
         $endpoint = $this->givenEndpoint(
             '/resources/{resourceId}',
             $this->givenParametersWithTypes([
-                'resourceId' => new ObjectType()
+                'resourceId' => new ObjectType(),
             ])
         );
 
@@ -128,7 +128,7 @@ class UrlMatcherFactoryTest extends TestCase
         yield [
             '/resources/{resourceId}/subresources/{subresourceId}',
             $this->givenParametersWithTypes([
-                'resourceId' => new StringType(),
+                'resourceId'    => new StringType(),
                 'subresourceId' => new IntegerType(),
             ]),
             '/^\/resources\/(.*)\/subresources\/(-?\d*)$/',
