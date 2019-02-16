@@ -10,10 +10,7 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -21,22 +18,11 @@ use Psr\Log\LoggerInterface;
 class SpecificationParser
 {
     /** @var ContextualParserInterface */
-    private $endpointParser;
+    private $pathCollectionParser;
 
-    /** @var ParsingErrorHandlerInterface */
-    private $errorHandler;
-
-    /** @var LoggerInterface */
-    private $logger;
-
-    public function __construct(
-        ContextualParserInterface $endpointParser,
-        ParsingErrorHandlerInterface $errorHandler,
-        LoggerInterface $logger
-    ) {
-        $this->endpointParser = $endpointParser;
-        $this->errorHandler = $errorHandler;
-        $this->logger = $logger;
+    public function __construct(ContextualParserInterface $pathCollectionParser)
+    {
+        $this->pathCollectionParser = $pathCollectionParser;
     }
 
     public function parseSpecification(SpecificationAccessor $specification): EndpointCollection
@@ -44,52 +30,7 @@ class SpecificationParser
         $pointer = new SpecificationPointer();
         $this->validateSpecificationSchema($specification, $pointer);
 
-        $context = new SpecificationParserContext($specification);
-        $pathsPointer = $pointer->withPathElement('paths');
-        $paths = $specification->getSchema($pathsPointer);
-
-        foreach ($paths as $path => $endpoints) {
-            $context->path = $path;
-            $context->pathPointer = $pathsPointer->withPathElement($path);
-            $isValid = $this->validateEndpointSpecificationAtPath($endpoints, $context->pathPointer);
-
-            if ($isValid) {
-                $this->parseEndpointList($endpoints, $context);
-            }
-        }
-
-        return $context->endpoints;
-    }
-
-    private function parseEndpointList(array $endpoints, SpecificationParserContext $context): void
-    {
-        foreach ($endpoints as $httpMethod => $endpointSpecification) {
-            $context->endpointPointer = $context->pathPointer->withPathElement($httpMethod);
-            $isValid = $this->validateEndpointSpecificationAtPath($endpointSpecification, $context->endpointPointer);
-
-            if ($isValid) {
-                $this->parseEndpoint($httpMethod, $context);
-            }
-        }
-    }
-
-    private function parseEndpoint(string $httpMethod, SpecificationParserContext $context): void
-    {
-        /** @var Endpoint $mockEndpoint */
-        $mockEndpoint = $this->endpointParser->parsePointedSchema($context->specification, $context->endpointPointer);
-        $mockEndpoint->path = $context->path;
-        $mockEndpoint->httpMethod = strtoupper($httpMethod);
-
-        $context->endpoints->add($mockEndpoint);
-
-        $this->logger->debug(
-            sprintf(
-                'Endpoint with method "%s" and path "%s" was successfully parsed.',
-                $mockEndpoint->httpMethod,
-                $mockEndpoint->path
-            ),
-            ['path' => $context->endpointPointer->getPath()]
-        );
+        return $this->parseEndpointsFromPaths($specification, $pointer);
     }
 
     private function validateSpecificationSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): void
@@ -119,18 +60,12 @@ class SpecificationParser
         }
     }
 
-    private function validateEndpointSpecificationAtPath($endpointSpecification, SpecificationPointer $pointer): bool
+    private function parseEndpointsFromPaths(SpecificationAccessor $specification, SpecificationPointer $pointer): EndpointCollection
     {
-        $isValid = true;
+        $pathsPointer = $pointer->withPathElement('paths');
+        $endpoints = $this->pathCollectionParser->parsePointedSchema($specification, $pathsPointer);
+        \assert($endpoints instanceof EndpointCollection);
 
-        if (!\is_array($endpointSpecification) || 0 === \count($endpointSpecification)) {
-            $isValid = false;
-            $this->errorHandler->reportError('Empty or invalid endpoint specification', $pointer);
-        } elseif (array_key_exists('$ref', $endpointSpecification)) {
-            $isValid = false;
-            $this->errorHandler->reportError('References on paths is not supported', $pointer);
-        }
-
-        return $isValid;
+        return $endpoints;
     }
 }

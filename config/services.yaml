@@ -43,6 +43,8 @@ services:
     autoconfigure: true
     public: false
     bind:
+      $pathCollectionParser: '@App\OpenAPI\Parsing\PathCollectionParser'
+      $parameterCollectionParser: '@App\OpenAPI\Parsing\EndpointParameterCollectionParser'
       $endpointParser: '@App\OpenAPI\Parsing\EndpointParser'
       $responseParser: '@App\OpenAPI\Parsing\ResponseParser'
       $responseCollectionParser: '@App\OpenAPI\Parsing\ResponseCollectionParser'

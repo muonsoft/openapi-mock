@@ -15,7 +15,7 @@ use App\Mock\Parameters\EndpointCollection;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SpecificationParserContext
+class PathCollectionParserContext
 {
     /** @var SpecificationAccessor */
     public $specification;
