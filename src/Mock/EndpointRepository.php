@@ -38,7 +38,7 @@ class EndpointRepository
 
         /** @var Endpoint $endpoint */
         foreach ($endpoints as $endpoint) {
-            if ($httpMethod === $endpoint->httpMethod && $uri === $endpoint->path) {
+            if ($httpMethod === $endpoint->httpMethod && $endpoint->urlMatcher->urlIsMatching($uri)) {
                 $parameters = $endpoint;
 
                 break;

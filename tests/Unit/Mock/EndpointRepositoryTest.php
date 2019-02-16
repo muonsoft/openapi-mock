@@ -13,6 +13,7 @@ namespace App\Tests\Unit\Mock;
 use App\Mock\EndpointRepository;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
+use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\Tests\Utility\TestCase\SpecificationLoaderTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
@@ -22,20 +23,24 @@ class EndpointRepositoryTest extends TestCase
 
     private const PATH = 'path';
     private const HTTP_METHOD = 'http_method';
-
     private const SPECIFICATION_URL = 'specification_url';
+
+    /** @var UrlMatcherInterface */
+    private $urlMatcher;
 
     protected function setUp(): void
     {
         $this->setUpSpecificationLoader();
+        $this->urlMatcher = \Phake::mock(UrlMatcherInterface::class);
     }
 
     /** @test */
-    public function findMockEndpoint_existingPathAndHttpMethod_mockEndpointReturned(): void
+    public function findMockEndpoint_existingHttpMethodAndUriMatches_mockEndpointReturned(): void
     {
         $repository = $this->createMockEndpointRepository();
-        $parametersCollection = $this->givenMockEndpointCollection();
-        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($parametersCollection);
+        $endpoints = $this->givenEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($endpoints);
+        $this->givenUrlMatcher_urlIsMatching_returnTrue();
 
         $parameters = $repository->findMockEndpoint(self::HTTP_METHOD, self::PATH);
 
@@ -43,19 +48,36 @@ class EndpointRepositoryTest extends TestCase
         $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
         $this->assertSame(self::PATH, $parameters->path);
         $this->assertSame(self::HTTP_METHOD, $parameters->httpMethod);
+        $this->assertUrlMatcher_urlIsMatching_wasCalledOnceWithUrl(self::PATH);
     }
 
     /** @test */
-    public function findMockEndpoint_notExistingPathAndHttpMethod_nullReturned(): void
+    public function findMockEndpoint_existingHttpMethodAndUriNotMatches_nullReturned(): void
     {
         $repository = $this->createMockEndpointRepository();
-        $parametersCollection = $this->givenMockEndpointCollection();
-        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($parametersCollection);
+        $endpoints = $this->givenEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($endpoints);
+        $this->givenUrlMatcher_urlIsMatching_returnFalse();
 
-        $parameters = $repository->findMockEndpoint('', '');
+        $parameters = $repository->findMockEndpoint(self::HTTP_METHOD, '');
 
         $this->assertNull($parameters);
         $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
+        $this->assertUrlMatcher_urlIsMatching_wasCalledOnceWithUrl('');
+    }
+
+    /** @test */
+    public function findMockEndpoint_notExistingHttpMethodAndUriMatches_nullReturned(): void
+    {
+        $repository = $this->createMockEndpointRepository();
+        $endpoints = $this->givenEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($endpoints);
+
+        $parameters = $repository->findMockEndpoint('', self::PATH);
+
+        $this->assertNull($parameters);
+        $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
+        \Phake::verifyNoInteraction($this->urlMatcher);
     }
 
     private function createMockEndpointRepository(): EndpointRepository
@@ -63,12 +85,33 @@ class EndpointRepositoryTest extends TestCase
         return new EndpointRepository($this->specificationLoader, self::SPECIFICATION_URL);
     }
 
-    private function givenMockEndpointCollection(): EndpointCollection
+    private function givenEndpointCollection(): EndpointCollection
     {
         $parameters = new Endpoint();
         $parameters->path = self::PATH;
         $parameters->httpMethod = self::HTTP_METHOD;
+        $parameters->urlMatcher = $this->urlMatcher;
 
         return new EndpointCollection([$parameters]);
+    }
+
+    private function assertUrlMatcher_urlIsMatching_wasCalledOnceWithUrl(string $url): void
+    {
+        \Phake::verify($this->urlMatcher)
+            ->urlIsMatching($url);
+    }
+
+    private function givenUrlMatcher_urlIsMatching_returnTrue(): void
+    {
+        \Phake::when($this->urlMatcher)
+            ->urlIsMatching(\Phake::anyParameters())
+            ->thenReturn(true);
+    }
+
+    private function givenUrlMatcher_urlIsMatching_returnFalse(): void
+    {
+        \Phake::when($this->urlMatcher)
+            ->urlIsMatching(\Phake::anyParameters())
+            ->thenReturn(false);
     }
 }
