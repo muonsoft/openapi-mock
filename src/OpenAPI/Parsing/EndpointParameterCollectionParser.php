@@ -35,7 +35,7 @@ class EndpointParameterCollectionParser implements ParserInterface
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $collection = new EndpointParameterCollection();
+        $parameters = new EndpointParameterCollection();
 
         $rawParameters = $specification->getSchema($pointer);
 
@@ -45,11 +45,11 @@ class EndpointParameterCollectionParser implements ParserInterface
 
             if ($isValid) {
                 $parameter = $this->parseEndpointParameter($specification, $rawParameter, $parameterPointer);
-                $collection->add($parameter);
+                $parameters->add($parameter);
             }
         }
 
-        return $collection;
+        return $parameters;
     }
 
     private function validateEndpointParameter($rawParameter, SpecificationPointer $parameterPointer): bool

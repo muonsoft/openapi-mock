@@ -12,6 +12,7 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
+use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\PathCollectionParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -48,20 +49,21 @@ class PathCollectionParserTest extends TestCase
         $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoint);
         $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
         $pointer = new SpecificationPointer();
+        $context = new EndpointContext();
+        $context->path = self::PATH;
+        $context->httpMethod = strtoupper(self::HTTP_METHOD);
+        $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer);
 
-        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
             $specification,
-            [self::PATH, self::HTTP_METHOD]
+            [self::PATH, self::HTTP_METHOD],
+            $context
         );
         $this->assertCount(1, $endpoints);
-        /** @var Endpoint $mockEndpoint */
-        $mockEndpoint = $endpoints->first();
-        $this->assertSame($expectedEndpoint, $mockEndpoint);
-        $this->assertSame(self::PATH, $mockEndpoint->path);
-        $this->assertSame(strtoupper(self::HTTP_METHOD), $mockEndpoint->httpMethod);
+        $this->assertSame($expectedEndpoint, $endpoints->first());
     }
 
     /** @test */
@@ -127,6 +129,6 @@ class PathCollectionParserTest extends TestCase
 
     private function createPathCollectionParser(): PathCollectionParser
     {
-        return new PathCollectionParser($this->internalParser, $this->errorHandler, new NullLogger());
+        return new PathCollectionParser($this->contextualParser, $this->errorHandler, new NullLogger());
     }
 }

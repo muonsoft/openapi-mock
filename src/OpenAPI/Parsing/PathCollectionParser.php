@@ -10,33 +10,26 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class PathCollectionParser implements ParserInterface
 {
-    /** @var ParserInterface */
+    /** @var ContextualParserInterface */
     private $endpointParser;
 
     /** @var ParsingErrorHandlerInterface */
     private $errorHandler;
 
-    /** @var LoggerInterface */
-    private $logger;
-
     public function __construct(
-        ParserInterface $endpointParser,
-        ParsingErrorHandlerInterface $errorHandler,
-        LoggerInterface $logger
+        ContextualParserInterface $endpointParser,
+        ParsingErrorHandlerInterface $errorHandler
     ) {
         $this->endpointParser = $endpointParser;
         $this->errorHandler = $errorHandler;
-        $this->logger = $logger;
     }
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
@@ -69,25 +62,6 @@ class PathCollectionParser implements ParserInterface
         }
     }
 
-    private function parseEndpoint(string $httpMethod, PathCollectionParserContext $context): void
-    {
-        /** @var Endpoint $endpoint */
-        $endpoint = $this->endpointParser->parsePointedSchema($context->specification, $context->endpointPointer);
-        $endpoint->path = $context->path;
-        $endpoint->httpMethod = strtoupper($httpMethod);
-
-        $context->endpoints->add($endpoint);
-
-        $this->logger->debug(
-            sprintf(
-                'Endpoint with method "%s" and path "%s" was successfully parsed.',
-                $endpoint->httpMethod,
-                $endpoint->path
-            ),
-            ['path' => $context->endpointPointer->getPath()]
-        );
-    }
-
     private function validateEndpointSpecificationAtPath($endpointSpecification, SpecificationPointer $pointer): bool
     {
         $isValid = true;
@@ -101,5 +75,20 @@ class PathCollectionParser implements ParserInterface
         }
 
         return $isValid;
+    }
+
+    private function parseEndpoint(string $httpMethod, PathCollectionParserContext $context): void
+    {
+        $endpointContext = new EndpointContext();
+        $endpointContext->path = $context->path;
+        $endpointContext->httpMethod = strtoupper($httpMethod);
+
+        $endpoint = $this->endpointParser->parsePointedSchema(
+            $context->specification,
+            $context->endpointPointer,
+            $endpointContext
+        );
+
+        $context->endpoints->add($endpoint);
     }
 }

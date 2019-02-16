@@ -12,11 +12,12 @@ namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointParser implements ParserInterface
+class EndpointParser implements ContextualParserInterface
 {
     /** @var ParserInterface */
     private $responseCollectionParser;
@@ -24,21 +25,45 @@ class EndpointParser implements ParserInterface
     /** @var ParserInterface */
     private $parameterCollectionParser;
 
-    public function __construct(ParserInterface $responseCollectionParser, ParserInterface $parameterCollectionParser)
-    {
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(
+        ParserInterface $responseCollectionParser,
+        ParserInterface $parameterCollectionParser,
+        LoggerInterface $logger
+    ) {
         $this->responseCollectionParser = $responseCollectionParser;
         $this->parameterCollectionParser = $parameterCollectionParser;
+        $this->logger = $logger;
     }
 
-    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
-    {
+    public function parsePointedSchema(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer,
+        ContextMarkerInterface $context
+    ): SpecificationObjectMarkerInterface {
+        assert($context instanceof EndpointContext);
+
         $endpoint = new Endpoint();
+        $endpoint->path = $context->path;
+        $endpoint->httpMethod = $context->httpMethod;
 
         $responsesPointer = $pointer->withPathElement('responses');
         $endpoint->responses = $this->responseCollectionParser->parsePointedSchema($specification, $responsesPointer);
 
         $parametersPointer = $pointer->withPathElement('parameters');
         $endpoint->parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $parametersPointer);
+        $endpoint->parameters->append($context->parameters);
+
+        $this->logger->debug(
+            sprintf(
+                'Endpoint with method "%s" and path "%s" was successfully parsed.',
+                $endpoint->httpMethod,
+                $endpoint->path
+            ),
+            ['path' => $pointer->getPath()]
+        );
 
         return $endpoint;
     }

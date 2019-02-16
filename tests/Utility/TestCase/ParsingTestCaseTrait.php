@@ -10,6 +10,8 @@
 
 namespace App\Tests\Utility\TestCase;
 
+use App\OpenAPI\Parsing\ContextMarkerInterface;
+use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
@@ -27,6 +29,9 @@ trait ParsingTestCaseTrait
     /** @var ParserInterface */
     protected $internalParser;
 
+    /** @var ContextualParserInterface */
+    protected $contextualParser;
+
     /** @var TypeParserLocator */
     protected $typeParserLocator;
 
@@ -39,6 +44,7 @@ trait ParsingTestCaseTrait
     protected function setUpParsingContext(): void
     {
         $this->internalParser = \Phake::mock(ParserInterface::class);
+        $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
         $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
         $this->resolvingParser = \Phake::mock(ReferenceResolvingParser::class);
         $this->errorHandler = \Phake::mock(ParsingErrorHandlerInterface::class);
@@ -95,6 +101,26 @@ trait ParsingTestCaseTrait
         $this->givenInternalParser_parsePointedSchema_returns($object);
 
         return $object;
+    }
+
+    protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
+        SpecificationAccessor $specification,
+        array $path,
+        ContextMarkerInterface $context
+    ): void {
+        /* @var SpecificationPointer $pointer */
+        \Phake::verify($this->contextualParser)
+            ->parsePointedSchema($specification, \Phake::capture($pointer), $context);
+        Assert::assertSame($path, $pointer->getPathElements());
+    }
+
+    protected function givenContextualParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface ...$objects): void
+    {
+        $parser = \Phake::when($this->contextualParser)->parsePointedSchema(\Phake::anyParameters());
+
+        foreach ($objects as $object) {
+            $parser = $parser->thenReturn($object);
+        }
     }
 
     protected function assertTypeParserLocator_getTypeParser_wasCalledOnceWithType(string $type): void
