@@ -12,7 +12,7 @@ namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Schema\Schema;
 use App\Mock\Parameters\Schema\Type\InvalidType;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -23,10 +23,10 @@ class SchemaParser implements ParserInterface
     /** @var ParserInterface */
     private $resolvingSchemaParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ParserInterface $resolvingSchemaParser, ErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
         $this->errorHandler = $errorHandler;

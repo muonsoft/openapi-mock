@@ -16,7 +16,7 @@ use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\SpecificationPointer;
 
 /**
@@ -24,10 +24,10 @@ use App\OpenAPI\Parsing\SpecificationPointer;
  */
 class UrlMatcherFactory
 {
-    /** @var ParsingErrorHandlerInterface */
+    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ErrorHandlerInterface $errorHandler)
     {
         $this->errorHandler = $errorHandler;
     }

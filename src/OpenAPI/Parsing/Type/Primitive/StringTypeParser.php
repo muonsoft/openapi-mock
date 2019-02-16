@@ -11,7 +11,7 @@
 namespace App\OpenAPI\Parsing\Type\Primitive;
 
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\FieldParserTrait;
@@ -25,10 +25,10 @@ class StringTypeParser implements TypeParserInterface
 {
     use FieldParserTrait;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ErrorHandlerInterface $errorHandler)
     {
         $this->errorHandler = $errorHandler;
     }

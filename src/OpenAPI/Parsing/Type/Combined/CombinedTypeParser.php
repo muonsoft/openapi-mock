@@ -16,7 +16,7 @@ use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\InvalidType;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -37,10 +37,10 @@ class CombinedTypeParser implements TypeParserInterface
     /** @var ParserInterface */
     private $resolvingSchemaParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ParserInterface $resolvingSchemaParser, ErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
         $this->errorHandler = $errorHandler;

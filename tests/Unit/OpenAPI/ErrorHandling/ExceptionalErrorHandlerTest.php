@@ -8,9 +8,9 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Tests\Unit\OpenAPI\Parsing\Error;
+namespace App\Tests\Unit\OpenAPI\ErrorHandling;
 
-use App\OpenAPI\Parsing\Error\ExceptionalErrorHandler;
+use App\OpenAPI\ErrorHandling\ExceptionalErrorHandler;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use PHPUnit\Framework\TestCase;

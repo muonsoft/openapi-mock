@@ -10,9 +10,9 @@
 
 namespace App\Tests\Utility\TestCase;
 
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\ContextMarkerInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
 use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -38,7 +38,7 @@ trait ParsingTestCaseTrait
     /** @var ReferenceResolvingParser */
     protected $resolvingParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     protected $errorHandler;
 
     protected function setUpParsingContext(): void
@@ -47,7 +47,7 @@ trait ParsingTestCaseTrait
         $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
         $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
         $this->resolvingParser = \Phake::mock(ReferenceResolvingParser::class);
-        $this->errorHandler = \Phake::mock(ParsingErrorHandlerInterface::class);
+        $this->errorHandler = \Phake::mock(ErrorHandlerInterface::class);
     }
 
     protected function assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(

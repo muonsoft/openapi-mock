@@ -109,4 +109,4 @@ services:
   Negotiation\Negotiator:
     class: Negotiation\Negotiator
 
-  App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface: '@App\OpenAPI\Parsing\Error\LoggingErrorHandler'
+  App\OpenAPI\ErrorHandling\ErrorHandlerInterface: '@App\OpenAPI\ErrorHandling\LoggingErrorHandler'

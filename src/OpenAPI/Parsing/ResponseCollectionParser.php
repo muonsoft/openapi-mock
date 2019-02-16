@@ -12,7 +12,7 @@ namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -27,7 +27,7 @@ class ResponseCollectionParser implements ParserInterface
     /** @var ReferenceResolvingParser */
     private $resolvingParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
     private $errorHandler;
 
     /** @var LoggerInterface */
@@ -36,7 +36,7 @@ class ResponseCollectionParser implements ParserInterface
     public function __construct(
         ParserInterface $responseParser,
         ReferenceResolvingParser $resolvingParser,
-        ParsingErrorHandlerInterface $errorHandler,
+        ErrorHandlerInterface $errorHandler,
         LoggerInterface $logger
     ) {
         $this->responseParser = $responseParser;

@@ -13,7 +13,7 @@ namespace App\OpenAPI\Parsing;
 use App\Enum\EndpointParameterLocationEnum;
 use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -24,10 +24,10 @@ class EndpointParameterCollectionParser implements ParserInterface
     /** @var ParserInterface */
     private $resolvingSchemaParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParserInterface $resolvingSchemaParser, ParsingErrorHandlerInterface $errorHandler)
+    public function __construct(ParserInterface $resolvingSchemaParser, ErrorHandlerInterface $errorHandler)
     {
         $this->resolvingSchemaParser = $resolvingSchemaParser;
         $this->errorHandler = $errorHandler;

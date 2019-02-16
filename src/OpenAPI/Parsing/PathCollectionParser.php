@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -21,12 +21,12 @@ class PathCollectionParser implements ParserInterface
     /** @var ContextualParserInterface */
     private $endpointParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     public function __construct(
         ContextualParserInterface $endpointParser,
-        ParsingErrorHandlerInterface $errorHandler
+        ErrorHandlerInterface $errorHandler
     ) {
         $this->endpointParser = $endpointParser;
         $this->errorHandler = $errorHandler;

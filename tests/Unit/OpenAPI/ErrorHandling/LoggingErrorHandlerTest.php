@@ -8,9 +8,8 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Tests\Unit\OpenAPI\Parsing\Error;
+namespace App\Tests\Unit\OpenAPI\ErrorHandling;
 
-use App\OpenAPI\Parsing\Error\LoggingErrorHandler;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\LoggerTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -53,8 +52,8 @@ class LoggingErrorHandlerTest extends TestCase
         $this->assertSame(self::ERROR_MESSAGE, $warning);
     }
 
-    private function createLoggingErrorHandler(): LoggingErrorHandler
+    private function createLoggingErrorHandler(): \App\OpenAPI\ErrorHandling\LoggingErrorHandler
     {
-        return new LoggingErrorHandler($this->logger);
+        return new \App\OpenAPI\ErrorHandling\LoggingErrorHandler($this->logger);
     }
 }

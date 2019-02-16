@@ -11,7 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Schema\Type\InvalidType;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -20,13 +20,13 @@ use Psr\Log\LoggerInterface;
  */
 class ReferenceResolvingParser
 {
-    /** @var ParsingErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(ParsingErrorHandlerInterface $errorHandler, LoggerInterface $logger)
+    public function __construct(ErrorHandlerInterface $errorHandler, LoggerInterface $logger)
     {
         $this->errorHandler = $errorHandler;
         $this->logger = $logger;
