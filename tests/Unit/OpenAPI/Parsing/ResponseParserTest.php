@@ -79,7 +79,7 @@ class ResponseParserTest extends TestCase
         $this->assertCount(0, $response->content);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid response content',
-            'content'
+            ['content']
         );
     }
 

@@ -103,7 +103,7 @@ class StringTypeParserTest extends TestCase
         $this->assertCount(0, $type->enum);
         $this->assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(
             'Invalid enum value ""invalid"". Expected to be array of strings.',
-            ''
+            []
         );
     }
 
@@ -122,7 +122,7 @@ class StringTypeParserTest extends TestCase
         $this->assertSame(self::DEFAULT_LENGTH, $type->maxLength);
         $this->assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(
             'Property "minLength" cannot be less than 0. Value is ignored.',
-            ''
+            []
         );
     }
 
@@ -141,7 +141,7 @@ class StringTypeParserTest extends TestCase
         $this->assertSame(self::DEFAULT_LENGTH, $type->maxLength);
         $this->assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(
             'Property "maxLength" cannot be less than 0. Value is ignored.',
-            ''
+            []
         );
     }
 
@@ -160,7 +160,7 @@ class StringTypeParserTest extends TestCase
         $this->assertSame(10, $type->maxLength);
         $this->assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(
             'Property "maxLength" cannot be greater than "minLength". Value is set to "minLength".',
-            ''
+            []
         );
     }
 
@@ -177,7 +177,7 @@ class StringTypeParserTest extends TestCase
         $this->assertContains(self::ENUM_VALUE_1, $type->enum);
         $this->assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(
             'Invalid enum value "["invalid"]" ignored. Value must be valid string.',
-            ''
+            []
         );
     }
 

@@ -99,7 +99,7 @@ class ArrayTypeParserTest extends TestCase
         $this->assertSame($errorMessage, $type->getError());
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Section "items" is required',
-            ''
+            []
         );
     }
 

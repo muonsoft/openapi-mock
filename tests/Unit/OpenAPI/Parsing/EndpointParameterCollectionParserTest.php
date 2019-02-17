@@ -76,7 +76,7 @@ class EndpointParameterCollectionParserTest extends TestCase
         $this->assertCount(0, $parameters);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             self::ERROR,
-            '0'
+            ['0']
         );
     }
 

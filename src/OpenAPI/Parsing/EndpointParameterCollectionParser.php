@@ -26,9 +26,9 @@ class EndpointParameterCollectionParser implements ParserInterface
     /** @var ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParserInterface $resolvingSchemaParser, ErrorHandlerInterface $errorHandler)
+    public function __construct(ParserInterface $parameterParser, ErrorHandlerInterface $errorHandler)
     {
-        $this->parameterParser = $resolvingSchemaParser;
+        $this->parameterParser = $parameterParser;
         $this->errorHandler = $errorHandler;
     }
 

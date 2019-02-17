@@ -104,7 +104,7 @@ class ResponseCollectionParserTest extends TestCase
         $this->assertCount(0, $responses);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid status code. Must be integer or "default".',
-            'invalid'
+            ['invalid']
         );
     }
 
@@ -120,7 +120,7 @@ class ResponseCollectionParserTest extends TestCase
         $this->assertCount(0, $responses);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid response specification.',
-            '200'
+            ['200']
         );
     }
 

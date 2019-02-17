@@ -77,7 +77,7 @@ class UrlMatcherFactoryTest extends TestCase
         $this->assertSame('/^\/resources\/([^\\\\\\/]*)$/', $matcher->getPattern());
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Unsupported schema type for Parameter Object in path, must be one of: "string", "number", "integer".',
-            'path'
+            ['path']
         );
     }
 
@@ -93,7 +93,7 @@ class UrlMatcherFactoryTest extends TestCase
         $this->assertInstanceOf(NullUrlMatcher::class, $matcher);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Path has unresolved path segments: {resourceId}, {subresourceId}.',
-            'path'
+            ['path']
         );
     }
 

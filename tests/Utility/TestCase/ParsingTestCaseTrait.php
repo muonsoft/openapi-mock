@@ -168,20 +168,20 @@ trait ParsingTestCaseTrait
             ->thenReturn($object);
     }
 
-    protected function assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
+    protected function assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(string $message, array $path): void
     {
         /* @var SpecificationPointer $pointer */
         \Phake::verify($this->errorHandler)
             ->reportError($message, \Phake::capture($pointer));
-        Assert::assertSame($path, $pointer->getPath());
+        Assert::assertSame($path, $pointer->getPathElements());
     }
 
-    protected function assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
+    protected function assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(string $message, array $path): void
     {
         /* @var SpecificationPointer $pointer */
         \Phake::verify($this->errorHandler)
             ->reportWarning($message, \Phake::capture($pointer));
-        Assert::assertSame($path, $pointer->getPath());
+        Assert::assertSame($path, $pointer->getPathElements());
     }
 
     protected function givenParsingErrorHandler_reportError_returnsMessage(): string

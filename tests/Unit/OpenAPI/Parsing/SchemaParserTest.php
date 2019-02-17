@@ -64,7 +64,7 @@ class SchemaParserTest extends TestCase
 
         $this->assertInstanceOf(InvalidType::class, $parsedSchema->value);
         $this->assertSame($reportMessage, $parsedSchema->value->getError());
-        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath('Invalid schema', '');
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath('Invalid schema', []);
     }
 
     private function createSchemaParser(): SchemaParser

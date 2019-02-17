@@ -80,7 +80,7 @@ class CombinedTypeParserTest extends TestCase
         $this->assertSame($errorMessage, $type->getError());
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Value must be not empty array',
-            $combinedTypeName
+            [$combinedTypeName]
         );
     }
 
@@ -107,7 +107,7 @@ class CombinedTypeParserTest extends TestCase
         $this->assertSame($errorMessage, $type->getError());
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Not supported combined type, must be one of: "oneOf", "allOf" or "anyOf"',
-            ''
+            []
         );
     }
 
@@ -135,7 +135,7 @@ class CombinedTypeParserTest extends TestCase
         $this->assertCount(0, $type->types);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'All internal types of "anyOf" or "allOf" schema must be objects',
-            $combinedTypeName.'.0'
+            [$combinedTypeName, '0']
         );
     }
 

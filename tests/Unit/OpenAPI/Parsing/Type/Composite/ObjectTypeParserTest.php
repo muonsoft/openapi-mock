@@ -238,7 +238,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertInstanceOf(FreeFormObjectType::class, $type);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid value of option "additionalProperties"',
-            ''
+            []
         );
     }
 
@@ -264,7 +264,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertCount(0, $type->required);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Required property "not_exist" does not exist',
-            'required'
+            ['required']
         );
     }
 
@@ -282,7 +282,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertCount(0, $type->required);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid required property',
-            'required'
+            ['required']
         );
     }
 

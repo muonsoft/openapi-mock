@@ -127,7 +127,7 @@ class ReferenceResolvingParserTest extends TestCase
 
         $this->assertInstanceOf(InvalidType::class, $object);
         $this->assertSame($errorReport, $object->getError());
-        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath($errorMessage, '$ref');
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath($errorMessage, ['$ref']);
     }
 
     public function invalidReferenceAndErrorMessageProvider(): array

@@ -86,7 +86,7 @@ class PathCollectionParserTest extends TestCase
         );
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Endpoint has invalid url matcher and is ignored.',
-            '/entity.get'
+            ['/entity', 'get']
         );
         $this->assertCount(0, $endpoints);
     }
@@ -106,7 +106,7 @@ class PathCollectionParserTest extends TestCase
         $this->assertCount(0, $endpoints);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Empty or invalid endpoint specification',
-            '/entity'
+            ['/entity']
         );
     }
 
@@ -127,7 +127,7 @@ class PathCollectionParserTest extends TestCase
         $this->assertCount(0, $endpoints);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Empty or invalid endpoint specification',
-            '/entity.get'
+            ['/entity', 'get']
         );
     }
 
@@ -148,7 +148,7 @@ class PathCollectionParserTest extends TestCase
         $this->assertCount(0, $endpoints);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'References on paths is not supported',
-            '/entity'
+            ['/entity']
         );
     }
 
