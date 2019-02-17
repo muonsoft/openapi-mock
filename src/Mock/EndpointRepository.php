@@ -32,19 +32,20 @@ class EndpointRepository
 
     public function findMockEndpoint(string $httpMethod, string $uri): ?Endpoint
     {
-        $endpoints = $this->specificationLoader->loadMockEndpoints($this->specificationUrl);
+        $foundEndpoint = null;
+        $uri = rtrim($uri, '\/');
 
-        $parameters = null;
+        $endpoints = $this->specificationLoader->loadMockEndpoints($this->specificationUrl);
 
         /** @var Endpoint $endpoint */
         foreach ($endpoints as $endpoint) {
             if ($httpMethod === $endpoint->httpMethod && $endpoint->urlMatcher->urlIsMatching($uri)) {
-                $parameters = $endpoint;
+                $foundEndpoint = $endpoint;
 
                 break;
             }
         }
 
-        return $parameters;
+        return $foundEndpoint;
     }
 }

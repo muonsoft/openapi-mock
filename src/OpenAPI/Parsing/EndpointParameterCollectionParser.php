@@ -24,7 +24,7 @@ class EndpointParameterCollectionParser implements ParserInterface
     /** @var ParserInterface */
     private $resolvingSchemaParser;
 
-    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     public function __construct(ParserInterface $resolvingSchemaParser, ErrorHandlerInterface $errorHandler)
@@ -56,22 +56,14 @@ class EndpointParameterCollectionParser implements ParserInterface
     {
         $error = null;
 
-        if (!is_array($rawParameter)) {
-            $error = 'Invalid parameter schema.';
-        } elseif (!array_key_exists('name', $rawParameter) || !is_string($rawParameter['name'])) {
-            $error = 'Parameter must have name of string format';
-        } elseif (!array_key_exists('in', $rawParameter) || !is_string($rawParameter['in'])) {
-            $error = 'Parameter location (tag "in") is not present or has invalid type';
-        } elseif (!EndpointParameterLocationEnum::isValid(strtolower($rawParameter['in']))) {
-            $error = sprintf(
-                'Invalid parameter location "%s". Must be one of: %s.',
-                $rawParameter['in'],
-                implode(', ', EndpointParameterLocationEnum::toArray())
-            );
-        } elseif (!array_key_exists('schema', $rawParameter)) {
-            $error = 'Only parameters with "schema" tag are currently supported.';
-        } elseif (!is_array($rawParameter['schema'])) {
-            $error = 'Invalid schema provider for parameter.';
+        foreach ($this->assertionRulesAndFormatters() as $ruleAndFormatter) {
+            [$rule, $formatter] = $ruleAndFormatter;
+
+            if ($rule($rawParameter)) {
+                $error = $formatter($rawParameter);
+
+                break;
+            }
         }
 
         if ($error) {
@@ -105,5 +97,61 @@ class EndpointParameterCollectionParser implements ParserInterface
     private function pathParameterIsNotRequired(EndpointParameter $parameter): bool
     {
         return !$parameter->required && EndpointParameterLocationEnum::PATH === $parameter->in->getValue();
+    }
+
+    private function assertionRulesAndFormatters(): \Iterator
+    {
+        yield [
+            function ($rawParameter): bool {
+                return !is_array($rawParameter);
+            },
+            function (): string {
+                return 'Invalid parameter schema.';
+            }
+        ];
+        yield [
+            function (array $rawParameter): bool {
+                return !array_key_exists('name', $rawParameter) || !is_string($rawParameter['name']);
+            },
+            function (): string {
+                return 'Parameter must have name of string format';
+            }
+        ];
+        yield [
+            function (array $rawParameter): bool {
+                return !array_key_exists('in', $rawParameter) || !is_string($rawParameter['in']);
+            },
+            function (): string {
+                return 'Parameter location (tag "in") is not present or has invalid type';
+            }
+        ];
+        yield [
+            function (array $rawParameter): bool {
+                return !EndpointParameterLocationEnum::isValid(strtolower($rawParameter['in']));
+            },
+            function (array $rawParameter): string {
+                return sprintf(
+                    'Invalid parameter location "%s". Must be one of: %s.',
+                    $rawParameter['in'],
+                    implode(', ', EndpointParameterLocationEnum::toArray())
+                );
+            }
+        ];
+        yield [
+            function (array $rawParameter): bool {
+                return !array_key_exists('schema', $rawParameter);
+            },
+            function (): string {
+                return 'Only parameters with "schema" tag are currently supported.';
+            }
+        ];
+        yield [
+            function (array $rawParameter): bool {
+                return !is_array($rawParameter['schema']);
+            },
+            function (): string {
+                return 'Invalid schema provider for parameter.';
+            }
+        ];
     }
 }

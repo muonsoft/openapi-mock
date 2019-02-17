@@ -10,6 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\ErrorHandling;
 
+use App\OpenAPI\ErrorHandling\LoggingErrorHandler;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\LoggerTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -52,8 +53,8 @@ class LoggingErrorHandlerTest extends TestCase
         $this->assertSame(self::ERROR_MESSAGE, $warning);
     }
 
-    private function createLoggingErrorHandler(): \App\OpenAPI\ErrorHandling\LoggingErrorHandler
+    private function createLoggingErrorHandler(): LoggingErrorHandler
     {
-        return new \App\OpenAPI\ErrorHandling\LoggingErrorHandler($this->logger);
+        return new LoggingErrorHandler($this->logger);
     }
 }

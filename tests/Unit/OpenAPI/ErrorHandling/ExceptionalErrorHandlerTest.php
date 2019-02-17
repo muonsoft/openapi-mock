@@ -21,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 class ExceptionalErrorHandlerTest extends TestCase
 {
     /** @test */
-    public function reportError_messageAndPointer_exceptioThrown(): void
+    public function reportError_messageAndPointer_exceptionThrown(): void
     {
         $handler = new ExceptionalErrorHandler();
         $pointer = new SpecificationPointer();
@@ -32,7 +32,7 @@ class ExceptionalErrorHandlerTest extends TestCase
     }
 
     /** @test */
-    public function reportWarning_messageAndPointer_exceptioThrown(): void
+    public function reportWarning_messageAndPointer_exceptionThrown(): void
     {
         $handler = new ExceptionalErrorHandler();
         $pointer = new SpecificationPointer();

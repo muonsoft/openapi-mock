@@ -24,7 +24,7 @@ use App\OpenAPI\Parsing\SpecificationPointer;
  */
 class UrlMatcherFactory
 {
-    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     public function __construct(ErrorHandlerInterface $errorHandler)
@@ -69,9 +69,9 @@ class UrlMatcherFactory
         } elseif ($parameter->schema instanceof NumberType) {
             $replace = '(-?(?:\d+|\d*\.\d+))';
         } elseif ($parameter->schema instanceof StringType) {
-            $replace = '(.*)';
+            $replace = '([^\\\\/]*)';
         } else {
-            $replace = '(.*)';
+            $replace = '([^\\\\/]*)';
 
             $this->errorHandler->reportError(
                 'Unsupported schema type for Parameter Object in path, must be one of: "string", "number", "integer".',

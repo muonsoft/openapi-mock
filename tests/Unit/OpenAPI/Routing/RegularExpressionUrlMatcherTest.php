@@ -33,8 +33,10 @@ class RegularExpressionUrlMatcherTest extends TestCase
 
     public function patternAndUrlAndIsMatchingProvider(): \Iterator
     {
-        yield ['/^\/resource\/(.*)$/', '/resource', false];
-        yield ['/^\/resource\/(.*)$/', '/resource/id', true];
+        yield ['/^\/resource\/([^\/]*)$/', '/resource', false];
+        yield ['/^\/resource\/([^\/]*)$/', '/resource/id', true];
+        yield ['/^\/resource\/([^\/]*)$/', '/resource/id/subresource', false];
+        yield ['/^\/resource\/([^\/]*)\/subresource$/', '/resource/id/subresource', true];
         yield ['/^\/resource\/(-?\d*)$/', '/resource/id', false];
         yield ['/^\/resource\/(-?\d*)$/', '/resource/0123456789', true];
         yield ['/^\/resource\/(-?\d*)$/', '/resource/-0123456789', true];

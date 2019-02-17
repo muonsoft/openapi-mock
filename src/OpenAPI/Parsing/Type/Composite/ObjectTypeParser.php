@@ -34,7 +34,7 @@ class ObjectTypeParser implements TypeParserInterface
     /** @var ParserInterface */
     private $resolvingSchemaParser;
 
-    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     public function __construct(ParserInterface $resolvingSchemaParser, ErrorHandlerInterface $errorHandler)

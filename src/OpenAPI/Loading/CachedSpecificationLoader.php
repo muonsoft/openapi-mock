@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Loading;
 
 use App\Cache\CacheKeyGeneratorInterface;
+use App\Enum\EndpointParameterLocationEnum;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameter;
@@ -69,6 +70,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         AnyOfType::class,
         AllOfType::class,
         InvalidType::class,
+        EndpointParameterLocationEnum::class,
     ];
 
     /** @var SpecificationLoaderInterface */

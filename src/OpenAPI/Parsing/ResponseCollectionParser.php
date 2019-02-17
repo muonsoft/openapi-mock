@@ -27,7 +27,7 @@ class ResponseCollectionParser implements ParserInterface
     /** @var ReferenceResolvingParser */
     private $resolvingParser;
 
-    /** @var \App\OpenAPI\ErrorHandling\ErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     /** @var LoggerInterface */

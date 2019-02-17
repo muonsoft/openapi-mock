@@ -74,7 +74,7 @@ class UrlMatcherFactoryTest extends TestCase
         $matcher = $factory->createUrlMatcher($endpoint, $pointer);
 
         $this->assertInstanceOf(RegularExpressionUrlMatcher::class, $matcher);
-        $this->assertSame('/^\/resources\/(.*)$/', $matcher->getPattern());
+        $this->assertSame('/^\/resources\/([^\\\\\\/]*)$/', $matcher->getPattern());
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Unsupported schema type for Parameter Object in path, must be one of: "string", "number", "integer".',
             'path'
@@ -109,7 +109,7 @@ class UrlMatcherFactoryTest extends TestCase
             $this->givenParametersWithTypes([
                 'resourceId' => new StringType(),
             ]),
-            '/^\/resources\/(.*)$/',
+            '/^\/resources\/([^\\\\\\/]*)$/',
         ];
         yield [
             '/resources/{resourceId}',
@@ -131,12 +131,12 @@ class UrlMatcherFactoryTest extends TestCase
                 'resourceId'    => new StringType(),
                 'subresourceId' => new IntegerType(),
             ]),
-            '/^\/resources\/(.*)\/subresources\/(-?\d*)$/',
+            '/^\/resources\/([^\\\\\\/]*)\/subresources\/(-?\d*)$/',
         ];
         yield [
             '/resources/{resourceId}',
             $this->givenQueryAndPathParametersWithSameNames(),
-            '/^\/resources\/(.*)$/',
+            '/^\/resources\/([^\\\\\\/]*)$/',
         ];
     }
 

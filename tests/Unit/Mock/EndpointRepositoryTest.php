@@ -22,6 +22,7 @@ class EndpointRepositoryTest extends TestCase
     use SpecificationLoaderTestCaseTrait;
 
     private const PATH = 'path';
+    private const PATH_WITH_TRAILING_SLASH = 'path/';
     private const HTTP_METHOD = 'http_method';
     private const SPECIFICATION_URL = 'specification_url';
 
@@ -48,6 +49,19 @@ class EndpointRepositoryTest extends TestCase
         $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
         $this->assertSame(self::PATH, $parameters->path);
         $this->assertSame(self::HTTP_METHOD, $parameters->httpMethod);
+        $this->assertUrlMatcher_urlIsMatching_wasCalledOnceWithUrl(self::PATH);
+    }
+
+    /** @test */
+    public function findMockEndpoint_urlWithTrailingSlash_trailingSlashRemovedForMatcher(): void
+    {
+        $repository = $this->createMockEndpointRepository();
+        $endpoints = $this->givenEndpointCollection();
+        $this->givenSpecificationLoader_loadMockEndpoints_returnsMockEndpointCollection($endpoints);
+        $this->givenUrlMatcher_urlIsMatching_returnTrue();
+
+        $repository->findMockEndpoint(self::HTTP_METHOD, self::PATH_WITH_TRAILING_SLASH);
+
         $this->assertUrlMatcher_urlIsMatching_wasCalledOnceWithUrl(self::PATH);
     }
 
