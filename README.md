@@ -18,13 +18,13 @@ Swagger API mock server with fake data generation with main features.
 
 | Feature | Support status |
 | --- | --- |
-| generating json response | basic support ([without xml tags](https://swagger.io/docs/specification/data-models/representing-xml/)) |
-| generating xml response | supported |
+| generating xml response | basic support ([without xml tags](https://swagger.io/docs/specification/data-models/representing-xml/)) |
+| generating json response | supported |
 | generation of [basic types](https://swagger.io/docs/specification/data-models/data-types/) | supported |
 | generation of [enums](https://swagger.io/docs/specification/data-models/enums/) | supported |
 | generation of [associative arrays](https://swagger.io/docs/specification/data-models/dictionaries/) | supported |
-| generation of [combined types](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/) | supported without tag `not` |
-| local reference resolving | supported |
+| generation of [combined types](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/) | supported (without tag `not` and discriminator) |
+| local reference resolving | supported for schemas, responses and parameters |
 | remote reference resolving | not supported |
 | URL reference resolving | not supported |
 | validating request data | not supported |
