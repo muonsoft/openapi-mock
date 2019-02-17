@@ -10,24 +10,23 @@
 
 namespace App\Mock\Parameters;
 
-use App\Enum\EndpointParameterLocationEnum;
-use App\Mock\Parameters\Schema\Type\TypeInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointParameter implements SpecificationObjectMarkerInterface
+class InvalidObject implements SpecificationObjectMarkerInterface
 {
     /** @var string */
-    public $name;
+    private $error;
 
-    /** @var EndpointParameterLocationEnum */
-    public $in;
+    public function __construct(string $error)
+    {
+        $this->error = $error;
+    }
 
-    /** @var bool */
-    public $required;
-
-    /** @var TypeInterface */
-    public $schema;
+    public function getError(): string
+    {
+        return $this->error;
+    }
 }
