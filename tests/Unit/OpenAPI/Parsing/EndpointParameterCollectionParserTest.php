@@ -42,12 +42,12 @@ class EndpointParameterCollectionParserTest extends TestCase
         $specification = new SpecificationAccessor([self::PARAMETER_SCHEMA]);
         $pointer = new SpecificationPointer();
         $expectedParameter = new EndpointParameter();
-        $this->givenInternalParser_parsePointedSchema_returns($expectedParameter);
+        $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedParameter);
 
         /** @var EndpointParameterCollection $parameters */
         $parameters = $parser->parsePointedSchema($specification, $pointer);
 
-        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
             $specification,
             ['0']
         );
@@ -63,12 +63,12 @@ class EndpointParameterCollectionParserTest extends TestCase
         $specification = new SpecificationAccessor([self::PARAMETER_SCHEMA]);
         $pointer = new SpecificationPointer();
         $expectedParameter = new InvalidObject(self::ERROR);
-        $this->givenInternalParser_parsePointedSchema_returns($expectedParameter);
+        $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedParameter);
 
         /** @var EndpointParameterCollection $parameters */
         $parameters = $parser->parsePointedSchema($specification, $pointer);
 
-        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
             $specification,
             ['0']
         );
@@ -82,6 +82,6 @@ class EndpointParameterCollectionParserTest extends TestCase
 
     private function createEndpointParameterCollectionParser(): EndpointParameterCollectionParser
     {
-        return new EndpointParameterCollectionParser($this->internalParser, $this->errorHandler);
+        return new EndpointParameterCollectionParser($this->internalParser, $this->resolvingParser, $this->errorHandler);
     }
 }

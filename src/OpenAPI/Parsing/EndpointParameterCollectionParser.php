@@ -23,12 +23,19 @@ class EndpointParameterCollectionParser implements ParserInterface
     /** @var ParserInterface */
     private $parameterParser;
 
+    /** @var ReferenceResolvingParser */
+    private $resolvingParser;
+
     /** @var ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ParserInterface $parameterParser, ErrorHandlerInterface $errorHandler)
-    {
+    public function __construct(
+        ParserInterface $parameterParser,
+        ReferenceResolvingParser $resolvingParser,
+        ErrorHandlerInterface $errorHandler
+    ) {
         $this->parameterParser = $parameterParser;
+        $this->resolvingParser = $resolvingParser;
         $this->errorHandler = $errorHandler;
     }
 
@@ -40,7 +47,11 @@ class EndpointParameterCollectionParser implements ParserInterface
 
         foreach (array_keys($rawParameters) as $index) {
             $parameterPointer = $pointer->withPathElement($index);
-            $parameter = $this->parameterParser->parsePointedSchema($specification, $parameterPointer);
+            $parameter = $this->resolvingParser->resolveReferenceAndParsePointedSchema(
+                $specification,
+                $parameterPointer,
+                $this->parameterParser
+            );
 
             if ($parameter instanceof InvalidObject) {
                 $this->errorHandler->reportError($parameter->getError(), $parameterPointer);

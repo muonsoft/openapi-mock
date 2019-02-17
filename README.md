@@ -107,9 +107,12 @@ This project is licensed under the MIT License - see the LICENSE file for detail
   * [x] make special invalid type instead of throwing exception on specification parsing
   * [x] exceptional error handler for test environment
 * [ ] detect path for rest items
+  * [x] reference resolving for parameters
+  * [ ] common parameters
 
 ## Planned features for v0.2
 
+* [ ] extra response negotiation (return of 405 code)
 * [ ] response cache
 * [ ] faker expression extension for numbers
 * [ ] faker expression extension for strings

@@ -21,7 +21,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class ReferenceResolvingSchemaParser implements ParserInterface
 {
-    /** @var DelegatingSchemaParser */
+    /** @var ParserInterface */
     private $delegatingSchemaParser;
 
     /** @var ReferenceResolvingParser */
