@@ -98,7 +98,7 @@ class EndpointParameterParser implements ParserInterface
             },
             function (): string {
                 return 'Invalid parameter schema.';
-            }
+            },
         ];
         yield [
             function (array $rawParameter): bool {
@@ -106,7 +106,7 @@ class EndpointParameterParser implements ParserInterface
             },
             function (): string {
                 return 'Parameter must have name of string format';
-            }
+            },
         ];
         yield [
             function (array $rawParameter): bool {
@@ -114,7 +114,7 @@ class EndpointParameterParser implements ParserInterface
             },
             function (): string {
                 return 'Parameter location (tag "in") is not present or has invalid type';
-            }
+            },
         ];
         yield [
             function (array $rawParameter): bool {
@@ -126,7 +126,7 @@ class EndpointParameterParser implements ParserInterface
                     $rawParameter['in'],
                     implode(', ', EndpointParameterLocationEnum::toArray())
                 );
-            }
+            },
         ];
         yield [
             function (array $rawParameter): bool {
@@ -134,7 +134,7 @@ class EndpointParameterParser implements ParserInterface
             },
             function (): string {
                 return 'Only parameters with "schema" tag are currently supported.';
-            }
+            },
         ];
         yield [
             function (array $rawParameter): bool {
@@ -142,7 +142,7 @@ class EndpointParameterParser implements ParserInterface
             },
             function (): string {
                 return 'Invalid schema provider for parameter.';
-            }
+            },
         ];
     }
 }

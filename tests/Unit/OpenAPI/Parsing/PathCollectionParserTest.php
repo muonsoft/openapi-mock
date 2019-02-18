@@ -42,7 +42,7 @@ class PathCollectionParserTest extends TestCase
     private const VALID_PATHS_WITH_PARAMETERS_SCHEMA = [
         self::PATH => [
             self::PARAMETERS_TAG => self::PARAMETERS_SCHEMA,
-            self::HTTP_METHOD => self::ENDPOINT_SCHEMA,
+            self::HTTP_METHOD    => self::ENDPOINT_SCHEMA,
         ],
     ];
 

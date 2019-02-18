@@ -26,7 +26,6 @@ class EndpointParameterCollectionParserTest extends TestCase
 {
     use ParsingTestCaseTrait;
 
-    private const TYPE_SCHEMA = ['typeSchema'];
     private const PARAMETER_SCHEMA = ['parameterSchema'];
     private const ERROR = 'error';
 
