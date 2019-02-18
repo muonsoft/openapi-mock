@@ -19,8 +19,7 @@ install:
 script:
   - ./vendor/bin/phpunit
   - ./vendor/bin/behat
-  - docker build --pull --tag "swaggermock/swagger-mock" .
-  - docker images
+  - bash ./build/build.sh
 
 deploy:
   provider: script
