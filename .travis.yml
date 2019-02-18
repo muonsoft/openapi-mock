@@ -18,12 +18,13 @@ install:
 
 script:
   - ./vendor/bin/phpunit
-  - ./vendor/bin/behat
+  - ./vendor/bin/behat --format=progress
   - bash ./build/build.sh
 
 deploy:
   provider: script
   script: bash ./build/deploy.sh
   on:
+    tags: true
     branch:
       - master
