@@ -30,6 +30,6 @@ class RegularExpressionUrlMatcher implements UrlMatcherInterface
 
     public function urlIsMatching(string $url): bool
     {
-        return preg_match($this->pattern, $url);
+        return (bool) preg_match($this->pattern, $url);
     }
 }

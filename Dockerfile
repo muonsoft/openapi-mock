@@ -23,11 +23,11 @@ RUN set -xe \
 FROM php:7.2-alpine
 LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
-ARG ROADRUNNER_VERSION=1.3.2
+ARG ROADRUNNER_VERSION=1.3.5
 
 ENV APP_ENV=prod \
     SWAGGER_MOCK_SPECIFICATION_URL='' \
-    SWAGGER_MOCK_LOG_LEVEL='error' \
+    SWAGGER_MOCK_LOG_LEVEL='warning' \
     SWAGGER_MOCK_CACHE_DIRECTORY='/dev/shm/openapi-cache' \
     SWAGGER_MOCK_CACHE_TTL='0' \
     SWAGGER_MOCK_CACHE_STRATEGY='disabled'

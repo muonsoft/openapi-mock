@@ -74,7 +74,7 @@ Mock server options can be set via environment variables.
 | Environment variable | Description | Default value | Possible values |
 | --- | --- | --- | --- |
 | SWAGGER_MOCK_SPECIFICATION_URL | Path to file with OpenAPI v3 specification|  | Any valid URL or path to file |
-| SWAGGER_MOCK_LOG_LEVEL | Error log level | error | error, warning, info, debug |
+| SWAGGER_MOCK_LOG_LEVEL | Error log level | warning | error, warning, info, debug |
 | SWAGGER_MOCK_CACHE_DIRECTORY | Directory for OpenAPI specification cache | /dev/shm/openapi-cache | Any valid path |
 | SWAGGER_MOCK_CACHE_TTL | Time to live for OpenAPI specification cache in seconds | 0 | Positive integer |
 | SWAGGER_MOCK_CACHE_STRATEGY | Caching strategy for OpenAPI specification cache | disabled | disabled, md5, md5_and_timestamp |

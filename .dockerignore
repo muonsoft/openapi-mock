@@ -7,8 +7,9 @@
 /vendor
 
 .scrutinizer.yml
+.travis.yml
 behat.yml.dist
-docker-compose.yml
+docker-compose*
 Dockerfile
 easy-coding-standard.yml
 phpunit.xml.dist
