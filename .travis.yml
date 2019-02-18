@@ -18,7 +18,6 @@ install:
 
 script:
   - ./vendor/bin/phpunit
-  - ./vendor/bin/behat --format=progress
   - bash ./build/build.sh
 
 deploy:

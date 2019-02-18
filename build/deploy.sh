@@ -3,7 +3,8 @@
 image_name="swaggermock/swagger-mock"
 
 if [ "$TRAVIS_TAG" != "" ]; then
-    image_name="$image_name:$TRAVIS_TAG"
+    version="${TRAVIS_TAG:1}"
+    image_name="$image_name:$version"
 fi
 
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
