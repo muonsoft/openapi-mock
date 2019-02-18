@@ -36,15 +36,15 @@ class DelegatingSchemaParserTest extends TestCase
     public function parsePointedSchema_schemaWithType_schemaParsedByConcreteTypeParserAndReturned(): void
     {
         $parser = $this->createDelegatingSchemaParser();
-        $this->givenTypeParserLocator_getTypeParser_returnsContextualParser();
+        $this->givenTypeParserLocator_getTypeParser_returnsInternalParser();
         $pointer = new SpecificationPointer();
-        $expectedType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $expectedType = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::SCHEMA_DEFINITION);
 
         $type = $parser->parsePointedSchema($specification, $pointer);
 
         $this->assertTypeParserLocator_getTypeParser_wasCalledOnceWithType(self::VALUE_TYPE);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
         $this->assertSame($expectedType, $type);
     }
 
@@ -56,15 +56,15 @@ class DelegatingSchemaParserTest extends TestCase
         string $combinedTypeName
     ): void {
         $parser = $this->createDelegatingSchemaParser();
-        $this->givenTypeParserLocator_getTypeParser_returnsContextualParser();
+        $this->givenTypeParserLocator_getTypeParser_returnsInternalParser();
         $pointer = new SpecificationPointer();
-        $expectedType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $expectedType = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor([$combinedTypeName => self::VALUE_TYPE]);
 
         $type = $parser->parsePointedSchema($specification, $pointer);
 
         $this->assertTypeParserLocator_getTypeParser_wasCalledOnceWithType($combinedTypeName);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
         $this->assertSame($expectedType, $type);
     }
 
@@ -81,15 +81,15 @@ class DelegatingSchemaParserTest extends TestCase
     public function parsePointedSchema_emptySchemaWithType_defaultObjectTypeReturned(): void
     {
         $parser = $this->createDelegatingSchemaParser();
-        $this->givenTypeParserLocator_getTypeParser_returnsContextualParser();
+        $this->givenTypeParserLocator_getTypeParser_returnsInternalParser();
         $pointer = new SpecificationPointer();
         $specification = new SpecificationAccessor([]);
-        $expectedType = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $expectedType = $this->givenInternalParser_parsePointedSchema_returnsObject();
 
         $type = $parser->parsePointedSchema($specification, $pointer);
 
         $this->assertTypeParserLocator_getTypeParser_wasCalledOnceWithType(self::DEFAULT_TYPE);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer($specification, $pointer);
         $this->assertSame($expectedType, $type);
     }
 

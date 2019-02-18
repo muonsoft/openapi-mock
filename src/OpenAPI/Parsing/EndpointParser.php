@@ -10,9 +10,8 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockResponse;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\Mock\Parameters\Endpoint;
+use App\OpenAPI\Routing\UrlMatcherFactory;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -21,84 +20,59 @@ use Psr\Log\LoggerInterface;
  */
 class EndpointParser implements ContextualParserInterface
 {
-    /** @var ContextualParserInterface */
-    private $responseParser;
+    /** @var ParserInterface */
+    private $responseCollectionParser;
 
-    /** @var ReferenceResolvingParser */
-    private $resolvingParser;
+    /** @var ParserInterface */
+    private $parameterCollectionParser;
 
-    /** @var ParsingErrorHandlerInterface */
-    private $errorHandler;
+    /** @var UrlMatcherFactory */
+    private $urlMatcherFactory;
 
     /** @var LoggerInterface */
     private $logger;
 
     public function __construct(
-        ContextualParserInterface $responseParser,
-        ReferenceResolvingParser $resolvingParser,
-        ParsingErrorHandlerInterface $errorHandler,
+        ParserInterface $responseCollectionParser,
+        ParserInterface $parameterCollectionParser,
+        UrlMatcherFactory $urlMatcherFactory,
         LoggerInterface $logger
     ) {
-        $this->responseParser = $responseParser;
-        $this->resolvingParser = $resolvingParser;
-        $this->errorHandler = $errorHandler;
+        $this->responseCollectionParser = $responseCollectionParser;
+        $this->parameterCollectionParser = $parameterCollectionParser;
+        $this->urlMatcherFactory = $urlMatcherFactory;
         $this->logger = $logger;
     }
 
-    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
-    {
-        $mockParameters = new MockParameters();
-        $schema = $specification->getSchema($pointer);
+    public function parsePointedSchema(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer,
+        ContextMarkerInterface $context
+    ): SpecificationObjectMarkerInterface {
+        assert($context instanceof EndpointContext);
 
-        $responses = $schema['responses'] ?? [];
+        $endpoint = new Endpoint();
+        $endpoint->path = $context->path;
+        $endpoint->httpMethod = $context->httpMethod;
+
         $responsesPointer = $pointer->withPathElement('responses');
+        $endpoint->responses = $this->responseCollectionParser->parsePointedSchema($specification, $responsesPointer);
 
-        foreach ($responses as $statusCode => $responseSpecification) {
-            $responsePointer = $responsesPointer->withPathElement($statusCode);
-            $isValid = $this->validateResponse($statusCode, $responseSpecification, $responsePointer);
+        $parametersPointer = $pointer->withPathElement('parameters');
+        $endpoint->parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $parametersPointer);
+        $endpoint->parameters->append($context->parameters);
 
-            if ($isValid) {
-                /** @var MockResponse $response */
-                $response = $this->resolvingParser->resolveReferenceAndParsePointedSchema($specification, $responsePointer, $this->responseParser);
-                $parsedStatusCode = $this->parseStatusCode($statusCode);
-                $response->statusCode = $parsedStatusCode;
-                $mockParameters->responses->set($parsedStatusCode, $response);
+        $endpoint->urlMatcher = $this->urlMatcherFactory->createUrlMatcher($endpoint, $pointer);
 
-                $this->logger->debug(
-                    sprintf('Response with status code "%s" was parsed.', $response->statusCode),
-                    ['path' => $responsePointer->getPath()]
-                );
-            }
-        }
+        $this->logger->debug(
+            sprintf(
+                'Endpoint with method "%s" and path "%s" was successfully parsed.',
+                $endpoint->httpMethod,
+                $endpoint->path
+            ),
+            ['path' => $pointer->getPath()]
+        );
 
-        return $mockParameters;
-    }
-
-    private function validateResponse($statusCode, $responseSpecification, SpecificationPointer $pointer): bool
-    {
-        $isValid = true;
-
-        if (!\is_int($statusCode) && 'default' !== $statusCode) {
-            $isValid = false;
-            $this->errorHandler->reportError('Invalid status code. Must be integer or "default".', $pointer);
-        }
-
-        if (!\is_array($responseSpecification)) {
-            $isValid = false;
-            $this->errorHandler->reportError('Invalid response specification.', $pointer);
-        }
-
-        return $isValid;
-    }
-
-    private function parseStatusCode($statusCode): int
-    {
-        $parsedStatusCode = (int) $statusCode;
-
-        if (0 === $parsedStatusCode) {
-            $parsedStatusCode = MockResponse::DEFAULT_STATUS_CODE;
-        }
-
-        return $parsedStatusCode;
+        return $endpoint;
     }
 }

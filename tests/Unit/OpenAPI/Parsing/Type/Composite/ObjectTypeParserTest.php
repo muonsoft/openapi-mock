@@ -87,13 +87,13 @@ class ObjectTypeParserTest extends TestCase
     {
         $parser = $this->createObjectTypeParser();
         $expectedPropertyType = \Phake::mock(TypeInterface::class);
-        $this->givenContextualParser_parsePointedSchema_returns($expectedPropertyType);
+        $this->givenInternalParser_parsePointedSchema_returns($expectedPropertyType);
         $specification = new SpecificationAccessor(self::VALID_OBJECT_SCHEMA);
 
         /** @var ObjectType $object */
         $object = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             self::PROPERTY_POINTER_PATH
         );
@@ -158,14 +158,14 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_validSchemaWithHashMapAdditionalProperties_hashMapTypeReturned(): void
     {
         $parser = $this->createObjectTypeParser();
-        $type = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $type = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::HASH_MAP_SCHEMA);
 
         /** @var HashMapType $object */
         $object = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(HashMapType::class, $object);
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             ['additionalProperties']
         );
@@ -176,7 +176,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_hashMapSchemaWithEmptyMinMaxValues_hashMapWithDefaultMinMax(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::HASH_MAP_SCHEMA);
 
         /** @var HashMapType $object */
@@ -191,7 +191,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_hashMapSchemaWithGivenMinMaxValues_hashMapWithExpectedMinMax(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::HASH_MAP_SCHEMA_WITH_MIN_MAX);
 
         /** @var HashMapType $object */
@@ -207,14 +207,14 @@ class ObjectTypeParserTest extends TestCase
     {
         $parser = $this->createObjectTypeParser();
         $type = \Phake::mock(TypeInterface::class);
-        $this->givenContextualParser_parsePointedSchema_returns($type);
+        $this->givenInternalParser_parsePointedSchema_returns($type);
         $specification = new SpecificationAccessor(self::HASH_MAP_SCHEMA_WITH_DEFAULT_PROPERTIES);
 
         /** @var HashMapType $object */
         $object = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertInstanceOf(HashMapType::class, $object);
-        $this->assertContextualParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
+        $this->assertInternalParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
             $specification,
             ['additionalProperties'],
             self::DEFAULT_PROPERTY_POINTER_PATH
@@ -238,7 +238,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertInstanceOf(FreeFormObjectType::class, $type);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid value of option "additionalProperties"',
-            ''
+            []
         );
     }
 
@@ -246,7 +246,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_requiredPropertyDoesNotExist_errorReportedAndPropertyIgnored(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
+        $this->givenInternalParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
         $specification = new SpecificationAccessor([
             'type'       => 'object',
             'properties' => [
@@ -264,7 +264,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertCount(0, $type->required);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Required property "not_exist" does not exist',
-            'required'
+            ['required']
         );
     }
 
@@ -272,7 +272,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_invalidRequiredProperty_errorReportedAndPropertyIgnored(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
+        $this->givenInternalParser_parsePointedSchema_returns(\Phake::mock(TypeInterface::class));
         $specification = new SpecificationAccessor(['required' => [[]]]);
 
         /** @var ObjectType $type */
@@ -282,7 +282,7 @@ class ObjectTypeParserTest extends TestCase
         $this->assertCount(0, $type->required);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid required property',
-            'required'
+            ['required']
         );
     }
 
@@ -290,7 +290,7 @@ class ObjectTypeParserTest extends TestCase
     public function parsePointedSchema_fixedFieldsSchema_typeWithValidFixedFieldsReturned(): void
     {
         $parser = $this->createObjectTypeParser();
-        $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor([
             'nullable'  => true,
             'readOnly'  => true,
@@ -307,7 +307,7 @@ class ObjectTypeParserTest extends TestCase
 
     private function createObjectTypeParser(): ObjectTypeParser
     {
-        return new ObjectTypeParser($this->contextualParser, $this->errorHandler);
+        return new ObjectTypeParser($this->internalParser, $this->errorHandler);
     }
 
     private function assertObjectIsValidAndHasProperty(ObjectType $object, TypeInterface $propertyType): void

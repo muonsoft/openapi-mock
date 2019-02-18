@@ -10,7 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\Type\TypeParserLocator;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -57,9 +57,9 @@ class TypeParserLocatorTest extends TestCase
             ->get($serviceId);
     }
 
-    private function givenContainer_get_returnsTypeParser(): ContextualParserInterface
+    private function givenContainer_get_returnsTypeParser(): ParserInterface
     {
-        $valueGenerator = \Phake::mock(ContextualParserInterface::class);
+        $valueGenerator = \Phake::mock(ParserInterface::class);
 
         \Phake::when($this->container)
             ->get(\Phake::anyParameters())

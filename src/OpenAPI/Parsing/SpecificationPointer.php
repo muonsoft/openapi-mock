@@ -15,7 +15,7 @@ namespace App\OpenAPI\Parsing;
  */
 class SpecificationPointer
 {
-    private const PATH_DELIMITER = '.';
+    private const PATH_DELIMITER = ' -> ';
 
     /** @var string[] */
     private $pathElements;

@@ -10,14 +10,17 @@
 
 namespace App\Mock\Parameters;
 
+use App\Enum\HttpMethodEnum;
+use App\OpenAPI\Routing\NullUrlMatcher;
+use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParameters implements SpecificationObjectMarkerInterface
+class Endpoint implements SpecificationObjectMarkerInterface
 {
-    /** @var string */
+    /** @var HttpMethodEnum */
     public $httpMethod;
 
     /** @var string */
@@ -26,8 +29,16 @@ class MockParameters implements SpecificationObjectMarkerInterface
     /** @var MockResponseCollection */
     public $responses;
 
+    /** @var EndpointParameterCollection */
+    public $parameters;
+
+    /** @var UrlMatcherInterface */
+    public $urlMatcher;
+
     public function __construct()
     {
         $this->responses = new MockResponseCollection();
+        $this->parameters = new EndpointParameterCollection();
+        $this->urlMatcher = new NullUrlMatcher();
     }
 }

@@ -42,13 +42,13 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
         $expectedSchema = new Schema();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedSchema);
+        $this->givenInternalParser_parsePointedSchema_returns($expectedSchema);
         $specification = new SpecificationAccessor(self::VALID_RESPONSE_SPECIFICATION);
 
         /** @var MockResponse $response */
         $response = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             self::CONTEXT_PATH
         );
@@ -79,7 +79,7 @@ class ResponseParserTest extends TestCase
         $this->assertCount(0, $response->content);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Invalid response content',
-            'content'
+            ['content']
         );
     }
 
@@ -93,6 +93,6 @@ class ResponseParserTest extends TestCase
 
     private function createResponseParser(): ResponseParser
     {
-        return new ResponseParser($this->contextualParser, $this->errorHandler, new NullLogger());
+        return new ResponseParser($this->internalParser, $this->errorHandler, new NullLogger());
     }
 }

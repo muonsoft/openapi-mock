@@ -8,14 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing\Error;
+namespace App\OpenAPI\ErrorHandling;
 
 use App\OpenAPI\Parsing\SpecificationPointer;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface ParsingErrorHandlerInterface
+interface ErrorHandlerInterface
 {
     public function reportError(string $message, SpecificationPointer $pointer): string;
 

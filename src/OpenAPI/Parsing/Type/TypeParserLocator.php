@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -30,7 +30,7 @@ class TypeParserLocator
         $this->typeParserMap = $typeParserMap;
     }
 
-    public function getTypeParser(string $type): ContextualParserInterface
+    public function getTypeParser(string $type): ParserInterface
     {
         if (!array_key_exists($type, $this->typeParserMap)) {
             throw new \DomainException(sprintf('Unrecognized schema type "%s".', $type));

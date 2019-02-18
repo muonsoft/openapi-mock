@@ -17,7 +17,7 @@ class SpecificationPointerTest extends TestCase
 {
     private const PATH = 'path';
     private const SUB_PATH = 'sub_path';
-    private const FULL_PATH = self::PATH.'.'.self::SUB_PATH;
+    private const FULL_PATH = self::PATH.' -> '.self::SUB_PATH;
 
     /** @test */
     public function getPathElements_noPathIsSet_emptyPathReturned(): void

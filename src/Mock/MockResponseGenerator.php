@@ -14,7 +14,7 @@ use App\API\Responder;
 use App\Mock\Generation\DataGenerator;
 use App\Mock\Negotiation\MediaTypeNegotiator;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\Schema\Schema;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +48,7 @@ class MockResponseGenerator
         $this->responder = $responder;
     }
 
-    public function generateResponse(Request $request, MockParameters $parameters): Response
+    public function generateResponse(Request $request, Endpoint $parameters): Response
     {
         $statusCode = $this->responseStatusNegotiator->negotiateResponseStatus($request, $parameters);
         $mockResponse = $parameters->responses->get($statusCode);

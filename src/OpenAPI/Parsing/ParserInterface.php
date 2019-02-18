@@ -8,17 +8,14 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters;
+namespace App\OpenAPI\Parsing;
 
-use App\Utility\AbstractClassCollection;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockParametersCollection extends AbstractClassCollection
+interface ParserInterface
 {
-    protected function getElementClassName(): string
-    {
-        return MockParameters::class;
-    }
+    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface;
 }

@@ -10,12 +10,12 @@
 
 namespace App\OpenAPI;
 
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\Parameters\EndpointCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 interface SpecificationLoaderInterface
 {
-    public function loadMockParameters(string $url): MockParametersCollection;
+    public function loadMockEndpoints(string $url): EndpointCollection;
 }

@@ -10,13 +10,12 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationParser;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\NullLogger;
 
 class SpecificationParserTest extends TestCase
 {
@@ -40,25 +39,20 @@ class SpecificationParserTest extends TestCase
     }
 
     /** @test */
-    public function parseSpecification_validSpecification_specificationParsedToMockParameters(): void
+    public function parseSpecification_validSpecification_specificationParsedToMockEndpoint(): void
     {
         $parser = $this->createSpecificationParser();
-        $expectedMockParameters = new MockParameters();
-        $this->givenContextualParser_parsePointedSchema_returns($expectedMockParameters);
+        $expectedEndpoints = new EndpointCollection();
+        $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoints);
         $specification = new SpecificationAccessor(self::VALID_SPECIFICATION);
 
-        $mockParametersCollection = $parser->parseSpecification($specification);
+        $endpoints = $parser->parseSpecification($specification);
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
-            ['paths', self::PATH, self::HTTP_METHOD]
+            ['paths']
         );
-        $this->assertCount(1, $mockParametersCollection);
-        /** @var MockParameters $mockParameters */
-        $mockParameters = $mockParametersCollection->first();
-        $this->assertSame($expectedMockParameters, $mockParameters);
-        $this->assertSame(self::PATH, $mockParameters->path);
-        $this->assertSame(strtoupper(self::HTTP_METHOD), $mockParameters->httpMethod);
+        $this->assertSame($expectedEndpoints, $endpoints);
     }
 
     /** @test */
@@ -102,72 +96,8 @@ class SpecificationParserTest extends TestCase
         $parser->parseSpecification($specification);
     }
 
-    /** @test */
-    public function parseSpecification_noEndpoints_errorReported(): void
-    {
-        $parser = $this->createSpecificationParser();
-        $specification = new SpecificationAccessor([
-            'openapi' => '3.0',
-            'paths'   => [
-                '/entity' => 'invalid',
-            ],
-        ]);
-
-        $mockParametersCollection = $parser->parseSpecification($specification);
-
-        $this->assertCount(0, $mockParametersCollection);
-        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
-            'Empty or invalid endpoint specification',
-            'paths./entity'
-        );
-    }
-
-    /** @test */
-    public function parseSpecification_invalidEndpoint_errorReported(): void
-    {
-        $parser = $this->createSpecificationParser();
-        $specification = new SpecificationAccessor([
-            'openapi' => '3.0',
-            'paths'   => [
-                '/entity' => [
-                    'get' => 'invalid',
-                ],
-            ],
-        ]);
-
-        $mockParametersCollection = $parser->parseSpecification($specification);
-
-        $this->assertCount(0, $mockParametersCollection);
-        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
-            'Empty or invalid endpoint specification',
-            'paths./entity.get'
-        );
-    }
-
-    /** @test */
-    public function parseSpecification_pathWithReference_errorReported(): void
-    {
-        $parser = $this->createSpecificationParser();
-        $specification = new SpecificationAccessor([
-            'openapi' => '3.0',
-            'paths'   => [
-                '/entity' => [
-                    '$ref' => 'anything',
-                ],
-            ],
-        ]);
-
-        $mockParametersCollection = $parser->parseSpecification($specification);
-
-        $this->assertCount(0, $mockParametersCollection);
-        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
-            'References on paths is not supported',
-            'paths./entity'
-        );
-    }
-
     private function createSpecificationParser(): SpecificationParser
     {
-        return new SpecificationParser($this->contextualParser, $this->errorHandler, new NullLogger());
+        return new SpecificationParser($this->internalParser);
     }
 }

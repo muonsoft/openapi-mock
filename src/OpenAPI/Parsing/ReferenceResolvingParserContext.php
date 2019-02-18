@@ -21,13 +21,13 @@ class ReferenceResolvingParserContext
     /** @var SpecificationPointer */
     public $pointer;
 
-    /** @var ContextualParserInterface */
+    /** @var ParserInterface */
     public $parser;
 
     public function __construct(
         SpecificationAccessor $specification,
         SpecificationPointer $pointer,
-        ContextualParserInterface $parser
+        ParserInterface $parser
     ) {
         $this->specification = $specification;
         $this->pointer = $pointer;

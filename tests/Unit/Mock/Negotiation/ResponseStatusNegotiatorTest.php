@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Negotiation;
 
 use App\Mock\Exception\MockGenerationException;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\MockResponse;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -25,12 +25,12 @@ class ResponseStatusNegotiatorTest extends TestCase
      * @test
      * @dataProvider statusCodesProvider
      */
-    public function negotiateResponseStatus_givenResponsesInMockParameters_bestResponseStatusCodeReturned(
+    public function negotiateResponseStatus_givenResponsesInMockEndpoint_bestResponseStatusCodeReturned(
         array $responseStatusCodes,
         int $bestResponseStatusCode
     ): void {
         $negotiator = $this->createResponseStatusNegotiator();
-        $parameters = $this->givenMockParametersWithResponsesWithStatusCodes($responseStatusCodes);
+        $parameters = $this->givenMockEndpointWithResponsesWithStatusCodes($responseStatusCodes);
 
         $statusCode = $negotiator->negotiateResponseStatus(new Request(), $parameters);
 
@@ -38,10 +38,10 @@ class ResponseStatusNegotiatorTest extends TestCase
     }
 
     /** @test */
-    public function negotiateResponseStatus_noResponsesInMockParameters_exceptionThrown(): void
+    public function negotiateResponseStatus_noResponsesInMockEndpoint_exceptionThrown(): void
     {
         $negotiator = $this->createResponseStatusNegotiator();
-        $parameters = new MockParameters();
+        $parameters = new Endpoint();
 
         $this->expectException(MockGenerationException::class);
         $this->expectExceptionMessage('Mock response not found');
@@ -71,9 +71,9 @@ class ResponseStatusNegotiatorTest extends TestCase
         ];
     }
 
-    private function givenMockParametersWithResponsesWithStatusCodes(array $responseStatusCodes): MockParameters
+    private function givenMockEndpointWithResponsesWithStatusCodes(array $responseStatusCodes): Endpoint
     {
-        $parameters = new MockParameters();
+        $parameters = new Endpoint();
 
         foreach ($responseStatusCodes as $responseStatusCode) {
             $response = new MockResponse();

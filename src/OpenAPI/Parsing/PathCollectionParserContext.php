@@ -10,18 +10,22 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Mock\Parameters\MockParametersCollection;
+use App\Mock\Parameters\EndpointCollection;
+use App\Mock\Parameters\EndpointParameterCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SpecificationParserContext
+class PathCollectionParserContext
 {
     /** @var SpecificationAccessor */
     public $specification;
 
-    /** @var MockParametersCollection */
-    public $mockParametersCollection;
+    /** @var EndpointParameterCollection */
+    public $pathParameters;
+
+    /** @var EndpointCollection */
+    public $endpoints;
 
     /** @var SpecificationPointer */
     public $pathPointer;
@@ -35,6 +39,7 @@ class SpecificationParserContext
     public function __construct(SpecificationAccessor $specification)
     {
         $this->specification = $specification;
-        $this->mockParametersCollection = new MockParametersCollection();
+        $this->pathParameters = new EndpointParameterCollection();
+        $this->endpoints = new EndpointCollection();
     }
 }

@@ -11,4 +11,4 @@ services:
     arguments:
       - '@App\OpenAPI\Loading\SpecificationFileLoader'
 
-  App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface: '@App\OpenAPI\Parsing\Error\ExceptionalErrorHandler'
+  App\OpenAPI\ErrorHandling\ErrorHandlerInterface: '@App\OpenAPI\ErrorHandling\ExceptionalErrorHandler'

@@ -39,13 +39,13 @@ class SchemaParserTest extends TestCase
     public function parsePointedSchema_validSchema_schemaCreatedByTypeParserFromLocator(): void
     {
         $parser = $this->createSchemaParser();
-        $type = $this->givenContextualParser_parsePointedSchema_returnsObject();
+        $type = $this->givenInternalParser_parsePointedSchema_returnsObject();
         $specification = new SpecificationAccessor(self::VALID_SCHEMA);
 
         /** @var Schema $parsedSchema */
         $parsedSchema = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
             $specification,
             ['schema']
         );
@@ -64,11 +64,11 @@ class SchemaParserTest extends TestCase
 
         $this->assertInstanceOf(InvalidType::class, $parsedSchema->value);
         $this->assertSame($reportMessage, $parsedSchema->value->getError());
-        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath('Invalid schema', '');
+        $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath('Invalid schema', []);
     }
 
     private function createSchemaParser(): SchemaParser
     {
-        return new SchemaParser($this->contextualParser, $this->errorHandler);
+        return new SchemaParser($this->internalParser, $this->errorHandler);
     }
 }

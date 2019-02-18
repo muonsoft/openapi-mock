@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing\Error;
+namespace App\OpenAPI\ErrorHandling;
 
 use App\OpenAPI\Parsing\SpecificationPointer;
 use Psr\Log\LoggerInterface;
@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class LoggingErrorHandler implements ParsingErrorHandlerInterface
+class LoggingErrorHandler implements ErrorHandlerInterface
 {
     /** @var LoggerInterface */
     private $logger;

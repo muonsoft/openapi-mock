@@ -18,12 +18,12 @@ Swagger API mock server with fake data generation with main features.
 
 | Feature | Support status |
 | --- | --- |
-| generating json response | basic support ([without xml tags](https://swagger.io/docs/specification/data-models/representing-xml/)) |
-| generating xml response | supported |
+| generating xml response | basic support ([without xml tags](https://swagger.io/docs/specification/data-models/representing-xml/)) |
+| generating json response | supported |
 | generation of [basic types](https://swagger.io/docs/specification/data-models/data-types/) | supported |
 | generation of [enums](https://swagger.io/docs/specification/data-models/enums/) | supported |
 | generation of [associative arrays](https://swagger.io/docs/specification/data-models/dictionaries/) | supported |
-| generation of [combined types](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/) | supported without tag `not` |
+| generation of [combined types](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/) | supported (without tag `not` and discriminator) |
 | local reference resolving | supported |
 | remote reference resolving | not supported |
 | URL reference resolving | not supported |
@@ -100,16 +100,12 @@ Recommended options for use with local file (at local server).
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## Features for first beta v0.1
+## Features roadmap for next versions
 
-* [x] not critical parsing errors should not fail mock server
-  * [x] service for handling parsing errors
-  * [x] make special invalid type instead of throwing exception on specification parsing
-  * [x] exceptional error handler for test environment
-* [ ] detect path for rest items
-
-## Planned features for v0.2
-
+* [ ] extra response negotiation (return of 405 code)
+  * [ ] path parser
+  * [ ] route matcher in path object
+  * [ ] routing by path and endpoints
 * [ ] response cache
 * [ ] faker expression extension for numbers
 * [ ] faker expression extension for strings

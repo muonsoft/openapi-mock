@@ -43,8 +43,12 @@ services:
     autoconfigure: true
     public: false
     bind:
+      $pathCollectionParser: '@App\OpenAPI\Parsing\PathCollectionParser'
+      $parameterParser: '@App\OpenAPI\Parsing\EndpointParameterParser'
+      $parameterCollectionParser: '@App\OpenAPI\Parsing\EndpointParameterCollectionParser'
       $endpointParser: '@App\OpenAPI\Parsing\EndpointParser'
       $responseParser: '@App\OpenAPI\Parsing\ResponseParser'
+      $responseCollectionParser: '@App\OpenAPI\Parsing\ResponseCollectionParser'
       $schemaParser: '@App\OpenAPI\Parsing\SchemaParser'
       $delegatingSchemaParser: '@App\OpenAPI\Parsing\Type\DelegatingSchemaParser'
       $resolvingSchemaParser: '@App\OpenAPI\Parsing\Type\ReferenceResolvingSchemaParser'
@@ -57,7 +61,7 @@ services:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 48 }
 
-  App\Mock\MockParametersRepository:
+  App\Mock\EndpointRepository:
     arguments:
       - '@specification_loader'
       - '%specification_url%'
@@ -106,4 +110,4 @@ services:
   Negotiation\Negotiator:
     class: Negotiation\Negotiator
 
-  App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface: '@App\OpenAPI\Parsing\Error\LoggingErrorHandler'
+  App\OpenAPI\ErrorHandling\ErrorHandlerInterface: '@App\OpenAPI\ErrorHandling\LoggingErrorHandler'

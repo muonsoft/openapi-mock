@@ -10,12 +10,16 @@
 
 namespace App\Tests\Utility\TestCase;
 
+use App\Mock\Parameters\Endpoint;
+use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
-use App\OpenAPI\Parsing\Error\ParsingErrorHandlerInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Parsing\Type\TypeParserLocator;
+use App\OpenAPI\Routing\UrlMatcherFactory;
+use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use PHPUnit\Framework\Assert;
 
@@ -24,6 +28,9 @@ use PHPUnit\Framework\Assert;
  */
 trait ParsingTestCaseTrait
 {
+    /** @var ParserInterface */
+    protected $internalParser;
+
     /** @var ContextualParserInterface */
     protected $contextualParser;
 
@@ -33,66 +40,93 @@ trait ParsingTestCaseTrait
     /** @var ReferenceResolvingParser */
     protected $resolvingParser;
 
-    /** @var ParsingErrorHandlerInterface */
+    /** @var ErrorHandlerInterface */
     protected $errorHandler;
+
+    /** @var UrlMatcherFactory */
+    protected $urlMatcherFactory;
 
     protected function setUpParsingContext(): void
     {
+        $this->internalParser = \Phake::mock(ParserInterface::class);
         $this->contextualParser = \Phake::mock(ContextualParserInterface::class);
         $this->typeParserLocator = \Phake::mock(TypeParserLocator::class);
         $this->resolvingParser = \Phake::mock(ReferenceResolvingParser::class);
-        $this->errorHandler = \Phake::mock(ParsingErrorHandlerInterface::class);
+        $this->errorHandler = \Phake::mock(ErrorHandlerInterface::class);
+        $this->urlMatcherFactory = \Phake::mock(UrlMatcherFactory::class);
     }
 
-    protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+    protected function assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
         SpecificationAccessor $specification,
         array $path
     ): void {
         /* @var SpecificationPointer $pointer */
-        \Phake::verify($this->contextualParser)
+        \Phake::verify($this->internalParser)
             ->parsePointedSchema($specification, \Phake::capture($pointer));
         Assert::assertSame($path, $pointer->getPathElements());
     }
 
-    protected function assertContextualParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
+    protected function assertInternalParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
         SpecificationAccessor $specification,
         array $firstPath,
         array $secondPath
     ): void {
         /* @var SpecificationPointer[] $pointers */
-        \Phake::verify($this->contextualParser, \Phake::times(2))
+        \Phake::verify($this->internalParser, \Phake::times(2))
             ->parsePointedSchema($specification, \Phake::captureAll($pointers));
         Assert::assertSame($firstPath, $pointers[0]->getPathElements());
         Assert::assertSame($secondPath, $pointers[1]->getPathElements());
     }
 
-    protected function assertContextualParser_parsePointedSchema_wasNeverCalledWithAnyParameters(): void
+    protected function assertInternalParser_parsePointedSchema_wasNeverCalledWithAnyParameters(): void
     {
-        \Phake::verify($this->contextualParser, \Phake::never())
+        \Phake::verify($this->internalParser, \Phake::never())
             ->parsePointedSchema(\Phake::anyParameters());
     }
 
-    protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer(
+    protected function assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointer(
         SpecificationAccessor $specification,
         SpecificationPointer $pointer
     ): void {
-        \Phake::verify($this->contextualParser)
+        \Phake::verify($this->internalParser)
             ->parsePointedSchema($specification, $pointer);
     }
 
-    protected function givenContextualParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface $object): void
+    protected function givenInternalParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface ...$objects): void
     {
-        \Phake::when($this->contextualParser)
-            ->parsePointedSchema(\Phake::anyParameters())
-            ->thenReturn($object);
+        $parser = \Phake::when($this->internalParser)->parsePointedSchema(\Phake::anyParameters());
+
+        foreach ($objects as $object) {
+            $parser = $parser->thenReturn($object);
+        }
     }
 
-    protected function givenContextualParser_parsePointedSchema_returnsObject(): SpecificationObjectMarkerInterface
+    protected function givenInternalParser_parsePointedSchema_returnsObject(): SpecificationObjectMarkerInterface
     {
         $object = \Phake::mock(SpecificationObjectMarkerInterface::class);
-        $this->givenContextualParser_parsePointedSchema_returns($object);
+        $this->givenInternalParser_parsePointedSchema_returns($object);
 
         return $object;
+    }
+
+    protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
+        SpecificationAccessor $specification,
+        array $path,
+        &$context
+    ): void {
+        /* @var SpecificationPointer $pointer */
+        \Phake::verify($this->contextualParser)
+            ->parsePointedSchema($specification, \Phake::capture($pointer), \Phake::capture($context));
+        Assert::assertSame($path, $pointer->getPathElements());
+    }
+
+    protected function givenContextualParser_parsePointedSchema_returns(SpecificationObjectMarkerInterface ...$objects): void
+    {
+        $parser = \Phake::when($this->contextualParser)->parsePointedSchema(\Phake::anyParameters());
+
+        foreach ($objects as $object) {
+            $parser = $parser->thenReturn($object);
+        }
     }
 
     protected function assertTypeParserLocator_getTypeParser_wasCalledOnceWithType(string $type): void
@@ -101,29 +135,29 @@ trait ParsingTestCaseTrait
             ->getTypeParser($type);
     }
 
-    protected function givenTypeParserLocator_getTypeParser_returnsContextualParser(): void
+    protected function givenTypeParserLocator_getTypeParser_returnsInternalParser(): void
     {
         \Phake::when($this->typeParserLocator)
             ->getTypeParser(\Phake::anyParameters())
-            ->thenReturn($this->contextualParser);
+            ->thenReturn($this->internalParser);
     }
 
-    protected function assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContextualParser(
+    protected function assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
         SpecificationAccessor $specification,
         array $path
     ): void {
         /* @var SpecificationPointer $pointer */
         \Phake::verify($this->resolvingParser)
-            ->resolveReferenceAndParsePointedSchema($specification, \Phake::capture($pointer), $this->contextualParser);
+            ->resolveReferenceAndParsePointedSchema($specification, \Phake::capture($pointer), $this->internalParser);
         Assert::assertSame($path, $pointer->getPathElements());
     }
 
-    protected function assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerAndContextualParser(
+    protected function assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerAndInternalParser(
         SpecificationAccessor $specification,
         SpecificationPointer $pointer
     ): void {
         \Phake::verify($this->resolvingParser)
-            ->resolveReferenceAndParsePointedSchema($specification, $pointer, $this->contextualParser);
+            ->resolveReferenceAndParsePointedSchema($specification, $pointer, $this->internalParser);
     }
 
     protected function givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns(SpecificationObjectMarkerInterface $object): void
@@ -133,20 +167,20 @@ trait ParsingTestCaseTrait
             ->thenReturn($object);
     }
 
-    protected function assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
+    protected function assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(string $message, array $path): void
     {
         /* @var SpecificationPointer $pointer */
         \Phake::verify($this->errorHandler)
             ->reportError($message, \Phake::capture($pointer));
-        Assert::assertSame($path, $pointer->getPath());
+        Assert::assertSame($path, $pointer->getPathElements());
     }
 
-    protected function assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(string $message, string $path): void
+    protected function assertParsingErrorHandler_reportWarning_wasCalledOnceWithMessageAndPointerPath(string $message, array $path): void
     {
         /* @var SpecificationPointer $pointer */
         \Phake::verify($this->errorHandler)
             ->reportWarning($message, \Phake::capture($pointer));
-        Assert::assertSame($path, $pointer->getPath());
+        Assert::assertSame($path, $pointer->getPathElements());
     }
 
     protected function givenParsingErrorHandler_reportError_returnsMessage(): string
@@ -171,5 +205,22 @@ trait ParsingTestCaseTrait
             ->thenReturn($message);
 
         return $message;
+    }
+
+    protected function givenUrlMatcherFactory_createUrlMatcher_returnsUrlMatcher(): UrlMatcherInterface
+    {
+        $urlMatcher = \Phake::mock(UrlMatcherInterface::class);
+
+        \Phake::when($this->urlMatcherFactory)
+            ->createUrlMatcher(\Phake::anyParameters())
+            ->thenReturn($urlMatcher);
+
+        return $urlMatcher;
+    }
+
+    protected function assertUrlMatcherFactory_createUrlMatcher_wasCalledOnceWithEndpointAndPointer(Endpoint $endpoint, SpecificationPointer $pointer): void
+    {
+        \Phake::verify($this->urlMatcherFactory)
+            ->createUrlMatcher($endpoint, $pointer);
     }
 }

@@ -29,7 +29,7 @@ class ReferenceResolvingSchemaParserTest extends TestCase
     /** @test */
     public function parsePointedSchema_specificationAndPointer_schemaResolvedAndParsedByDelegatingParser(): void
     {
-        $resolvingSchemaParser = new ReferenceResolvingSchemaParser($this->contextualParser, $this->resolvingParser);
+        $resolvingSchemaParser = new ReferenceResolvingSchemaParser($this->internalParser, $this->resolvingParser);
         $specification = new SpecificationAccessor([]);
         $pointer = new SpecificationPointer();
         $expectedObject = \Phake::mock(SpecificationObjectMarkerInterface::class);
@@ -37,7 +37,7 @@ class ReferenceResolvingSchemaParserTest extends TestCase
 
         $object = $resolvingSchemaParser->parsePointedSchema($specification, $pointer);
 
-        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerAndContextualParser(
+        $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerAndInternalParser(
             $specification,
             $pointer
         );

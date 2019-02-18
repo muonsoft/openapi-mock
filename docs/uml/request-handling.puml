@@ -1,11 +1,11 @@
 @startuml
 
-RequestHandler -> MockRepository : findMockParameters(httpMethod, uri)
-RequestHandler <- MockRepository : mockParameters
-RequestHandler -> MockResponseGenerator : generateResponse(request, mockParameters)
-MockResponseGenerator -> MediaTypeNegotiator : negotiateMediaType(request, mockParameters)
+RequestHandler -> MockRepository : findMockEndpoint(httpMethod, uri)
+RequestHandler <- MockRepository : mockEndpoint
+RequestHandler -> MockResponseGenerator : generateResponse(request, mockEndpoint)
+MockResponseGenerator -> MediaTypeNegotiator : negotiateMediaType(request, mockEndpoint)
 MockResponseGenerator <- MediaTypeNegotiator : mediaType
-MockResponseGenerator -> ResponseStatusNegotiator : negotiateResponseStatus(request, mockParameters)
+MockResponseGenerator -> ResponseStatusNegotiator : negotiateResponseStatus(request, mockEndpoint)
 MockResponseGenerator <- ResponseStatusNegotiator : statusCode
 MockResponseGenerator -> DataGenerator : generateResponseData(schema)
 MockResponseGenerator <- DataGenerator : data

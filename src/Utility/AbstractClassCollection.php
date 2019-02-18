@@ -48,6 +48,7 @@ abstract class AbstractClassCollection extends ArrayCollection
     public function set($key, $value): void
     {
         $this->validateElement($value);
+
         parent::set($key, $value);
     }
 
@@ -61,6 +62,13 @@ abstract class AbstractClassCollection extends ArrayCollection
         $this->validateElement($element);
 
         return parent::add($element);
+    }
+
+    public function append(self $collection): void
+    {
+        foreach ($collection as $element) {
+            $this->add($element);
+        }
     }
 
     abstract protected function getElementClassName(): string;

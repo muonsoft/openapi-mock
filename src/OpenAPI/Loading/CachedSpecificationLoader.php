@@ -11,8 +11,11 @@
 namespace App\OpenAPI\Loading;
 
 use App\Cache\CacheKeyGeneratorInterface;
-use App\Mock\Parameters\MockParameters;
-use App\Mock\Parameters\MockParametersCollection;
+use App\Enum\EndpointParameterLocationEnum;
+use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointCollection;
+use App\Mock\Parameters\EndpointParameter;
+use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\MockResponseCollection;
 use App\Mock\Parameters\Schema\Schema;
@@ -30,6 +33,8 @@ use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
+use App\OpenAPI\Routing\NullUrlMatcher;
+use App\OpenAPI\Routing\RegularExpressionUrlMatcher;
 use App\OpenAPI\SpecificationLoaderInterface;
 use App\Utility\StringList;
 use Psr\Log\LoggerInterface;
@@ -40,6 +45,34 @@ use Psr\SimpleCache\CacheInterface;
  */
 class CachedSpecificationLoader implements SpecificationLoaderInterface
 {
+    public const ALLOWED_CLASSES = [
+        StringList::class,
+        EndpointCollection::class,
+        Endpoint::class,
+        EndpointParameter::class,
+        EndpointParameterCollection::class,
+        NullUrlMatcher::class,
+        RegularExpressionUrlMatcher::class,
+        MockResponseCollection::class,
+        MockResponse::class,
+        SchemaCollection::class,
+        Schema::class,
+        TypeCollection::class,
+        BooleanType::class,
+        IntegerType::class,
+        NumberType::class,
+        StringType::class,
+        ArrayType::class,
+        ObjectType::class,
+        FreeFormObjectType::class,
+        HashMapType::class,
+        OneOfType::class,
+        AnyOfType::class,
+        AllOfType::class,
+        InvalidType::class,
+        EndpointParameterLocationEnum::class,
+    ];
+
     /** @var SpecificationLoaderInterface */
     private $specificationLoader;
 
@@ -64,7 +97,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         $this->logger = $logger;
     }
 
-    public function loadMockParameters(string $url): MockParametersCollection
+    public function loadMockEndpoints(string $url): EndpointCollection
     {
         $cacheKey = $this->cacheKeyGenerator->generateKey($url);
 
@@ -73,7 +106,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
 
             $this->logger->info(sprintf('OpenAPI specification "%s" loaded from cache "%s".', $url, $cacheKey));
         } else {
-            $specification = $this->specificationLoader->loadMockParameters($url);
+            $specification = $this->specificationLoader->loadMockEndpoints($url);
             $this->cache->set($cacheKey, serialize($specification));
 
             $this->logger->info(sprintf('OpenAPI specification "%s" saved to cache "%s".', $url, $cacheKey));
@@ -88,35 +121,14 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         $this->cache->delete($cacheKey);
     }
 
-    private function loadFromCache($cacheKey): MockParametersCollection
+    private function loadFromCache($cacheKey): EndpointCollection
     {
         $serializedSpecification = $this->cache->get($cacheKey);
 
         return unserialize(
             $serializedSpecification,
             [
-                'allowed_classes' => [
-                    StringList::class,
-                    MockParametersCollection::class,
-                    MockParameters::class,
-                    MockResponseCollection::class,
-                    MockResponse::class,
-                    SchemaCollection::class,
-                    Schema::class,
-                    TypeCollection::class,
-                    BooleanType::class,
-                    IntegerType::class,
-                    NumberType::class,
-                    StringType::class,
-                    ArrayType::class,
-                    ObjectType::class,
-                    FreeFormObjectType::class,
-                    HashMapType::class,
-                    OneOfType::class,
-                    AnyOfType::class,
-                    AllOfType::class,
-                    InvalidType::class,
-                ],
+                'allowed_classes' => self::ALLOWED_CLASSES,
             ]
         );
     }

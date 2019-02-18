@@ -10,11 +10,11 @@
 
 namespace App\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-interface TypeParserInterface extends ContextualParserInterface
+interface TypeParserInterface extends ParserInterface
 {
 }

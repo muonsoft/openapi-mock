@@ -10,9 +10,9 @@
 
 namespace App\API;
 
-use App\Mock\MockParametersRepository;
+use App\Mock\EndpointRepository;
 use App\Mock\MockResponseGenerator;
-use App\Mock\Parameters\MockParameters;
+use App\Mock\Parameters\Endpoint;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,13 +21,13 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RequestHandler
 {
-    /** @var MockParametersRepository */
+    /** @var EndpointRepository */
     private $repository;
 
     /** @var MockResponseGenerator */
     private $responseGenerator;
 
-    public function __construct(MockParametersRepository $repository, MockResponseGenerator $responseGenerator)
+    public function __construct(EndpointRepository $repository, MockResponseGenerator $responseGenerator)
     {
         $this->repository = $repository;
         $this->responseGenerator = $responseGenerator;
@@ -35,22 +35,22 @@ class RequestHandler
 
     public function handleRequest(Request $request): Response
     {
-        $mockParameters = $this->findMockParametersForRequest($request);
+        $mockEndpoint = $this->findMockEndpointForRequest($request);
 
-        if (null === $mockParameters) {
+        if (null === $mockEndpoint) {
             $response = new Response('API endpoint not found.', Response::HTTP_NOT_FOUND);
         } else {
-            $response = $this->responseGenerator->generateResponse($request, $mockParameters);
+            $response = $this->responseGenerator->generateResponse($request, $mockEndpoint);
         }
 
         return $response;
     }
 
-    private function findMockParametersForRequest(Request $request): ?MockParameters
+    private function findMockEndpointForRequest(Request $request): ?Endpoint
     {
         $httpMethod = $request->getMethod();
         $requestUri = $request->getPathInfo();
 
-        return $this->repository->findMockParameters($httpMethod, $requestUri);
+        return $this->repository->findMockEndpoint($httpMethod, $requestUri);
     }
 }

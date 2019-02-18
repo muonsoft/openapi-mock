@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace App\OpenAPI\Parsing\Error;
+namespace App\OpenAPI\ErrorHandling;
 
 use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -16,7 +16,7 @@ use App\OpenAPI\Parsing\SpecificationPointer;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ExceptionalErrorHandler implements ParsingErrorHandlerInterface
+class ExceptionalErrorHandler implements ErrorHandlerInterface
 {
     public function reportError(string $message, SpecificationPointer $pointer): string
     {

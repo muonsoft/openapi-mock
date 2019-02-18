@@ -10,7 +10,7 @@
 
 namespace App\OpenAPI\Parsing\Type;
 
-use App\OpenAPI\Parsing\ContextualParserInterface;
+use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -19,7 +19,7 @@ use Psr\Log\LoggerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class DelegatingSchemaParser implements ContextualParserInterface
+class DelegatingSchemaParser implements ParserInterface
 {
     private const DEFAULT_TYPE = 'object';
     private const COMBINED_TYPES = [

@@ -1,13 +1,22 @@
 openapi: "3.0.0"
 paths:
-  /entity:
+  /entity/{id}:
     get:
       summary: 'Get entity'
+      parameters:
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           $ref: '#/components/responses/getEntity'
 
 components:
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
   responses:
     getEntity:
       description: 'Returns entity in JSON'
