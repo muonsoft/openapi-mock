@@ -10,6 +10,7 @@
 
 namespace App\Tests\Unit\Mock;
 
+use App\Enum\HttpMethodEnum;
 use App\Mock\EndpointRepository;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
@@ -23,7 +24,7 @@ class EndpointRepositoryTest extends TestCase
 
     private const PATH = 'path';
     private const PATH_WITH_TRAILING_SLASH = 'path/';
-    private const HTTP_METHOD = 'http_method';
+    private const HTTP_METHOD = 'GET';
     private const SPECIFICATION_URL = 'specification_url';
 
     /** @var UrlMatcherInterface */
@@ -48,7 +49,7 @@ class EndpointRepositoryTest extends TestCase
         $this->assertNotNull($parameters);
         $this->assertSpecificationLoader_loadMockEndpoints_wasCalledOnceWithUrl(self::SPECIFICATION_URL);
         $this->assertSame(self::PATH, $parameters->path);
-        $this->assertSame(self::HTTP_METHOD, $parameters->httpMethod);
+        $this->assertSame(strtolower(self::HTTP_METHOD), $parameters->httpMethod->getValue());
         $this->assertUrlMatcher_urlIsMatching_wasCalledOnceWithUrl(self::PATH);
     }
 
@@ -103,7 +104,7 @@ class EndpointRepositoryTest extends TestCase
     {
         $parameters = new Endpoint();
         $parameters->path = self::PATH;
-        $parameters->httpMethod = self::HTTP_METHOD;
+        $parameters->httpMethod = new HttpMethodEnum(strtolower(self::HTTP_METHOD));
         $parameters->urlMatcher = $this->urlMatcher;
 
         return new EndpointCollection([$parameters]);

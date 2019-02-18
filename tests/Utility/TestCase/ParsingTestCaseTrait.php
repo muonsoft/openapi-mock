@@ -12,7 +12,6 @@ namespace App\Tests\Utility\TestCase;
 
 use App\Mock\Parameters\Endpoint;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
-use App\OpenAPI\Parsing\ContextMarkerInterface;
 use App\OpenAPI\Parsing\ContextualParserInterface;
 use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\ReferenceResolvingParser;
@@ -113,11 +112,11 @@ trait ParsingTestCaseTrait
     protected function assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
         SpecificationAccessor $specification,
         array $path,
-        ContextMarkerInterface $context
+        &$context
     ): void {
         /* @var SpecificationPointer $pointer */
         \Phake::verify($this->contextualParser)
-            ->parsePointedSchema($specification, \Phake::capture($pointer), $context);
+            ->parsePointedSchema($specification, \Phake::capture($pointer), \Phake::capture($context));
         Assert::assertSame($path, $pointer->getPathElements());
     }
 

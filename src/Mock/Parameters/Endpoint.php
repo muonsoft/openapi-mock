@@ -10,6 +10,7 @@
 
 namespace App\Mock\Parameters;
 
+use App\Enum\HttpMethodEnum;
 use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\Routing\UrlMatcherInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -19,7 +20,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class Endpoint implements SpecificationObjectMarkerInterface
 {
-    /** @var string */
+    /** @var HttpMethodEnum */
     public $httpMethod;
 
     /** @var string */

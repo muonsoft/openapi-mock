@@ -39,7 +39,7 @@ class EndpointRepository
 
         /** @var Endpoint $endpoint */
         foreach ($endpoints as $endpoint) {
-            if ($httpMethod === $endpoint->httpMethod && $endpoint->urlMatcher->urlIsMatching($uri)) {
+            if ($this->endpointMatchesToMethodAndUri($endpoint, $httpMethod, $uri)) {
                 $foundEndpoint = $endpoint;
 
                 break;
@@ -47,5 +47,11 @@ class EndpointRepository
         }
 
         return $foundEndpoint;
+    }
+
+    private function endpointMatchesToMethodAndUri(Endpoint $endpoint, string $httpMethod, string $uri): bool
+    {
+        return strtolower($httpMethod) === $endpoint->httpMethod->getValue()
+            && $endpoint->urlMatcher->urlIsMatching($uri);
     }
 }

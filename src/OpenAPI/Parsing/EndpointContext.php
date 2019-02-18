@@ -10,6 +10,7 @@
 
 namespace App\OpenAPI\Parsing;
 
+use App\Enum\HttpMethodEnum;
 use App\Mock\Parameters\EndpointParameterCollection;
 
 /**
@@ -20,7 +21,7 @@ class EndpointContext implements ContextMarkerInterface
     /** @var string */
     public $path;
 
-    /** @var string */
+    /** @var HttpMethodEnum */
     public $httpMethod;
 
     /** @var EndpointParameterCollection */
