@@ -39,14 +39,13 @@ class TypeParserLocatorTest extends TestCase
         $this->assertSame($containerParser, $parser);
     }
 
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Unrecognized schema type
-     */
+    /** @test */
     public function getTypeParser_notExistingType_exceptionThrown(): void
     {
         $locator = $this->createTypeParserLocator();
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Unrecognized schema type');
 
         $locator->getTypeParser('invalid');
     }

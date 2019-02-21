@@ -77,14 +77,13 @@ class TextProviderTest extends TestCase
         $this->assertSame(self::LEXIFY_VALUE, $value);
     }
 
-    /**
-     * @test
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Max length cannot be less than min length
-     */
+    /** @test */
     public function rangedText_invalidLengths_exceptionThrown(): void
     {
         $provider = new TextProvider($this->faker);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Max length cannot be less than min length');
 
         $provider->rangedText(5, 0);
     }

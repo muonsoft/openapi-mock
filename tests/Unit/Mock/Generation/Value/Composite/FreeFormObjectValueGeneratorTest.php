@@ -44,7 +44,8 @@ class FreeFormObjectValueGeneratorTest extends TestCase
 
         $this->assertGreaterThanOrEqual(self::DEFAULT_MIN_PROPERTIES, \count($value));
         $this->assertLessThanOrEqual(self::DEFAULT_MAX_PROPERTIES, \count($value));
-        $this->assertArraySubset(['key' => 'value'], $value);
+        $this->assertArrayHasKey('key', $value);
+        $this->assertSame('value', $value['key']);
         $this->assertFaker_method_wasCalledAtLeastOnce('unique');
         $this->assertFaker_method_wasCalledAtLeastOnce('word');
         $this->assertFakerMock_method_wasCalledAtLeastOnce($faker, 'word');

@@ -58,7 +58,8 @@ class AnyOfValueGeneratorTest extends TestCase
 
         $value = $generator->generateValue($anyOf);
 
-        $this->assertArraySubset(self::COMMON_PROPERTY_PAIR, $value);
+        $this->assertArrayHasKey('commonProperty', $value);
+        $this->assertSame('commonPropertyValue', $value['commonProperty']);
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledAtMostOnceWithType($type1);
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledAtMostOnceWithType($type2);
         $this->assertExpectedValueGenerator_generateValue_wasCalledAtMostOnceWithType($internalGenerator1, $type1);
