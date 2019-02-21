@@ -11,7 +11,7 @@ behat.yml
 
 ###> phpunit/phpunit ###
 /phpunit.xml
-/.phpunit.*
+.phpunit.result.cache
 ###< phpunit/phpunit ###
 
 ###> friendsofphp/php-cs-fixer ###
