@@ -112,6 +112,7 @@ class ReferenceResolvingParser
     private function createReferencePointer(string $reference): SpecificationPointer
     {
         $reference = ltrim($reference, '#/');
+        $reference = urldecode($reference);
         $referenceElements = explode('/', $reference);
 
         foreach ($referenceElements as $key => $element) {

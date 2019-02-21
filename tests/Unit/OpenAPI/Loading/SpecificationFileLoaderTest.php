@@ -69,14 +69,13 @@ class SpecificationFileLoaderTest extends TestCase
         ];
     }
 
-    /**
-     * @test
-     * @expectedException \DomainException
-     * @expectedExceptionMessage Unsupported OpenAPI specification format
-     */
+    /** @test */
     public function loadMockEndpoints_unsupportedFileFormat_exceptionThrown(): void
     {
         $loader = $this->createSpecificationLoader();
+
+        $this->expectException(\DomainException::class);
+        $this->expectExceptionMessage('Unsupported OpenAPI specification format');
 
         $loader->loadMockEndpoints('unsupported_url');
     }

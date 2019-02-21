@@ -56,7 +56,8 @@ class HashMapValueGeneratorTest extends TestCase
         $this->assertLessThanOrEqual(self::DEFAULT_MAX_PROPERTIES, \count($hashMap));
         $this->assertFaker_method_wasCalledAtLeastOnce('unique');
         $this->assertFakerMock_method_wasCalledAtLeastOnce($faker, 'word');
-        $this->assertArraySubset(['key' => $hashMapValue], $hashMap);
+        $this->assertArrayHasKey('key', $hashMap);
+        $this->assertSame($hashMapValue, $hashMap['key']);
     }
 
     /** @test */
@@ -97,7 +98,8 @@ class HashMapValueGeneratorTest extends TestCase
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($defaultValueType);
         $this->assertCount(self::PROPERTIES_COUNT, $hashMap);
-        $this->assertArraySubset(['default' => $value], $hashMap);
+        $this->assertArrayHasKey('default', $hashMap);
+        $this->assertSame($value, $hashMap['default']);
     }
 
     /** @test */

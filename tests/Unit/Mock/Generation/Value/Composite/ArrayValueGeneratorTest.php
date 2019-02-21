@@ -103,11 +103,7 @@ class ArrayValueGeneratorTest extends TestCase
         $this->assertContains(2, $array);
     }
 
-    /**
-     * @test
-     * @expectedException \RuntimeException
-     * @expectedExceptionMessage Cannot generate array with unique values, attempts limit exceeded
-     */
+    /** @test */
     public function generateValue_arrayTypeWithUniqueItems_exceptionThrownOnRetryLimit(): void
     {
         $generator = $this->createArrayValueGenerator();
@@ -118,6 +114,9 @@ class ArrayValueGeneratorTest extends TestCase
         $type->uniqueItems = true;
         $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator($randomRangeValueGenerator);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Cannot generate array with unique values, attempts limit exceeded');
 
         $generator->generateValue($type);
     }

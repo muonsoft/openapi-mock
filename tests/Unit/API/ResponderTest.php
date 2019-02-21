@@ -11,6 +11,7 @@
 namespace App\Tests\Unit\API;
 
 use App\API\Responder;
+use App\Mock\Exception\NotSupportedException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpFoundation\Response;
@@ -50,14 +51,13 @@ class ResponderTest extends TestCase
         $this->assertSame(self::ENCODED_DATA, $response->getContent());
     }
 
-    /**
-     * @test
-     * @expectedException \App\Mock\Exception\NotSupportedException
-     * @expectedExceptionMessage Not supported media type
-     */
+    /** @test */
     public function createResponse_statusCodeAndNotSupportedMediaTypeAndData_exceptionThrown(): void
     {
         $responder = $this->creteResponder();
+
+        $this->expectException(NotSupportedException::class);
+        $this->expectExceptionMessage('Not supported media type');
 
         $responder->createResponse(Response::HTTP_OK, 'text/html', self::DATA);
     }

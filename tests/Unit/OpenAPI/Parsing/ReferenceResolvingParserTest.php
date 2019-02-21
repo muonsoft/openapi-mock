@@ -75,6 +75,7 @@ class ReferenceResolvingParserTest extends TestCase
             [self::REFERENCE, ['reference']],
             ['#/one/two/three', ['one', 'two', 'three']],
             ['#/paths/~1blogs~1{blog_id}~1new~0posts', ['paths', '/blogs/{blog_id}/new~posts']],
+            ['#/paths/~1blogs~1%7Bblog_id%7D~1new~0posts', ['paths', '/blogs/{blog_id}/new~posts']],
         ];
     }
 
