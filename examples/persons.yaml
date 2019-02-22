@@ -1,0 +1,74 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Personstore
+  license:
+    name: MIT
+servers:
+  - url: https://github.com/swagger-mock/swagger-mock/blob/master/examples/petstore.yaml
+paths:
+  /persons:
+    get:
+      summary: List all persons
+      operationId: listPersons
+      tags:
+        - persons
+      responses:
+        200:
+          description: An paged array of persons
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persons"
+  /persons/{personId}:
+    get:
+      summary: Info for a specific person
+      operationId: showPersonById
+      tags:
+        - persons
+      parameters:
+        - name: personId
+          in: path
+          required: true
+          description: The id of the person to retrieve
+          schema:
+            type: string
+      responses:
+        200:
+          description: Expected response to a valid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Persons"
+components:
+  schemas:
+    Person:
+      required:
+        - id
+        - email
+        - name
+        - birthDate
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+          maxLength: 20
+        birthDate:
+          type: string
+          format: date
+        tags:
+          type: array
+          minItems: 0
+          maxItems: 3
+          items:
+            type: string
+            maxLength: 10
+    Persons:
+      type: array
+      items:
+        $ref: "#/components/schemas/Person"
