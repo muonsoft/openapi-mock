@@ -62,8 +62,8 @@ class SpecificationLoaderFactoryTest extends TestCase
         return [
             ['disabled', SpecificationFileLoader::class],
             ['DISABLED', SpecificationFileLoader::class],
-            ['md5', CachedSpecificationLoader::class],
-            ['md5_and_timestamp', CachedSpecificationLoader::class],
+            ['url_md5', CachedSpecificationLoader::class],
+            ['url_and_timestamp_md5', CachedSpecificationLoader::class],
         ];
     }
 

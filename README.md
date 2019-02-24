@@ -71,29 +71,50 @@ docker-compose up -d
 
 Mock server options can be set via environment variables.
 
-| Environment variable | Description | Default value | Possible values |
-| --- | --- | --- | --- |
-| SWAGGER_MOCK_SPECIFICATION_URL | Path to file with OpenAPI v3 specification|  | Any valid URL or path to file |
-| SWAGGER_MOCK_LOG_LEVEL | Error log level | warning | error, warning, info, debug |
-| SWAGGER_MOCK_CACHE_DIRECTORY | Directory for OpenAPI specification cache | /dev/shm/openapi-cache | Any valid path |
-| SWAGGER_MOCK_CACHE_TTL | Time to live for OpenAPI specification cache in seconds | 0 | Positive integer |
-| SWAGGER_MOCK_CACHE_STRATEGY | Caching strategy for OpenAPI specification cache | disabled | disabled, md5, md5_and_timestamp |
+#### SWAGGER_MOCK_SPECIFICATION_URL
+
+* Path to file with OpenAPI v3 specification (_required_)
+* _Possible values_: any valid URL or path to file
+
+#### SWAGGER_MOCK_LOG_LEVEL
+
+* Error log level
+* _Default value_: `warning`
+* _Possible values_: `error`, `warning`, `info`, `debug`
+
+#### SWAGGER_MOCK_CACHE_DIRECTORY
+
+* Directory for OpenAPI specification cache
+* _Default value_: `/dev/shm/openapi-cache`
+* _Possible values_: any valid path
+
+#### SWAGGER_MOCK_CACHE_TTL
+
+* Time to live for OpenAPI specification cache in seconds
+* _Default value_: 0
+* _Possible values_: positive integer
+
+#### SWAGGER_MOCK_CACHE_STRATEGY
+
+* Caching strategy for OpenAPI specification cache
+* _Default value_: `disabled`
+* _Possible values_: `disabled`, `url_md5`, `url_and_timestamp_md5`
 
 ### Specification cache
 
 To speed up server response time you can use caching mechanism for OpenAPI. There are several caching strategies. Specific strategy can be set by environment variable `SWAGGER_MOCK_CACHE_STRATEGY`.
 
-* `md5` calculates hash from specification URL and if specification URL was not changed uses parsed objects from cache.
-* `md5_and_timestamp` calculates hash from specification URL and timestamp (file timestamp or value of `Last-Modified` header). If you are using file from remote server make sure that valid `Last-Modified` header is present. 
+* `url_md5` calculates hash from specification URL and if specification URL was not changed uses parsed objects from cache.
+* `url_and_timestamp_md5` calculates hash from specification URL and timestamp (file timestamp or value of `Last-Modified` header). If you are using file from remote server make sure that valid `Last-Modified` header is present. 
 
 Recommended options for use with remote file (accessible by URL).
 
-* `SWAGGER_MOCK_CACHE_STRATEGY='md5'`
+* `SWAGGER_MOCK_CACHE_STRATEGY='url_md5'`
 * `SWAGGER_MOCK_CACHE_TTL=3600`
 
 Recommended options for use with local file (at local server).
 
-* `SWAGGER_MOCK_CACHE_STRATEGY='md5_and_timestamp'`
+* `SWAGGER_MOCK_CACHE_STRATEGY='url_and_timestamp_md5'`
 * `SWAGGER_MOCK_CACHE_TTL=3600`
 
 ## License

@@ -10,6 +10,6 @@ services:
     environment:
       APP_ENV: prod
       SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
-      SWAGGER_MOCK_CACHE_STRATEGY: 'md5'
+      SWAGGER_MOCK_CACHE_STRATEGY: 'url_md5'
     ports:
       - "8080:8080"

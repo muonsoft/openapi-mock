@@ -29,8 +29,8 @@ class SpecificationLoaderFactory
     private const KEY_PREFIX = 'specification_';
     private const CACHE_STRATEGIES = [
         'disabled',
-        'md5',
-        'md5_and_timestamp',
+        'url_md5',
+        'url_and_timestamp_md5',
     ];
 
     /** @var UriLoader */
@@ -94,7 +94,7 @@ class SpecificationLoaderFactory
 
     private function createCacheKeyGenerator(string $cacheStrategy): CacheKeyGeneratorInterface
     {
-        if ('md5' === $cacheStrategy) {
+        if ('url_md5' === $cacheStrategy) {
             $generator = new MD5KeyGenerator(self::KEY_PREFIX);
         } else {
             $generator = new MD5AndTimestampKeyGenerator($this->uriLoader, self::KEY_PREFIX);
