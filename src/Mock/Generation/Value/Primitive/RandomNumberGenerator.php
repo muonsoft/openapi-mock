@@ -32,8 +32,8 @@ class RandomNumberGenerator implements ValueGeneratorInterface
 
     private function generateFloatValue(NumberType $type): float
     {
-        $minimum = $type->minimum ?? 0;
-        $maximum = $type->maximum ?? mt_getrandmax();
+        $minimum = (float) ($type->minimum ?? -mt_getrandmax() / 2);
+        $maximum = (float) ($type->maximum ?? mt_getrandmax() / 2);
         $range = $maximum - $minimum;
 
         $uniformValue = $this->uniformRandomValue($type->exclusiveMinimum, $type->exclusiveMaximum);
@@ -47,11 +47,14 @@ class RandomNumberGenerator implements ValueGeneratorInterface
         return $value;
     }
 
-    private function uniformRandomValue(bool $exclusiveMinimum, bool $exclusiveMaximum): float
+    private function uniformRandomValue(bool $exclusiveMinimum = false, bool $exclusiveMaximum = false): float
     {
         $minimum = $exclusiveMinimum ? 1 : 0;
         $maximum = mt_getrandmax() - ($exclusiveMaximum ? 1 : 0);
 
-        return (float) random_int($minimum, $maximum) / mt_getrandmax();
+        $value1 = (float) random_int($minimum, $maximum) / mt_getrandmax();
+        $value2 = (float) random_int($minimum, $maximum) / mt_getrandmax();
+
+        return $value1 * $value2;
     }
 }

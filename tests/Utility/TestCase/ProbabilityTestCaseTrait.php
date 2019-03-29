@@ -29,4 +29,17 @@ trait ProbabilityTestCaseTrait
 
         Assert::assertNull($value);
     }
+
+    protected function expectClosureOccasionallyReturnsValueGreaterThan(\Closure $test, $expectedValue): void
+    {
+        for ($i = 0; $i < 100; $i++) {
+            $value = $test();
+
+            if ($value > $expectedValue) {
+                break;
+            }
+        }
+
+        Assert::assertGreaterThan($expectedValue, $value);
+    }
 }

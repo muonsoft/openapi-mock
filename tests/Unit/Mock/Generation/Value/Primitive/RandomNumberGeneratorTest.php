@@ -25,6 +25,21 @@ class RandomNumberGeneratorTest extends TestCase
     private const VALUE_DEVIATION = 0.001;
 
     /** @test */
+    public function generateValue_numberType_randomNumberValueReturned(): void
+    {
+        $generator = $this->createRandomNumberGenerator();
+        $type = new NumberType();
+
+        $test = function () use ($generator, $type) {
+            $value = $generator->generateValue($type);
+
+            return abs($value) - floor(abs($value));
+        };
+
+        $this->expectClosureOccasionallyReturnsValueGreaterThan($test, self::VALUE_DEVIATION);
+    }
+
+    /** @test */
     public function generateValue_numberTypeWithLimits_limitedNumberValueReturned(): void
     {
         $generator = $this->createRandomNumberGenerator();
