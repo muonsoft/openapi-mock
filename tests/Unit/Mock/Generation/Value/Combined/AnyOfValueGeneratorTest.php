@@ -33,9 +33,6 @@ class AnyOfValueGeneratorTest extends TestCase
         'property1'      => 'value1',
         'property2'      => 'value2',
     ];
-    private const COMMON_PROPERTY_PAIR = [
-        'commonProperty' => 'commonPropertyValue',
-    ];
 
     protected function setUp(): void
     {
