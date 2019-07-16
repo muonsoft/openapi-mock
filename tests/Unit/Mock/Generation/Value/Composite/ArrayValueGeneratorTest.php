@@ -104,22 +104,22 @@ class ArrayValueGeneratorTest extends TestCase
     }
 
 	/** @test */
-	public function generateValue_arrayTypeWithUniqueItems_retryLimitExceededButMinItemsSatisfied(): void
-	{
-		$generator = $this->createArrayValueGenerator();
-		$type = new ArrayType();
-		$type->items = new DummyType();
-		$type->minItems = 1;
-		$type->maxItems = 3;
-		$type->uniqueItems = true;
-		$randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
-		$this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator($randomRangeValueGenerator);
+    public function generateValue_arrayTypeWithUniqueItems_retryLimitExceededButMinItemsSatisfied(): void
+    {
+        $generator = $this->createArrayValueGenerator();
+        $type = new ArrayType();
+        $type->items = new DummyType();
+        $type->minItems = 1;
+        $type->maxItems = 3;
+        $type->uniqueItems = true;
+        $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
+        $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator($randomRangeValueGenerator);
 
-		$array = $generator->generateValue($type);
+        $array = $generator->generateValue($type);
 
-		$this->assertGreaterThanOrEqual(1, count($array));
-		$this->assertLessThanOrEqual(3, count($array));
-	}
+        $this->assertGreaterThanOrEqual(1, count($array));
+        $this->assertLessThanOrEqual(3, count($array));
+    }
 
     /** @test */
     public function generateValue_arrayTypeWithUniqueItems_exceptionThrownOnRetryLimitAndNotSatisfyingMinItems(): void
