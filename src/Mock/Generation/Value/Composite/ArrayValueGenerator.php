@@ -53,19 +53,14 @@ class ArrayValueGenerator implements ValueGeneratorInterface
 
         for ($i = 1; $i <= $count; $i++) {
             try {
-                $values[] = $this->generateArrayValue($valueGenerator, $type, $uniqueValues);
-            } 
-            catch (\RuntimeException $e) 
-            {
-                // Only throw attempts limit exception, of not enough values were generated
-                if ($i < ($type->minItems > 0 ? $type->minItems : self::DEFAULT_MIN_ITEMS))
-                {
-                    throw $e;
-                }
-                else
-                {
-                    break;
-                }
+				$values[] = $this->generateArrayValue($valueGenerator, $type, $uniqueValues);
+			} catch (\RuntimeException $e) {
+				// Only throw attempts limit exception, of not enough values were generated
+				if (count($values) < ($type->minItems > 0 ? $type->minItems : self::DEFAULT_MIN_ITEMS)) {
+					throw $e;
+				} else {
+					break;
+				}
             }
         }
 
