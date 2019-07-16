@@ -103,7 +103,7 @@ class ArrayValueGeneratorTest extends TestCase
         $this->assertContains(2, $array);
     }
 
-	/** @test */
+    /** @test */
     public function generateValue_arrayTypeWithUniqueItems_retryLimitExceededButMinItemsSatisfied(): void
     {
         $generator = $this->createArrayValueGenerator();
