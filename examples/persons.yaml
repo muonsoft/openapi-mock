@@ -5,7 +5,7 @@ info:
   license:
     name: MIT
 servers:
-  - url: https://github.com/swagger-mock/swagger-mock/blob/master/examples/petstore.yaml
+  - url: https://github.com/gschafra/swagger-mock/blob/master/examples/petstore.yaml
 paths:
   /persons:
     get:

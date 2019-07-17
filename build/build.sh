@@ -1,6 +1,6 @@
 #!/bin/bash
 
-image_name="swaggermock/swagger-mock"
+image_name="gschafra/swagger-mock"
 
 if [ "$TRAVIS_TAG" != "" ]; then
     version="${TRAVIS_TAG:1}"

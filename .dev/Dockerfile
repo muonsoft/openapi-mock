@@ -1,4 +1,4 @@
-FROM swaggermock/swagger-mock
+FROM gschafra/swagger-mock
 
 ENV APP_ENV=dev \
     COMPOSER_HOME=/var/run/composer \

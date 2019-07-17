@@ -1,8 +1,10 @@
 # Swagger Mock Server
 
-[![Build Status](https://travis-ci.org/swagger-mock/swagger-mock.svg?branch=master)](https://travis-ci.org/swagger-mock/swagger-mock)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
+**This is a fork of [swagger-mock/swagger-mock](https://github.com/swagger-mock/swagger-mock) with personal modifications. Use with care!**
+
+[![Build Status](https://travis-ci.org/gschafra/swagger-mock.svg?branch=master)](https://travis-ci.org/gschafra/swagger-mock)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/gschafra/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/gschafra/swagger-mock/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/gschafra/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/gschafra/swagger-mock/?branch=master)
 [![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)](https://github.styleci.io/repos/145602302)
 
 Swagger API mock server with fake data generation with main features.
@@ -35,13 +37,13 @@ Swagger API mock server with fake data generation with main features.
 Recommended way is to use [Docker](https://www.docker.com/) container.
 
 ```bash
-docker pull swaggermock/swagger-mock
+docker pull gschafra/swagger-mock
 
 # with remote file
-docker run -p 8080:8080 -e "SWAGGER_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml" --rm swaggermock/swagger-mock
+docker run -p 8080:8080 -e "SWAGGER_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml" --rm gschafra/swagger-mock
 
 # with local file
-docker run -p 8080:8080 -v $PWD/examples/petstore.yaml:/openapi/petstore.yaml -e "SWAGGER_MOCK_SPECIFICATION_URL=/openapi/petstore.yaml" --rm swaggermock/swagger-mock
+docker run -p 8080:8080 -v $PWD/examples/petstore.yaml:/openapi/petstore.yaml -e "SWAGGER_MOCK_SPECIFICATION_URL=/openapi/petstore.yaml" --rm gschafra/swagger-mock
 ```
 
 Also, you can use [Docker Compose](https://docs.docker.com/compose/). Example of `docker-compose.yml`
@@ -52,7 +54,7 @@ version: '3.0'
 services:
   swagger_mock:
     container_name: swagger_mock
-    image: swaggermock/swagger-mock
+    image: gschafra/swagger-mock
     environment:
       SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
     ports:
