@@ -67,11 +67,15 @@ components:
           format: date
         tags:
           type: array
-          minItems: 0
+          minItems: 1
           maxItems: 3
+          uniqueItems: true
           items:
             type: string
-            maxLength: 10
+            enum:
+              - manager
+              - admin
+              - programmer
     Persons:
       type: array
       items:
