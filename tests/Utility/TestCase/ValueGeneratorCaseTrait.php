@@ -10,8 +10,11 @@
 
 namespace App\Tests\Utility\TestCase;
 
+use App\Mock\Generation\Value\Composite\ArrayGenerator\ArrayLength;
+use App\Mock\Generation\Value\Composite\ArrayGenerator\ArrayLengthGenerator;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
+use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
 use PHPUnit\Framework\Assert;
 
@@ -26,10 +29,14 @@ trait ValueGeneratorCaseTrait
     /** @var ValueGeneratorInterface */
     protected $valueGenerator;
 
+    /** @var ArrayLengthGenerator */
+    protected $arrayLengthGenerator;
+
     protected function setUpValueGenerator(): void
     {
         $this->valueGeneratorLocator = \Phake::mock(ValueGeneratorLocator::class);
         $this->valueGenerator = \Phake::mock(ValueGeneratorInterface::class);
+        $this->arrayLengthGenerator = \Phake::mock(ArrayLengthGenerator::class);
     }
 
     protected function assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType(TypeInterface $type): void
@@ -128,5 +135,22 @@ trait ValueGeneratorCaseTrait
             ->thenReturn($generator);
 
         return $generator;
+    }
+
+    protected function givenArrayLengthGeneratorGeneratesLength(int $length, int $minLength = 0): void
+    {
+        $arrayLength = new ArrayLength();
+        $arrayLength->value = $length;
+        $arrayLength->minValue = $minLength;
+
+        \Phake::when($this->arrayLengthGenerator)
+            ->generateArrayLength(\Phake::anyParameters())
+            ->thenReturn($arrayLength);
+    }
+
+    protected function assertArrayLengthGenerated(ArrayType $type): void
+    {
+        \Phake::verify($this->arrayLengthGenerator)
+            ->generateArrayLength($type);
     }
 }
