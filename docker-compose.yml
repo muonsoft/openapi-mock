@@ -6,9 +6,8 @@ volumes:
 services:
   swagger_mock:
     container_name: swagger_mock
-    build: .
+    image: swaggermock/swagger-mock
     environment:
-      APP_ENV: prod
       SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
       SWAGGER_MOCK_CACHE_STRATEGY: 'url_md5'
     ports:
