@@ -47,6 +47,7 @@ components:
         - id
         - email
         - name
+        - salary
         - birthDate
       properties:
         id:
@@ -58,6 +59,9 @@ components:
         name:
           type: string
           maxLength: 20
+        salary:
+          type: number
+          format: float
         birthDate:
           type: string
           format: date
