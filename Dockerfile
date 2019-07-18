@@ -20,10 +20,10 @@ RUN set -xe \
         --classmap-authoritative
 
 # Main image
-FROM php:7.2-alpine
+FROM php:7.3-alpine
 LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
-ARG ROADRUNNER_VERSION=1.3.5
+ARG ROADRUNNER_VERSION=1.4.6
 
 ENV APP_ENV=prod \
     SWAGGER_MOCK_SPECIFICATION_URL='' \

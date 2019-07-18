@@ -11,7 +11,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "7.2.*",
+        "php": "7.3.*",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -19,6 +19,7 @@
         "fzaninotto/faker": "1.*",
         "guzzlehttp/guzzle": "6.*",
         "myclabs/php-enum": "^1.6",
+        "psr/simple-cache": "^1.0",
         "spiral/roadrunner": "1.*",
         "symfony/cache": "4.*",
         "symfony/console": "4.*",
@@ -82,7 +83,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.2.*"
+            "require": "4.3.*"
         }
     }
 }
