@@ -9,6 +9,8 @@ build:
           - php-scrutinizer-run
     tests:
       environment:
+        php:
+          version: 7.3
         variables:
           APP_ENV: 'test'
       tests:
