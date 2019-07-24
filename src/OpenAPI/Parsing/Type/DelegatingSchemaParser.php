@@ -62,7 +62,7 @@ class DelegatingSchemaParser implements ParserInterface
     {
         $type = $this->detectCombinedType($schema);
 
-        if ($type === null && array_key_exists('type', $schema)) {
+        if (null === $type && array_key_exists('type', $schema)) {
             $type = $schema['type'];
         }
 
