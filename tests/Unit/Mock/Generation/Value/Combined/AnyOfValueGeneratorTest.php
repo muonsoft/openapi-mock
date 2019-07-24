@@ -50,13 +50,13 @@ class AnyOfValueGeneratorTest extends TestCase
         $anyOf->types->add($type2);
         $internalGenerator1 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type1);
         $internalGenerator2 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type2);
-        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator1, self::GENERATED_VALUE_1);
-        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, self::GENERATED_VALUE_2);
+        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator1, (object) self::GENERATED_VALUE_1);
+        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, (object) self::GENERATED_VALUE_2);
 
         $value = $generator->generateValue($anyOf);
 
-        $this->assertArrayHasKey('commonProperty', $value);
-        $this->assertSame('commonPropertyValue', $value['commonProperty']);
+        $this->assertObjectHasAttribute('commonProperty', $value);
+        $this->assertSame('commonPropertyValue', $value->commonProperty);
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledAtMostOnceWithType($type1);
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledAtMostOnceWithType($type2);
         $this->assertExpectedValueGenerator_generateValue_wasCalledAtMostOnceWithType($internalGenerator1, $type1);
@@ -67,7 +67,7 @@ class AnyOfValueGeneratorTest extends TestCase
      * @test
      * @dataProvider possibleExpectedValuesProvider
      */
-    public function generateValue_anyOfWithTwoTypes_anyOfValuesRandomlyGeneratedAndMergedAndReturned(array $expectedValue): void
+    public function generateValue_anyOfWithTwoTypes_anyOfValuesRandomlyGeneratedAndMergedAndReturned(object $expectedValue): void
     {
         $generator = new AnyOfValueGenerator($this->valueGeneratorLocator);
         $anyOf = new AnyOfType();
@@ -77,13 +77,14 @@ class AnyOfValueGeneratorTest extends TestCase
         $anyOf->types->add($type2);
         $internalGenerator1 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type1);
         $internalGenerator2 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type2);
-        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator1, self::GENERATED_VALUE_1);
-        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, self::GENERATED_VALUE_2);
+        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator1, (object) self::GENERATED_VALUE_1);
+        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, (object) self::GENERATED_VALUE_2);
 
         $actualValueEqualsExpectedValue = false;
         for ($i = 0; $i < 100; $i++) {
             $value = $generator->generateValue($anyOf);
-            $actualValueEqualsExpectedValue = $value === $expectedValue;
+
+            $actualValueEqualsExpectedValue = $this->objectsAreEqual($expectedValue, $value);
 
             if ($actualValueEqualsExpectedValue) {
                 break;
@@ -107,9 +108,21 @@ class AnyOfValueGeneratorTest extends TestCase
     public function possibleExpectedValuesProvider(): array
     {
         return [
-            [self::GENERATED_VALUE_1],
-            [self::GENERATED_VALUE_2],
-            [self::MERGED_GENERATED_VALUE],
+            [(object) self::GENERATED_VALUE_1],
+            [(object) self::GENERATED_VALUE_2],
+            [(object) self::MERGED_GENERATED_VALUE],
         ];
+    }
+
+    private function objectsAreEqual(object $expectedValue, object $actualValue): bool
+    {
+        $properties = get_object_vars($expectedValue);
+        $isEqual = true;
+
+        foreach ($properties as $name => $propertyValue) {
+            $isEqual = $isEqual && property_exists($actualValue, $name) && ($actualValue->{$name} === $propertyValue);
+        }
+
+        return $isEqual;
     }
 }

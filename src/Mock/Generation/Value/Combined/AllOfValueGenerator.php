@@ -35,7 +35,7 @@ class AllOfValueGenerator implements ValueGeneratorInterface
         if (0 === \count($values)) {
             $value = new \stdClass();
         } else {
-            $value = \array_merge(...$values);
+            $value = (object) \array_merge(...$values);
         }
 
         return $value;
@@ -47,7 +47,7 @@ class AllOfValueGenerator implements ValueGeneratorInterface
 
         foreach ($type->types as $internalType) {
             $generator = $this->generatorLocator->getValueGenerator($internalType);
-            $values[] = $generator->generateValue($internalType);
+            $values[] = (array) $generator->generateValue($internalType);
         }
 
         return $values;

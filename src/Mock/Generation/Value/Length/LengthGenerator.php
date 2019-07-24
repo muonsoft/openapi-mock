@@ -8,24 +8,22 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Generation\Value\Composite\ArrayGenerator;
-
-use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
+namespace App\Mock\Generation\Value\Length;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ArrayLengthGenerator
+class LengthGenerator
 {
-    private const DEFAULT_MIN_ITEMS = 1;
     private const DEFAULT_MAX_ITEMS = 20;
 
-    public function generateArrayLength(ArrayType $type): ArrayLength
+    public function generateLength(int $min, int $max): Length
     {
-        $minItems = $type->minItems > 0 ? $type->minItems : self::DEFAULT_MIN_ITEMS;
-        $maxItems = $type->maxItems > 0 ? $type->maxItems : self::DEFAULT_MAX_ITEMS;
+        $minItems = max($min, 0);
+        $maxItems = $max > 0 ? $max : self::DEFAULT_MAX_ITEMS;
+        $maxItems = max($minItems, $maxItems);
 
-        $length = new ArrayLength();
+        $length = new Length();
         $length->value = random_int($minItems, $maxItems);
         $length->minValue = $minItems;
 

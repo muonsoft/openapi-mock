@@ -10,6 +10,7 @@
 
 namespace App\Mock\Generation\Value\Composite\ArrayGenerator;
 
+use App\Mock\Generation\Value\Length\LengthGenerator;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
@@ -21,17 +22,17 @@ class ArrayUniqueValueGenerator
 {
     private const MAX_ATTEMPTS = 100;
 
-    /** @var ArrayLengthGenerator */
+    /** @var LengthGenerator */
     private $lengthGenerator;
 
-    public function __construct(ArrayLengthGenerator $lengthGenerator)
+    public function __construct(LengthGenerator $lengthGenerator)
     {
         $this->lengthGenerator = $lengthGenerator;
     }
 
     public function generateArray(ValueGeneratorInterface $generator, ArrayType $type): array
     {
-        $length = $this->lengthGenerator->generateArrayLength($type);
+        $length = $this->lengthGenerator->generateLength($type->minItems, $type->maxItems);
 
         $values = [];
         $uniqueValues = [];

@@ -23,8 +23,6 @@ class ObjectValueGeneratorTest extends TestCase
     use ValueGeneratorCaseTrait;
     use ProbabilityTestCaseTrait;
 
-    private const PROPERTY_NAME = 'name';
-
     protected function setUp(): void
     {
         $this->setUpValueGenerator();
@@ -36,7 +34,7 @@ class ObjectValueGeneratorTest extends TestCase
         $type = new ObjectType();
         $propertyType = new DummyType();
         $type->properties = new TypeCollection([
-            self::PROPERTY_NAME => $propertyType,
+            'name' => $propertyType,
         ]);
         $generator = new ObjectValueGenerator($this->valueGeneratorLocator);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
@@ -46,7 +44,8 @@ class ObjectValueGeneratorTest extends TestCase
 
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($propertyType);
         $this->assertValueGenerator_generateValue_wasCalledOnceWithType($propertyType);
-        $this->assertSame([self::PROPERTY_NAME => $propertyValue], $value);
+        $this->assertObjectHasAttribute('name', $value);
+        $this->assertSame($propertyValue, $value->name);
     }
 
     /** @test */
@@ -56,13 +55,13 @@ class ObjectValueGeneratorTest extends TestCase
         $propertyType = new DummyType();
         $propertyType->setWriteOnly(true);
         $type->properties = new TypeCollection([
-            self::PROPERTY_NAME => $propertyType,
+            'name' => $propertyType,
         ]);
         $generator = new ObjectValueGenerator($this->valueGeneratorLocator);
 
         $value = $generator->generateValue($type);
 
-        $this->assertSame([], $value);
+        $this->assertCount(0, get_object_vars($value));
         \Phake::verifyNoInteraction($this->valueGeneratorLocator);
     }
 

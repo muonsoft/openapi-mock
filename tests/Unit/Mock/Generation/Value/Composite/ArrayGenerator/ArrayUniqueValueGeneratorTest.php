@@ -35,13 +35,15 @@ class ArrayUniqueValueGeneratorTest extends TestCase
     {
         $generator = $this->createArrayUniqueValueGenerator();
         $type = new ArrayType();
+        $type->minItems = 1;
+        $type->maxItems = 3;
         $type->items = new DummyType();
-        $this->givenArrayLengthGeneratorGeneratesLength(3, 3);
+        $this->givenLengthGeneratorGeneratesLength(3, 3);
         $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 2);
 
         $array = $generator->generateArray($randomRangeValueGenerator, $type);
 
-        $this->assertArrayLengthGenerated($type);
+        $this->assertLengthGeneratedInRange(1, 3);
         $this->assertContains(0, $array);
         $this->assertContains(1, $array);
         $this->assertContains(2, $array);
@@ -53,7 +55,7 @@ class ArrayUniqueValueGeneratorTest extends TestCase
         $generator = $this->createArrayUniqueValueGenerator();
         $type = new ArrayType();
         $type->items = new DummyType();
-        $this->givenArrayLengthGeneratorGeneratesLength(3, 3);
+        $this->givenLengthGeneratorGeneratesLength(3, 3);
         $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
 
         $this->expectException(\RuntimeException::class);
@@ -68,7 +70,7 @@ class ArrayUniqueValueGeneratorTest extends TestCase
         $generator = $this->createArrayUniqueValueGenerator();
         $type = new ArrayType();
         $type->items = new DummyType();
-        $this->givenArrayLengthGeneratorGeneratesLength(3, 2);
+        $this->givenLengthGeneratorGeneratesLength(3, 2);
         $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
 
         $array = $generator->generateArray($randomRangeValueGenerator, $type);
@@ -100,6 +102,6 @@ class ArrayUniqueValueGeneratorTest extends TestCase
 
     private function createArrayUniqueValueGenerator(): ArrayUniqueValueGenerator
     {
-        return new ArrayUniqueValueGenerator($this->arrayLengthGenerator);
+        return new ArrayUniqueValueGenerator($this->lengthGenerator);
     }
 }

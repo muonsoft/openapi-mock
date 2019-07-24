@@ -10,6 +10,7 @@
 
 namespace App\Mock\Generation\Value\Composite;
 
+use App\Mock\Generation\Value\Length\LengthGenerator;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
@@ -21,22 +22,23 @@ use Faker\Generator;
  */
 class HashMapValueGenerator implements ValueGeneratorInterface
 {
-    private const DEFAULT_MIN_PROPERTIES = 1;
-    private const DEFAULT_MAX_PROPERTIES = 20;
-
     /** @var Generator */
     private $faker;
+
+    /** @var LengthGenerator */
+    private $lengthGenerator;
 
     /** @var ValueGeneratorLocator */
     private $generatorLocator;
 
-    public function __construct(Generator $faker, ValueGeneratorLocator $generatorLocator)
+    public function __construct(Generator $faker, LengthGenerator $lengthGenerator, ValueGeneratorLocator $generatorLocator)
     {
         $this->faker = $faker;
+        $this->lengthGenerator = $lengthGenerator;
         $this->generatorLocator = $generatorLocator;
     }
 
-    public function generateValue(TypeInterface $type): ?array
+    public function generateValue(TypeInterface $type): ?object
     {
         if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
@@ -47,44 +49,37 @@ class HashMapValueGenerator implements ValueGeneratorInterface
         return $value;
     }
 
-    private function generateHashMap(HashMapType $type): array
+    private function generateHashMap(HashMapType $type): object
     {
         $defaultProperties = $this->generateDefaultProperties($type);
 
         return $this->generateAndAppendRandomProperties($type, $defaultProperties);
     }
 
-    private function generateDefaultProperties(HashMapType $type): array
+    private function generateDefaultProperties(HashMapType $type): object
     {
-        $properties = [];
+        $properties = new \stdClass();
 
         foreach ($type->required as $defaultPropertyName) {
             $defaultPropertyType = $type->properties[$defaultPropertyName];
             $valueGenerator = $this->generatorLocator->getValueGenerator($defaultPropertyType);
-            $properties[$defaultPropertyName] = $valueGenerator->generateValue($defaultPropertyType);
+            $properties->{$defaultPropertyName} = $valueGenerator->generateValue($defaultPropertyType);
         }
 
         return $properties;
     }
 
-    private function generateAndAppendRandomProperties(HashMapType $type, array $properties): array
+    private function generateAndAppendRandomProperties(HashMapType $type, object $properties): object
     {
         $valueGenerator = $this->generatorLocator->getValueGenerator($type->value);
-        $length = $this->generateRandomArrayLength($type);
+        $length = $this->lengthGenerator->generateLength($type->minProperties, $type->maxProperties);
+        $count = \count(get_object_vars($properties));
 
-        for ($i = \count($properties); $i < $length; $i++) {
+        for ($i = $count; $i < $length->value; $i++) {
             $key = $this->faker->unique()->word();
-            $properties[$key] = $valueGenerator->generateValue($type->value);
+            $properties->{$key} = $valueGenerator->generateValue($type->value);
         }
 
         return $properties;
-    }
-
-    private function generateRandomArrayLength(HashMapType $type): int
-    {
-        $minItems = $type->minProperties > 0 ? $type->minProperties : self::DEFAULT_MIN_PROPERTIES;
-        $maxItems = $type->maxProperties > 0 ? $type->maxProperties : self::DEFAULT_MAX_PROPERTIES;
-
-        return random_int($minItems, $maxItems);
     }
 }

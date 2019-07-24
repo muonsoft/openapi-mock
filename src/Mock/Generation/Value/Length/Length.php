@@ -8,12 +8,12 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Generation\Value\Composite\ArrayGenerator;
+namespace App\Mock\Generation\Value\Length;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class ArrayLength
+class Length
 {
     /** @var int */
     public $value;

@@ -14,41 +14,44 @@ use App\Mock\Generation\Value\Composite\FreeFormObjectValueGenerator;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Tests\Utility\TestCase\FakerCaseTrait;
 use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
+use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use Faker\Factory;
+use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
 class FreeFormObjectValueGeneratorTest extends TestCase
 {
     use FakerCaseTrait;
+    use ValueGeneratorCaseTrait;
     use ProbabilityTestCaseTrait;
 
-    private const DEFAULT_MIN_PROPERTIES = 1;
-    private const DEFAULT_MAX_PROPERTIES = 20;
     private const PROPERTIES_COUNT = 5;
 
     protected function setUp(): void
     {
         $this->setUpFaker();
+        $this->setUpValueGenerator();
     }
 
     /** @test */
     public function generateValue_freeFormObjectType_objectWithRandomKeysAndValuesGeneratedAndReturned(): void
     {
         $type = new FreeFormObjectType();
-        $generator = new FreeFormObjectValueGenerator($this->faker);
+        $generator = $this->createFreeFormObjectValueGenerator();
         $this->givenFaker_method_returnsValue('word', 'value');
         $faker = $this->givenFaker_method_returnsNewFaker('unique');
         $this->givenFakerMock_method_returnsValue($faker, 'word', 'key');
+        $this->givenLengthGeneratorGeneratesLength(1);
 
         $value = $generator->generateValue($type);
 
-        $this->assertGreaterThanOrEqual(self::DEFAULT_MIN_PROPERTIES, \count($value));
-        $this->assertLessThanOrEqual(self::DEFAULT_MAX_PROPERTIES, \count($value));
-        $this->assertArrayHasKey('key', $value);
-        $this->assertSame('value', $value['key']);
+        $this->assertCount(1, get_object_vars($value));
+        $this->assertObjectHasAttribute('key', $value);
+        $this->assertSame('value', $value->key);
         $this->assertFaker_method_wasCalledAtLeastOnce('unique');
         $this->assertFaker_method_wasCalledAtLeastOnce('word');
         $this->assertFakerMock_method_wasCalledAtLeastOnce($faker, 'word');
+        $this->assertLengthGeneratedInRange(0, 0);
     }
 
     /** @test */
@@ -57,11 +60,13 @@ class FreeFormObjectValueGeneratorTest extends TestCase
         $type = new FreeFormObjectType();
         $type->minProperties = self::PROPERTIES_COUNT;
         $type->maxProperties = self::PROPERTIES_COUNT;
-        $generator = new FreeFormObjectValueGenerator(Factory::create());
+        $generator = $this->createFreeFormObjectValueGenerator(Factory::create());
+        $this->givenLengthGeneratorGeneratesLength(self::PROPERTIES_COUNT);
 
         $value = $generator->generateValue($type);
 
-        $this->assertCount(self::PROPERTIES_COUNT, $value);
+        $this->assertCount(self::PROPERTIES_COUNT, get_object_vars($value));
+        $this->assertLengthGeneratedInRange(self::PROPERTIES_COUNT, self::PROPERTIES_COUNT);
     }
 
     /** @test */
@@ -69,12 +74,17 @@ class FreeFormObjectValueGeneratorTest extends TestCase
     {
         $type = new FreeFormObjectType();
         $type->setNullable(true);
-        $generator = new FreeFormObjectValueGenerator(Factory::create());
+        $generator = $this->createFreeFormObjectValueGenerator(Factory::create());
 
         $test = function () use ($generator, $type) {
             return $generator->generateValue($type);
         };
 
         $this->expectClosureOccasionallyReturnsNull($test);
+    }
+
+    private function createFreeFormObjectValueGenerator(Generator $faker = null): FreeFormObjectValueGenerator
+    {
+        return new FreeFormObjectValueGenerator($faker ?? $this->faker, $this->lengthGenerator);
     }
 }

@@ -111,3 +111,7 @@ services:
     class: Negotiation\Negotiator
 
   App\OpenAPI\ErrorHandling\ErrorHandlerInterface: '@App\OpenAPI\ErrorHandling\LoggingErrorHandler'
+
+  App\Utility\EncoderDecorator:
+    decorates: Symfony\Component\Serializer\Encoder\EncoderInterface
+    arguments: ['@App\Utility\EncoderDecorator.inner']
