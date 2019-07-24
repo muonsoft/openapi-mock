@@ -19,6 +19,7 @@ use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
 use App\Utility\StringList;
 use Faker\Factory;
+use Faker\Generator;
 use PHPUnit\Framework\TestCase;
 
 class HashMapValueGeneratorTest extends TestCase
@@ -27,8 +28,6 @@ class HashMapValueGeneratorTest extends TestCase
     use ValueGeneratorCaseTrait;
     use ProbabilityTestCaseTrait;
 
-    private const DEFAULT_MIN_PROPERTIES = 1;
-    private const DEFAULT_MAX_PROPERTIES = 20;
     private const PROPERTIES_COUNT = 5;
 
     protected function setUp(): void
@@ -42,7 +41,8 @@ class HashMapValueGeneratorTest extends TestCase
     {
         $type = new HashMapType();
         $type->value = new DummyType();
-        $generator = new HashMapValueGenerator($this->faker, $this->valueGeneratorLocator);
+        $generator = $this->createHashMapValueGenerator();
+        $this->givenLengthGeneratorGeneratesLength(1);
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
         $hashMapValue = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
         $faker = $this->givenFaker_method_returnsNewFaker('unique');
@@ -52,12 +52,12 @@ class HashMapValueGeneratorTest extends TestCase
 
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->value);
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
-        $this->assertGreaterThanOrEqual(self::DEFAULT_MIN_PROPERTIES, \count($hashMap));
-        $this->assertLessThanOrEqual(self::DEFAULT_MAX_PROPERTIES, \count($hashMap));
+        $this->assertCount(1, get_object_vars($hashMap));
         $this->assertFaker_method_wasCalledAtLeastOnce('unique');
         $this->assertFakerMock_method_wasCalledAtLeastOnce($faker, 'word');
-        $this->assertArrayHasKey('key', $hashMap);
-        $this->assertSame($hashMapValue, $hashMap['key']);
+        $this->assertObjectHasAttribute('key', $hashMap);
+        $this->assertSame($hashMapValue, $hashMap->key);
+        $this->assertLengthGeneratedInRange(0, 0);
     }
 
     /** @test */
@@ -67,7 +67,8 @@ class HashMapValueGeneratorTest extends TestCase
         $type->value = new DummyType();
         $type->minProperties = self::PROPERTIES_COUNT;
         $type->maxProperties = self::PROPERTIES_COUNT;
-        $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
+        $this->givenLengthGeneratorGeneratesLength(self::PROPERTIES_COUNT);
+        $generator = $this->createHashMapValueGenerator(Factory::create());
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
         $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
@@ -75,7 +76,8 @@ class HashMapValueGeneratorTest extends TestCase
 
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->value);
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
-        $this->assertCount(self::PROPERTIES_COUNT, $hashMap);
+        $this->assertCount(self::PROPERTIES_COUNT, get_object_vars($hashMap));
+        $this->assertLengthGeneratedInRange(self::PROPERTIES_COUNT, self::PROPERTIES_COUNT);
     }
 
     /** @test */
@@ -88,7 +90,8 @@ class HashMapValueGeneratorTest extends TestCase
         $type->required = new StringList(['default']);
         $defaultValueType = \Phake::mock(TypeInterface::class);
         $type->properties->set('default', $defaultValueType);
-        $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
+        $this->givenLengthGeneratorGeneratesLength(self::PROPERTIES_COUNT);
+        $generator = $this->createHashMapValueGenerator(Factory::create());
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
         $value = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
@@ -97,9 +100,10 @@ class HashMapValueGeneratorTest extends TestCase
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type->value);
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->value);
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($defaultValueType);
-        $this->assertCount(self::PROPERTIES_COUNT, $hashMap);
-        $this->assertArrayHasKey('default', $hashMap);
-        $this->assertSame($value, $hashMap['default']);
+        $this->assertLengthGeneratedInRange(self::PROPERTIES_COUNT, self::PROPERTIES_COUNT);
+        $this->assertCount(self::PROPERTIES_COUNT, get_object_vars($hashMap));
+        $this->assertObjectHasAttribute('default', $hashMap);
+        $this->assertSame($value, $hashMap->default);
     }
 
     /** @test */
@@ -110,7 +114,7 @@ class HashMapValueGeneratorTest extends TestCase
         $type->value = new DummyType();
         $type->minProperties = self::PROPERTIES_COUNT;
         $type->maxProperties = self::PROPERTIES_COUNT;
-        $generator = new HashMapValueGenerator(Factory::create(), $this->valueGeneratorLocator);
+        $generator = $this->createHashMapValueGenerator(Factory::create());
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();
         $this->givenValueGenerator_generateValue_returnsGeneratedValue();
 
@@ -119,5 +123,14 @@ class HashMapValueGeneratorTest extends TestCase
         };
 
         $this->expectClosureOccasionallyReturnsNull($test);
+    }
+
+    private function createHashMapValueGenerator(Generator $generator = null): HashMapValueGenerator
+    {
+        return new HashMapValueGenerator(
+            $generator ?? $this->faker,
+            $this->lengthGenerator,
+            $this->valueGeneratorLocator
+        );
     }
 }

@@ -28,14 +28,14 @@ class AnyOfValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    public function generateValue(TypeInterface $type)
+    public function generateValue(TypeInterface $type): object
     {
         $values = $this->generateValues($type);
 
         if (0 === \count($values)) {
             $value = new \stdClass();
         } else {
-            $value = \array_merge(...$values);
+            $value = (object) \array_merge(...$values);
         }
 
         return $value;
@@ -47,25 +47,25 @@ class AnyOfValueGenerator implements ValueGeneratorInterface
 
         foreach ($type->types as $internalType) {
             if (0 === random_int(0, 1)) {
-                $values[] = $this->generateValueOfType($internalType);
+                $values[] = (array) $this->generateValueOfType($internalType);
             }
         }
 
         if (0 === \count($values) && $type->types->count() > 0) {
-            $values[] = $this->generateOneOfValues($type);
+            $values[] = (array) $this->generateOneOfValues($type);
         }
 
         return $values;
     }
 
-    private function generateValueOfType(TypeInterface $type): array
+    private function generateValueOfType(TypeInterface $type)
     {
         $generator = $this->generatorLocator->getValueGenerator($type);
 
         return $generator->generateValue($type);
     }
 
-    private function generateOneOfValues(AnyOfType $type): array
+    private function generateOneOfValues(AnyOfType $type)
     {
         $randomInternalTypeIndex = random_int(0, $type->types->count() - 1);
         $randomInternalType = $type->types->get($randomInternalTypeIndex);

@@ -11,6 +11,8 @@
 namespace App\Tests\Unit\Mock\Generation\Value\Composite\ArrayGenerator;
 
 use App\Mock\Generation\Value\Composite\ArrayGenerator\ArrayUniqueValueGenerator;
+use App\Mock\Generation\Value\Unique\UniqueValueGenerator;
+use App\Mock\Generation\Value\Unique\UniqueValueGeneratorFactory;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
@@ -25,9 +27,23 @@ class ArrayUniqueValueGeneratorTest extends TestCase
 {
     use ValueGeneratorCaseTrait;
 
+    private const VALUE = 'value';
+
+    /** @var UniqueValueGeneratorFactory */
+    private $uniqueValueGeneratorFactory;
+
+    /** @var UniqueValueGenerator */
+    private $uniqueValueGenerator;
+
     protected function setUp(): void
     {
         $this->setUpValueGenerator();
+        $this->uniqueValueGeneratorFactory = \Phake::mock(UniqueValueGeneratorFactory::class);
+        $this->uniqueValueGenerator = \Phake::mock(UniqueValueGenerator::class);
+
+        \Phake::when($this->uniqueValueGeneratorFactory)
+            ->createGenerator(\Phake::anyParameters())
+            ->thenReturn($this->uniqueValueGenerator);
     }
 
     /** @test */
@@ -35,16 +51,23 @@ class ArrayUniqueValueGeneratorTest extends TestCase
     {
         $generator = $this->createArrayUniqueValueGenerator();
         $type = new ArrayType();
+        $type->minItems = 1;
+        $type->maxItems = 3;
         $type->items = new DummyType();
-        $this->givenArrayLengthGeneratorGeneratesLength(3, 3);
-        $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 2);
+        $this->givenLengthGeneratorGeneratesLength(3, 3);
+        $this->givenUniqueValueGenerator_nextValues_returnsValue(self::VALUE);
+        $this->givenUniqueValueGenerator_isAttemptsExceedingLimit_returnsFalse();
 
-        $array = $generator->generateArray($randomRangeValueGenerator, $type);
+        $array = $generator->generateArray($this->valueGenerator, $type);
 
-        $this->assertArrayLengthGenerated($type);
-        $this->assertContains(0, $array);
-        $this->assertContains(1, $array);
-        $this->assertContains(2, $array);
+        $this->assertUniqueValueGeneratorCreated($this->valueGenerator, $type->items);
+        $this->assertUniqueValueGenerator_nextValue_wasCalledTimes(3);
+        $this->assertUniqueValueGenerator_isAttemptsExceedingLimit_wasCalledTimes(3);
+        $this->assertLengthGeneratedInRange(1, 3);
+        $this->assertCount(3, $array);
+        $this->assertSame(self::VALUE, $array[0]);
+        $this->assertSame(self::VALUE, $array[1]);
+        $this->assertSame(self::VALUE, $array[2]);
     }
 
     /** @test */
@@ -53,13 +76,13 @@ class ArrayUniqueValueGeneratorTest extends TestCase
         $generator = $this->createArrayUniqueValueGenerator();
         $type = new ArrayType();
         $type->items = new DummyType();
-        $this->givenArrayLengthGeneratorGeneratesLength(3, 3);
-        $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
+        $this->givenLengthGeneratorGeneratesLength(3, 3);
+        $this->givenUniqueValueGenerator_isAttemptsExceedingLimit_returnsTrue();
 
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('Cannot generate array with unique values, attempts limit exceeded');
 
-        $generator->generateArray($randomRangeValueGenerator, $type);
+        $generator->generateArray($this->valueGenerator, $type);
     }
 
     /** @test */
@@ -68,38 +91,65 @@ class ArrayUniqueValueGeneratorTest extends TestCase
         $generator = $this->createArrayUniqueValueGenerator();
         $type = new ArrayType();
         $type->items = new DummyType();
-        $this->givenArrayLengthGeneratorGeneratesLength(3, 2);
-        $randomRangeValueGenerator = $this->givenRandomRangeValueGenerator(0, 1);
+        $this->givenLengthGeneratorGeneratesLength(3, 2);
+        $this->givenUniqueValueGenerator_isAttemptsExceedingLimit_returnsSequence(false, false, true);
 
-        $array = $generator->generateArray($randomRangeValueGenerator, $type);
+        $array = $generator->generateArray($this->valueGenerator, $type);
 
         $this->assertCount(2, $array);
-    }
-
-    private function givenRandomRangeValueGenerator(int $min, int $max): ValueGeneratorInterface
-    {
-        return new class($min, $max) implements ValueGeneratorInterface {
-            /** @var int */
-            private $min;
-
-            /** @var int */
-            private $max;
-
-            public function __construct(int $min, int $max)
-            {
-                $this->min = $min;
-                $this->max = $max;
-            }
-
-            public function generateValue(TypeInterface $type): int
-            {
-                return random_int($this->min, $this->max);
-            }
-        };
+        $this->assertUniqueValueGenerator_isAttemptsExceedingLimit_wasCalledTimes(3);
     }
 
     private function createArrayUniqueValueGenerator(): ArrayUniqueValueGenerator
     {
-        return new ArrayUniqueValueGenerator($this->arrayLengthGenerator);
+        return new ArrayUniqueValueGenerator($this->lengthGenerator, $this->uniqueValueGeneratorFactory);
+    }
+
+    private function assertUniqueValueGeneratorCreated(ValueGeneratorInterface $generator, TypeInterface $type): void
+    {
+        \Phake::verify($this->uniqueValueGeneratorFactory)
+            ->createGenerator($generator, $type);
+    }
+
+    private function assertUniqueValueGenerator_nextValue_wasCalledTimes(int $times): void
+    {
+        \Phake::verify($this->uniqueValueGenerator, \Phake::times($times))
+            ->nextValue();
+    }
+
+    private function assertUniqueValueGenerator_isAttemptsExceedingLimit_wasCalledTimes(int $times): void
+    {
+        \Phake::verify($this->uniqueValueGenerator, \Phake::times($times))
+            ->isAttemptsExceedingLimit();
+    }
+
+    private function givenUniqueValueGenerator_nextValues_returnsValue(string $value): void
+    {
+        \Phake::when($this->uniqueValueGenerator)
+            ->nextValue(\Phake::anyParameters())
+            ->thenReturn($value);
+    }
+
+    private function givenUniqueValueGenerator_isAttemptsExceedingLimit_returnsFalse(): void
+    {
+        \Phake::when($this->uniqueValueGenerator)
+            ->isAttemptsExceedingLimit(\Phake::anyParameters())
+            ->thenReturn(false);
+    }
+
+    private function givenUniqueValueGenerator_isAttemptsExceedingLimit_returnsTrue(): void
+    {
+        \Phake::when($this->uniqueValueGenerator)
+            ->isAttemptsExceedingLimit(\Phake::anyParameters())
+            ->thenReturn(true);
+    }
+
+    private function givenUniqueValueGenerator_isAttemptsExceedingLimit_returnsSequence(bool ...$values): void
+    {
+        $mock = \Phake::when($this->uniqueValueGenerator)->isAttemptsExceedingLimit(\Phake::anyParameters());
+
+        foreach ($values as $value) {
+            $mock = $mock->thenReturn($value);
+        }
     }
 }

@@ -60,12 +60,10 @@ class DelegatingSchemaParser implements ParserInterface
 
     private function detectSchemaType(array $schema): ?string
     {
-        $type = null;
+        $type = $this->detectCombinedType($schema);
 
-        if (array_key_exists('type', $schema)) {
+        if (null === $type && array_key_exists('type', $schema)) {
             $type = $schema['type'];
-        } else {
-            $type = $this->detectCombinedType($schema);
         }
 
         return $type;

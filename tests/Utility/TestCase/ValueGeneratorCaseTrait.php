@@ -10,11 +10,10 @@
 
 namespace App\Tests\Utility\TestCase;
 
-use App\Mock\Generation\Value\Composite\ArrayGenerator\ArrayLength;
-use App\Mock\Generation\Value\Composite\ArrayGenerator\ArrayLengthGenerator;
+use App\Mock\Generation\Value\Length\Length;
+use App\Mock\Generation\Value\Length\LengthGenerator;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Generation\ValueGeneratorLocator;
-use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
 use PHPUnit\Framework\Assert;
 
@@ -29,14 +28,14 @@ trait ValueGeneratorCaseTrait
     /** @var ValueGeneratorInterface */
     protected $valueGenerator;
 
-    /** @var ArrayLengthGenerator */
-    protected $arrayLengthGenerator;
+    /** @var LengthGenerator */
+    protected $lengthGenerator;
 
     protected function setUpValueGenerator(): void
     {
         $this->valueGeneratorLocator = \Phake::mock(ValueGeneratorLocator::class);
         $this->valueGenerator = \Phake::mock(ValueGeneratorInterface::class);
-        $this->arrayLengthGenerator = \Phake::mock(ArrayLengthGenerator::class);
+        $this->lengthGenerator = \Phake::mock(LengthGenerator::class);
     }
 
     protected function assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType(TypeInterface $type): void
@@ -65,6 +64,12 @@ trait ValueGeneratorCaseTrait
     protected function assertValueGenerator_generateValue_wasCalledOnceWithType(TypeInterface $type): void
     {
         \Phake::verify($this->valueGenerator)
+            ->generateValue($type);
+    }
+
+    protected function assertValueGenerator_generateValue_wasCalledTimesWithType(int $times, TypeInterface $type): void
+    {
+        \Phake::verify($this->valueGenerator, \Phake::times($times))
             ->generateValue($type);
     }
 
@@ -137,20 +142,20 @@ trait ValueGeneratorCaseTrait
         return $generator;
     }
 
-    protected function givenArrayLengthGeneratorGeneratesLength(int $length, int $minLength = 0): void
+    protected function givenLengthGeneratorGeneratesLength(int $length, int $minLength = 0): void
     {
-        $arrayLength = new ArrayLength();
+        $arrayLength = new Length();
         $arrayLength->value = $length;
         $arrayLength->minValue = $minLength;
 
-        \Phake::when($this->arrayLengthGenerator)
-            ->generateArrayLength(\Phake::anyParameters())
+        \Phake::when($this->lengthGenerator)
+            ->generateLength(\Phake::anyParameters())
             ->thenReturn($arrayLength);
     }
 
-    protected function assertArrayLengthGenerated(ArrayType $type): void
+    protected function assertLengthGeneratedInRange(int $min, int $max): void
     {
-        \Phake::verify($this->arrayLengthGenerator)
-            ->generateArrayLength($type);
+        \Phake::verify($this->lengthGenerator)
+            ->generateLength($min, $max);
     }
 }

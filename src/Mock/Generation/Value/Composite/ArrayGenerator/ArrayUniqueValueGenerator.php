@@ -10,36 +10,39 @@
 
 namespace App\Mock\Generation\Value\Composite\ArrayGenerator;
 
+use App\Mock\Generation\Value\Length\LengthGenerator;
+use App\Mock\Generation\Value\Unique\UniqueValueGeneratorFactory;
 use App\Mock\Generation\Value\ValueGeneratorInterface;
 use App\Mock\Parameters\Schema\Type\Composite\ArrayType;
-use App\Mock\Parameters\Schema\Type\TypeInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
 class ArrayUniqueValueGenerator
 {
-    private const MAX_ATTEMPTS = 100;
-
-    /** @var ArrayLengthGenerator */
+    /** @var LengthGenerator */
     private $lengthGenerator;
 
-    public function __construct(ArrayLengthGenerator $lengthGenerator)
+    /** @var UniqueValueGeneratorFactory */
+    private $uniqueValueGeneratorFactory;
+
+    public function __construct(LengthGenerator $lengthGenerator, UniqueValueGeneratorFactory $uniqueValueGeneratorFactory)
     {
         $this->lengthGenerator = $lengthGenerator;
+        $this->uniqueValueGeneratorFactory = $uniqueValueGeneratorFactory;
     }
 
     public function generateArray(ValueGeneratorInterface $generator, ArrayType $type): array
     {
-        $length = $this->lengthGenerator->generateArrayLength($type);
+        $uniqueGenerator = $this->uniqueValueGeneratorFactory->createGenerator($generator, $type->items);
+        $length = $this->lengthGenerator->generateLength($type->minItems, $type->maxItems);
 
         $values = [];
-        $uniqueValues = [];
 
         for ($i = 1; $i <= $length->value; $i++) {
-            [$value, $attemptsExceeded] = $this->generateUniqueValue($generator, $type->items, $uniqueValues);
+            $value = $uniqueGenerator->nextValue();
 
-            if ($attemptsExceeded) {
+            if ($uniqueGenerator->isAttemptsExceedingLimit()) {
                 if ($i > $length->minValue) {
                     break;
                 }
@@ -51,26 +54,5 @@ class ArrayUniqueValueGenerator
         }
 
         return $values;
-    }
-
-    private function generateUniqueValue(ValueGeneratorInterface $generator, TypeInterface $itemsType, array &$uniqueValues): array
-    {
-        $attempts = 0;
-        $attemptsExceeded = false;
-
-        do {
-            $value = $generator->generateValue($itemsType);
-            $attempts++;
-
-            if ($attempts > self::MAX_ATTEMPTS) {
-                $attemptsExceeded = true;
-
-                break;
-            }
-        } while (\in_array($value, $uniqueValues, true));
-
-        $uniqueValues[] = $value;
-
-        return [$value, $attemptsExceeded];
     }
 }

@@ -24,6 +24,7 @@ paths:
                   - shortString
                   - longString
                   - array
+                  - uniqueArrayOfObjects
                   - freeForm
                   - writeOnlyBoolean
                   - writeOnlyInteger
@@ -88,6 +89,20 @@ paths:
                     maxItems: 5
                     items:
                       type: integer
+                  uniqueArrayOfObjects:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    maxItems: 5
+                    items:
+                      type: object
+                      required:
+                        - key
+                      properties:
+                        key:
+                          type: string
+                          enum:
+                            - value
                   freeForm:
                     type: object
                     additionalProperties: {}

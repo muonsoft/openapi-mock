@@ -22,10 +22,6 @@ class AllOfValueGeneratorTest extends TestCase
 
     private const GENERATED_VALUE_1 = ['property1' => 'value1'];
     private const GENERATED_VALUE_2 = ['property2' => 'value2'];
-    private const MERGED_GENERATED_VALUE = [
-        'property1' => 'value1',
-        'property2' => 'value2',
-    ];
 
     protected function setUp(): void
     {
@@ -43,12 +39,15 @@ class AllOfValueGeneratorTest extends TestCase
         $allOf->types->add($type2);
         $internalGenerator1 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type1);
         $internalGenerator2 = $this->givenValueGeneratorLocator_getValueGenerator_withType_returnsValueGenerator($type2);
-        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator1, self::GENERATED_VALUE_1);
-        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, self::GENERATED_VALUE_2);
+        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator1, (object) self::GENERATED_VALUE_1);
+        $this->givenValueGenerator_generateValue_returnsValue($internalGenerator2, (object) self::GENERATED_VALUE_2);
 
         $value = $generator->generateValue($allOf);
 
-        $this->assertSame(self::MERGED_GENERATED_VALUE, $value);
+        $this->assertObjectHasAttribute('property1', $value);
+        $this->assertObjectHasAttribute('property2', $value);
+        $this->assertSame('value1', $value->property1);
+        $this->assertSame('value2', $value->property2);
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type1);
         $this->assertValueGeneratorLocator_getValueGenerator_wasCalledOnceWithType($type2);
         $this->assertExpectedValueGenerator_generateValue_wasCalledOnceWithType($internalGenerator1, $type1);

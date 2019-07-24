@@ -28,7 +28,7 @@ class ObjectValueGenerator implements ValueGeneratorInterface
         $this->generatorLocator = $generatorLocator;
     }
 
-    public function generateValue(TypeInterface $type): ?array
+    public function generateValue(TypeInterface $type): ?object
     {
         if ($type->isNullable() && 0 === random_int(0, 1)) {
             $value = null;
@@ -39,16 +39,9 @@ class ObjectValueGenerator implements ValueGeneratorInterface
         return $value;
     }
 
-    private function generateValueByType(TypeInterface $type)
+    private function generateObject(ObjectType $type): object
     {
-        $propertyValueGenerator = $this->generatorLocator->getValueGenerator($type);
-
-        return $propertyValueGenerator->generateValue($type);
-    }
-
-    private function generateObject(ObjectType $type): array
-    {
-        $object = [];
+        $object = new \stdClass();
 
         /**
          * @var string
@@ -56,10 +49,17 @@ class ObjectValueGenerator implements ValueGeneratorInterface
          */
         foreach ($type->properties as $propertyName => $propertyType) {
             if (!$propertyType->isWriteOnly()) {
-                $object[$propertyName] = $this->generateValueByType($propertyType);
+                $object->{$propertyName} = $this->generateValueByType($propertyType);
             }
         }
 
         return $object;
+    }
+
+    private function generateValueByType(TypeInterface $type)
+    {
+        $propertyValueGenerator = $this->generatorLocator->getValueGenerator($type);
+
+        return $propertyValueGenerator->generateValue($type);
     }
 }

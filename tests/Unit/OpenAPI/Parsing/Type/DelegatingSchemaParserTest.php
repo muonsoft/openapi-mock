@@ -59,7 +59,10 @@ class DelegatingSchemaParserTest extends TestCase
         $this->givenTypeParserLocator_getTypeParser_returnsInternalParser();
         $pointer = new SpecificationPointer();
         $expectedType = $this->givenInternalParser_parsePointedSchema_returnsObject();
-        $specification = new SpecificationAccessor([$combinedTypeName => self::VALUE_TYPE]);
+        $specification = new SpecificationAccessor([
+            'type'            => 'ignored',
+            $combinedTypeName => self::VALUE_TYPE,
+        ]);
 
         $type = $parser->parsePointedSchema($specification, $pointer);
 

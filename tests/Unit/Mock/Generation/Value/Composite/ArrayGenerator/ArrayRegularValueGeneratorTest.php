@@ -35,20 +35,22 @@ class ArrayRegularValueGeneratorTest extends TestCase
     {
         $generator = $this->createArrayRegularValueGenerator();
         $type = new ArrayType();
+        $type->minItems = 1;
+        $type->maxItems = 3;
         $type->items = new DummyType();
         $value = $this->givenValueGenerator_generateValue_returnsGeneratedValue();
-        $this->givenArrayLengthGeneratorGeneratesLength(self::ARRAY_LENGTH);
+        $this->givenLengthGeneratorGeneratesLength(self::ARRAY_LENGTH);
 
         $array = $generator->generateArray($this->valueGenerator, $type);
 
         $this->assertValueGenerator_generateValue_wasCalledAtLeastOnceWithType($type->items);
         $this->assertContains($value, $array);
         $this->assertCount(self::ARRAY_LENGTH, $array);
-        $this->assertArrayLengthGenerated($type);
+        $this->assertLengthGeneratedInRange(1, 3);
     }
 
     private function createArrayRegularValueGenerator(): ArrayRegularValueGenerator
     {
-        return new ArrayRegularValueGenerator($this->arrayLengthGenerator);
+        return new ArrayRegularValueGenerator($this->lengthGenerator);
     }
 }
