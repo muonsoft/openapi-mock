@@ -67,6 +67,12 @@ trait ValueGeneratorCaseTrait
             ->generateValue($type);
     }
 
+    protected function assertValueGenerator_generateValue_wasCalledTimesWithType(int $times, TypeInterface $type): void
+    {
+        \Phake::verify($this->valueGenerator, \Phake::times($times))
+            ->generateValue($type);
+    }
+
     protected function assertExpectedValueGenerator_generateValue_wasCalledOnceWithType(
         ValueGeneratorInterface $generator,
         TypeInterface $type
