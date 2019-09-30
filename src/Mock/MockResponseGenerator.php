@@ -15,7 +15,7 @@ use App\Mock\Generation\DataGenerator;
 use App\Mock\Negotiation\MediaTypeNegotiator;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
 use App\Mock\Parameters\Endpoint;
-use App\Mock\Parameters\Schema\Schema;
+use App\Mock\Parameters\MockResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -51,16 +51,16 @@ class MockResponseGenerator
     public function generateResponse(Request $request, Endpoint $parameters): Response
     {
         $statusCode = $this->responseStatusNegotiator->negotiateResponseStatus($request, $parameters);
+        /** @var MockResponse $mockResponse */
         $mockResponse = $parameters->responses->get($statusCode);
         $mediaType = $this->mediaTypeNegotiator->negotiateMediaType($request, $mockResponse);
         $schema = $mockResponse->content->get($mediaType);
 
-        return $this->generateMockResponseBySchema($statusCode, $mediaType, $schema);
-    }
-
-    private function generateMockResponseBySchema(int $statusCode, string $mediaType, Schema $schema): Response
-    {
-        $responseData = $this->dataGenerator->generateData($schema);
+        if (null === $schema) {
+            $responseData = '';
+        } else {
+            $responseData = $this->dataGenerator->generateData($schema);
+        }
 
         return $this->responder->createResponse($statusCode, $mediaType, $responseData);
     }

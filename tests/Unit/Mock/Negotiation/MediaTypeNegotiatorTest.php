@@ -86,6 +86,16 @@ class MediaTypeNegotiatorTest extends TestCase
                 [self::APPLICATION_JSON, self::APPLICATION_LD_JSON],
                 self::APPLICATION_JSON,
             ],
+            [
+                '',
+                [],
+                '',
+            ],
+            [
+                self::APPLICATION_JSON,
+                [],
+                '',
+            ],
         ];
     }
 

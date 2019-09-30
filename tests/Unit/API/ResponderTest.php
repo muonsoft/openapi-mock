@@ -51,17 +51,6 @@ class ResponderTest extends TestCase
         $this->assertSame(self::ENCODED_DATA, $response->getContent());
     }
 
-    /** @test */
-    public function createResponse_statusCodeAndNotSupportedMediaTypeAndData_exceptionThrown(): void
-    {
-        $responder = $this->creteResponder();
-
-        $this->expectException(NotSupportedException::class);
-        $this->expectExceptionMessage('Not supported media type');
-
-        $responder->createResponse(Response::HTTP_OK, 'text/html', self::DATA);
-    }
-
     public function statusCodeAndMediaTypeAndEncodingFormatProvider(): array
     {
         return [
@@ -86,6 +75,30 @@ class ResponderTest extends TestCase
                 'xml',
             ],
         ];
+    }
+
+    /** @test */
+    public function createResponse_statusCodeAndNotSupportedMediaTypeAndData_exceptionThrown(): void
+    {
+        $responder = $this->creteResponder();
+
+        $this->expectException(NotSupportedException::class);
+        $this->expectExceptionMessage('Not supported media type');
+
+        $responder->createResponse(Response::HTTP_OK, 'text/html', self::DATA);
+    }
+
+    /** @test */
+    public function createResponse_statusCodeAndNoMediaTypeAndStringData_rawResponseCreated(): void
+    {
+        $responder = $this->creteResponder();
+        $this->givenEncoder_encode_returnsData(self::ENCODED_DATA);
+
+        $response = $responder->createResponse(Response::HTTP_NO_CONTENT, '', self::DATA);
+
+        $this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
+        $this->assertFalse($response->headers->has('Content-Type'));
+        $this->assertSame(self::DATA, $response->getContent());
     }
 
     private function assertEncoder_encode_wasCalledOnceWithDataAndFormat(string $data, string $expectedEncodingFormat): void
