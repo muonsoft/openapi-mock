@@ -36,11 +36,11 @@ class MediaTypeNegotiator
 
     public function negotiateMediaType(Request $request, MockResponse $response): string
     {
-        $contentTypes = $this->collectContentTypesFromResponse($response);
+        $contentTypes = $response->content->getKeys();
         $acceptHeader = $request->headers->get('Accept', '');
 
         if ('' === $acceptHeader) {
-            $bestMediaType = $contentTypes[0];
+            $bestMediaType = $contentTypes[0] ?? '';
         } else {
             $bestMediaType = $this->getBestMediaType($acceptHeader, $contentTypes);
         }
@@ -56,26 +56,21 @@ class MediaTypeNegotiator
         return $bestMediaType;
     }
 
-    private function collectContentTypesFromResponse(MockResponse $response): array
-    {
-        $contentTypes = [];
-
-        foreach ($response->content->getKeys() as $contentType) {
-            $contentTypes[] = $contentType;
-        }
-
-        return $contentTypes;
-    }
-
     private function getBestMediaType(string $acceptHeader, array $contentTypes): string
     {
-        /** @var Accept $mediaType */
-        $mediaType = $this->negotiator->getBest($acceptHeader, $contentTypes);
+        $mediaType = '';
 
-        if (null === $mediaType) {
-            throw new UnsupportedMediaTypeHttpException();
+        if (count($contentTypes) > 0) {
+            /** @var Accept $mediaType */
+            $mediaType = $this->negotiator->getBest($acceptHeader, $contentTypes);
+
+            if (null === $mediaType) {
+                throw new UnsupportedMediaTypeHttpException();
+            }
+
+            $mediaType = $mediaType->getValue();
         }
 
-        return $mediaType->getValue();
+        return $mediaType;
     }
 }

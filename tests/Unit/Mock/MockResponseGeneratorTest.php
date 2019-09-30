@@ -79,6 +79,32 @@ class MockResponseGeneratorTest extends TestCase
         $this->assertSame($responderResponse, $response);
     }
 
+    /** @test */
+    public function generateResponse_endpointWithEmptyResponse_emptyResponseCreated(): void
+    {
+        $generator = $this->createMockResponseGenerator();
+        $request = new Request();
+        $parameters = $this->givenMockEndpointWithStatusCodeAndNoContent();
+        $this->givenMediaTypeNegotiator_negotiateMediaType_returnsMediaType(self::MEDIA_TYPE);
+        $this->givenResponseStatusNegotiator_negotiateResponseStatus_returnsStatusCode(self::STATUS_CODE);
+        $responderResponse = $this->givenResponder_createResponse_returnsResponse();
+
+        $response = $generator->generateResponse($request, $parameters);
+
+        $this->assertNotNull($response);
+        $this->assertMediaTypeGenerator_negotiateMediaType_wasCalledOnceWithRequestAndMockResponse(
+            $request,
+            $parameters->responses->get(self::STATUS_CODE)
+        );
+        $this->assertResponseStatusNegotiator_negotiateResponseStatus_wasCalledOnceWithRequestAndParameters($request, $parameters);
+        $this->assertResponder_createResponse_wasCalledOnceWithStatusCodeAndMediaTypeAndData(
+            self::STATUS_CODE,
+            self::MEDIA_TYPE,
+            ''
+        );
+        $this->assertSame($responderResponse, $response);
+    }
+
     private function createMockResponseGenerator(): MockResponseGenerator
     {
         return new MockResponseGenerator(
@@ -160,6 +186,19 @@ class MockResponseGeneratorTest extends TestCase
         $mockResponse->content = new SchemaCollection([
             self::MEDIA_TYPE => $schema,
         ]);
+        $parameters->responses = new MockResponseCollection([
+            self::STATUS_CODE => $mockResponse,
+        ]);
+
+        return $parameters;
+    }
+
+    private function givenMockEndpointWithStatusCodeAndNoContent(): Endpoint
+    {
+        $parameters = new Endpoint();
+        $mockResponse = new MockResponse();
+
+        $mockResponse->content = new SchemaCollection();
         $parameters->responses = new MockResponseCollection([
             self::STATUS_CODE => $mockResponse,
         ]);

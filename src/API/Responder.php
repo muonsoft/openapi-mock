@@ -34,22 +34,30 @@ class Responder
 
     public function createResponse(int $statusCode, string $mediaType, $data): Response
     {
-        $format = $this->guessSerializationFormat($mediaType);
-        $encodedData = $this->encoder->encode($data, $format);
-
-        $headers = [
-            'Content-Type' => sprintf('%s; charset=utf-8', $mediaType),
-        ];
+        $encodedData = $this->encodeDataByMediaType($data, $mediaType);
+        $headers = $this->createHeaders($mediaType);
 
         $this->logger->info(
             sprintf(
                 'Response with status code "%d" and content type "%s" was generated.',
                 $statusCode,
-                $headers['Content-Type']
+                $headers['Content-Type'] ?? ''
             )
         );
 
         return new Response($encodedData, $statusCode, $headers);
+    }
+
+    private function encodeDataByMediaType($data, string $mediaType): string
+    {
+        if (is_string($data) && '' === $mediaType) {
+            $encodedData = $data;
+        } else {
+            $format = $this->guessSerializationFormat($mediaType);
+            $encodedData = $this->encoder->encode($data, $format);
+        }
+
+        return $encodedData;
     }
 
     private function guessSerializationFormat(string $mediaType): string
@@ -63,5 +71,16 @@ class Responder
         }
 
         return $format;
+    }
+
+    private function createHeaders(string $mediaType): array
+    {
+        $headers = [];
+
+        if ('' !== $mediaType) {
+            $headers['Content-Type'] = sprintf('%s; charset=utf-8', $mediaType);
+        }
+
+        return $headers;
     }
 }
