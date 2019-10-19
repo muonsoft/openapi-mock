@@ -20,8 +20,8 @@ use Psr\Log\LoggerInterface;
  */
 class ResponseParser implements ParserInterface
 {
-    /** @var ParserInterface */
-    private $schemaParser;
+    /** @var MediaParser */
+    private $mediaParser;
 
     /** @var ErrorHandlerInterface */
     private $errorHandler;
@@ -29,9 +29,9 @@ class ResponseParser implements ParserInterface
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(ParserInterface $schemaParser, ErrorHandlerInterface $errorHandler, LoggerInterface $logger)
+    public function __construct(MediaParser $mediaParser, ErrorHandlerInterface $errorHandler, LoggerInterface $logger)
     {
-        $this->schemaParser = $schemaParser;
+        $this->mediaParser = $mediaParser;
         $this->errorHandler = $errorHandler;
         $this->logger = $logger;
     }
@@ -45,7 +45,7 @@ class ResponseParser implements ParserInterface
 
         foreach ($mediaTypes as $mediaType) {
             $mediaTypePointer = $contentPointer->withPathElement($mediaType);
-            $parsedSchema = $this->schemaParser->parsePointedSchema($specification, $mediaTypePointer);
+            $parsedSchema = $this->mediaParser->parseMediaScheme($specification, $mediaTypePointer, $mediaType);
             $response->content->set($mediaType, $parsedSchema);
 
             $this->logger->debug(

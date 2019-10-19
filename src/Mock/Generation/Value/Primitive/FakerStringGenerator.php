@@ -31,6 +31,7 @@ class FakerStringGenerator implements ValueGeneratorInterface
         'ipv4'      => 'ipv4',
         'ipv6'      => 'ipv6',
         'byte'      => 'base64',
+        'html'      => 'randomHtml',
     ];
 
     /** @var Generator */

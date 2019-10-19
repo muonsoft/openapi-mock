@@ -1,0 +1,10 @@
+openapi: "3.0.0"
+paths:
+  /html:
+    get:
+      responses:
+        200:
+          content:
+            text/html:
+              schema:
+                type: string

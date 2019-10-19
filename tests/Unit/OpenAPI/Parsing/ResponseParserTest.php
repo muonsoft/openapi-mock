@@ -12,10 +12,13 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
 use App\Mock\Parameters\Schema\Schema;
+use App\OpenAPI\Parsing\MediaParser;
 use App\OpenAPI\Parsing\ResponseParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
+use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 
@@ -32,9 +35,12 @@ class ResponseParserTest extends TestCase
     ];
     private const CONTEXT_PATH = ['content', self::MEDIA_TYPE];
 
+    /** @var MediaParser */
+    private $mediaParser;
+
     protected function setUp(): void
     {
-        $this->setUpParsingContext();
+        $this->mediaParser = \Phake::mock(MediaParser::class);
     }
 
     /** @test */
@@ -42,15 +48,16 @@ class ResponseParserTest extends TestCase
     {
         $parser = $this->createResponseParser();
         $expectedSchema = new Schema();
-        $this->givenInternalParser_parsePointedSchema_returns($expectedSchema);
+        $this->givenMediaParser_parseMediaScheme_returns($expectedSchema);
         $specification = new SpecificationAccessor(self::VALID_RESPONSE_SPECIFICATION);
 
         /** @var MockResponse $response */
         $response = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
-        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
+        $this->assertMediaParser_parseMediaScheme_wasCalledOnceWithSpecificationAndPointerPathAndMediaType(
             $specification,
-            self::CONTEXT_PATH
+            self::CONTEXT_PATH,
+            self::MEDIA_TYPE
         );
         $this->assertResponseHasValidContentWithExpectedSchema($response, $expectedSchema);
     }
@@ -91,8 +98,28 @@ class ResponseParserTest extends TestCase
         $this->assertSame([self::MEDIA_TYPE], $response->content->getKeys());
     }
 
+    private function assertMediaParser_parseMediaScheme_wasCalledOnceWithSpecificationAndPointerPathAndMediaType(
+        SpecificationAccessor $specification,
+        array $path,
+        string $mediaType
+    ): void {
+        /* @var SpecificationPointer $pointer */
+        \Phake::verify($this->mediaParser)
+            ->parseMediaScheme($specification, \Phake::capture($pointer), $mediaType);
+        Assert::assertSame($path, $pointer->getPathElements());
+    }
+
+    private function givenMediaParser_parseMediaScheme_returns(SpecificationObjectMarkerInterface ...$objects): void
+    {
+        $parser = \Phake::when($this->mediaParser)->parseMediaScheme(\Phake::anyParameters());
+
+        foreach ($objects as $object) {
+            $parser = $parser->thenReturn($object);
+        }
+    }
+
     private function createResponseParser(): ResponseParser
     {
-        return new ResponseParser($this->internalParser, $this->errorHandler, new NullLogger());
+        return new ResponseParser($this->mediaParser, $this->errorHandler, new NullLogger());
     }
 }

@@ -46,6 +46,7 @@ trait ParsingTestCaseTrait
     /** @var UrlMatcherFactory */
     protected $urlMatcherFactory;
 
+    /** @before */
     protected function setUpParsingContext(): void
     {
         $this->internalParser = \Phake::mock(ParserInterface::class);
