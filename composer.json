@@ -41,7 +41,7 @@
         "phake/phake": "3.*",
         "phpunit/phpunit": "8.*",
         "symfony/expression-language": "4.*",
-        "symplify/easy-coding-standard": "5.*"
+        "symplify/easy-coding-standard": "6.*"
     },
     "config": {
         "preferred-install": {

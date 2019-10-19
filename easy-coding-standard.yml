@@ -1,9 +1,9 @@
 imports:
-  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/clean-code.yml' }
-  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/common.yml' }
-  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/php71.yml' }
-  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/psr12.yml' }
-  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/symfony.yml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/set/clean-code.yaml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/set/common.yaml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/set/php71.yaml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/set/psr12.yaml' }
+  - { resource: '%vendor_dir%/symplify/easy-coding-standard/config/set/symfony.yaml' }
 
 services:
   PhpCsFixer\Fixer\PhpUnit\PhpUnitTestAnnotationFixer:
@@ -14,10 +14,10 @@ services:
     style: 'post'
 
 parameters:
-  exclude_checkers:
-    - PhpCsFixer\Fixer\PhpUnit\PhpUnitMethodCasingFixer
-    - PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer
-    - PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer
-    - SlevomatCodingStandard\Sniffs\TypeHints\NullableTypeForNullDefaultValueSniff
-    - SlevomatCodingStandard\Sniffs\TypeHints\TypeHintDeclarationSniff
-    - Symplify\CodingStandard\Fixer\Commenting\ParamReturnAndVarTagMalformsFixer
+  skip:
+    PhpCsFixer\Fixer\PhpUnit\PhpUnitMethodCasingFixer: ~
+    PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer: ~
+    PhpCsFixer\Fixer\Strict\DeclareStrictTypesFixer: ~
+    SlevomatCodingStandard\Sniffs\TypeHints\NullableTypeForNullDefaultValueSniff: ~
+    SlevomatCodingStandard\Sniffs\TypeHints\TypeHintDeclarationSniff: ~
+    Symplify\CodingStandard\Fixer\Commenting\ParamReturnAndVarTagMalformsFixer: ~
