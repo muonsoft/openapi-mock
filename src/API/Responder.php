@@ -20,6 +20,11 @@ use Symfony\Component\Serializer\Encoder\EncoderInterface;
  */
 class Responder
 {
+    private const RAW_MEDIA_TYPES = [
+        '',
+        'text/html',
+    ];
+
     /** @var EncoderInterface */
     private $encoder;
 
@@ -50,7 +55,7 @@ class Responder
 
     private function encodeDataByMediaType($data, string $mediaType): string
     {
-        if (is_string($data) && '' === $mediaType) {
+        if ($this->isRawMediaType($data, $mediaType)) {
             $encodedData = $data;
         } else {
             $format = $this->guessSerializationFormat($mediaType);
@@ -82,5 +87,10 @@ class Responder
         }
 
         return $headers;
+    }
+
+    private function isRawMediaType($data, string $mediaType): bool
+    {
+        return is_string($data) && in_array($mediaType, self::RAW_MEDIA_TYPES, true);
     }
 }

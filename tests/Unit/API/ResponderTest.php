@@ -85,20 +85,32 @@ class ResponderTest extends TestCase
         $this->expectException(NotSupportedException::class);
         $this->expectExceptionMessage('Not supported media type');
 
-        $responder->createResponse(Response::HTTP_OK, 'text/html', self::DATA);
+        $responder->createResponse(Response::HTTP_OK, 'application/octet-stream', self::DATA);
     }
 
-    /** @test */
-    public function createResponse_statusCodeAndNoMediaTypeAndStringData_rawResponseCreated(): void
-    {
+    /**
+     * @test
+     * @dataProvider mediaTypeProvider
+     */
+    public function createResponse_statusCodeAndGivenMediaTypeAndStringData_rawResponseCreated(
+        string $mediaType
+    ): void {
         $responder = $this->creteResponder();
         $this->givenEncoder_encode_returnsData(self::ENCODED_DATA);
 
-        $response = $responder->createResponse(Response::HTTP_NO_CONTENT, '', self::DATA);
+        $response = $responder->createResponse(Response::HTTP_NO_CONTENT, $mediaType, self::DATA);
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-        $this->assertFalse($response->headers->has('Content-Type'));
         $this->assertSame(self::DATA, $response->getContent());
+        if ('' === $mediaType) {
+            $this->assertFalse($response->headers->has('Content-Type'));
+        }
+    }
+
+    public function mediaTypeProvider(): \Iterator
+    {
+        yield 'no media' => [''];
+        yield 'text/html' => ['text/html'];
     }
 
     private function assertEncoder_encode_wasCalledOnceWithDataAndFormat(string $data, string $expectedEncodingFormat): void
