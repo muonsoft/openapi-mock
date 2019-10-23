@@ -4,6 +4,8 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
 [![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)](https://github.styleci.io/repos/145602302)
+![Docker Pulls](https://img.shields.io/docker/pulls/swaggermock/swagger-mock)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/swagger-mock/swagger-mock)
 
 Swagger API mock server with fake data generation with main features.
 
