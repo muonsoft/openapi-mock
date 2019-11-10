@@ -11,7 +11,6 @@
 namespace App\Mock\Parameters;
 
 use App\OpenAPI\SpecificationObjectMarkerInterface;
-use App\Utility\AbstractClassCollection;
 use Ramsey\Collection\Map\AbstractTypedMap;
 
 /**

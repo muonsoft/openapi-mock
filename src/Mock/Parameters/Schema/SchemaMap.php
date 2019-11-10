@@ -10,7 +10,6 @@
 
 namespace App\Mock\Parameters\Schema;
 
-use App\Utility\AbstractClassCollection;
 use Ramsey\Collection\Map\AbstractTypedMap;
 
 /**
