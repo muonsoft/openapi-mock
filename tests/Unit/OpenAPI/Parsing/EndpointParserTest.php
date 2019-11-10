@@ -13,7 +13,7 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\MockResponseMap;
 use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -44,7 +44,7 @@ class EndpointParserTest extends TestCase
     {
         $parser = $this->createEndpointParser();
         $pointer = new SpecificationPointer();
-        $expectedMockResponses = new MockResponseCollection();
+        $expectedMockResponses = new MockResponseMap();
         $expectedEndpointParameter = new EndpointParameter();
         $expectedContextParameter = new EndpointParameter();
         $expectedParameters = new EndpointParameterCollection([$expectedEndpointParameter]);

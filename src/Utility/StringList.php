@@ -10,31 +10,15 @@
 
 namespace App\Utility;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Ramsey\Collection\AbstractCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class StringList extends ArrayCollection
+class StringList extends AbstractCollection
 {
-    public function __construct(array $elements = [])
+    public function getType(): string
     {
-        foreach ($elements as $key => $value) {
-            $elements[$key] = (string) $value;
-        }
-        parent::__construct($elements);
-    }
-
-    /**
-     * @param string $element
-     */
-    public function add($element): bool
-    {
-        return parent::add((string) $element);
-    }
-
-    public function set($key, $value): void
-    {
-        parent::set($key, (string) $value);
+        return 'string';
     }
 }

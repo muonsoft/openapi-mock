@@ -60,7 +60,7 @@ class EndpointParser implements ContextualParserInterface
 
         $parametersPointer = $pointer->withPathElement('parameters');
         $endpoint->parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $parametersPointer);
-        $endpoint->parameters->append($context->parameters);
+        $endpoint->parameters = $endpoint->parameters->merge($context->parameters);
 
         $endpoint->urlMatcher = $this->urlMatcherFactory->createUrlMatcher($endpoint, $pointer);
 

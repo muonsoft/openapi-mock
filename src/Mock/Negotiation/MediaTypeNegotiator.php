@@ -36,7 +36,7 @@ class MediaTypeNegotiator
 
     public function negotiateMediaType(Request $request, MockResponse $response): string
     {
-        $contentTypes = $response->content->getKeys();
+        $contentTypes = $response->content->keys();
         $acceptHeader = $request->headers->get('Accept', '');
 
         if ('' === $acceptHeader) {

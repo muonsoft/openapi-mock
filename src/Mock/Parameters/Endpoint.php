@@ -26,7 +26,7 @@ class Endpoint implements SpecificationObjectMarkerInterface
     /** @var string */
     public $path;
 
-    /** @var MockResponseCollection */
+    /** @var MockResponseMap */
     public $responses;
 
     /** @var EndpointParameterCollection */
@@ -37,7 +37,7 @@ class Endpoint implements SpecificationObjectMarkerInterface
 
     public function __construct()
     {
-        $this->responses = new MockResponseCollection();
+        $this->responses = new MockResponseMap();
         $this->parameters = new EndpointParameterCollection();
         $this->urlMatcher = new NullUrlMatcher();
     }

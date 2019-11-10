@@ -11,7 +11,7 @@
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\MockResponseMap;
 use App\OpenAPI\Parsing\ResponseCollectionParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
@@ -54,7 +54,7 @@ class ResponseCollectionParserTest extends TestCase
         $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedMockResponse);
         $specification = new SpecificationAccessor(self::VALID_RESPONSE_SCHEMA);
 
-        /** @var MockResponseCollection $responses */
+        /** @var MockResponseMap $responses */
         $responses = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
@@ -62,9 +62,9 @@ class ResponseCollectionParserTest extends TestCase
             ['200']
         );
         $this->assertCount(1, $responses);
-        $this->assertSame([(int) self::RESPONSE_STATUS_CODE], $responses->getKeys());
+        $this->assertSame([(int) self::RESPONSE_STATUS_CODE], $responses->keys());
         /** @var MockResponse $mockResponse */
-        $mockResponse = $responses->first();
+        $mockResponse = $responses->get(self::RESPONSE_STATUS_CODE);
         $this->assertSame($expectedMockResponse, $mockResponse);
         $this->assertSame((int) self::RESPONSE_STATUS_CODE, $mockResponse->statusCode);
     }
@@ -77,7 +77,7 @@ class ResponseCollectionParserTest extends TestCase
         $this->givenReferenceResolvingParser_resolveReferenceAndParsePointedSchema_returns($expectedMockResponse);
         $specification = new SpecificationAccessor(self::VALID_DEFAULT_RESPONSE_SCHEMA);
 
-        /** @var MockResponseCollection $responses */
+        /** @var MockResponseMap $responses */
         $responses = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertReferenceResolvingParser_resolveReferenceAndParsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndInternalParser(
@@ -85,9 +85,9 @@ class ResponseCollectionParserTest extends TestCase
             ['default']
         );
         $this->assertCount(1, $responses);
-        $this->assertSame([MockResponse::DEFAULT_STATUS_CODE], $responses->getKeys());
+        $this->assertSame([MockResponse::DEFAULT_STATUS_CODE], $responses->keys());
         /** @var MockResponse $mockResponse */
-        $mockResponse = $responses->first();
+        $mockResponse = $responses->get(MockResponse::DEFAULT_STATUS_CODE);
         $this->assertSame($expectedMockResponse, $mockResponse);
         $this->assertSame(MockResponse::DEFAULT_STATUS_CODE, $mockResponse->statusCode);
     }
@@ -98,7 +98,7 @@ class ResponseCollectionParserTest extends TestCase
         $parser = $this->createResponseCollectionParser();
         $specification = new SpecificationAccessor(self::RESPONSE_SCHEMA_WITH_INVALID_STATUS_CODE);
 
-        /** @var MockResponseCollection $responses */
+        /** @var MockResponseMap $responses */
         $responses = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertCount(0, $responses);
@@ -114,7 +114,7 @@ class ResponseCollectionParserTest extends TestCase
         $parser = $this->createResponseCollectionParser();
         $specification = new SpecificationAccessor(self::RESPONSE_SCHEMA_INVALID_STRUCTURE);
 
-        /** @var MockResponseCollection $responses */
+        /** @var MockResponseMap $responses */
         $responses = $parser->parsePointedSchema($specification, new SpecificationPointer());
 
         $this->assertCount(0, $responses);

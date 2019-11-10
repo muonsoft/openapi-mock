@@ -11,8 +11,8 @@
 namespace App\Mock\Parameters\Schema\Type\Composite;
 
 use App\Mock\Parameters\Schema\Type\FixedFieldsTrait;
-use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
+use App\Mock\Parameters\Schema\Type\TypeMap;
 use App\Utility\StringList;
 
 /**
@@ -25,12 +25,12 @@ class ObjectType implements TypeInterface
     /** @var StringList */
     public $required;
 
-    /** @var TypeCollection */
+    /** @var TypeMap */
     public $properties;
 
     public function __construct()
     {
         $this->required = new StringList();
-        $this->properties = new TypeCollection();
+        $this->properties = new TypeMap();
     }
 }

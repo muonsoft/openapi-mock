@@ -93,9 +93,9 @@ class ResponseParserTest extends TestCase
     private function assertResponseHasValidContentWithExpectedSchema(MockResponse $response, Schema $expectedSchema): void
     {
         $this->assertCount(1, $response->content);
-        $parsedSchema = $response->content->first();
+        $parsedSchema = $response->content->get(self::MEDIA_TYPE);
         $this->assertSame($expectedSchema, $parsedSchema);
-        $this->assertSame([self::MEDIA_TYPE], $response->content->getKeys());
+        $this->assertSame([self::MEDIA_TYPE], $response->content->keys());
     }
 
     private function assertMediaParser_parseMediaScheme_wasCalledOnceWithSpecificationAndPointerPathAndMediaType(

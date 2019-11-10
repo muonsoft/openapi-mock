@@ -12,7 +12,6 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
-use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\PathCollectionParser;
@@ -46,18 +45,13 @@ class PathCollectionParserTest extends TestCase
         ],
     ];
 
-    protected function setUp(): void
-    {
-        $this->setUpParsingContext();
-    }
-
     /** @test */
     public function parsePointedSchema_validPathsSchema_endpointsParsedAndReturned(): void
     {
         $parser = $this->createPathCollectionParser();
         $expectedEndpoint = new Endpoint();
         $expectedEndpoint->urlMatcher = \Phake::mock(UrlMatcherInterface::class);
-        $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoint);
+        $this->givenInternalParser_parsePointedSchema_returns(new EndpointParameterCollection());
         $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
         $pointer = new SpecificationPointer();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
@@ -80,7 +74,7 @@ class PathCollectionParserTest extends TestCase
     {
         $parser = $this->createPathCollectionParser();
         $expectedEndpoint = new Endpoint();
-        $this->givenInternalParser_parsePointedSchema_returns($expectedEndpoint);
+        $this->givenInternalParser_parsePointedSchema_returns(new EndpointParameterCollection());
         $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
         $pointer = new SpecificationPointer();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
@@ -109,6 +103,7 @@ class PathCollectionParserTest extends TestCase
             '/entity' => 'invalid',
         ]);
         $pointer = new SpecificationPointer();
+        $this->givenInternalParser_parsePointedSchema_returns(new EndpointParameterCollection());
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer);
@@ -130,6 +125,7 @@ class PathCollectionParserTest extends TestCase
             ],
         ]);
         $pointer = new SpecificationPointer();
+        $this->givenInternalParser_parsePointedSchema_returns(new EndpointParameterCollection());
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer);
@@ -187,42 +183,6 @@ class PathCollectionParserTest extends TestCase
             $context
         );
         $this->assertValidEndpointContextWithParameters($context, $expectedParameters);
-        $this->assertCount(1, $endpoints);
-        $this->assertSame($expectedEndpoint, $endpoints->first());
-    }
-
-    /** @test */
-    public function parsePointedSchema_secondPathWithoutParameters_noParametersForSecondEndpoint(): void
-    {
-        $parser = $this->createPathCollectionParser();
-        $expectedParameters = new EndpointParameterCollection([new EndpointParameter()]);
-        $this->givenInternalParser_parsePointedSchema_returns($expectedParameters);
-        $expectedEndpoint = new Endpoint();
-        $expectedEndpoint->urlMatcher = \Phake::mock(UrlMatcherInterface::class);
-        $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
-        $specification = new SpecificationAccessor([
-            'parametersPath' => [
-                self::PARAMETERS_TAG => self::PARAMETERS_SCHEMA,
-            ],
-            self::PATH => [
-                self::HTTP_METHOD => self::ENDPOINT_SCHEMA,
-            ],
-        ]);
-        $pointer = new SpecificationPointer();
-
-        /** @var EndpointCollection $endpoints */
-        $endpoints = $parser->parsePointedSchema($specification, $pointer);
-
-        $this->assertInternalParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPath(
-            $specification,
-            ['parametersPath', self::PARAMETERS_TAG]
-        );
-        $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
-            $specification,
-            [self::PATH, self::HTTP_METHOD],
-            $context
-        );
-        $this->assertValidEndpointContextWithoutParameters($context);
         $this->assertCount(1, $endpoints);
         $this->assertSame($expectedEndpoint, $endpoints->first());
     }

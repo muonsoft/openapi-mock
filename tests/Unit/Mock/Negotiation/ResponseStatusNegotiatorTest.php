@@ -78,7 +78,7 @@ class ResponseStatusNegotiatorTest extends TestCase
         foreach ($responseStatusCodes as $responseStatusCode) {
             $response = new MockResponse();
             $response->statusCode = $responseStatusCode;
-            $parameters->responses->set($responseStatusCode, $response);
+            $parameters->responses->put($responseStatusCode, $response);
         }
 
         return $parameters;

@@ -46,7 +46,7 @@ class ResponseParser implements ParserInterface
         foreach ($mediaTypes as $mediaType) {
             $mediaTypePointer = $contentPointer->withPathElement($mediaType);
             $parsedSchema = $this->mediaParser->parseMediaScheme($specification, $mediaTypePointer, $mediaType);
-            $response->content->set($mediaType, $parsedSchema);
+            $response->content->put($mediaType, $parsedSchema);
 
             $this->logger->debug(
                 sprintf('Response content scheme for media type "%s" was parsed.', $mediaType),

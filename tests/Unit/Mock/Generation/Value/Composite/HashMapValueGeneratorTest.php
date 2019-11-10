@@ -89,7 +89,7 @@ class HashMapValueGeneratorTest extends TestCase
         $type->maxProperties = self::PROPERTIES_COUNT;
         $type->required = new StringList(['default']);
         $defaultValueType = \Phake::mock(TypeInterface::class);
-        $type->properties->set('default', $defaultValueType);
+        $type->properties->put('default', $defaultValueType);
         $this->givenLengthGeneratorGeneratesLength(self::PROPERTIES_COUNT);
         $generator = $this->createHashMapValueGenerator(Factory::create());
         $this->givenValueGeneratorLocator_getValueGenerator_returnsValueGenerator();

@@ -11,14 +11,25 @@
 namespace App\Mock\Parameters\Schema;
 
 use App\Utility\AbstractClassCollection;
+use Ramsey\Collection\Map\AbstractTypedMap;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SchemaCollection extends AbstractClassCollection
+class SchemaMap extends AbstractTypedMap
 {
-    protected function getElementClassName(): string
+    public function getKeyType(): string
+    {
+        return 'string';
+    }
+
+    public function getValueType(): string
     {
         return Schema::class;
+    }
+
+    public function unserialize($serialized): void
+    {
+        $this->data = unserialize($serialized);
     }
 }

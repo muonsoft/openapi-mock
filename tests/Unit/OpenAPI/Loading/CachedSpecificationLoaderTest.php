@@ -18,9 +18,9 @@ use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\MockResponse;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\MockResponseMap;
 use App\Mock\Parameters\Schema\Schema;
-use App\Mock\Parameters\Schema\SchemaCollection;
+use App\Mock\Parameters\Schema\SchemaMap;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
@@ -33,7 +33,7 @@ use App\Mock\Parameters\Schema\Type\Primitive\BooleanType;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
-use App\Mock\Parameters\Schema\Type\TypeCollection;
+use App\Mock\Parameters\Schema\Type\TypeMap;
 use App\OpenAPI\Loading\CachedSpecificationLoader;
 use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\Routing\RegularExpressionUrlMatcher;
@@ -55,11 +55,11 @@ class CachedSpecificationLoaderTest extends TestCase
         EndpointParameterCollection::class,
         NullUrlMatcher::class,
         RegularExpressionUrlMatcher::class,
-        MockResponseCollection::class,
+        MockResponseMap::class,
         MockResponse::class,
-        SchemaCollection::class,
+        SchemaMap::class,
         Schema::class,
-        TypeCollection::class,
+        TypeMap::class,
         BooleanType::class,
         IntegerType::class,
         NumberType::class,
@@ -178,25 +178,25 @@ class CachedSpecificationLoaderTest extends TestCase
         $endpoints = new EndpointCollection();
 
         $objectType = new ObjectType();
-        $objectType->properties->add(new BooleanType());
-        $objectType->properties->add(new IntegerType());
-        $objectType->properties->add(new NumberType());
-        $objectType->properties->add(new StringType());
-        $objectType->properties->add(new ArrayType());
-        $objectType->properties->add(new FreeFormObjectType());
-        $objectType->properties->add(new HashMapType());
-        $objectType->properties->add(new OneOfType());
-        $objectType->properties->add(new AnyOfType());
-        $objectType->properties->add(new AllOfType());
-        $objectType->properties->add(new InvalidType(''));
+        $objectType->properties->put('boolean', new BooleanType());
+        $objectType->properties->put('integer', new IntegerType());
+        $objectType->properties->put('number', new NumberType());
+        $objectType->properties->put('string', new StringType());
+        $objectType->properties->put('array', new ArrayType());
+        $objectType->properties->put('freeForm', new FreeFormObjectType());
+        $objectType->properties->put('hashMap', new HashMapType());
+        $objectType->properties->put('oneOf', new OneOfType());
+        $objectType->properties->put('anyOf', new AnyOfType());
+        $objectType->properties->put('allOf', new AllOfType());
+        $objectType->properties->put('invalid', new InvalidType(''));
         $schema = new Schema();
         $schema->value = $objectType;
         $mockResponse = new MockResponse();
-        $mockResponse->content->set('application/json', $schema);
+        $mockResponse->content->put('application/json', $schema);
         $endpoint = new Endpoint();
         $parameter = new EndpointParameter();
         $endpoint->parameters->add($parameter);
-        $endpoint->responses->set(200, $mockResponse);
+        $endpoint->responses->put(200, $mockResponse);
         $endpoints->add($endpoint);
 
         return $endpoints;

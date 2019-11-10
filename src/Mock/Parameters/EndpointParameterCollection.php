@@ -12,14 +12,20 @@ namespace App\Mock\Parameters;
 
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use App\Utility\AbstractClassCollection;
+use Ramsey\Collection\AbstractCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointParameterCollection extends AbstractClassCollection implements SpecificationObjectMarkerInterface
+class EndpointParameterCollection extends AbstractCollection implements SpecificationObjectMarkerInterface
 {
-    protected function getElementClassName(): string
+    public function getType(): string
     {
         return EndpointParameter::class;
+    }
+
+    public function unserialize($serialized): void
+    {
+        $this->data = unserialize($serialized);
     }
 }

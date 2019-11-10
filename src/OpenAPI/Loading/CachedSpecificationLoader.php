@@ -18,9 +18,9 @@ use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\MockResponse;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\MockResponseMap;
 use App\Mock\Parameters\Schema\Schema;
-use App\Mock\Parameters\Schema\SchemaCollection;
+use App\Mock\Parameters\Schema\SchemaMap;
 use App\Mock\Parameters\Schema\Type\Combined\AllOfType;
 use App\Mock\Parameters\Schema\Type\Combined\AnyOfType;
 use App\Mock\Parameters\Schema\Type\Combined\OneOfType;
@@ -34,6 +34,7 @@ use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
+use App\Mock\Parameters\Schema\Type\TypeMap;
 use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\Routing\RegularExpressionUrlMatcher;
 use App\OpenAPI\SpecificationLoaderInterface;
@@ -54,10 +55,11 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
         EndpointParameterCollection::class,
         NullUrlMatcher::class,
         RegularExpressionUrlMatcher::class,
-        MockResponseCollection::class,
+        MockResponseMap::class,
         MockResponse::class,
-        SchemaCollection::class,
+        SchemaMap::class,
         Schema::class,
+        TypeMap::class,
         TypeCollection::class,
         BooleanType::class,
         IntegerType::class,
@@ -127,11 +129,6 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
     {
         $serializedSpecification = $this->cache->get($cacheKey);
 
-        return unserialize(
-            $serializedSpecification,
-            [
-                'allowed_classes' => self::ALLOWED_CLASSES,
-            ]
-        );
+        return unserialize($serializedSpecification);
     }
 }

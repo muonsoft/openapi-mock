@@ -17,9 +17,9 @@ use App\Mock\Negotiation\MediaTypeNegotiator;
 use App\Mock\Negotiation\ResponseStatusNegotiator;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\MockResponse;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\MockResponseMap;
 use App\Mock\Parameters\Schema\Schema;
-use App\Mock\Parameters\Schema\SchemaCollection;
+use App\Mock\Parameters\Schema\SchemaMap;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -183,10 +183,10 @@ class MockResponseGeneratorTest extends TestCase
         $parameters = new Endpoint();
         $mockResponse = new MockResponse();
 
-        $mockResponse->content = new SchemaCollection([
+        $mockResponse->content = new SchemaMap([
             self::MEDIA_TYPE => $schema,
         ]);
-        $parameters->responses = new MockResponseCollection([
+        $parameters->responses = new MockResponseMap([
             self::STATUS_CODE => $mockResponse,
         ]);
 
@@ -198,8 +198,8 @@ class MockResponseGeneratorTest extends TestCase
         $parameters = new Endpoint();
         $mockResponse = new MockResponse();
 
-        $mockResponse->content = new SchemaCollection();
-        $parameters->responses = new MockResponseCollection([
+        $mockResponse->content = new SchemaMap();
+        $parameters->responses = new MockResponseMap([
             self::STATUS_CODE => $mockResponse,
         ]);
 

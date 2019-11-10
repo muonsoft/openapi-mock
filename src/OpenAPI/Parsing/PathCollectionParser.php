@@ -12,6 +12,7 @@ namespace App\OpenAPI\Parsing;
 
 use App\Enum\HttpMethodEnum;
 use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Routing\NullUrlMatcher;
@@ -43,44 +44,60 @@ class PathCollectionParser implements ParserInterface
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $context = new PathCollectionParserContext($specification);
         $paths = $specification->getSchema($pointer);
 
+        $totalEndpoints = [];
+
         foreach ($paths as $path => $pathSchema) {
-            $context->path = $path;
-            $context->pathPointer = $pointer->withPathElement($path);
-            $isValid = $this->validateSchema($pathSchema, $context->pathPointer);
+            $pathPointer = $pointer->withPathElement($path);
+            $isValid = $this->validateSchema($pathSchema, $pathPointer);
 
             if ($isValid) {
-                $this->parsePathParameters($pathSchema, $context);
-                $this->parsePathEndpoints($pathSchema, $context);
+                $totalEndpoints[] = $this->parsePathEndpoints($specification, $pathPointer, $path);
             }
         }
 
-        return $context->endpoints;
+        $endpoints = new EndpointCollection();
+
+        return $endpoints->merge(...$totalEndpoints);
     }
 
-    private function parsePathParameters(array $pathSchema, PathCollectionParserContext $context): void
-    {
-        if (array_key_exists('parameters', $pathSchema)) {
-            $pointer = $context->pathPointer->withPathElement('parameters');
-            $context->pathParameters = $this->parameterCollectionParser->parsePointedSchema($context->specification, $pointer);
-        } else {
-            $context->pathParameters = new EndpointParameterCollection();
-        }
-    }
+    private function parsePathEndpoints(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pathPointer,
+        string $path
+    ): EndpointCollection {
+        $parameters = $this->parsePathParameters($specification, $pathPointer);
+        $endpoints = new EndpointCollection();
 
-    private function parsePathEndpoints(array $pathSchema, PathCollectionParserContext $context): void
-    {
+        $pathSchema = $specification->getSchema($pathPointer);
+
         foreach ($pathSchema as $tag => $schema) {
             $httpMethod = strtolower($tag);
-            $context->endpointPointer = $context->pathPointer->withPathElement($tag);
-            $isValid = HttpMethodEnum::isValid($httpMethod) && $this->validateSchema($schema, $context->endpointPointer);
+            $endpointPointer = $pathPointer->withPathElement($tag);
+            $isValid = HttpMethodEnum::isValid($httpMethod) && $this->validateSchema($schema, $endpointPointer);
 
             if ($isValid) {
-                $this->parseEndpoint(new HttpMethodEnum($httpMethod), $context);
+                $endpoint = $this->parseEndpoint(
+                    $specification,
+                    $endpointPointer,
+                    new HttpMethodEnum($httpMethod),
+                    $path,
+                    $parameters
+                );
+
+                if ($endpoint->urlMatcher instanceof NullUrlMatcher) {
+                    $this->errorHandler->reportError(
+                        'Endpoint has invalid url matcher and is ignored.',
+                        $endpointPointer
+                    );
+                } else {
+                    $endpoints->add($endpoint);
+                }
             }
         }
+
+        return $endpoints;
     }
 
     private function validateSchema($schema, SpecificationPointer $pointer): bool
@@ -98,27 +115,31 @@ class PathCollectionParser implements ParserInterface
         return $isValid;
     }
 
-    private function parseEndpoint(HttpMethodEnum $httpMethod, PathCollectionParserContext $context): void
-    {
-        $endpointContext = new EndpointContext();
-        $endpointContext->path = $context->path;
-        $endpointContext->httpMethod = $httpMethod;
-        $endpointContext->parameters = $context->pathParameters;
+    private function parsePathParameters(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pathPointer
+    ): EndpointParameterCollection {
+        $pointer = $pathPointer->withPathElement('parameters');
 
-        /** @var Endpoint $endpoint */
-        $endpoint = $this->endpointParser->parsePointedSchema(
-            $context->specification,
-            $context->endpointPointer,
+        return $this->parameterCollectionParser->parsePointedSchema($specification, $pointer);
+    }
+
+    private function parseEndpoint(
+        SpecificationAccessor $specification,
+        SpecificationPointer $endpointPointer,
+        HttpMethodEnum $httpMethod,
+        string $path,
+        EndpointParameterCollection $pathParameters
+    ): Endpoint {
+        $endpointContext = new EndpointContext();
+        $endpointContext->path = $path;
+        $endpointContext->httpMethod = $httpMethod;
+        $endpointContext->parameters = $pathParameters;
+
+        return $this->endpointParser->parsePointedSchema(
+            $specification,
+            $endpointPointer,
             $endpointContext
         );
-
-        if ($endpoint->urlMatcher instanceof NullUrlMatcher) {
-            $this->errorHandler->reportError(
-                'Endpoint has invalid url matcher and is ignored.',
-                $context->endpointPointer
-            );
-        } else {
-            $context->endpoints->add($endpoint);
-        }
     }
 }
