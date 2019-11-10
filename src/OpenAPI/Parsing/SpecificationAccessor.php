@@ -44,6 +44,10 @@ class SpecificationAccessor
             }
         }
 
+        if (!is_array($schema)) {
+            throw new ParsingException('Schema is expected to be an array or an object', $pointer);
+        }
+
         return $schema;
     }
 

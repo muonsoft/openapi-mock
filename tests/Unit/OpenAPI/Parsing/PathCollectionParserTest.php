@@ -13,9 +13,11 @@ namespace App\Tests\Unit\OpenAPI\Parsing;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameterCollection;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\Parsing\PathCollectionParser;
 use App\OpenAPI\Parsing\PathContext;
 use App\OpenAPI\Parsing\SpecificationAccessor;
+use App\OpenAPI\Parsing\SpecificationContext;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -45,16 +47,18 @@ class PathCollectionParserTest extends TestCase
         $specification = new SpecificationAccessor(self::VALID_PATHS_SCHEMA);
         $pointer = new SpecificationPointer();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoints);
+        $servers = new Servers();
+        $specificationContext = new SpecificationContext($servers);
 
         /** @var EndpointCollection $endpoints */
-        $endpoints = $parser->parsePointedSchema($specification, $pointer);
+        $endpoints = $parser->parsePointedSchema($specification, $pointer, $specificationContext);
 
         $this->assertContextualParser_parsePointedSchema_wasCalledOnceWithSpecificationAndPointerPathAndContext(
             $specification,
             [self::PATH],
             $context
         );
-        $this->assertValidPathContext($context);
+        $this->assertValidPathContextWithServers($context, $servers);
         $this->assertCount(1, $endpoints);
         $this->assertSame($expectedEndpoints->toArray(), $endpoints->toArray());
     }
@@ -68,9 +72,10 @@ class PathCollectionParserTest extends TestCase
         $specification = new SpecificationAccessor([]);
         $pointer = new SpecificationPointer();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoints);
+        $specificationContext = new SpecificationContext(new Servers());
 
         /** @var EndpointCollection $endpoints */
-        $endpoints = $parser->parsePointedSchema($specification, $pointer);
+        $endpoints = $parser->parsePointedSchema($specification, $pointer, $specificationContext);
 
         $this->assertCount(0, $endpoints);
     }
@@ -83,9 +88,10 @@ class PathCollectionParserTest extends TestCase
             '/entity' => 'invalid',
         ]);
         $pointer = new SpecificationPointer();
+        $specificationContext = new SpecificationContext(new Servers());
 
         /** @var EndpointCollection $endpoints */
-        $endpoints = $parser->parsePointedSchema($specification, $pointer);
+        $endpoints = $parser->parsePointedSchema($specification, $pointer, $specificationContext);
 
         $this->assertCount(0, $endpoints);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
@@ -104,9 +110,10 @@ class PathCollectionParserTest extends TestCase
             ],
         ]);
         $pointer = new SpecificationPointer();
+        $specificationContext = new SpecificationContext(new Servers());
 
         /** @var EndpointCollection $endpoints */
-        $endpoints = $parser->parsePointedSchema($specification, $pointer);
+        $endpoints = $parser->parsePointedSchema($specification, $pointer, $specificationContext);
 
         $this->assertCount(0, $endpoints);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
@@ -120,8 +127,9 @@ class PathCollectionParserTest extends TestCase
         return new PathCollectionParser($this->contextualParser, $this->errorHandler);
     }
 
-    private function assertValidPathContext(PathContext $context): void
+    private function assertValidPathContextWithServers(PathContext $context, Servers $servers): void
     {
         $this->assertSame(self::PATH, $context->getPath());
+        $this->assertSame($servers, $context->getServers());
     }
 }

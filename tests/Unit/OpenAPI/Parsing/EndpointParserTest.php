@@ -16,6 +16,7 @@ use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\InvalidObject;
 use App\Mock\Parameters\MockResponseMap;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -36,11 +37,6 @@ class EndpointParserTest extends TestCase
             self::RESPONSE_STATUS_CODE => self::RESPONSE_SPECIFICATION,
         ],
     ];
-
-    protected function setUp(): void
-    {
-        $this->setUpParsingContext();
-    }
 
     /** @test */
     public function parsePointedSchema_validResponseSpecification_mockEndpointWithResponses(): void
@@ -69,6 +65,7 @@ class EndpointParserTest extends TestCase
         $this->assertSame($expectedMockResponses, $endpoint->responses);
         $this->assertSame($context->getPath(), $endpoint->path);
         $this->assertSame($context->getHttpMethod(), $endpoint->httpMethod);
+        $this->assertSame($context->getServers(), $endpoint->servers);
         $this->assertSame($urlMatcher, $endpoint->urlMatcher);
         $this->assertCount(2, $endpoint->parameters);
         $this->assertContains($expectedEndpointParameter, $endpoint->parameters);
@@ -116,7 +113,8 @@ class EndpointParserTest extends TestCase
         return new EndpointContext(
             'path',
             new HttpMethodEnum(HttpMethodEnum::TRACE),
-            new EndpointParameterCollection([$expectedContextParameter])
+            new EndpointParameterCollection([$expectedContextParameter]),
+            new Servers()
         );
     }
 }

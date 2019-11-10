@@ -35,6 +35,7 @@ use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
 use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeMap;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\Routing\RegularExpressionUrlMatcher;
 use App\OpenAPI\SpecificationLoaderInterface;
@@ -49,6 +50,7 @@ class CachedSpecificationLoader implements SpecificationLoaderInterface
 {
     public const ALLOWED_CLASSES = [
         StringList::class,
+        Servers::class,
         EndpointCollection::class,
         Endpoint::class,
         EndpointParameter::class,

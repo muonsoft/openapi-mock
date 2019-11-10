@@ -88,6 +88,7 @@ class EndpointParser implements ContextualParserInterface
         $endpoint = new Endpoint();
         $endpoint->path = $context->getPath();
         $endpoint->httpMethod = $context->getHttpMethod();
+        $endpoint->servers = $context->getServers();
 
         $responsesPointer = $pointer->withPathElement('responses');
         $endpoint->responses = $this->responseCollectionParser->parsePointedSchema($specification, $responsesPointer);

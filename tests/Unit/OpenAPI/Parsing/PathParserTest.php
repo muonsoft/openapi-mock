@@ -14,6 +14,7 @@ use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\InvalidObject;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\PathContext;
 use App\OpenAPI\Parsing\PathParser;
@@ -53,7 +54,8 @@ class PathParserTest extends TestCase
         $specification = new SpecificationAccessor(self::VALID_PATH_SCHEMA);
         $pointer = new SpecificationPointer();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
-        $pathContext = new PathContext(self::PATH);
+        $servers = new Servers();
+        $pathContext = new PathContext(self::PATH, $servers);
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer, $pathContext);
@@ -63,7 +65,7 @@ class PathParserTest extends TestCase
             [self::HTTP_METHOD],
             $context
         );
-        $this->assertValidEndpointContextWithoutParameters($context);
+        $this->assertValidEndpointContextWithServers($context, $servers);
         $this->assertCount(1, $endpoints);
         $this->assertSame($expectedEndpoint, $endpoints->first());
     }
@@ -77,7 +79,8 @@ class PathParserTest extends TestCase
         $specification = new SpecificationAccessor(self::VALID_PATH_SCHEMA);
         $pointer = new SpecificationPointer();
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
-        $pathContext = new PathContext(self::PATH);
+        $servers = new Servers();
+        $pathContext = new PathContext(self::PATH, $servers);
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer, $pathContext);
@@ -87,7 +90,7 @@ class PathParserTest extends TestCase
             [self::HTTP_METHOD],
             $context
         );
-        $this->assertValidEndpointContextWithoutParameters($context);
+        $this->assertValidEndpointContextWithServers($context, $servers);
         $this->assertParsingErrorHandler_reportError_wasCalledOnceWithMessageAndPointerPath(
             'Endpoint will be ignored because of error: error.',
             ['get']
@@ -104,7 +107,7 @@ class PathParserTest extends TestCase
         ]);
         $pointer = new SpecificationPointer();
         $this->givenInternalParser_parsePointedSchema_returns(new EndpointParameterCollection());
-        $pathContext = new PathContext(self::PATH);
+        $pathContext = new PathContext(self::PATH, new Servers());
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer, $pathContext);
@@ -127,7 +130,8 @@ class PathParserTest extends TestCase
         $this->givenContextualParser_parsePointedSchema_returns($expectedEndpoint);
         $specification = new SpecificationAccessor(self::VALID_PATH_WITH_PARAMETERS_SCHEMA);
         $pointer = new SpecificationPointer();
-        $pathContext = new PathContext(self::PATH);
+        $servers = new Servers();
+        $pathContext = new PathContext(self::PATH, $servers);
 
         /** @var EndpointCollection $endpoints */
         $endpoints = $parser->parsePointedSchema($specification, $pointer, $pathContext);
@@ -141,7 +145,7 @@ class PathParserTest extends TestCase
             [self::HTTP_METHOD],
             $context
         );
-        $this->assertValidEndpointContextWithParameters($context, $expectedParameters);
+        $this->assertValidEndpointContextWithServers($context, $servers, $expectedParameters);
         $this->assertCount(1, $endpoints);
         $this->assertSame($expectedEndpoint, $endpoints->first());
     }
@@ -151,17 +155,19 @@ class PathParserTest extends TestCase
         return new PathParser($this->contextualParser, $this->internalParser, $this->errorHandler);
     }
 
-    private function assertValidEndpointContextWithoutParameters(EndpointContext $context): void
-    {
+    private function assertValidEndpointContextWithServers(
+        EndpointContext $context,
+        Servers $servers,
+        EndpointParameterCollection $parameters = null
+    ): void {
         $this->assertSame(self::PATH, $context->getPath());
         $this->assertSame(self::HTTP_METHOD, $context->getHttpMethod()->getValue());
-        $this->assertCount(0, $context->getParameters());
-    }
+        $this->assertSame($servers, $context->getServers());
 
-    private function assertValidEndpointContextWithParameters(EndpointContext $context, EndpointParameterCollection $parameters): void
-    {
-        $this->assertSame(self::PATH, $context->getPath());
-        $this->assertSame(self::HTTP_METHOD, $context->getHttpMethod()->getValue());
-        $this->assertSame($parameters, $context->getParameters());
+        if (null === $parameters) {
+            $this->assertCount(0, $context->getParameters());
+        } else {
+            $this->assertSame($parameters, $context->getParameters());
+        }
     }
 }

@@ -1,0 +1,24 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: ''
+servers:
+  - url: http://example.com:1234/global/base/path
+  - url: /another-global/base/path
+paths:
+  /endpoint:
+    get:
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value

@@ -17,7 +17,7 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class PathCollectionParser implements ParserInterface
+class PathCollectionParser implements ContextualParserInterface
 {
     /** @var ContextualParserInterface */
     private $pathParser;
@@ -33,25 +33,28 @@ class PathCollectionParser implements ParserInterface
         $this->errorHandler = $errorHandler;
     }
 
-    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
-    {
+    public function parsePointedSchema(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer,
+        ContextMarkerInterface $context
+    ): SpecificationObjectMarkerInterface {
+        assert($context instanceof SpecificationContext);
+
         $paths = $specification->getSchema($pointer);
 
-        $totalEndpoints = [];
+        $allEndpoints = [];
 
         foreach ($paths as $path => $pathSchema) {
             $pathPointer = $pointer->withPathElement($path);
             $isValid = $this->validateSchema($pathSchema, $pathPointer);
 
             if ($isValid) {
-                $pathContext = new PathContext($path);
-                $totalEndpoints[] = $this->pathParser->parsePointedSchema($specification, $pathPointer, $pathContext);
+                $pathContext = new PathContext($path, $context->getServers());
+                $allEndpoints[] = $this->pathParser->parsePointedSchema($specification, $pathPointer, $pathContext);
             }
         }
 
-        $endpoints = new EndpointCollection();
-
-        return $endpoints->merge(...$totalEndpoints);
+        return $this->mergeEndpoints($allEndpoints);
     }
 
     private function validateSchema($schema, SpecificationPointer $pointer): bool
@@ -67,5 +70,14 @@ class PathCollectionParser implements ParserInterface
         }
 
         return $isValid;
+    }
+
+    private function mergeEndpoints(array $allEndpoints): EndpointCollection
+    {
+        $endpoints = new EndpointCollection();
+        $endpoints = $endpoints->merge(...$allEndpoints);
+        assert($endpoints instanceof EndpointCollection);
+
+        return $endpoints;
     }
 }

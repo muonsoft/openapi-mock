@@ -32,6 +32,9 @@ class Endpoint implements SpecificationObjectMarkerInterface
     /** @var EndpointParameterCollection */
     public $parameters;
 
+    /** @var Servers */
+    public $servers;
+
     /** @var UrlMatcherInterface */
     public $urlMatcher;
 
@@ -39,6 +42,7 @@ class Endpoint implements SpecificationObjectMarkerInterface
     {
         $this->responses = new MockResponseMap();
         $this->parameters = new EndpointParameterCollection();
+        $this->servers = new Servers();
         $this->urlMatcher = new NullUrlMatcher();
     }
 }

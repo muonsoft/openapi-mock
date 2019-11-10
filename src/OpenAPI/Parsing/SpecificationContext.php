@@ -15,23 +15,14 @@ use App\Mock\Parameters\Servers;
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class PathContext implements ContextMarkerInterface
+class SpecificationContext implements ContextMarkerInterface
 {
-    /** @var string */
-    private $path;
-
     /** @var Servers */
     private $servers;
 
-    public function __construct(string $path, Servers $servers)
+    public function __construct(Servers $servers)
     {
-        $this->path = $path;
         $this->servers = $servers;
-    }
-
-    public function getPath(): string
-    {
-        return $this->path;
     }
 
     public function getServers(): Servers

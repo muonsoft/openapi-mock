@@ -14,6 +14,7 @@ use App\Enum\HttpMethodEnum;
 use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\InvalidObject;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
@@ -63,7 +64,8 @@ class PathParser implements ContextualParserInterface
                     $endpointPointer,
                     new HttpMethodEnum($httpMethod),
                     $context->getPath(),
-                    $parameters
+                    $parameters,
+                    $context->getServers()
                 );
 
                 if ($endpoint instanceof InvalidObject) {
@@ -97,8 +99,10 @@ class PathParser implements ContextualParserInterface
         SpecificationPointer $pathPointer
     ): EndpointParameterCollection {
         $pointer = $pathPointer->withPathElement('parameters');
+        $parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $pointer);
+        assert($parameters instanceof EndpointParameterCollection);
 
-        return $this->parameterCollectionParser->parsePointedSchema($specification, $pointer);
+        return $parameters;
     }
 
     private function parseEndpoint(
@@ -106,9 +110,10 @@ class PathParser implements ContextualParserInterface
         SpecificationPointer $endpointPointer,
         HttpMethodEnum $httpMethod,
         string $path,
-        EndpointParameterCollection $pathParameters
+        EndpointParameterCollection $pathParameters,
+        Servers $servers
     ): SpecificationObjectMarkerInterface {
-        $endpointContext = new EndpointContext($path, $httpMethod, $pathParameters);
+        $endpointContext = new EndpointContext($path, $httpMethod, $pathParameters, $servers);
 
         return $this->endpointParser->parsePointedSchema(
             $specification,

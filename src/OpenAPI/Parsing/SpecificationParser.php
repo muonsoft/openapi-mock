@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\EndpointCollection;
+use App\Mock\Parameters\Servers;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
@@ -18,10 +19,14 @@ use App\Mock\Parameters\EndpointCollection;
 class SpecificationParser
 {
     /** @var ParserInterface */
+    private $serversParser;
+
+    /** @var ContextualParserInterface */
     private $pathCollectionParser;
 
-    public function __construct(ParserInterface $pathCollectionParser)
+    public function __construct(ParserInterface $serversParser, ContextualParserInterface $pathCollectionParser)
     {
+        $this->serversParser = $serversParser;
         $this->pathCollectionParser = $pathCollectionParser;
     }
 
@@ -30,12 +35,21 @@ class SpecificationParser
         $pointer = new SpecificationPointer();
         $this->validateSpecificationSchema($specification, $pointer);
 
-        return $this->parseEndpointsFromPaths($specification, $pointer);
+        $context = $this->createSpecificationContext($specification, $pointer);
+
+        return $this->parseEndpointsFromPaths($specification, $pointer, $context);
     }
 
     private function validateSpecificationSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): void
     {
         $schema = $specification->getSchema($pointer);
+
+        if (array_key_exists('swagger', $schema)) {
+            throw new ParsingException(
+                'Swagger specification is not supported. Supports only OpenAPI v3.*.',
+                $pointer
+            );
+        }
 
         if (!array_key_exists('openapi', $schema)) {
             throw new ParsingException(
@@ -60,10 +74,21 @@ class SpecificationParser
         }
     }
 
-    private function parseEndpointsFromPaths(SpecificationAccessor $specification, SpecificationPointer $pointer): EndpointCollection
+    private function createSpecificationContext(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationContext
     {
+        $servers = $this->serversParser->parsePointedSchema($specification, $pointer->withPathElement('servers'));
+        assert($servers instanceof Servers);
+
+        return new SpecificationContext($servers);
+    }
+
+    private function parseEndpointsFromPaths(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer,
+        SpecificationContext $context
+    ): EndpointCollection {
         $pathsPointer = $pointer->withPathElement('paths');
-        $endpoints = $this->pathCollectionParser->parsePointedSchema($specification, $pathsPointer);
+        $endpoints = $this->pathCollectionParser->parsePointedSchema($specification, $pathsPointer, $context);
         \assert($endpoints instanceof EndpointCollection);
 
         return $endpoints;

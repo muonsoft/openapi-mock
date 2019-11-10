@@ -24,21 +24,26 @@ use App\OpenAPI\Parsing\SpecificationPointer;
  */
 class UrlMatcherFactory
 {
+    /** @var ServerPathMaker */
+    private $serverPathMaker;
+
     /** @var ErrorHandlerInterface */
     private $errorHandler;
 
-    public function __construct(ErrorHandlerInterface $errorHandler)
+    public function __construct(ServerPathMaker $serverPathMaker, ErrorHandlerInterface $errorHandler)
     {
+        $this->serverPathMaker = $serverPathMaker;
         $this->errorHandler = $errorHandler;
     }
 
     public function createUrlMatcher(Endpoint $endpoint, SpecificationPointer $pointer): UrlMatcherInterface
     {
+        $serverPaths = $this->serverPathMaker->createServerPaths($endpoint->servers);
         $path = $this->injectSchemaPatternsIntoPath($endpoint, $pointer);
         $isValid = $this->validatePath($path, $pointer);
 
         if ($isValid) {
-            $matcher = $this->createRegularExpressionMatcher($path);
+            $matcher = $this->createRegularExpressionMatcher($serverPaths, $path);
         } else {
             $matcher = new NullUrlMatcher();
         }
@@ -82,9 +87,17 @@ class UrlMatcherFactory
         return str_replace($search, $replace, $path);
     }
 
-    private function createRegularExpressionMatcher(string $path): RegularExpressionUrlMatcher
+    private function createRegularExpressionMatcher(array $serverPaths, string $path): RegularExpressionUrlMatcher
     {
-        $pattern = str_replace('/', '\\/', $path);
+        $pattern = $path;
+
+        if (1 === count($serverPaths)) {
+            $pattern = $serverPaths[0].$pattern;
+        } elseif (count($serverPaths) > 1) {
+            $pattern = '('.implode('|', $serverPaths).')'.$pattern;
+        }
+
+        $pattern = str_replace('/', '\\/', $pattern);
         $pattern = sprintf('/^%s$/', $pattern);
 
         return new RegularExpressionUrlMatcher($pattern);
