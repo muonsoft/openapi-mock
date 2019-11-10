@@ -19,16 +19,33 @@ use App\Mock\Parameters\EndpointParameterCollection;
 class EndpointContext implements ContextMarkerInterface
 {
     /** @var string */
-    public $path;
+    private $path;
 
     /** @var HttpMethodEnum */
-    public $httpMethod;
+    private $httpMethod;
 
     /** @var EndpointParameterCollection */
-    public $parameters;
+    private $parameters;
 
-    public function __construct()
+    public function __construct(string $path, HttpMethodEnum $httpMethod, EndpointParameterCollection $parameters)
     {
-        $this->parameters = new EndpointParameterCollection();
+        $this->path = $path;
+        $this->httpMethod = $httpMethod;
+        $this->parameters = $parameters;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function getHttpMethod(): HttpMethodEnum
+    {
+        return $this->httpMethod;
+    }
+
+    public function getParameters(): EndpointParameterCollection
+    {
+        return $this->parameters;
     }
 }

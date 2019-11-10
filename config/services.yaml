@@ -44,6 +44,7 @@ services:
     public: false
     bind:
       $pathCollectionParser: '@App\OpenAPI\Parsing\PathCollectionParser'
+      $pathParser: '@App\OpenAPI\Parsing\PathParser'
       $parameterParser: '@App\OpenAPI\Parsing\EndpointParameterParser'
       $parameterCollectionParser: '@App\OpenAPI\Parsing\EndpointParameterCollectionParser'
       $endpointParser: '@App\OpenAPI\Parsing\EndpointParser'
