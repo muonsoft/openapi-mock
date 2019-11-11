@@ -10,12 +10,9 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Enum\HttpMethodEnum;
 use App\Mock\Parameters\EndpointCollection;
 use App\Mock\Parameters\EndpointParameterCollection;
-use App\Mock\Parameters\InvalidObject;
 use App\Mock\Parameters\Servers;
-use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
@@ -23,23 +20,23 @@ use App\OpenAPI\SpecificationObjectMarkerInterface;
  */
 class PathParser implements ContextualParserInterface
 {
-    /** @var ContextualParserInterface */
-    private $endpointParser;
+    /** @var EndpointSchemaParser */
+    private $endpointSchemaParser;
+
+    /** @var ParserInterface */
+    private $serversParser;
 
     /** @var ParserInterface */
     private $parameterCollectionParser;
 
-    /** @var ErrorHandlerInterface */
-    private $errorHandler;
-
     public function __construct(
-        ContextualParserInterface $endpointParser,
-        ParserInterface $parameterCollectionParser,
-        ErrorHandlerInterface $errorHandler
+        EndpointSchemaParser $endpointSchemaParser,
+        ParserInterface $serversParser,
+        ParserInterface $parameterCollectionParser
     ) {
-        $this->endpointParser = $endpointParser;
+        $this->endpointSchemaParser = $endpointSchemaParser;
+        $this->serversParser = $serversParser;
         $this->parameterCollectionParser = $parameterCollectionParser;
-        $this->errorHandler = $errorHandler;
     }
 
     public function parsePointedSchema(
@@ -50,48 +47,21 @@ class PathParser implements ContextualParserInterface
         assert($context instanceof PathContext);
 
         $parameters = $this->parsePathParameters($specification, $pointer);
-        $endpoints = new EndpointCollection();
+        $servers = $this->getServers($specification, $pointer, $context);
 
         $pathSchema = $specification->getSchema($pointer);
+        $endpoints = new EndpointCollection();
 
-        foreach ($pathSchema as $tag => $schema) {
-            $httpMethod = strtolower($tag);
-            $endpointPointer = $pointer->withPathElement($tag);
+        foreach (array_keys($pathSchema) as $tag) {
+            $endpointsContext = new EndpointSchemaContext($context->getPath(), $tag, $parameters, $servers);
+            $endpoint = $this->endpointSchemaParser->parseEndpoint($specification, $pointer, $endpointsContext);
 
-            if ($this->isValidEndpointSchema($schema, $httpMethod, $endpointPointer)) {
-                $endpoint = $this->parseEndpoint(
-                    $specification,
-                    $endpointPointer,
-                    new HttpMethodEnum($httpMethod),
-                    $context->getPath(),
-                    $parameters,
-                    $context->getServers()
-                );
-
-                if ($endpoint instanceof InvalidObject) {
-                    $this->errorHandler->reportError(
-                        sprintf('Endpoint will be ignored because of error: %s.', $endpoint->getError()),
-                        $endpointPointer
-                    );
-                } else {
-                    $endpoints->add($endpoint);
-                }
+            if ($endpoint) {
+                $endpoints->add($endpoint);
             }
         }
 
         return $endpoints;
-    }
-
-    private function isValidEndpointSchema($schema, string $httpMethod, SpecificationPointer $pointer): bool
-    {
-        $isValid = HttpMethodEnum::isValid($httpMethod);
-
-        if (!\is_array($schema) || 0 === \count($schema)) {
-            $isValid = false;
-            $this->errorHandler->reportError('Empty or invalid endpoint schema', $pointer);
-        }
-
-        return $isValid;
     }
 
     private function parsePathParameters(
@@ -105,20 +75,18 @@ class PathParser implements ContextualParserInterface
         return $parameters;
     }
 
-    private function parseEndpoint(
+    private function getServers(
         SpecificationAccessor $specification,
-        SpecificationPointer $endpointPointer,
-        HttpMethodEnum $httpMethod,
-        string $path,
-        EndpointParameterCollection $pathParameters,
-        Servers $servers
-    ): SpecificationObjectMarkerInterface {
-        $endpointContext = new EndpointContext($path, $httpMethod, $pathParameters, $servers);
+        SpecificationPointer $pointer,
+        PathContext $context
+    ): Servers {
+        $servers = $this->serversParser->parsePointedSchema($specification, $pointer->withPathElement('servers'));
+        assert($servers instanceof Servers);
 
-        return $this->endpointParser->parsePointedSchema(
-            $specification,
-            $endpointPointer,
-            $endpointContext
-        );
+        if ($servers->urls->count() === 0) {
+            $servers = $context->getServers();
+        }
+
+        return $servers;
     }
 }
