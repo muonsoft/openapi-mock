@@ -35,13 +35,8 @@ class PathParserTest extends TestCase
     private const HTTP_METHOD = 'get';
     private const ENDPOINT_SCHEMA = ['endpointSchema'];
     private const PARAMETERS_TAG = 'parameters';
-    private const PARAMETERS_SCHEMA = ['parametersSchema'];
     private const VALID_PATH_SCHEMA = [
         self::HTTP_METHOD => self::ENDPOINT_SCHEMA,
-    ];
-    private const VALID_PATH_WITH_PARAMETERS_SCHEMA = [
-        self::PARAMETERS_TAG => self::PARAMETERS_SCHEMA,
-        self::HTTP_METHOD    => self::ENDPOINT_SCHEMA,
     ];
     private const SERVERS_TAG = 'servers';
 

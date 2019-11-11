@@ -103,7 +103,7 @@ class EndpointSchemaParser
         $servers = $this->serversParser->parsePointedSchema($specification, $endpointPointer->withPathElement('servers'));
         assert($servers instanceof Servers);
 
-        if ($servers->urls->count() === 0) {
+        if (0 === $servers->urls->count()) {
             $servers = $context->getServers();
         }
 
