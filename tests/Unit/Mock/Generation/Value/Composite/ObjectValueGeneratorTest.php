@@ -12,7 +12,7 @@ namespace App\Tests\Unit\Mock\Generation\Value\Composite;
 
 use App\Mock\Generation\Value\Composite\ObjectValueGenerator;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
-use App\Mock\Parameters\Schema\Type\TypeCollection;
+use App\Mock\Parameters\Schema\Type\TypeMap;
 use App\Tests\Utility\Dummy\DummyType;
 use App\Tests\Utility\TestCase\ProbabilityTestCaseTrait;
 use App\Tests\Utility\TestCase\ValueGeneratorCaseTrait;
@@ -33,7 +33,7 @@ class ObjectValueGeneratorTest extends TestCase
     {
         $type = new ObjectType();
         $propertyType = new DummyType();
-        $type->properties = new TypeCollection([
+        $type->properties = new TypeMap([
             'name' => $propertyType,
         ]);
         $generator = new ObjectValueGenerator($this->valueGeneratorLocator);
@@ -54,7 +54,7 @@ class ObjectValueGeneratorTest extends TestCase
         $type = new ObjectType();
         $propertyType = new DummyType();
         $propertyType->setWriteOnly(true);
-        $type->properties = new TypeCollection([
+        $type->properties = new TypeMap([
             'name' => $propertyType,
         ]);
         $generator = new ObjectValueGenerator($this->valueGeneratorLocator);

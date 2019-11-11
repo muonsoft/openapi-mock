@@ -11,15 +11,25 @@
 namespace App\Mock\Parameters;
 
 use App\OpenAPI\SpecificationObjectMarkerInterface;
-use App\Utility\AbstractClassCollection;
+use Ramsey\Collection\Map\AbstractTypedMap;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class MockResponseCollection extends AbstractClassCollection implements SpecificationObjectMarkerInterface
+class MockResponseMap extends AbstractTypedMap implements SpecificationObjectMarkerInterface
 {
-    protected function getElementClassName(): string
+    public function getKeyType(): string
+    {
+        return 'integer';
+    }
+
+    public function getValueType(): string
     {
         return MockResponse::class;
+    }
+
+    public function unserialize($serialized): void
+    {
+        $this->data = unserialize($serialized);
     }
 }

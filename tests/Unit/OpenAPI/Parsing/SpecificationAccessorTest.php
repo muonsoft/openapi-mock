@@ -10,6 +10,7 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
+use App\OpenAPI\Parsing\ParsingException;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
@@ -45,6 +46,18 @@ class SpecificationAccessorTest extends TestCase
             [new SpecificationPointer(['topLevel', 'midLevel', 'lowLevel']), self::LOW_LEVEL_VALUE],
             [new SpecificationPointer(['emptyPath']), []],
         ];
+    }
+
+    /** @test */
+    public function getSchema_notAnArraySchema_exceptionThrown(): void
+    {
+        $accessor = new SpecificationAccessor(['schema' => 'invalid']);
+        $pointer = new SpecificationPointer(['schema']);
+
+        $this->expectException(ParsingException::class);
+        $this->expectExceptionMessage('Schema is expected to be an array or an object');
+
+        $accessor->getSchema($pointer);
     }
 
     /** @test */

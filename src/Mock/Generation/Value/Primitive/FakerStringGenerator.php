@@ -72,7 +72,7 @@ class FakerStringGenerator implements ValueGeneratorInterface
     {
         $randomArrayKey = array_rand($type->enum->toArray());
 
-        return $type->enum->get($randomArrayKey);
+        return $type->enum[$randomArrayKey];
     }
 
     private function generateValueByPattern(StringType $type): string

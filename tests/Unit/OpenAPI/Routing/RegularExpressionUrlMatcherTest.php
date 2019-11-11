@@ -44,5 +44,8 @@ class RegularExpressionUrlMatcherTest extends TestCase
         yield ['/^\/resource\/(-?(?:\d+|\d*\.\d+))$/', '/resource/0123456789.0123456789', true];
         yield ['/^\/resource\/(-?(?:\d+|\d*\.\d+))$/', '/resource/-0123456789.0123456789', true];
         yield ['/^\/resource\/(-?(?:\d+|\d*\.\d+))$/', '/resource/-0123456789.a', false];
+        yield ['/^(\/first\/path|\/second\/path)\/resource$/', '/resource', false];
+        yield ['/^(\/first\/path|\/second\/path)\/resource$/', '/first/path/resource', true];
+        yield ['/^(\/first\/path|\/second\/path)\/resource$/', '/second/path/resource', true];
     }
 }

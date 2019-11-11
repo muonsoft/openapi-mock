@@ -10,7 +10,7 @@
 
 namespace App\Mock\Parameters;
 
-use App\Mock\Parameters\Schema\SchemaCollection;
+use App\Mock\Parameters\Schema\SchemaMap;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -24,11 +24,11 @@ class MockResponse implements SpecificationObjectMarkerInterface
     /** @var int */
     public $statusCode = self::DEFAULT_STATUS_CODE;
 
-    /** @var SchemaCollection */
+    /** @var SchemaMap */
     public $content;
 
     public function __construct()
     {
-        $this->content = new SchemaCollection();
+        $this->content = new SchemaMap();
     }
 }

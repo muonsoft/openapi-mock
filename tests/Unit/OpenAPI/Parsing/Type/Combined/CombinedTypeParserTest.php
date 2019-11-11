@@ -60,7 +60,7 @@ class CombinedTypeParserTest extends TestCase
             [$combinedTypeName, '0']
         );
         $this->assertCount(1, $type->types);
-        $this->assertSame($internalType, $type->types->get(0));
+        $this->assertSame($internalType, $type->types[0]);
     }
 
     /**

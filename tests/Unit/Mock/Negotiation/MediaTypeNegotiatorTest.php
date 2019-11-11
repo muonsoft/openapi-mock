@@ -112,7 +112,7 @@ class MediaTypeNegotiatorTest extends TestCase
         $response = new MockResponse();
 
         foreach ($responseContentTypes as $contentType) {
-            $response->content->set($contentType, new Schema());
+            $response->content->put($contentType, new Schema());
         }
 
         return $response;

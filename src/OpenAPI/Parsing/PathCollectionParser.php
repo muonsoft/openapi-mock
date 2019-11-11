@@ -10,77 +10,51 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Enum\HttpMethodEnum;
-use App\Mock\Parameters\Endpoint;
-use App\Mock\Parameters\EndpointParameterCollection;
+use App\Mock\Parameters\EndpointCollection;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
-use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class PathCollectionParser implements ParserInterface
+class PathCollectionParser implements ContextualParserInterface
 {
     /** @var ContextualParserInterface */
-    private $endpointParser;
-
-    /** @var ParserInterface */
-    private $parameterCollectionParser;
+    private $pathParser;
 
     /** @var ErrorHandlerInterface */
     private $errorHandler;
 
     public function __construct(
-        ContextualParserInterface $endpointParser,
-        ParserInterface $parameterCollectionParser,
+        ContextualParserInterface $pathParser,
         ErrorHandlerInterface $errorHandler
     ) {
-        $this->endpointParser = $endpointParser;
-        $this->parameterCollectionParser = $parameterCollectionParser;
+        $this->pathParser = $pathParser;
         $this->errorHandler = $errorHandler;
     }
 
-    public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
-    {
-        $context = new PathCollectionParserContext($specification);
+    public function parsePointedSchema(
+        SpecificationAccessor $specification,
+        SpecificationPointer $pointer,
+        ContextMarkerInterface $context
+    ): SpecificationObjectMarkerInterface {
+        assert($context instanceof SpecificationContext);
+
         $paths = $specification->getSchema($pointer);
 
+        $allEndpoints = [];
+
         foreach ($paths as $path => $pathSchema) {
-            $context->path = $path;
-            $context->pathPointer = $pointer->withPathElement($path);
-            $isValid = $this->validateSchema($pathSchema, $context->pathPointer);
+            $pathPointer = $pointer->withPathElement($path);
+            $isValid = $this->validateSchema($pathSchema, $pathPointer);
 
             if ($isValid) {
-                $this->parsePathParameters($pathSchema, $context);
-                $this->parsePathEndpoints($pathSchema, $context);
+                $pathContext = new PathContext($path, $context->getServers());
+                $allEndpoints[] = $this->pathParser->parsePointedSchema($specification, $pathPointer, $pathContext);
             }
         }
 
-        return $context->endpoints;
-    }
-
-    private function parsePathParameters(array $pathSchema, PathCollectionParserContext $context): void
-    {
-        if (array_key_exists('parameters', $pathSchema)) {
-            $pointer = $context->pathPointer->withPathElement('parameters');
-            $context->pathParameters = $this->parameterCollectionParser->parsePointedSchema($context->specification, $pointer);
-        } else {
-            $context->pathParameters = new EndpointParameterCollection();
-        }
-    }
-
-    private function parsePathEndpoints(array $pathSchema, PathCollectionParserContext $context): void
-    {
-        foreach ($pathSchema as $tag => $schema) {
-            $httpMethod = strtolower($tag);
-            $context->endpointPointer = $context->pathPointer->withPathElement($tag);
-            $isValid = HttpMethodEnum::isValid($httpMethod) && $this->validateSchema($schema, $context->endpointPointer);
-
-            if ($isValid) {
-                $this->parseEndpoint(new HttpMethodEnum($httpMethod), $context);
-            }
-        }
+        return $this->mergeEndpoints($allEndpoints);
     }
 
     private function validateSchema($schema, SpecificationPointer $pointer): bool
@@ -98,27 +72,12 @@ class PathCollectionParser implements ParserInterface
         return $isValid;
     }
 
-    private function parseEndpoint(HttpMethodEnum $httpMethod, PathCollectionParserContext $context): void
+    private function mergeEndpoints(array $allEndpoints): EndpointCollection
     {
-        $endpointContext = new EndpointContext();
-        $endpointContext->path = $context->path;
-        $endpointContext->httpMethod = $httpMethod;
-        $endpointContext->parameters = $context->pathParameters;
+        $endpoints = new EndpointCollection();
+        $endpoints = $endpoints->merge(...$allEndpoints);
+        assert($endpoints instanceof EndpointCollection);
 
-        /** @var Endpoint $endpoint */
-        $endpoint = $this->endpointParser->parsePointedSchema(
-            $context->specification,
-            $context->endpointPointer,
-            $endpointContext
-        );
-
-        if ($endpoint->urlMatcher instanceof NullUrlMatcher) {
-            $this->errorHandler->reportError(
-                'Endpoint has invalid url matcher and is ignored.',
-                $context->endpointPointer
-            );
-        } else {
-            $context->endpoints->add($endpoint);
-        }
+        return $endpoints;
     }
 }

@@ -313,16 +313,16 @@ class ObjectTypeParserTest extends TestCase
     private function assertObjectIsValidAndHasProperty(ObjectType $object, TypeInterface $propertyType): void
     {
         $this->assertCount(1, $object->properties);
-        $this->assertSame($propertyType, $object->properties->first());
-        $this->assertSame([self::PROPERTY_NAME], $object->properties->getKeys());
+        $this->assertSame($propertyType, $object->properties->get(self::PROPERTY_NAME));
+        $this->assertSame([self::PROPERTY_NAME], $object->properties->keys());
         $this->assertSame([self::PROPERTY_NAME], $object->required->toArray());
     }
 
     private function assertHashMapHasValidDefaultProperty(HashMapType $type, TypeInterface $propertyType): void
     {
         $this->assertCount(1, $type->properties);
-        $this->assertSame($propertyType, $type->properties->first());
-        $this->assertSame([self::DEFAULT_PROPERTY_NAME], $type->properties->getKeys());
+        $this->assertSame($propertyType, $type->properties->get(self::DEFAULT_PROPERTY_NAME));
+        $this->assertSame([self::DEFAULT_PROPERTY_NAME], $type->properties->keys());
         $this->assertSame([self::DEFAULT_PROPERTY_NAME], $type->required->toArray());
     }
 }

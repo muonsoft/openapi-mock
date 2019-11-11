@@ -8,17 +8,21 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters\Schema;
+namespace App\Mock\Parameters;
 
-use App\Utility\AbstractClassCollection;
+use App\OpenAPI\SpecificationObjectMarkerInterface;
+use App\Utility\StringList;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class SchemaCollection extends AbstractClassCollection
+class Servers implements SpecificationObjectMarkerInterface
 {
-    protected function getElementClassName(): string
+    /** @var StringList */
+    public $urls;
+
+    public function __construct()
     {
-        return Schema::class;
+        $this->urls = new StringList();
     }
 }

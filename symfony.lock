@@ -47,9 +47,6 @@
             "ref": "cb4152ebcadbe620ea2261da1a1c5a9b8cea7672"
         }
     },
-    "doctrine/collections": {
-        "version": "v1.5.0"
-    },
     "doctrine/instantiator": {
         "version": "1.1.0"
     },
@@ -175,6 +172,9 @@
     },
     "ralouphie/getallheaders": {
         "version": "2.0.5"
+    },
+    "ramsey/collection": {
+        "version": "1.0.0"
     },
     "sebastian/code-unit-reverse-lookup": {
         "version": "1.0.1"

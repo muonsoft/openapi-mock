@@ -208,9 +208,9 @@ trait ParsingTestCaseTrait
         return $message;
     }
 
-    protected function givenUrlMatcherFactory_createUrlMatcher_returnsUrlMatcher(): UrlMatcherInterface
+    protected function givenUrlMatcherFactory_createUrlMatcher_returnsUrlMatcher(UrlMatcherInterface $urlMatcher = null): UrlMatcherInterface
     {
-        $urlMatcher = \Phake::mock(UrlMatcherInterface::class);
+        $urlMatcher = $urlMatcher ?? \Phake::mock(UrlMatcherInterface::class);
 
         \Phake::when($this->urlMatcherFactory)
             ->createUrlMatcher(\Phake::anyParameters())

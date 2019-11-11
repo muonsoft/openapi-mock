@@ -10,20 +10,19 @@
 
 namespace App\OpenAPI\Parsing;
 
-use App\Enum\HttpMethodEnum;
 use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\Servers;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointContext implements ContextMarkerInterface
+class EndpointSchemaContext
 {
     /** @var string */
     private $path;
 
-    /** @var HttpMethodEnum */
-    private $httpMethod;
+    /** @var string */
+    private $tag;
 
     /** @var EndpointParameterCollection */
     private $parameters;
@@ -31,14 +30,10 @@ class EndpointContext implements ContextMarkerInterface
     /** @var Servers */
     private $servers;
 
-    public function __construct(
-        string $path,
-        HttpMethodEnum $httpMethod,
-        EndpointParameterCollection $parameters,
-        Servers $servers
-    ) {
+    public function __construct(string $path, string $tag, EndpointParameterCollection $parameters, Servers $servers)
+    {
         $this->path = $path;
-        $this->httpMethod = $httpMethod;
+        $this->tag = $tag;
         $this->parameters = $parameters;
         $this->servers = $servers;
     }
@@ -48,9 +43,9 @@ class EndpointContext implements ContextMarkerInterface
         return $this->path;
     }
 
-    public function getHttpMethod(): HttpMethodEnum
+    public function getTag(): string
     {
-        return $this->httpMethod;
+        return $this->tag;
     }
 
     public function getParameters(): EndpointParameterCollection

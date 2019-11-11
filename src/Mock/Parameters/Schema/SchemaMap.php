@@ -8,19 +8,23 @@
  * file that was distributed with this source code.
  */
 
-namespace App\Mock\Parameters;
+namespace App\Mock\Parameters\Schema;
 
-use App\OpenAPI\SpecificationObjectMarkerInterface;
-use Ramsey\Collection\AbstractCollection;
+use Ramsey\Collection\Map\AbstractTypedMap;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class EndpointCollection extends AbstractCollection implements SpecificationObjectMarkerInterface
+class SchemaMap extends AbstractTypedMap
 {
-    public function getType(): string
+    public function getKeyType(): string
     {
-        return Endpoint::class;
+        return 'string';
+    }
+
+    public function getValueType(): string
+    {
+        return Schema::class;
     }
 
     public function unserialize($serialized): void

@@ -11,7 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\MockResponse;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\MockResponseMap;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\SpecificationObjectMarkerInterface;
 use Psr\Log\LoggerInterface;
@@ -47,7 +47,7 @@ class ResponseCollectionParser implements ParserInterface
 
     public function parsePointedSchema(SpecificationAccessor $specification, SpecificationPointer $pointer): SpecificationObjectMarkerInterface
     {
-        $responses = new MockResponseCollection();
+        $responses = new MockResponseMap();
         $responseSchemas = $specification->getSchema($pointer);
 
         foreach ($responseSchemas as $statusCode => $responseSpecification) {
@@ -59,7 +59,7 @@ class ResponseCollectionParser implements ParserInterface
                 $response = $this->resolvingParser->resolveReferenceAndParsePointedSchema($specification, $responsePointer, $this->responseParser);
                 $parsedStatusCode = $this->parseStatusCode($statusCode);
                 $response->statusCode = $parsedStatusCode;
-                $responses->set($parsedStatusCode, $response);
+                $responses->put($parsedStatusCode, $response);
 
                 $this->logger->debug(
                     sprintf('Response with status code "%s" was parsed.', $response->statusCode),

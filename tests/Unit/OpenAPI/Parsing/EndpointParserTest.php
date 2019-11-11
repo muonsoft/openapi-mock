@@ -10,14 +10,18 @@
 
 namespace App\Tests\Unit\OpenAPI\Parsing;
 
+use App\Enum\HttpMethodEnum;
 use App\Mock\Parameters\Endpoint;
 use App\Mock\Parameters\EndpointParameter;
 use App\Mock\Parameters\EndpointParameterCollection;
-use App\Mock\Parameters\MockResponseCollection;
+use App\Mock\Parameters\InvalidObject;
+use App\Mock\Parameters\MockResponseMap;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\Parsing\EndpointContext;
 use App\OpenAPI\Parsing\EndpointParser;
 use App\OpenAPI\Parsing\SpecificationAccessor;
 use App\OpenAPI\Parsing\SpecificationPointer;
+use App\OpenAPI\Routing\NullUrlMatcher;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
@@ -34,17 +38,12 @@ class EndpointParserTest extends TestCase
         ],
     ];
 
-    protected function setUp(): void
-    {
-        $this->setUpParsingContext();
-    }
-
     /** @test */
     public function parsePointedSchema_validResponseSpecification_mockEndpointWithResponses(): void
     {
         $parser = $this->createEndpointParser();
         $pointer = new SpecificationPointer();
-        $expectedMockResponses = new MockResponseCollection();
+        $expectedMockResponses = new MockResponseMap();
         $expectedEndpointParameter = new EndpointParameter();
         $expectedContextParameter = new EndpointParameter();
         $expectedParameters = new EndpointParameterCollection([$expectedEndpointParameter]);
@@ -56,6 +55,7 @@ class EndpointParserTest extends TestCase
         /** @var Endpoint $endpoint */
         $endpoint = $parser->parsePointedSchema($specification, $pointer, $context);
 
+        $this->assertInstanceOf(Endpoint::class, $endpoint);
         $this->assertInternalParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
             $specification,
             ['responses'],
@@ -63,12 +63,39 @@ class EndpointParserTest extends TestCase
         );
         $this->assertUrlMatcherFactory_createUrlMatcher_wasCalledOnceWithEndpointAndPointer($endpoint, $pointer);
         $this->assertSame($expectedMockResponses, $endpoint->responses);
-        $this->assertSame($context->path, $endpoint->path);
-        $this->assertSame($context->httpMethod, $endpoint->httpMethod);
+        $this->assertSame($context->getPath(), $endpoint->path);
+        $this->assertSame($context->getHttpMethod(), $endpoint->httpMethod);
+        $this->assertSame($context->getServers(), $endpoint->servers);
         $this->assertSame($urlMatcher, $endpoint->urlMatcher);
         $this->assertCount(2, $endpoint->parameters);
         $this->assertContains($expectedEndpointParameter, $endpoint->parameters);
         $this->assertContains($expectedContextParameter, $endpoint->parameters);
+    }
+
+    /** @test */
+    public function parsePointedSchema_endpointWithInvalidUrl_invalidObjectReturned(): void
+    {
+        $parser = $this->createEndpointParser();
+        $pointer = new SpecificationPointer();
+        $expectedMockResponses = new MockResponseMap();
+        $expectedEndpointParameter = new EndpointParameter();
+        $expectedContextParameter = new EndpointParameter();
+        $expectedParameters = new EndpointParameterCollection([$expectedEndpointParameter]);
+        $this->givenInternalParser_parsePointedSchema_returns($expectedMockResponses, $expectedParameters);
+        $specification = new SpecificationAccessor(self::VALID_ENDPOINT_SCHEMA);
+        $context = $this->givenEndpointContext($expectedContextParameter);
+        $this->givenUrlMatcherFactory_createUrlMatcher_returnsUrlMatcher(new NullUrlMatcher());
+
+        /** @var InvalidObject $endpoint */
+        $endpoint = $parser->parsePointedSchema($specification, $pointer, $context);
+
+        $this->assertInstanceOf(InvalidObject::class, $endpoint);
+        $this->assertSame('endpoint has not parsable url', $endpoint->getError());
+        $this->assertInternalParser_parsePointedSchema_wasCalledTwiceWithSpecificationAndPointerPaths(
+            $specification,
+            ['responses'],
+            ['parameters']
+        );
     }
 
     private function createEndpointParser(): EndpointParser
@@ -83,11 +110,11 @@ class EndpointParserTest extends TestCase
 
     private function givenEndpointContext(EndpointParameter $expectedContextParameter): EndpointContext
     {
-        $context = new EndpointContext();
-        $context->path = 'path';
-        $context->httpMethod = 'HTTP_METHOD';
-        $context->parameters->add($expectedContextParameter);
-
-        return $context;
+        return new EndpointContext(
+            'path',
+            new HttpMethodEnum(HttpMethodEnum::TRACE),
+            new EndpointParameterCollection([$expectedContextParameter]),
+            new Servers()
+        );
     }
 }

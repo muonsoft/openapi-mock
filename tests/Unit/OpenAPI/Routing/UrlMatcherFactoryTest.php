@@ -18,9 +18,11 @@ use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
 use App\Mock\Parameters\Schema\Type\Primitive\IntegerType;
 use App\Mock\Parameters\Schema\Type\Primitive\NumberType;
 use App\Mock\Parameters\Schema\Type\Primitive\StringType;
+use App\Mock\Parameters\Servers;
 use App\OpenAPI\Parsing\SpecificationPointer;
 use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\Routing\RegularExpressionUrlMatcher;
+use App\OpenAPI\Routing\ServerPathMaker;
 use App\OpenAPI\Routing\UrlMatcherFactory;
 use App\Tests\Utility\TestCase\ParsingTestCaseTrait;
 use PHPUnit\Framework\TestCase;
@@ -32,29 +34,35 @@ class UrlMatcherFactoryTest extends TestCase
 {
     use ParsingTestCaseTrait;
 
+    /** @var ServerPathMaker */
+    private $serverPathMaker;
+
     protected function setUp(): void
     {
-        $this->setUpParsingContext();
+        $this->serverPathMaker = \Phake::mock(ServerPathMaker::class);
     }
 
     /**
      * @test
-     * @dataProvider pathAndParametersAndExpectedPatternProvider
+     * @dataProvider pathAndParametersAndServerPathsAndExpectedPatternProvider
      */
     public function createUrlMatcher_givenPathAndParametersInEndpoint_regularExpressionPatternReturned(
         string $path,
         EndpointParameterCollection $parameters,
+        array $serverPaths,
         string $expectedPattern
     ): void {
         $factory = $this->createUrlMatcherFactory();
         $pointer = new SpecificationPointer();
         $endpoint = $this->givenEndpoint($path, $parameters);
+        $this->givenServerPathMaker_createServerPaths_returnsPaths($serverPaths);
 
         /** @var RegularExpressionUrlMatcher $matcher */
         $matcher = $factory->createUrlMatcher($endpoint, $pointer);
 
         $this->assertInstanceOf(RegularExpressionUrlMatcher::class, $matcher);
         $this->assertSame($expectedPattern, $matcher->getPattern());
+        $this->assertServerPathMaker_createServerPaths_wasCalledOnceWithServers($endpoint->servers);
         \Phake::verifyNoInteraction($this->errorHandler);
     }
 
@@ -97,46 +105,64 @@ class UrlMatcherFactoryTest extends TestCase
         );
     }
 
-    public function pathAndParametersAndExpectedPatternProvider(): \Iterator
+    public function pathAndParametersAndServerPathsAndExpectedPatternProvider(): \Iterator
     {
-        yield [
+        yield 'path without parameters' => [
             '/resources',
             $this->givenParametersWithTypes(),
+            [],
             '/^\/resources$/',
         ];
-        yield [
+        yield 'string parameter in path' => [
             '/resources/{resourceId}',
             $this->givenParametersWithTypes([
                 'resourceId' => new StringType(),
             ]),
+            [],
             '/^\/resources\/([^\\\\\\/]*)$/',
         ];
-        yield [
+        yield 'integer parameter in path' => [
             '/resources/{resourceId}',
             $this->givenParametersWithTypes([
                 'resourceId' => new IntegerType(),
             ]),
+            [],
             '/^\/resources\/(-?\d*)$/',
         ];
-        yield [
+        yield 'number parameter in path' => [
             '/resources/{resourceId}',
             $this->givenParametersWithTypes([
                 'resourceId' => new NumberType(),
             ]),
+            [],
             '/^\/resources\/(-?(?:\d+|\d*\.\d+))$/',
         ];
-        yield [
+        yield 'two parameters in path' => [
             '/resources/{resourceId}/subresources/{subresourceId}',
             $this->givenParametersWithTypes([
                 'resourceId'    => new StringType(),
                 'subresourceId' => new IntegerType(),
             ]),
+            [],
             '/^\/resources\/([^\\\\\\/]*)\/subresources\/(-?\d*)$/',
         ];
-        yield [
+        yield 'query and path parameters with same names' => [
             '/resources/{resourceId}',
             $this->givenQueryAndPathParametersWithSameNames(),
+            [],
             '/^\/resources\/([^\\\\\\/]*)$/',
+        ];
+        yield 'path with one server path' => [
+            '/resources',
+            $this->givenParametersWithTypes(),
+            ['/server/path'],
+            '/^\/server\/path\/resources$/',
+        ];
+        yield 'path with two server paths' => [
+            '/resources',
+            $this->givenParametersWithTypes(),
+            ['/first/path', '/second/path'],
+            '/^(\/first\/path|\/second\/path)\/resources$/',
         ];
     }
 
@@ -178,7 +204,7 @@ class UrlMatcherFactoryTest extends TestCase
 
     private function createUrlMatcherFactory(): UrlMatcherFactory
     {
-        return new UrlMatcherFactory($this->errorHandler);
+        return new UrlMatcherFactory($this->serverPathMaker, $this->errorHandler);
     }
 
     private function givenEndpoint(string $path, EndpointParameterCollection $parameters = null): Endpoint
@@ -188,5 +214,18 @@ class UrlMatcherFactoryTest extends TestCase
         $endpoint->parameters = $parameters ?? new EndpointParameterCollection();
 
         return $endpoint;
+    }
+
+    private function assertServerPathMaker_createServerPaths_wasCalledOnceWithServers(Servers $servers): void
+    {
+        \Phake::verify($this->serverPathMaker)
+            ->createServerPaths($servers);
+    }
+
+    private function givenServerPathMaker_createServerPaths_returnsPaths(array $serverPaths): void
+    {
+        \Phake::when($this->serverPathMaker)
+            ->createServerPaths(\Phake::anyParameters())
+            ->thenReturn($serverPaths);
     }
 }

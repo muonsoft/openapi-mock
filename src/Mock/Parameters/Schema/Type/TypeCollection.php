@@ -10,15 +10,20 @@
 
 namespace App\Mock\Parameters\Schema\Type;
 
-use App\Utility\AbstractClassCollection;
+use Ramsey\Collection\AbstractCollection;
 
 /**
  * @author Igor Lazarev <strider2038@yandex.ru>
  */
-class TypeCollection extends AbstractClassCollection
+class TypeCollection extends AbstractCollection
 {
-    protected function getElementClassName(): string
+    public function getType(): string
     {
         return TypeInterface::class;
+    }
+
+    public function unserialize($serialized): void
+    {
+        $this->data = unserialize($serialized);
     }
 }

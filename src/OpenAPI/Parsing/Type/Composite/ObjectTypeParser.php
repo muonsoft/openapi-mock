@@ -13,8 +13,8 @@ namespace App\OpenAPI\Parsing\Type\Composite;
 use App\Mock\Parameters\Schema\Type\Composite\FreeFormObjectType;
 use App\Mock\Parameters\Schema\Type\Composite\HashMapType;
 use App\Mock\Parameters\Schema\Type\Composite\ObjectType;
-use App\Mock\Parameters\Schema\Type\TypeCollection;
 use App\Mock\Parameters\Schema\Type\TypeInterface;
+use App\Mock\Parameters\Schema\Type\TypeMap;
 use App\OpenAPI\ErrorHandling\ErrorHandlerInterface;
 use App\OpenAPI\Parsing\ParserInterface;
 use App\OpenAPI\Parsing\SpecificationAccessor;
@@ -112,9 +112,9 @@ class ObjectTypeParser implements TypeParserInterface
         return $object;
     }
 
-    private function parseProperties(SpecificationAccessor $specification, SpecificationPointer $pointer): TypeCollection
+    private function parseProperties(SpecificationAccessor $specification, SpecificationPointer $pointer): TypeMap
     {
-        $properties = new TypeCollection();
+        $properties = new TypeMap();
 
         $schema = $specification->getSchema($pointer);
         $schemaProperties = $schema['properties'] ?? [];
@@ -123,13 +123,13 @@ class ObjectTypeParser implements TypeParserInterface
         foreach (array_keys($schemaProperties) as $propertyName) {
             $propertyPointer = $propertiesPointer->withPathElement($propertyName);
             $property = $this->resolvingSchemaParser->parsePointedSchema($specification, $propertyPointer);
-            $properties->set($propertyName, $property);
+            $properties->put($propertyName, $property);
         }
 
         return $properties;
     }
 
-    private function parseRequiredProperties(SpecificationAccessor $specification, SpecificationPointer $pointer, TypeCollection $properties): StringList
+    private function parseRequiredProperties(SpecificationAccessor $specification, SpecificationPointer $pointer, TypeMap $properties): StringList
     {
         $requiredProperties = new StringList();
         $schema = $specification->getSchema($pointer);
@@ -148,7 +148,7 @@ class ObjectTypeParser implements TypeParserInterface
         return $requiredProperties;
     }
 
-    private function validateProperty($propertyName, TypeCollection $properties, SpecificationPointer $pointer): bool
+    private function validateProperty($propertyName, TypeMap $properties, SpecificationPointer $pointer): bool
     {
         $isValid = false;
 
