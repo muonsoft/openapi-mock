@@ -11,6 +11,7 @@
 namespace App\OpenAPI\Parsing;
 
 use App\Mock\Parameters\Endpoint;
+use App\Mock\Parameters\EndpointParameterCollection;
 use App\Mock\Parameters\InvalidObject;
 use App\OpenAPI\Routing\NullUrlMatcher;
 use App\OpenAPI\Routing\UrlMatcherFactory;
@@ -95,6 +96,7 @@ class EndpointParser implements ContextualParserInterface
 
         $parametersPointer = $pointer->withPathElement('parameters');
         $endpoint->parameters = $this->parameterCollectionParser->parsePointedSchema($specification, $parametersPointer);
+        assert($endpoint->parameters instanceof EndpointParameterCollection);
         $endpoint->parameters = $endpoint->parameters->merge($context->getParameters());
 
         $endpoint->urlMatcher = $this->urlMatcherFactory->createUrlMatcher($endpoint, $pointer);

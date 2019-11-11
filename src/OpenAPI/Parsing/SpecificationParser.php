@@ -24,10 +24,30 @@ class SpecificationParser
     /** @var ContextualParserInterface */
     private $pathCollectionParser;
 
+    /** @var \Closure[] */
+    private $validators;
+
     public function __construct(ParserInterface $serversParser, ContextualParserInterface $pathCollectionParser)
     {
         $this->serversParser = $serversParser;
         $this->pathCollectionParser = $pathCollectionParser;
+
+        $this->validators = [
+            'Swagger specification is not supported. Supports only OpenAPI v3.*.' => static function (array $schema): bool {
+                return array_key_exists('swagger', $schema);
+            },
+            'Cannot detect OpenAPI specification version: tag "openapi" does not exist.' => static function (array $schema): bool {
+                return !array_key_exists('openapi', $schema);
+            },
+            'OpenAPI specification version is not supported. Supports only 3.*.' => static function (array $schema): bool {
+                return 3 !== ((int) $schema['openapi']);
+            },
+            'Section "paths" is empty or does not exist' => static function (array $schema): bool {
+                return !array_key_exists('paths', $schema)
+                    || !\is_array($schema['paths'])
+                    || 0 === \count($schema['paths']);
+            },
+        ];
     }
 
     public function parseSpecification(SpecificationAccessor $specification): EndpointCollection
@@ -44,33 +64,10 @@ class SpecificationParser
     {
         $schema = $specification->getSchema($pointer);
 
-        if (array_key_exists('swagger', $schema)) {
-            throw new ParsingException(
-                'Swagger specification is not supported. Supports only OpenAPI v3.*.',
-                $pointer
-            );
-        }
-
-        if (!array_key_exists('openapi', $schema)) {
-            throw new ParsingException(
-                'Cannot detect OpenAPI specification version: tag "openapi" does not exist.',
-                $pointer
-            );
-        }
-
-        if (3 !== ((int) $schema['openapi'])) {
-            throw new ParsingException(
-                'OpenAPI specification version is not supported. Supports only 3.*.',
-                $pointer
-            );
-        }
-
-        if (
-            !array_key_exists('paths', $schema)
-            || !\is_array($schema['paths'])
-            || 0 === \count($schema['paths'])
-        ) {
-            throw new ParsingException('Section "paths" is empty or does not exist', $pointer);
+        foreach ($this->validators as $message => $isNotValid) {
+            if ($isNotValid($schema)) {
+                throw new ParsingException($message, $pointer);
+            }
         }
     }
 

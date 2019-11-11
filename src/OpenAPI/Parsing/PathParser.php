@@ -56,7 +56,7 @@ class PathParser implements ContextualParserInterface
             $endpointsContext = new EndpointSchemaContext($context->getPath(), $tag, $parameters, $servers);
             $endpoint = $this->endpointSchemaParser->parseEndpoint($specification, $pointer, $endpointsContext);
 
-            if ($endpoint) {
+            if (null !== $endpoint) {
                 $endpoints->add($endpoint);
             }
         }

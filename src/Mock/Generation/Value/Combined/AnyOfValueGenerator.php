@@ -69,6 +69,7 @@ class AnyOfValueGenerator implements ValueGeneratorInterface
     {
         $randomInternalTypeIndex = random_int(0, $type->types->count() - 1);
         $randomInternalType = $type->types[$randomInternalTypeIndex];
+        assert($randomInternalType instanceof TypeInterface);
 
         return $this->generateValueOfType($randomInternalType);
     }
