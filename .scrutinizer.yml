@@ -10,7 +10,7 @@ build:
     tests:
       environment:
         php:
-          version: 7.3
+          version: 7.4
         variables:
           APP_ENV: 'test'
       tests:
