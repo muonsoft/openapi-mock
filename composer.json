@@ -11,7 +11,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "7.3.*",
+        "php": "7.4.*",
         "ext-ctype": "*",
         "ext-iconv": "*",
         "ext-json": "*",
@@ -41,7 +41,7 @@
         "phake/phake": "3.*",
         "phpunit/phpunit": "8.*",
         "symfony/expression-language": "4.*",
-        "symplify/easy-coding-standard": "6.*"
+        "symplify/easy-coding-standard": "7.*"
     },
     "config": {
         "preferred-install": {
@@ -83,7 +83,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.3.*"
+            "require": "4.4.*"
         }
     }
 }
