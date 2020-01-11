@@ -25,7 +25,7 @@ class Base64Provider extends Base
         if ($length <= self::MINIMAL_LENGTH) {
             $textLength = self::DEFAULT_LENGTH;
         } else {
-            $textLength = (int) (($length * 2) / 3);
+            $textLength = (int) ($length * 2 / 3);
         }
 
         $text = $this->generator->text($textLength);

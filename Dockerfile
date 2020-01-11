@@ -23,7 +23,7 @@ RUN set -xe \
 FROM php:7.4-alpine
 LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
 
-ARG ROADRUNNER_VERSION=1.5.1
+ARG ROADRUNNER_VERSION=1.5.3
 
 ENV APP_ENV=prod \
     SWAGGER_MOCK_SPECIFICATION_URL='' \
