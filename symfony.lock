@@ -35,9 +35,6 @@
     "composer/xdebug-handler": {
         "version": "1.3.1"
     },
-    "container-interop/container-interop": {
-        "version": "1.2.0"
-    },
     "doctrine/annotations": {
         "version": "1.0",
         "recipe": {
@@ -52,6 +49,9 @@
     },
     "doctrine/lexer": {
         "version": "v1.0.1"
+    },
+    "friends-of-behat/mink-extension": {
+        "version": "2.3.1"
     },
     "friendsofphp/php-cs-fixer": {
         "version": "2.2",
@@ -334,6 +334,9 @@
     },
     "symfony/options-resolver": {
         "version": "v4.2.2"
+    },
+    "symfony/polyfill-ctype": {
+        "version": "v1.14.0"
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.9.0"
