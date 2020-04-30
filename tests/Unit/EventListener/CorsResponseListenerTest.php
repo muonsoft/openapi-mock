@@ -21,11 +21,12 @@ class CorsResponseListenerTest extends TestCase
     }
 
     /** @test */
-    public function onUnhandledCorsRequest_ifFeatureEnabled_handlesCors(): void
+    public function onUnhandledOptionsRequest_ifFeatureEnabled_handlesCors(): void
     {
         $listener = new CorsResponseListener(true);
         $request = new Request();
         $request->setMethod('OPTIONS');
+        $request->headers->set('Origin', 'http://example.tld');
         $response = new Response();
         $response->setStatusCode(Response::HTTP_NOT_FOUND);
         \Phake::when($this->event)
@@ -38,20 +39,21 @@ class CorsResponseListenerTest extends TestCase
         $listener->onKernelResponse($this->event);
 
         $this->assertEquals(Response::HTTP_NO_CONTENT, $response->getStatusCode());
-        $this->assertEquals('*', $response->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('http://example.tld', $response->headers->get('Access-Control-Allow-Origin'));
         $this->assertEquals('GET,POST,PUT,DELETE', $response->headers->get('Access-Control-Allow-Methods'));
         $this->assertEquals('', $response->getContent());
     }
 
     /** @test */
-    public function onHandledCorsRequest_ifFeatureEnabled_doesNothing(): void
+    public function onCorsRequest_ifFeatureEnabled_addsCorsHeaders(): void
     {
         $listener = new CorsResponseListener(true);
         $request = new Request();
-        $request->setMethod('OPTIONS');
+        $request->setMethod('GET');
+        $request->headers->set('Origin', 'http://example.tld');
         $response = new Response();
         $response->setStatusCode(Response::HTTP_OK);
-        $response->setContent('something');
+        $response->setContent('a content');
         \Phake::when($this->event)
             ->getRequest()
             ->thenReturn($request);
@@ -62,17 +64,17 @@ class CorsResponseListenerTest extends TestCase
         $listener->onKernelResponse($this->event);
 
         $this->assertEquals(Response::HTTP_OK, $response->getStatusCode());
-        $this->assertEquals('something', $response->getContent());
-        $this->assertEquals('', $response->headers->get('Access-Control-Allow-Origin'));
-        $this->assertEquals('', $response->headers->get('Access-Control-Allow-Methods'));
+        $this->assertEquals('a content', $response->getContent());
+        $this->assertEquals('http://example.tld', $response->headers->get('Access-Control-Allow-Origin'));
+        $this->assertEquals('GET,POST,PUT,DELETE', $response->headers->get('Access-Control-Allow-Methods'));
     }
 
     /** @test */
-    public function onUnhandledCorsRequest_ifFeatureDisabled_doesNothing(): void
+    public function onCorsRequest_ifFeatureDisabled_doesNothing(): void
     {
         $listener = new CorsResponseListener(false);
         $request = new Request();
-        $request->setMethod('OPTIONS');
+        $request->headers->set('Origin', 'http://example.tld');
         $response = new Response();
         $response->setStatusCode(Response::HTTP_NOT_FOUND);
         \Phake::when($this->event)

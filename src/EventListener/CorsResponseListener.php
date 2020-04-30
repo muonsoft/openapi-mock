@@ -25,17 +25,14 @@ class CorsResponseListener
 
         $request = $event->getRequest();
 
-        if (!$request->isMethod('OPTIONS')) {
+        if (!$request->headers->has('Origin')) {
             return;
         }
 
         $response = $event->getResponse();
 
-        if ($response->getStatusCode() !== Response::HTTP_NOT_FOUND) {
-            return;
-        }
 
-        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin', '*'));
+        $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
 
         $response->headers->set(
             'Access-Control-Allow-Methods',
@@ -46,7 +43,11 @@ class CorsResponseListener
             $response->headers->set('Access-Control-Allow-Headers', $requestHeaders);
         }
 
-        $response->setContent('');
-        $response->setStatusCode(Response::HTTP_NO_CONTENT);
+        if ($request->isMethod('OPTIONS')) {
+            if ($response->getStatusCode() === Response::HTTP_NOT_FOUND) {
+                $response->setContent('');
+                $response->setStatusCode(Response::HTTP_NO_CONTENT);
+            }
+        }
     }
 }
