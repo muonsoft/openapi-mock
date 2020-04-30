@@ -31,7 +31,6 @@ class CorsResponseListener
 
         $response = $event->getResponse();
 
-
         $response->headers->set('Access-Control-Allow-Origin', $request->headers->get('Origin'));
 
         $response->headers->set(
