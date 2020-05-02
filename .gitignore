@@ -20,3 +20,6 @@ behat.yml
 ###< friendsofphp/php-cs-fixer ###
 
 docker-compose.override.yml
+
+# compiled application
+swagger-mock

@@ -1,5 +1,5 @@
 package config
 
 type Config struct {
-	Port uint16 `default:"8888"`
+	Port uint16 `default:"8080"`
 }

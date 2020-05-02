@@ -15,7 +15,7 @@ type Server struct {
 	server *http.Server
 }
 
-func NewServer(port uint16, handler http.Handler, logger *log.Logger) *Server {
+func New(port uint16, handler http.Handler, logger *log.Logger) *Server {
 	return &Server{
 		server: &http.Server{
 			Addr:           fmt.Sprintf(":%d", port),
@@ -67,4 +67,3 @@ func (httpServer *Server) Run() error {
 
 	return nil
 }
-
