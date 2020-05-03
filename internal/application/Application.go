@@ -1,8 +1,10 @@
 package application
 
 import (
+	"github.com/sirupsen/logrus"
 	"log"
 	"swagger-mock/internal/application/config"
+	diContainer "swagger-mock/internal/infrastructure/di/container"
 	"swagger-mock/internal/infrastructure/server"
 )
 
@@ -22,8 +24,12 @@ func (app *application) Run() {
 	}
 }
 
-func NewApplication(config config.Config) SwaggerMock {
-	httpServer := server.New(config.Port, nil, nil)
+func New(config config.Configuration) SwaggerMock {
+	container := diContainer.New(config)
+	loggerWriter := container.Logger.(*logrus.Logger).Writer()
+
+	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
+	httpServer := server.New(config.Port, nil, serverLogger)
 
 	return &application{httpServer}
 }
