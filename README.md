@@ -102,6 +102,12 @@ Mock server options can be set via environment variables.
 * _Default value_: `disabled`
 * _Possible values_: `disabled`, `url_md5`, `url_and_timestamp_md5`
 
+#### SWAGGER_MOCK_CORS_ENABLE
+
+ * When enabled, CORS request will automatically be handled
+ * _Default value_: `False`
+ * _Possible values_: `True` or `False`
+
 ### Specification cache
 
 To speed up server response time you can use caching mechanism for OpenAPI. There are several caching strategies. Specific strategy can be set by environment variable `SWAGGER_MOCK_CACHE_STRATEGY`.

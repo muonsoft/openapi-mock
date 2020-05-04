@@ -3,6 +3,7 @@ parameters:
   env(SWAGGER_MOCK_CACHE_STRATEGY): 'disabled'
   env(SWAGGER_MOCK_CACHE_DIRECTORY): '/dev/shm/openapi-cache'
   env(SWAGGER_MOCK_CACHE_TTL): 0
+  env(SWAGGER_MOCK_CORS_ENABLE): False
 
   locale: 'en'
   specification_url: '%env(SWAGGER_MOCK_SPECIFICATION_URL)%'
@@ -10,6 +11,7 @@ parameters:
   cache_directory: '%env(SWAGGER_MOCK_CACHE_DIRECTORY)%'
   cache_ttl: '%env(SWAGGER_MOCK_CACHE_TTL)%'
   log_level: '%env(SWAGGER_MOCK_LOG_LEVEL)%'
+  cors_enable: '%env(SWAGGER_MOCK_CORS_ENABLE)%'
 
   type_parser_map:
     object: 'App\OpenAPI\Parsing\Type\Composite\ObjectTypeParser'
@@ -62,6 +64,12 @@ services:
   App\EventListener\RequestListener:
     tags:
       - { name: kernel.event_listener, event: kernel.request, priority: 48 }
+
+  App\EventListener\CorsResponseListener:
+    arguments:
+      - '%cors_enable%'
+    tags:
+      - { name: kernel.event_listener, event: kernel.response, priority: 46 }
 
   App\Mock\EndpointRepository:
     arguments:
