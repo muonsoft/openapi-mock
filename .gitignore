@@ -22,4 +22,4 @@ behat.yml
 docker-compose.override.yml
 
 # compiled application
-swagger-mock
+cmd/swagger-mock/swagger-mock

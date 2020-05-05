@@ -1,22 +1,22 @@
-package application
+package openapi
 
 import (
 	"github.com/sirupsen/logrus"
 	"log"
-	"swagger-mock/internal/application/config"
+	"swagger-mock/internal/infrastructure/di/config"
 	diContainer "swagger-mock/internal/infrastructure/di/container"
 	"swagger-mock/internal/infrastructure/server"
 )
 
-type SwaggerMock interface {
+type MockServer interface {
 	Run()
 }
 
-type application struct {
-	server *server.Server
+type mockServer struct {
+	server server.Server
 }
 
-func (app *application) Run() {
+func (app *mockServer) Run() {
 	err := app.server.Run()
 
 	if err != nil {
@@ -24,12 +24,12 @@ func (app *application) Run() {
 	}
 }
 
-func New(config config.Configuration) SwaggerMock {
+func NewMockServer(config config.Configuration) MockServer {
 	container := diContainer.New(config)
-	loggerWriter := container.Logger.(*logrus.Logger).Writer()
+	loggerWriter := container.GetLogger().(*logrus.Logger).Writer()
 
 	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
 	httpServer := server.New(config.Port, nil, serverLogger)
 
-	return &application{httpServer}
+	return &mockServer{httpServer}
 }

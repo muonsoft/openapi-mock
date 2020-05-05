@@ -11,12 +11,12 @@ import (
 	"time"
 )
 
-type Server struct {
+type httpServer struct {
 	server *http.Server
 }
 
-func New(port uint16, handler http.Handler, logger *log.Logger) *Server {
-	return &Server{
+func New(port uint16, handler http.Handler, logger *log.Logger) Server {
+	return &httpServer{
 		server: &http.Server{
 			Addr:           fmt.Sprintf(":%d", port),
 			Handler:        handler,
@@ -29,8 +29,7 @@ func New(port uint16, handler http.Handler, logger *log.Logger) *Server {
 	}
 }
 
-func (httpServer *Server) Run() error {
-
+func (httpServer *httpServer) Run() error {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return err
@@ -63,7 +62,7 @@ func (httpServer *Server) Run() error {
 	}
 
 	<-done
-	httpServer.server.ErrorLog.Printf("%s - Server gracefully stopped.\n", hostname)
+	httpServer.server.ErrorLog.Printf("%s - Server has been gracefully stopped.\n", hostname)
 
 	return nil
 }

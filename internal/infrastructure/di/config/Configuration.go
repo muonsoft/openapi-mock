@@ -7,10 +7,11 @@ import (
 )
 
 type Configuration struct {
-	Port      uint16       `default:"8080"`
-	LogLevel  logrus.Level `ignored:"true"`
-	LogFormat string       `envconfig:"log_format"`
-	Debug     bool
+	SpecificationUrl string       `required:"true" split_words:"true"`
+	Port             uint16       `default:"8080"`
+	LogLevel         logrus.Level `ignored:"true"`
+	LogFormat        string       `envconfig:"log_format"`
+	Debug            bool
 }
 
 func LoadConfigFromEnvironment() Configuration {
