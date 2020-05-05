@@ -9,12 +9,6 @@ type autoLoader struct {
 	loader externalLoader
 }
 
-func New() SpecificationLoader {
-	return &autoLoader{
-		loader: openapi3.NewSwaggerLoader(),
-	}
-}
-
 func (loader *autoLoader) LoadFromURI(uri string) (*openapi3.Swagger, error) {
 	specificationUrl, err := url.Parse(uri)
 	if err != nil || specificationUrl.Scheme == "" {
