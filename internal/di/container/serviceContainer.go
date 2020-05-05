@@ -4,12 +4,12 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	dataGenerator "swagger-mock/internal/application/mock/generator"
-	"swagger-mock/internal/infrastructure/di/config"
-	responseGenerator "swagger-mock/internal/infrastructure/openapi/generator"
-	"swagger-mock/internal/infrastructure/openapi/handler"
-	"swagger-mock/internal/infrastructure/openapi/loader"
-	"swagger-mock/internal/infrastructure/openapi/responder"
+	"swagger-mock/internal/di/config"
+	dataGenerator "swagger-mock/internal/mock/generator"
+	responseGenerator "swagger-mock/internal/openapi/generator"
+	"swagger-mock/internal/openapi/handler"
+	"swagger-mock/internal/openapi/loader"
+	"swagger-mock/internal/openapi/responder"
 )
 
 type serviceContainer struct {

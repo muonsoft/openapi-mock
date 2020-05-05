@@ -3,7 +3,7 @@ package responder
 import (
 	"encoding/json"
 	"net/http"
-	"swagger-mock/internal/infrastructure/openapi/generator"
+	"swagger-mock/internal/openapi/generator"
 )
 
 type coordinatingResponder struct{}

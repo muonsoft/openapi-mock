@@ -4,7 +4,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/sirupsen/logrus"
 	"net/http"
-	"swagger-mock/internal/infrastructure/openapi/loader"
+	"swagger-mock/internal/openapi/loader"
 )
 
 type Container interface {

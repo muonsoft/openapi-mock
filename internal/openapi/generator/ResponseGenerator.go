@@ -3,8 +3,8 @@ package generator
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"net/http"
-	"swagger-mock/internal/application/mock/generator"
-	"swagger-mock/internal/infrastructure/openapi/generator/negotiator"
+	"swagger-mock/internal/mock/generator"
+	"swagger-mock/internal/openapi/generator/negotiator"
 )
 
 type ResponseGenerator interface {

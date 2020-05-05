@@ -2,7 +2,7 @@ package responder
 
 import (
 	"net/http"
-	"swagger-mock/internal/infrastructure/openapi/generator"
+	"swagger-mock/internal/openapi/generator"
 )
 
 type Responder interface {

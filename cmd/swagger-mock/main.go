@@ -1,12 +1,12 @@
 package main
 
 import (
-	"swagger-mock/internal/infrastructure/di/config"
-	"swagger-mock/internal/infrastructure/openapi"
+	"swagger-mock/internal/application"
+	"swagger-mock/internal/di/config"
 )
 
 func main() {
 	configuration := config.LoadConfigFromEnvironment()
-	app := openapi.NewMockServer(configuration)
+	app := application.NewMockServer(configuration)
 	app.Run()
 }

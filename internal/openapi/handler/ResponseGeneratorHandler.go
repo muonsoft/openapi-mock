@@ -3,8 +3,8 @@ package handler
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"net/http"
-	"swagger-mock/internal/infrastructure/openapi/generator"
-	"swagger-mock/internal/infrastructure/openapi/responder"
+	"swagger-mock/internal/openapi/generator"
+	"swagger-mock/internal/openapi/responder"
 )
 
 type responseGeneratorHandler struct {

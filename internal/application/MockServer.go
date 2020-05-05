@@ -1,12 +1,12 @@
-package openapi
+package application
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/sirupsen/logrus"
 	"log"
-	"swagger-mock/internal/infrastructure/di/config"
-	diContainer "swagger-mock/internal/infrastructure/di/container"
-	"swagger-mock/internal/infrastructure/server"
+	"swagger-mock/internal/di/config"
+	diContainer "swagger-mock/internal/di/container"
+	"swagger-mock/internal/server"
 )
 
 type MockServer interface {
