@@ -2,6 +2,7 @@ package container
 
 import (
 	"github.com/sirupsen/logrus"
+	"swagger-mock/internal/application/openapi/loader"
 	"swagger-mock/internal/infrastructure/di/config"
 )
 
@@ -15,6 +16,14 @@ func New(config config.Configuration) Container {
 	return &serviceContainer{logger}
 }
 
+func (container *serviceContainer) GetLogger() logrus.FieldLogger {
+	return container.logger
+}
+
+func (container *serviceContainer) CreateLoader() loader.SpecificationLoader {
+	return loader.New()
+}
+
 func createLogger(config config.Configuration) *logrus.Logger {
 	logger := logrus.New()
 	logger.SetLevel(config.LogLevel)
@@ -26,8 +35,4 @@ func createLogger(config config.Configuration) *logrus.Logger {
 	}
 
 	return logger
-}
-
-func (container *serviceContainer) GetLogger() logrus.FieldLogger {
-	return container.logger
 }
