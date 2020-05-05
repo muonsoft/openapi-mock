@@ -11,10 +11,10 @@ type ResponseGenerator interface {
 	GenerateResponse(request *http.Request, route *openapi3filter.Route) (*Response, error)
 }
 
-func New(dataGenerator generator.DataGenerator) ResponseGenerator {
+func New(dataGenerator generator.MediaGenerator) ResponseGenerator {
 	return &coordinatingGenerator{
-		mediaTypeNegotiator:  negotiator.NewMediaTypeNegotiator(),
-		statusCodeNegotiator: negotiator.NewStatusCodeNegotiator(),
-		dataGenerator:        dataGenerator,
+		contentTypeNegotiator: negotiator.NewContentTypeNegotiator(),
+		statusCodeNegotiator:  negotiator.NewStatusCodeNegotiator(),
+		mediaGenerator:        dataGenerator,
 	}
 }
