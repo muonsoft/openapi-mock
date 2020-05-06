@@ -11,7 +11,7 @@ type MediaGenerator interface {
 	GenerateData(ctx context.Context, mediaType *openapi3.MediaType) (Data, error)
 }
 
-func New() MediaGenerator {
+func New(options Options) MediaGenerator {
 	randomSource := rand.NewSource(time.Now().UnixNano())
 
 	generatorsByType := map[string]schemaGenerator{
@@ -19,8 +19,17 @@ func New() MediaGenerator {
 		"string": &stringGenerator{*rand.New(randomSource)},
 	}
 
-	schemaGenerator := &coordinatingSchemaGenerator{
+	var schemaGenerator schemaGenerator
+
+	schemaGenerator = &coordinatingSchemaGenerator{
 		generatorsByType: generatorsByType,
+	}
+
+	if options.UseExamples != No {
+		schemaGenerator = &exampleSchemaGenerator{
+			useExamples:     options.UseExamples,
+			schemaGenerator: schemaGenerator,
+		}
 	}
 
 	for i := range generatorsByType {
@@ -30,6 +39,7 @@ func New() MediaGenerator {
 	}
 
 	return &coordinatingMediaGenerator{
+		useExamples:     options.UseExamples,
 		schemaGenerator: schemaGenerator,
 	}
 }

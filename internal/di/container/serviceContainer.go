@@ -13,13 +13,17 @@ import (
 )
 
 type serviceContainer struct {
-	logger logrus.FieldLogger
+	configuration config.Configuration
+	logger        logrus.FieldLogger
 }
 
-func New(config config.Configuration) Container {
-	logger := createLogger(config)
+func New(configuration config.Configuration) Container {
+	logger := createLogger(configuration)
 
-	return &serviceContainer{logger}
+	return &serviceContainer{
+		configuration: configuration,
+		logger:        logger,
+	}
 }
 
 func (container *serviceContainer) GetLogger() logrus.FieldLogger {
@@ -31,19 +35,23 @@ func (container *serviceContainer) CreateSpecificationLoader() loader.Specificat
 }
 
 func (container *serviceContainer) CreateOpenApiHandler(router *openapi3filter.Router) http.Handler {
-	dataGenerator := dataGenerator.New()
-	responseGenerator := responseGenerator.New(dataGenerator)
-	webResponder := responder.New()
+	generatorOptions := dataGenerator.Options{
+		UseExamples: container.configuration.UseExamples,
+	}
 
-	httpHandler := handler.NewResponseGeneratorHandler(router, responseGenerator, webResponder)
+	dataGeneratorInstance := dataGenerator.New(generatorOptions)
+	responseGeneratorInstance := responseGenerator.New(dataGeneratorInstance)
+	apiResponder := responder.New()
+
+	httpHandler := handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
 	return httpHandler
 }
 
-func createLogger(config config.Configuration) *logrus.Logger {
+func createLogger(configuration config.Configuration) *logrus.Logger {
 	logger := logrus.New()
-	logger.SetLevel(config.LogLevel)
+	logger.SetLevel(configuration.LogLevel)
 
-	if config.LogFormat == "json" {
+	if configuration.LogFormat == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
 	} else {
 		logger.SetFormatter(&logrus.TextFormatter{})

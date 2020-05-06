@@ -3,13 +3,16 @@ package apitest
 import (
 	"net/http"
 	"net/http/httptest"
+	"swagger-mock/internal/di/config"
 	"swagger-mock/pkg/jsonassert"
 )
 
-func (suite *ApiSuite) TestGETContent_NoParameters_200GeneratedValues() {
+func (suite *ApiSuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_ExpectedValuesGenerated() {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/content", nil)
-	handler := suite.createOpenApiHandler("value-generation.yaml")
+	handler := suite.createOpenApiHandler(config.Configuration{
+		SpecificationUrl: "value-generation.yaml",
+	})
 
 	handler.ServeHTTP(recorder, request)
 

@@ -17,9 +17,9 @@ func TestApi(t *testing.T) {
 	suite.Run(t, new(ApiSuite))
 }
 
-func (suite *ApiSuite) createOpenApiHandler(specificationFilename string) http.Handler {
-	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + specificationFilename)
-	diContainer := container.New(config.Configuration{})
+func (suite *ApiSuite) createOpenApiHandler(configuration config.Configuration) http.Handler {
+	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + configuration.SpecificationUrl)
+	diContainer := container.New(configuration)
 
 	return diContainer.CreateOpenApiHandler(router)
 }
