@@ -3,6 +3,7 @@ package apitest
 import (
 	"net/http"
 	"net/http/httptest"
+	"swagger-mock/pkg/jsonassert"
 )
 
 func (suite *ApiSuite) TestGETContent_NoParameters_200GeneratedValues() {
@@ -14,4 +15,6 @@ func (suite *ApiSuite) TestGETContent_NoParameters_200GeneratedValues() {
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
+	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
+	json.AssertNodeEqualToTheString("$.stringValue", "value")
 }
