@@ -9,7 +9,7 @@ type MediaGenerator interface {
 	GenerateData(ctx context.Context, mediaType *openapi3.MediaType) (Data, error)
 }
 
-func New() MediaGenerator {
+func New(options Options) MediaGenerator {
 	generatorsByType := map[string]schemaGenerator{
 		"object": &objectGenerator{},
 		"string": &stringGenerator{},
@@ -26,6 +26,7 @@ func New() MediaGenerator {
 	}
 
 	return &coordinatingMediaGenerator{
+		useExamples:     options.UseExamples,
 		schemaGenerator: schemaGenerator,
 	}
 }

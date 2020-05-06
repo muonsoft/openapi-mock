@@ -4,17 +4,19 @@ import (
 	"github.com/kelseyhightower/envconfig"
 	"github.com/sirupsen/logrus"
 	"os"
+	"swagger-mock/internal/mock/generator"
 )
 
 type Configuration struct {
-	SpecificationUrl string       `required:"true" split_words:"true"`
-	Port             uint16       `default:"8080"`
-	LogLevel         logrus.Level `ignored:"true"`
-	LogFormat        string       `envconfig:"log_format"`
+	SpecificationUrl string                    `required:"true" split_words:"true"`
+	UseExamples      generator.UseExamplesEnum `ignored:"true"`
+	Port             uint16                    `default:"8080"`
+	LogLevel         logrus.Level              `ignored:"true"`
+	LogFormat        string                    `envconfig:"log_format"`
 	Debug            bool
 }
 
-func LoadConfigFromEnvironment() Configuration {
+func LoadFromEnvironment() Configuration {
 	var configuration Configuration
 	envconfig.MustProcess("SWAGGER_MOCK", &configuration)
 
@@ -28,6 +30,8 @@ func LoadConfigFromEnvironment() Configuration {
 		configuration.LogFormat = "tty"
 	}
 
+	configuration.UseExamples = getUseExamples()
+
 	return configuration
 }
 
@@ -38,7 +42,7 @@ func getLogLevel() logrus.Level {
 	unparsedLogLevel := os.Getenv("SWAGGER_MOCK_LOG_LEVEL")
 
 	if unparsedLogLevel == "" {
-		logLevel = logrus.InfoLevel
+		logLevel = logrus.WarnLevel
 	} else {
 		logLevel, err = logrus.ParseLevel(unparsedLogLevel)
 
@@ -48,4 +52,17 @@ func getLogLevel() logrus.Level {
 	}
 
 	return logLevel
+}
+
+func getUseExamples() generator.UseExamplesEnum {
+	useExamples := os.Getenv("SWAGGER_MOCK_USE_EXAMPLES")
+
+	if useExamples == "if_present" {
+		return generator.IfPresent
+	}
+	if useExamples == "exclusively" {
+		return generator.Exclusively
+	}
+
+	return generator.No
 }

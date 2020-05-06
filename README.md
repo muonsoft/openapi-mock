@@ -84,6 +84,16 @@ Mock server options can be set via environment variables.
 * _Default value_: `warning`
 * _Possible values_: `error`, `warning`, `info`, `debug`
 
+#### SWAGGER_MOCK_USE_EXAMPLES
+
+* Error log level
+* _Default value_: `no`
+* _Possible values_: `no`, `if_present`, `exclusively`
+
+* `no` - examples will be ignored and all data will be generated randomly
+* `if_present` - examples will be used instead of random data if they are present
+* `exclusively` - only examples will be used, no random data generation
+
 #### SWAGGER_MOCK_CACHE_DIRECTORY
 
 * Directory for OpenAPI specification cache
