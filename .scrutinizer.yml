@@ -3,9 +3,9 @@ build:
     analysis:
       project_setup:
         override: true
-        tests:
-          override:
-            - go-scrutinizer-run
+      tests:
+        override:
+          - go-scrutinizer-run
     tests:
       environment:
         go:
@@ -21,3 +21,6 @@ filter:
   excluded_paths:
     - 'test/*'
     - 'cmd/*'
+
+checks:
+  go: true

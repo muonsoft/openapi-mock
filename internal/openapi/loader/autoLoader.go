@@ -10,10 +10,10 @@ type autoLoader struct {
 }
 
 func (loader *autoLoader) LoadFromURI(uri string) (*openapi3.Swagger, error) {
-	specificationUrl, err := url.Parse(uri)
-	if err != nil || specificationUrl.Scheme == "" {
+	specificationURL, err := url.Parse(uri)
+	if err != nil || specificationURL.Scheme == "" {
 		return loader.loader.LoadSwaggerFromFile(uri)
 	}
 
-	return loader.loader.LoadSwaggerFromURI(specificationUrl)
+	return loader.loader.LoadSwaggerFromURI(specificationURL)
 }

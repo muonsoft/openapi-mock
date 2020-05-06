@@ -33,7 +33,7 @@ func New(options Options) MediaGenerator {
 	}
 
 	for i := range generatorsByType {
-		if generator, ok := generatorsByType[i].(recursiveGenerator); ok == true {
+		if generator, ok := generatorsByType[i].(recursiveGenerator); ok {
 			generator.SetSchemaGenerator(schemaGenerator)
 		}
 	}

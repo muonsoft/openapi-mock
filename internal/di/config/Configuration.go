@@ -8,12 +8,12 @@ import (
 )
 
 type Configuration struct {
-	SpecificationUrl string                    `required:"true" split_words:"true"`
+	SpecificationURL string                    `required:"true" split_words:"true"`
 	UseExamples      generator.UseExamplesEnum `ignored:"true"`
-	Port             uint16                    `default:"8080"`
-	LogLevel         logrus.Level              `ignored:"true"`
-	LogFormat        string                    `envconfig:"log_format"`
 	Debug            bool
+	Port             uint16       `default:"8080"`
+	LogLevel         logrus.Level `ignored:"true"`
+	LogFormat        string       `envconfig:"log_format"`
 }
 
 func LoadFromEnvironment() Configuration {

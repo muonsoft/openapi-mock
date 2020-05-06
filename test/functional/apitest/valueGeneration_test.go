@@ -7,11 +7,11 @@ import (
 	"swagger-mock/pkg/jsonassert"
 )
 
-func (suite *ApiSuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_ExpectedValuesGenerated() {
+func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_ExpectedValuesGenerated() {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/content", nil)
-	handler := suite.createOpenApiHandler(config.Configuration{
-		SpecificationUrl: "value-generation.yaml",
+	handler := suite.createOpenAPIHandler(config.Configuration{
+		SpecificationURL: "value-generation.yaml",
 	})
 
 	handler.ServeHTTP(recorder, request)

@@ -19,7 +19,7 @@ func TestLoadFromEnvironment_AllParametersInEnv_ParametersLoaded(t *testing.T) {
 
 	config := LoadFromEnvironment()
 
-	assert.Equal(t, "specification_url", config.SpecificationUrl)
+	assert.Equal(t, "specification_url", config.SpecificationURL)
 	assert.Equal(t, generator.IfPresent, config.UseExamples)
 	assert.False(t, config.Debug)
 	assert.Equal(t, logrus.ErrorLevel, config.LogLevel)
@@ -43,7 +43,7 @@ func TestLoadFromEnvironment_DebugIsOn_LogLevelIsTrace(t *testing.T) {
 
 	config := LoadFromEnvironment()
 
-	assert.Equal(t, "specification_url", config.SpecificationUrl)
+	assert.Equal(t, "specification_url", config.SpecificationURL)
 	assert.Equal(t, generator.No, config.UseExamples)
 	assert.False(t, config.Debug)
 	assert.Equal(t, logrus.WarnLevel, config.LogLevel)

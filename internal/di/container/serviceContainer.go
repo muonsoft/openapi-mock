@@ -34,7 +34,7 @@ func (container *serviceContainer) CreateSpecificationLoader() loader.Specificat
 	return loader.New()
 }
 
-func (container *serviceContainer) CreateOpenApiHandler(router *openapi3filter.Router) http.Handler {
+func (container *serviceContainer) CreateOpenAPIHandler(router *openapi3filter.Router) http.Handler {
 	generatorOptions := dataGenerator.Options{
 		UseExamples: container.configuration.UseExamples,
 	}

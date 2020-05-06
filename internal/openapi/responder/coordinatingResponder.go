@@ -17,5 +17,5 @@ func (responder *coordinatingResponder) WriteResponse(writer http.ResponseWriter
 
 	writer.Header().Set("Content-Type", response.MediaType)
 	writer.WriteHeader(response.StatusCode)
-	writer.Write(data)
+	_, _ = writer.Write(data)
 }

@@ -8,11 +8,11 @@ import (
 	"swagger-mock/pkg/jsonassert"
 )
 
-func (suite *ApiSuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
+func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/content", nil)
-	handler := suite.createOpenApiHandler(config.Configuration{
-		SpecificationUrl: "example-usage/media-type-example.yaml",
+	handler := suite.createOpenAPIHandler(config.Configuration{
+		SpecificationURL: "example-usage/media-type-example.yaml",
 		UseExamples:      generator.No,
 	})
 
@@ -24,11 +24,11 @@ func (suite *ApiSuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabl
 	json.AssertNodeEqualToTheString("$.key", "generatedValue")
 }
 
-func (suite *ApiSuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPresent_ExampleInResponse() {
+func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPresent_ExampleInResponse() {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/content", nil)
-	handler := suite.createOpenApiHandler(config.Configuration{
-		SpecificationUrl: "example-usage/media-type-example.yaml",
+	handler := suite.createOpenAPIHandler(config.Configuration{
+		SpecificationURL: "example-usage/media-type-example.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
@@ -40,11 +40,11 @@ func (suite *ApiSuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 	json.AssertNodeEqualToTheString("$.key", "exampleValue")
 }
 
-func (suite *ApiSuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfPresent_ExampleInResponse() {
+func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfPresent_ExampleInResponse() {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/content", nil)
-	handler := suite.createOpenApiHandler(config.Configuration{
-		SpecificationUrl: "example-usage/media-type-examples.yaml",
+	handler := suite.createOpenAPIHandler(config.Configuration{
+		SpecificationURL: "example-usage/media-type-examples.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
@@ -56,11 +56,11 @@ func (suite *ApiSuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 	json.AssertNodeEqualToTheString("$.key", "multiExampleValue")
 }
 
-func (suite *ApiSuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_ExamplesInResponse() {
+func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_ExamplesInResponse() {
 	recorder := httptest.NewRecorder()
 	request, _ := http.NewRequest("GET", "/content", nil)
-	handler := suite.createOpenApiHandler(config.Configuration{
-		SpecificationUrl: "example-usage/value-examples.yaml",
+	handler := suite.createOpenAPIHandler(config.Configuration{
+		SpecificationURL: "example-usage/value-examples.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
