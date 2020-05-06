@@ -11,9 +11,11 @@ build:
         go:
           version: 'go1.14'
       tests:
+        dependencies:
+          before:
+            - go mod download
+            - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.26.0
         override:
-          - go mod download
-          - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.26.0
           - golangci-lint run
           - command: go test -v $(go list ./... | grep -v vendor) -coverprofile=cover.out
             coverage:
