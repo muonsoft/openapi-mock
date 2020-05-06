@@ -1,8 +1,10 @@
 package generator
 
 import (
+	"context"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
@@ -14,10 +16,10 @@ func TestCoordinatingSchemaGenerator_GenerateDataBySchema_MatchingType_DataGener
 		},
 	}
 	schema := &openapi3.Schema{Type: "type"}
-	generatedData := Data{}
-	mockGenerator.On("GenerateDataBySchema", schema).Return(generatedData, nil).Once()
+	generatedData := map[string]interface{}{}
+	mockGenerator.On("GenerateDataBySchema", mock.Anything, schema).Return(generatedData, nil).Once()
 
-	data, err := coordinatingGenerator.GenerateDataBySchema(schema)
+	data, err := coordinatingGenerator.GenerateDataBySchema(context.Background(), schema)
 
 	mockGenerator.AssertExpectations(t)
 	assert.NoError(t, err)

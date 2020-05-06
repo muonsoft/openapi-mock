@@ -11,8 +11,6 @@ import (
 
 type ApiSuite struct {
 	suite.Suite
-	configuration config.Configuration
-	container     *container.Container
 }
 
 func TestApi(t *testing.T) {
@@ -20,14 +18,8 @@ func TestApi(t *testing.T) {
 }
 
 func (suite *ApiSuite) createOpenApiHandler(specificationFilename string) http.Handler {
-	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../../tests/Resources/swagger-files/" + specificationFilename)
+	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + specificationFilename)
 	diContainer := container.New(config.Configuration{})
-	handler := diContainer.CreateOpenApiHandler(router)
-	return handler
-}
 
-func panicOnError(err error) {
-	if err != nil {
-		panic(err)
-	}
+	return diContainer.CreateOpenApiHandler(router)
 }

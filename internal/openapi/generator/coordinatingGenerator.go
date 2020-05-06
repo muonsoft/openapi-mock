@@ -20,7 +20,7 @@ func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, 
 
 	mediaType := route.Operation.Responses[strconv.Itoa(statusCode)].Value.Content[contentType]
 
-	data, _ := generator.mediaGenerator.GenerateData(mediaType)
+	data, _ := generator.mediaGenerator.GenerateData(request.Context(), mediaType)
 
 	response := &Response{
 		StatusCode: statusCode,

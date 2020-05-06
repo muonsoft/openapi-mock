@@ -58,9 +58,9 @@ paths:
                   dateTime:
                     type: string
                     format: 'date-time'
-#                  uuid:
-#                    type: string
-#                    format: uuid
+                  uuid:
+                    type: string
+                    format: uuid
                   email:
                     type: string
                     format: email

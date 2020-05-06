@@ -3,6 +3,8 @@
 package generator
 
 import (
+	context "context"
+
 	openapi3 "github.com/getkin/kin-openapi/openapi3"
 	mock "github.com/stretchr/testify/mock"
 )
@@ -12,13 +14,13 @@ type mockSchemaGenerator struct {
 	mock.Mock
 }
 
-// GenerateDataBySchema provides a mock function with given fields: schema
-func (_m *mockSchemaGenerator) GenerateDataBySchema(schema *openapi3.Schema) (Data, error) {
-	ret := _m.Called(schema)
+// GenerateDataBySchema provides a mock function with given fields: ctx, schema
+func (_m *mockSchemaGenerator) GenerateDataBySchema(ctx context.Context, schema *openapi3.Schema) (Data, error) {
+	ret := _m.Called(ctx, schema)
 
 	var r0 Data
-	if rf, ok := ret.Get(0).(func(*openapi3.Schema) Data); ok {
-		r0 = rf(schema)
+	if rf, ok := ret.Get(0).(func(context.Context, *openapi3.Schema) Data); ok {
+		r0 = rf(ctx, schema)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(Data)
@@ -26,8 +28,8 @@ func (_m *mockSchemaGenerator) GenerateDataBySchema(schema *openapi3.Schema) (Da
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(*openapi3.Schema) error); ok {
-		r1 = rf(schema)
+	if rf, ok := ret.Get(1).(func(context.Context, *openapi3.Schema) error); ok {
+		r1 = rf(ctx, schema)
 	} else {
 		r1 = ret.Error(1)
 	}
