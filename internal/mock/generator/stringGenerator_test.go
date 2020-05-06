@@ -10,7 +10,7 @@ import (
 
 func TestStringGenerator_GenerateDataBySchema_Enum_PropertyGeneratedBySchemaGenerator(t *testing.T) {
 	stringGeneratorInstance := &stringGenerator{
-		*rand.New(rand.NewSource(1)),
+		rand.New(rand.NewSource(1)),
 	}
 	schema := &openapi3.Schema{
 		Type: "string",

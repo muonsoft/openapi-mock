@@ -16,7 +16,7 @@ func New() MediaGenerator {
 
 	generatorsByType := map[string]schemaGenerator{
 		"object": &objectGenerator{},
-		"string": &stringGenerator{*rand.New(randomSource)},
+		"string": &stringGenerator{rand.New(randomSource)},
 	}
 
 	schemaGenerator := &coordinatingSchemaGenerator{
