@@ -1,33 +1,23 @@
 build:
   nodes:
     analysis:
-      environment:
-        php:
-          version: 7.4
       project_setup:
-        override:
-          - 'true'
-      tests:
-        override:
-          - php-scrutinizer-run
+        override: true
+        tests:
+          override:
+            - go-scrutinizer-run
     tests:
       environment:
-        php:
-          version: 7.4
-        variables:
-          APP_ENV: 'test'
+        go:
+          version: 'go1.14'
       tests:
         override:
-          - command: ./vendor/bin/phpunit --coverage-clover clover.xml
+          - command: go test -v $(go list ./... | grep -v vendor) -coverprofile=cover.out
             coverage:
-              file: clover.xml
-              format: 'php-clover'
+              file: 'cover.out'
+              format: 'go-cc'
 
 filter:
   excluded_paths:
-    - 'tests/*'
-    - 'bin/*'
-checks:
-  php: true
-coding_style:
-  php: {  }
+    - 'test/*'
+    - 'cmd/*'

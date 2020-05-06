@@ -1,8 +1,0 @@
-framework:
-  secret: '%env(APP_SECRET)%'
-  translator:
-    enabled: false
-  session:
-    handler_id: ~
-  php_errors:
-    log: true
