@@ -15,8 +15,17 @@ func New(options Options) MediaGenerator {
 		"string": &stringGenerator{},
 	}
 
-	schemaGenerator := &coordinatingSchemaGenerator{
+	var schemaGenerator schemaGenerator
+
+	schemaGenerator = &coordinatingSchemaGenerator{
 		generatorsByType: generatorsByType,
+	}
+
+	if options.UseExamples != No {
+		schemaGenerator = &exampleSchemaGenerator{
+			useExamples:     options.UseExamples,
+			schemaGenerator: schemaGenerator,
+		}
 	}
 
 	for i := range generatorsByType {
