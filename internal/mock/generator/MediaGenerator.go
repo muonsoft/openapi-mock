@@ -39,6 +39,7 @@ func New(options Options) MediaGenerator {
 	}
 
 	return &coordinatingMediaGenerator{
+		useExamples:     options.UseExamples,
 		schemaGenerator: schemaGenerator,
 	}
 }

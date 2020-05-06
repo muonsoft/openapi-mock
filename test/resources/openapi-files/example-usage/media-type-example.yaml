@@ -16,6 +16,6 @@ paths:
                   key:
                     type: string
                     enum:
-                      - value
+                      - generatedValue
               example:
                 key: 'exampleValue'
