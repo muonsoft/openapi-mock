@@ -16,6 +16,7 @@ build:
           - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.26.0
           - cd cmd/swagger-mock
           - go build -v
+          - cd ../..
       tests:
         override:
           - golangci-lint run
