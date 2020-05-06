@@ -3,6 +3,8 @@ package generator
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
+	"math/rand"
+	"time"
 )
 
 type MediaGenerator interface {
@@ -10,9 +12,11 @@ type MediaGenerator interface {
 }
 
 func New() MediaGenerator {
+	randomSource := rand.NewSource(time.Now().UnixNano())
+
 	generatorsByType := map[string]schemaGenerator{
 		"object": &objectGenerator{},
-		"string": &stringGenerator{},
+		"string": &stringGenerator{*rand.New(randomSource)},
 	}
 
 	schemaGenerator := &coordinatingSchemaGenerator{
