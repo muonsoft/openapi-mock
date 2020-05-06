@@ -11,7 +11,7 @@ build:
         go:
           version: 'go1.14'
       project_setup:
-        override:
+        before:
           - go mod download
           - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.26.0
       tests:
