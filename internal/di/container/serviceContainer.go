@@ -1,6 +1,7 @@
 package container
 
 import (
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -21,10 +22,17 @@ type serviceContainer struct {
 func New(configuration config.Configuration) Container {
 	logger := createLogger(configuration)
 
-	return &serviceContainer{
+	container := &serviceContainer{
 		configuration: configuration,
 		logger:        logger,
 	}
+
+	container.init()
+	return container
+}
+
+func (container *serviceContainer) init() {
+	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 }
 
 func (container *serviceContainer) GetLogger() logrus.FieldLogger {
