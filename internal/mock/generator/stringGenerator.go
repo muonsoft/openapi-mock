@@ -4,88 +4,53 @@ import (
 	"context"
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
-	"math/rand"
 	"syreclabs.com/go/faker"
-	"time"
 )
 
 type stringGenerator struct {
-	random *rand.Rand
+	random           randomGenerator
+	textGenerator    schemaGenerator
+	formatGenerators map[string]stringGeneratorFunction
+}
+
+func newStringGenerator(random randomGenerator) schemaGenerator {
+	return &stringGenerator{
+		random:           random,
+		textGenerator:    &textGenerator{random: random},
+		formatGenerators: defaultFormattedStringGenerators(),
+	}
 }
 
 func (generator *stringGenerator) GenerateDataBySchema(ctx context.Context, schema *openapi3.Schema) (Data, error) {
-	var value string
+	var value Data
 	var err error
 
-	supportedFormatMap := map[string]Data{
-		"date":      dateFormat(),
-		"date-time": dateTimeFormat(),
-		"email":     faker.Internet().Email(),
-		"uri":       faker.Internet().Url(),
-		"hostname":  faker.Internet().DomainName(),
-		"ipv4":      faker.Internet().IpV4Address(),
-		"ipv6":      faker.Internet().IpV6Address(),
-	}
-
-	if schema.Enum != nil {
-		value = generator.generateRandomEnumValue(schema)
+	if len(schema.Enum) > 0 {
+		value = generator.getRandomEnumValue(schema.Enum)
 	} else if schema.Pattern != "" {
-		value, err = generateValueByPattern(schema)
-	} else if hasSupportedFormat(schema, supportedFormatMap) {
-		value = generateValueByFormat(schema, supportedFormatMap)
+		value, err = generator.generateValueByPattern(schema.Pattern)
+	} else if formatGenerator, isSupported := generator.formatGenerators[schema.Format]; isSupported {
+		maxLength := 0
+		if schema.MaxLength != nil {
+			maxLength = int(*schema.MaxLength)
+		}
+		value = formatGenerator(int(schema.MinLength), maxLength)
 	} else {
-		value = generateText(schema)
+		value, err = generator.textGenerator.GenerateDataBySchema(ctx, schema)
 	}
 
+	return value, err
+}
+
+func (generator *stringGenerator) getRandomEnumValue(enum []interface{}) string {
+	return fmt.Sprint(enum[generator.random.Intn(len(enum))])
+}
+
+func (generator *stringGenerator) generateValueByPattern(pattern string) (string, error) {
+	value, err := faker.Regexify(pattern)
 	if err != nil {
-		return nil, err
+		return "", fmt.Errorf("[stringGenerator] Cannot generate string value by pattern %s: %s", pattern, err)
 	}
 
 	return value, nil
-}
-
-func (generator *stringGenerator) generateRandomEnumValue(schema *openapi3.Schema) string {
-	return fmt.Sprint(schema.Enum[generator.random.Intn(len(schema.Enum))])
-}
-
-func generateValueByPattern(schema *openapi3.Schema) (string, error) {
-	value, err := faker.Regexify(schema.Pattern)
-
-	if err != nil {
-		return "", fmt.Errorf("[stringGenerator] Cannot generate string value by pattern %s", schema.Pattern)
-	}
-
-	return value, nil
-}
-
-func hasSupportedFormat(schema *openapi3.Schema, supportedFormatMap map[string]Data) bool {
-	_, supported := supportedFormatMap[schema.Format]
-
-	return supported
-}
-
-func generateValueByFormat(schema *openapi3.Schema, supportedFormatMap map[string]Data) string {
-	return supportedFormatMap[schema.Format].(string)
-}
-
-func generateText(schema *openapi3.Schema) string {
-	return faker.RandomString((int)(*schema.MaxLength))
-}
-
-func dateFormat() string {
-	date := generateDate()
-
-	return fmt.Sprintf("%d-%d-%d", date.Year(), int(date.Month()), date.Day())
-}
-
-func dateTimeFormat() string {
-	date := generateDate()
-
-	return date.Format(time.RFC3339)
-}
-
-func generateDate() time.Time {
-	return faker.Date().Between(
-		time.Date(1800, 1, 1, 1, 1, 1, 1, time.UTC),
-		time.Date(2100, 1, 1, 1, 1, 1, 1, time.UTC))
 }

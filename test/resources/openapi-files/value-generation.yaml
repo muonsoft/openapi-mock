@@ -37,8 +37,6 @@ paths:
                   - writeOnlyArray
                   - writeOnlyObject
                 properties:
-                  stringValue:
-                    type: string
 #                  rangedInteger:
 #                    type: integer
 #                    minimum: 1
@@ -48,12 +46,12 @@ paths:
 #                    minimum: 1.0
 #                    maximum: 1.5
 #                    multipleOf: 0.1
-#                  enum:
-#                    type: string
-#                    enum:
-#                      - enumValue1
-#                      - enumValue2
-#                      - enumValue3
+                  enum:
+                    type: string
+                    enum:
+                      - enumValue1
+                      - enumValue2
+                      - enumValue3
 #                  date:
 #                    type: string
 #                    format: date
