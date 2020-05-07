@@ -1,0 +1,38 @@
+linters:
+  enable:
+    - bodyclose
+    - depguard
+    - dogsled
+    - funlen
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - gofmt
+    - golint
+    - gosec
+    - interfacer
+    - maligned
+    - misspell
+    - nakedret
+    - prealloc
+    - scopelint
+    - stylecheck
+    - unconvert
+    - unparam
+    - whitespace
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - funlen
+        - lll
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - scopelint

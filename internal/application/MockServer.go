@@ -30,13 +30,13 @@ func NewMockServer(config config.Configuration) MockServer {
 	loggerWriter := container.GetLogger().(*logrus.Logger).Writer()
 
 	specificationLoader := container.CreateSpecificationLoader()
-	specification, err := specificationLoader.LoadFromURI(config.SpecificationUrl)
+	specification, err := specificationLoader.LoadFromURI(config.SpecificationURL)
 	if err != nil {
-		log.Fatalf("failed to load OpenAPI specification from '%s': %s", config.SpecificationUrl, err)
+		log.Fatalf("failed to load OpenAPI specification from '%s': %s", config.SpecificationURL, err)
 	}
 
 	router := openapi3filter.NewRouter().WithSwagger(specification)
-	httpHandler := container.CreateOpenApiHandler(router)
+	httpHandler := container.CreateHTTPHandler(router)
 
 	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
 	httpServer := server.New(config.Port, httpHandler, serverLogger)

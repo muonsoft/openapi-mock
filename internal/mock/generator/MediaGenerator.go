@@ -11,25 +11,44 @@ type MediaGenerator interface {
 	GenerateData(ctx context.Context, mediaType *openapi3.MediaType) (Data, error)
 }
 
-func New() MediaGenerator {
+func New(options Options) MediaGenerator {
 	randomSource := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(randomSource)
 
 	generatorsByType := map[string]schemaGenerator{
 		"object": &objectGenerator{},
-		"string": &stringGenerator{rand.New(randomSource)},
+		"string": &stringGenerator{random},
 	}
 
-	schemaGenerator := &coordinatingSchemaGenerator{
+	var schemaGenerator schemaGenerator
+
+	schemaGenerator = &coordinatingSchemaGenerator{
 		generatorsByType: generatorsByType,
 	}
 
+	if options.UseExamples != No {
+		schemaGenerator = &exampleSchemaGenerator{
+			useExamples:     options.UseExamples,
+			schemaGenerator: schemaGenerator,
+		}
+	}
+
+	if options.NullProbability > 0 {
+		schemaGenerator = &nullGenerator{
+			nullProbability: options.NullProbability,
+			random:          random,
+			schemaGenerator: schemaGenerator,
+		}
+	}
+
 	for i := range generatorsByType {
-		if generator, ok := generatorsByType[i].(recursiveGenerator); ok == true {
+		if generator, ok := generatorsByType[i].(recursiveGenerator); ok {
 			generator.SetSchemaGenerator(schemaGenerator)
 		}
 	}
 
 	return &coordinatingMediaGenerator{
+		useExamples:     options.UseExamples,
 		schemaGenerator: schemaGenerator,
 	}
 }

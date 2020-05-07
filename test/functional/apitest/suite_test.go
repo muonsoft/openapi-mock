@@ -9,17 +9,17 @@ import (
 	"testing"
 )
 
-type ApiSuite struct {
+type APISuite struct {
 	suite.Suite
 }
 
 func TestApi(t *testing.T) {
-	suite.Run(t, new(ApiSuite))
+	suite.Run(t, new(APISuite))
 }
 
-func (suite *ApiSuite) createOpenApiHandler(specificationFilename string) http.Handler {
-	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + specificationFilename)
-	diContainer := container.New(config.Configuration{})
+func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) http.Handler {
+	diContainer := container.New(configuration)
+	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + configuration.SpecificationURL)
 
-	return diContainer.CreateOpenApiHandler(router)
+	return diContainer.CreateHTTPHandler(router)
 }

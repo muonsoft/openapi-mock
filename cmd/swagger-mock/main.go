@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	configuration := config.LoadConfigFromEnvironment()
+	configuration := config.LoadFromEnvironment()
 	app := application.NewMockServer(configuration)
 	app.Run()
 }

@@ -10,5 +10,5 @@ import (
 type Container interface {
 	GetLogger() logrus.FieldLogger
 	CreateSpecificationLoader() loader.SpecificationLoader
-	CreateOpenApiHandler(router *openapi3filter.Router) http.Handler
+	CreateHTTPHandler(router *openapi3filter.Router) http.Handler
 }

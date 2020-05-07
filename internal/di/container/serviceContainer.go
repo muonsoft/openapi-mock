@@ -1,6 +1,7 @@
 package container
 
 import (
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -10,16 +11,28 @@ import (
 	"swagger-mock/internal/openapi/handler"
 	"swagger-mock/internal/openapi/loader"
 	"swagger-mock/internal/openapi/responder"
+	"swagger-mock/internal/server/middleware"
 )
 
 type serviceContainer struct {
-	logger logrus.FieldLogger
+	configuration config.Configuration
+	logger        logrus.FieldLogger
 }
 
-func New(config config.Configuration) Container {
-	logger := createLogger(config)
+func New(configuration config.Configuration) Container {
+	logger := createLogger(configuration)
 
-	return &serviceContainer{logger}
+	container := &serviceContainer{
+		configuration: configuration,
+		logger:        logger,
+	}
+
+	container.init()
+	return container
+}
+
+func (container *serviceContainer) init() {
+	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 }
 
 func (container *serviceContainer) GetLogger() logrus.FieldLogger {
@@ -30,20 +43,29 @@ func (container *serviceContainer) CreateSpecificationLoader() loader.Specificat
 	return loader.New()
 }
 
-func (container *serviceContainer) CreateOpenApiHandler(router *openapi3filter.Router) http.Handler {
-	dataGenerator := dataGenerator.New()
-	responseGenerator := responseGenerator.New(dataGenerator)
-	webResponder := responder.New()
+func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Router) http.Handler {
+	generatorOptions := dataGenerator.Options{
+		UseExamples:     container.configuration.UseExamples,
+		NullProbability: container.configuration.NullProbability,
+	}
 
-	httpHandler := handler.NewResponseGeneratorHandler(router, responseGenerator, webResponder)
+	dataGeneratorInstance := dataGenerator.New(generatorOptions)
+	responseGeneratorInstance := responseGenerator.New(dataGeneratorInstance)
+	apiResponder := responder.New()
+
+	var httpHandler http.Handler
+	httpHandler = handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
+	httpHandler = middleware.ContextLoggerHandler(container.logger, httpHandler)
+	httpHandler = middleware.TracingHandler(httpHandler)
+
 	return httpHandler
 }
 
-func createLogger(config config.Configuration) *logrus.Logger {
+func createLogger(configuration config.Configuration) *logrus.Logger {
 	logger := logrus.New()
-	logger.SetLevel(config.LogLevel)
+	logger.SetLevel(configuration.LogLevel)
 
-	if config.LogFormat == "json" {
+	if configuration.LogFormat == "json" {
 		logger.SetFormatter(&logrus.JSONFormatter{})
 	} else {
 		logger.SetFormatter(&logrus.TextFormatter{})

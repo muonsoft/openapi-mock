@@ -3,15 +3,23 @@ build:
     analysis:
       project_setup:
         override: true
-        tests:
-          override:
-            - go-scrutinizer-run
+      tests:
+        override:
+          - go-scrutinizer-run
     tests:
       environment:
         go:
           version: 'go1.14'
+      project_setup:
+        override:
+          - go mod download
+          - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.26.0
+          - cd cmd/swagger-mock
+          - go build -v
+          - cd ../..
       tests:
         override:
+          - golangci-lint run
           - command: go test -v $(go list ./... | grep -v vendor) -coverprofile=cover.out
             coverage:
               file: 'cover.out'
@@ -21,3 +29,6 @@ filter:
   excluded_paths:
     - 'test/*'
     - 'cmd/*'
+
+checks:
+  go: true
