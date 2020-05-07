@@ -10,7 +10,7 @@
 Swagger API mock server with fake data generation with main features.
 
 * OpenAPI 3.x support.
-* Load specification from local file or URL.
+* Load specification from a local file or URL.
 * JSON and YAML format supported.
 * Generates fake response data by provided schemas.
 * Content negotiation by Accept header.
@@ -86,13 +86,19 @@ Mock server options can be set via environment variables.
 
 #### SWAGGER_MOCK_USE_EXAMPLES
 
-* Error log level
+* Strategy for generating response data by examples
 * _Default value_: `no`
 * _Possible values_: `no`, `if_present`, `exclusively`
 
 * `no` - examples will be ignored and all data will be generated randomly
 * `if_present` - examples will be used instead of random data if they are present
 * `exclusively` - only examples will be used, no random data generation
+
+#### SWAGGER_MOCK_NULL_PROBABILITY
+
+* Probability for generating null values for nullable properties
+* _Default value_: `0.5`
+* _Possible values_: from `0.0` to `1.0`
 
 #### SWAGGER_MOCK_CACHE_DIRECTORY
 

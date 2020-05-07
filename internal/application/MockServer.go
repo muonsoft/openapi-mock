@@ -36,7 +36,7 @@ func NewMockServer(config config.Configuration) MockServer {
 	}
 
 	router := openapi3filter.NewRouter().WithSwagger(specification)
-	httpHandler := container.CreateOpenAPIHandler(router)
+	httpHandler := container.CreateHTTPHandler(router)
 
 	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
 	httpServer := server.New(config.Port, httpHandler, serverLogger)

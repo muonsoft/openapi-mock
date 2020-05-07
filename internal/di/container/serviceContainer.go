@@ -1,6 +1,7 @@
 package container
 
 import (
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -10,6 +11,7 @@ import (
 	"swagger-mock/internal/openapi/handler"
 	"swagger-mock/internal/openapi/loader"
 	"swagger-mock/internal/openapi/responder"
+	"swagger-mock/internal/server/middleware"
 )
 
 type serviceContainer struct {
@@ -20,10 +22,17 @@ type serviceContainer struct {
 func New(configuration config.Configuration) Container {
 	logger := createLogger(configuration)
 
-	return &serviceContainer{
+	container := &serviceContainer{
 		configuration: configuration,
 		logger:        logger,
 	}
+
+	container.init()
+	return container
+}
+
+func (container *serviceContainer) init() {
+	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 }
 
 func (container *serviceContainer) GetLogger() logrus.FieldLogger {
@@ -34,16 +43,21 @@ func (container *serviceContainer) CreateSpecificationLoader() loader.Specificat
 	return loader.New()
 }
 
-func (container *serviceContainer) CreateOpenAPIHandler(router *openapi3filter.Router) http.Handler {
+func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Router) http.Handler {
 	generatorOptions := dataGenerator.Options{
-		UseExamples: container.configuration.UseExamples,
+		UseExamples:     container.configuration.UseExamples,
+		NullProbability: container.configuration.NullProbability,
 	}
 
 	dataGeneratorInstance := dataGenerator.New(generatorOptions)
 	responseGeneratorInstance := responseGenerator.New(dataGeneratorInstance)
 	apiResponder := responder.New()
 
-	httpHandler := handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
+	var httpHandler http.Handler
+	httpHandler = handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
+	httpHandler = middleware.ContextLoggerHandler(container.logger, httpHandler)
+	httpHandler = middleware.TracingHandler(httpHandler)
+
 	return httpHandler
 }
 

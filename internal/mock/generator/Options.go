@@ -1,7 +1,8 @@
 package generator
 
 type Options struct {
-	UseExamples UseExamplesEnum
+	UseExamples     UseExamplesEnum
+	NullProbability float64
 }
 
 type UseExamplesEnum int

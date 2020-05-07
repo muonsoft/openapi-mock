@@ -8,7 +8,7 @@ import (
 )
 
 type stringGenerator struct {
-	random rand.Rand
+	random *rand.Rand
 }
 
 func (generator *stringGenerator) GenerateDataBySchema(ctx context.Context, schema *openapi3.Schema) (Data, error) {

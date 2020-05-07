@@ -10,6 +10,7 @@ import (
 type Configuration struct {
 	SpecificationURL string                    `required:"true" split_words:"true"`
 	UseExamples      generator.UseExamplesEnum `ignored:"true"`
+	NullProbability  float64                   `default:"0.5" split_words:"true"`
 	Debug            bool
 	Port             uint16       `default:"8080"`
 	LogLevel         logrus.Level `ignored:"true"`
