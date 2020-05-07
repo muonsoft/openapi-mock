@@ -37,6 +37,12 @@ func (j *JSONAssert) AssertNodeEqualToTheString(path string, expectedValue strin
 	assert.Equal(j.t, expectedValue, value, msgAndArgs)
 }
 
+func (j *JSONAssert) AssertNodeShouldMatch(path string, regexp string, msgAndArgs ...interface{}) {
+	value := j.read(path)
+	assert.IsType(j.t, "string", value, msgAndArgs)
+	assert.Regexp(j.t, regexp, value, msgAndArgs)
+}
+
 func (j *JSONAssert) AssertNodeEqualToTheInteger(path string, expectedValue int, msgAndArgs ...interface{}) {
 	value := j.read(path)
 	assert.IsType(j.t, 0, value, msgAndArgs)

@@ -22,3 +22,17 @@ func (_m *mockRandomGenerator) Float64() float64 {
 
 	return r0
 }
+
+// Intn provides a mock function with given fields: n
+func (_m *mockRandomGenerator) Intn(n int) int {
+	ret := _m.Called(n)
+
+	var r0 int
+	if rf, ok := ret.Get(0).(func(int) int); ok {
+		r0 = rf(n)
+	} else {
+		r0 = ret.Get(0).(int)
+	}
+
+	return r0
+}

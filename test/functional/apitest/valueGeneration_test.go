@@ -19,5 +19,5 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.stringValue", "value")
+	json.AssertNodeShouldMatch("$.enum", "^enumValue\\d$")
 }
