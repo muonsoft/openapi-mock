@@ -21,5 +21,5 @@ func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) 
 	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + configuration.SpecificationURL)
 	diContainer := container.New(configuration)
 
-	return diContainer.CreateOpenAPIHandler(router)
+	return diContainer.CreateHTTPHandler(router)
 }

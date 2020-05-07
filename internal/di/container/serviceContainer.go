@@ -10,6 +10,7 @@ import (
 	"swagger-mock/internal/openapi/handler"
 	"swagger-mock/internal/openapi/loader"
 	"swagger-mock/internal/openapi/responder"
+	"swagger-mock/internal/server/middleware"
 )
 
 type serviceContainer struct {
@@ -34,7 +35,7 @@ func (container *serviceContainer) CreateSpecificationLoader() loader.Specificat
 	return loader.New()
 }
 
-func (container *serviceContainer) CreateOpenAPIHandler(router *openapi3filter.Router) http.Handler {
+func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Router) http.Handler {
 	generatorOptions := dataGenerator.Options{
 		UseExamples:     container.configuration.UseExamples,
 		NullProbability: container.configuration.NullProbability,
@@ -44,7 +45,11 @@ func (container *serviceContainer) CreateOpenAPIHandler(router *openapi3filter.R
 	responseGeneratorInstance := responseGenerator.New(dataGeneratorInstance)
 	apiResponder := responder.New()
 
-	httpHandler := handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
+	var httpHandler http.Handler
+	httpHandler = handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
+	httpHandler = middleware.ContextLoggerHandler(container.logger, httpHandler)
+	httpHandler = middleware.TracingHandler(httpHandler)
+
 	return httpHandler
 }
 

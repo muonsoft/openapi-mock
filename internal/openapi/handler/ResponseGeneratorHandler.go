@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"swagger-mock/internal/openapi/generator"
 	"swagger-mock/internal/openapi/responder"
+	"swagger-mock/pkg/logcontext"
 )
 
 type responseGeneratorHandler struct {
@@ -26,9 +27,13 @@ func NewResponseGeneratorHandler(
 }
 
 func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	route, _, err := handler.router.FindRoute("GET", request.URL)
+	logger := logcontext.LoggerFromContext(request.Context())
+
+	route, _, err := handler.router.FindRoute(request.Method, request.URL)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		http.NotFound(writer, request)
+
+		logger.Debugf("Route '%s %s' was not found", request.Method, request.URL)
 		return
 	}
 
