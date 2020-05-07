@@ -13,10 +13,11 @@ type MediaGenerator interface {
 
 func New(options Options) MediaGenerator {
 	randomSource := rand.NewSource(time.Now().UnixNano())
+	random := rand.New(randomSource)
 
 	generatorsByType := map[string]schemaGenerator{
 		"object": &objectGenerator{},
-		"string": &stringGenerator{*rand.New(randomSource)},
+		"string": &stringGenerator{random},
 	}
 
 	var schemaGenerator schemaGenerator
@@ -28,6 +29,14 @@ func New(options Options) MediaGenerator {
 	if options.UseExamples != No {
 		schemaGenerator = &exampleSchemaGenerator{
 			useExamples:     options.UseExamples,
+			schemaGenerator: schemaGenerator,
+		}
+	}
+
+	if options.NullProbability > 0 {
+		schemaGenerator = &nullGenerator{
+			nullProbability: options.NullProbability,
+			random:          random,
 			schemaGenerator: schemaGenerator,
 		}
 	}

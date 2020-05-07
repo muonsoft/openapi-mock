@@ -36,7 +36,8 @@ func (container *serviceContainer) CreateSpecificationLoader() loader.Specificat
 
 func (container *serviceContainer) CreateOpenAPIHandler(router *openapi3filter.Router) http.Handler {
 	generatorOptions := dataGenerator.Options{
-		UseExamples: container.configuration.UseExamples,
+		UseExamples:     container.configuration.UseExamples,
+		NullProbability: container.configuration.NullProbability,
 	}
 
 	dataGeneratorInstance := dataGenerator.New(generatorOptions)
