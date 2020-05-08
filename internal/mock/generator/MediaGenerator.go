@@ -15,12 +15,17 @@ func New(options Options) MediaGenerator {
 	randomSource := rand.NewSource(time.Now().UnixNano())
 	random := rand.New(randomSource)
 
+	lengthGenerator := &randomArrayLengthGenerator{random: random}
+
 	generatorsByType := map[string]schemaGenerator{
 		"object":  &objectGenerator{},
 		"string":  newStringGenerator(random),
 		"boolean": &booleanGenerator{random: random},
 		"integer": &integerGenerator{random: random},
 		"number":  &numberGenerator{random: random},
+		"array": &regularArrayGenerator{
+			lengthGenerator: lengthGenerator,
+		},
 	}
 
 	var schemaGenerator schemaGenerator

@@ -90,12 +90,12 @@ paths:
                     type: string
                     minLength: 100
                     maxLength: 105
-#                  array:
-#                    type: array
-#                    minItems: 5
-#                    maxItems: 5
-#                    items:
-#                      type: integer
+                  array:
+                    type: array
+                    minItems: 5
+                    maxItems: 5
+                    items:
+                      type: integer
 #                  uniqueArrayOfObjects:
 #                    type: array
 #                    uniqueItems: true

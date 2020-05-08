@@ -35,4 +35,5 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 	json.AssertNodeShouldMatch("$.html", "<[^>]+>|&[^;]+;")
 	json.AssertNodeShouldBeAStringWithLengthInRange("$.shortString", 2, 4)
 	json.AssertNodeShouldBeAStringWithLengthInRange("$.longString", 100, 105)
+	json.AssertArrayNodeShouldHaveElementsCount("$.array", 5)
 }

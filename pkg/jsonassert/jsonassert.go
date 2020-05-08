@@ -49,6 +49,11 @@ func (j *JSONAssert) AssertNodeShouldContain(path string, contain string, msgAnd
 	assert.Contains(j.t, value, contain, msgAndArgs)
 }
 
+func (j *JSONAssert) AssertArrayNodeShouldHaveElementsCount(path string, count int, msgAndArgs ...interface{}) {
+	value := j.read(path)
+	assert.Len(j.t, value, count, msgAndArgs)
+}
+
 func (j *JSONAssert) AssertNodeShouldBeAStringWithLengthInRange(path string, min int, max int, msgAndArgs ...interface{}) {
 	value := j.read(path)
 	assert.IsType(j.t, "string", value, msgAndArgs)
