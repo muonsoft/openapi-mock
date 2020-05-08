@@ -43,6 +43,25 @@ func (j *JSONAssert) AssertNodeShouldMatch(path string, regexp string, msgAndArg
 	assert.Regexp(j.t, regexp, value, msgAndArgs)
 }
 
+func (j *JSONAssert) AssertNodeShouldContain(path string, contain string, msgAndArgs ...interface{}) {
+	value := j.read(path)
+	assert.IsType(j.t, "string", value, msgAndArgs)
+	assert.Contains(j.t, value, contain, msgAndArgs)
+}
+
+func (j *JSONAssert) AssertNodeShouldBeAStringWithLengthInRange(path string, min int, max int, msgAndArgs ...interface{}) {
+	value := j.read(path)
+	assert.IsType(j.t, "string", value, msgAndArgs)
+	assert.GreaterOrEqual(j.t, len(value.(string)), min, msgAndArgs)
+	assert.LessOrEqual(j.t, len(value.(string)), max, msgAndArgs)
+}
+
+func (j *JSONAssert) AssertNodeShouldBeANumberInRange(path string, min float64, max float64, msgAndArgs ...interface{}) {
+	value := j.read(path)
+	assert.GreaterOrEqual(j.t, value, min, msgAndArgs)
+	assert.LessOrEqual(j.t, value, max, msgAndArgs)
+}
+
 func (j *JSONAssert) AssertNodeEqualToTheInteger(path string, expectedValue int, msgAndArgs ...interface{}) {
 	value := j.read(path)
 	assert.IsType(j.t, 0, value, msgAndArgs)

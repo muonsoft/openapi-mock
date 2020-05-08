@@ -33,6 +33,7 @@ func New(configuration config.Configuration) Container {
 
 func (container *serviceContainer) init() {
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
+	openapi3.DefineStringFormat("html", "<[^>]+>|&[^;]+;")
 }
 
 func (container *serviceContainer) GetLogger() logrus.FieldLogger {
