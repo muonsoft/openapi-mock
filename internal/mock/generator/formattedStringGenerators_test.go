@@ -2,6 +2,7 @@ package generator
 
 import (
 	"github.com/stretchr/testify/assert"
+	"math/rand"
 	"testing"
 )
 
@@ -44,7 +45,10 @@ func TestDefaultFormattedStringGenerators_GivenFormat_ExpectedRegExp(t *testing.
 		},
 	}
 
-	generators := defaultFormattedStringGenerators()
+	randomSource := rand.NewSource(0)
+	generators := defaultFormattedStringGenerators(&rangedTextGenerator{
+		random: rand.New(randomSource),
+	})
 
 	for _, test := range tests {
 		t.Run(test.format, func(t *testing.T) {

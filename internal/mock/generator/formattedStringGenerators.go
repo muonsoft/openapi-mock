@@ -9,7 +9,10 @@ import (
 
 type stringGeneratorFunction func(minLength int, maxLength int) string
 
-func defaultFormattedStringGenerators() map[string]stringGeneratorFunction {
+func defaultFormattedStringGenerators(generator *rangedTextGenerator) map[string]stringGeneratorFunction {
+	base64 := &base64Generator{generator: generator}
+	html := &htmlGenerator{random: generator.random}
+
 	return map[string]stringGeneratorFunction{
 		"date": func(_ int, _ int) string {
 			date := generateRandomTime()
@@ -47,8 +50,8 @@ func defaultFormattedStringGenerators() map[string]stringGeneratorFunction {
 			return uuid.Must(uuid.NewV4()).String()
 		},
 
-		// 'byte' => 'base64',
-		// 'html' => 'randomHtml',
+		"byte": base64.GenerateBase64Text,
+		"html": html.GenerateHTML,
 	}
 }
 

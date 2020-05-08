@@ -14,10 +14,14 @@ type stringGenerator struct {
 }
 
 func newStringGenerator(random randomGenerator) schemaGenerator {
+	generator := &rangedTextGenerator{
+		random: random,
+	}
+
 	return &stringGenerator{
 		random:           random,
-		textGenerator:    &textGenerator{random: random},
-		formatGenerators: defaultFormattedStringGenerators(),
+		textGenerator:    &textGenerator{generator: generator},
+		formatGenerators: defaultFormattedStringGenerators(generator),
 	}
 }
 

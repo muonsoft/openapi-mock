@@ -37,7 +37,9 @@ func TestTextGenerator_GenerateDataBySchema_MaxLengthLessThan5_RandomStringOfGiv
 func TestTextGenerator_GenerateDataBySchema_MinAndMaxLength_LengthOfStringInRange(t *testing.T) {
 	randomSource := rand.NewSource(time.Now().UnixNano())
 	textGeneratorInstance := &textGenerator{
-		random: rand.New(randomSource),
+		generator: &rangedTextGenerator{
+			random: rand.New(randomSource),
+		},
 	}
 	schema := openapi3.NewSchema()
 	var maxLength uint64 = 1000
@@ -56,7 +58,9 @@ func TestTextGenerator_GenerateDataBySchema_MinAndMaxLength_LengthOfStringInRang
 func TestTextGenerator_GenerateDataBySchema_NoOptions_LengthOfStringInDefaultRange(t *testing.T) {
 	randomSource := rand.NewSource(time.Now().UnixNano())
 	textGeneratorInstance := &textGenerator{
-		random: rand.New(randomSource),
+		generator: &rangedTextGenerator{
+			random: rand.New(randomSource),
+		},
 	}
 	schema := openapi3.NewSchema()
 
@@ -72,7 +76,9 @@ func TestTextGenerator_GenerateDataBySchema_NoOptions_LengthOfStringInDefaultRan
 func TestTextGenerator_GenerateDataBySchema_MinLengthGreaterThanDefaultMaxLength_LengthOfStringInExpectedRange(t *testing.T) {
 	randomSource := rand.NewSource(time.Now().UnixNano())
 	textGeneratorInstance := &textGenerator{
-		random: rand.New(randomSource),
+		generator: &rangedTextGenerator{
+			random: rand.New(randomSource),
+		},
 	}
 	schema := openapi3.NewSchema()
 	schema.MinLength = defaultMaxLength
@@ -83,5 +89,25 @@ func TestTextGenerator_GenerateDataBySchema_MinLengthGreaterThanDefaultMaxLength
 		assert.NoError(t, err)
 		assert.GreaterOrEqual(t, len(data.(string)), defaultMaxLength)
 		assert.LessOrEqual(t, len(data.(string)), 2*defaultMaxLength)
+	}
+}
+
+func TestTextGenerator_GenerateDataBySchema_StrictLength_LengthOfStringHasExpectedLength(t *testing.T) {
+	randomSource := rand.NewSource(time.Now().UnixNano())
+	textGeneratorInstance := &textGenerator{
+		generator: &rangedTextGenerator{
+			random: rand.New(randomSource),
+		},
+	}
+	schema := openapi3.NewSchema()
+	var maxLength uint64 = defaultMaxLength
+	schema.MinLength = defaultMaxLength
+	schema.MaxLength = &maxLength
+
+	for i := 0; i < 1000; i++ {
+		data, err := textGeneratorInstance.GenerateDataBySchema(context.Background(), schema)
+
+		assert.NoError(t, err)
+		assert.Len(t, data, defaultMaxLength)
 	}
 }
