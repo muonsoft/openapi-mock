@@ -16,14 +16,15 @@ func New(options Options) MediaGenerator {
 	random := rand.New(randomSource)
 
 	lengthGenerator := &randomArrayLengthGenerator{random: random}
+	keyGenerator := &camelCaseKeyGenerator{random: random}
 
 	generatorsByType := map[string]schemaGenerator{
-		"object":  &objectGenerator{},
 		"string":  newStringGenerator(random),
 		"boolean": &booleanGenerator{random: random},
 		"integer": &integerGenerator{random: random},
 		"number":  &numberGenerator{random: random},
 		"array":   newArrayGenerator(lengthGenerator),
+		"object":  newObjectGenerator(lengthGenerator, keyGenerator),
 	}
 
 	var schemaGenerator schemaGenerator

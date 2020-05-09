@@ -110,9 +110,16 @@ paths:
                           type: string
                           enum:
                             - value
-#                  freeForm:
-#                    type: object
-#                    additionalProperties: {}
+                  freeForm:
+                    type: object
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties: {}
+                  freeFormWithBooleanOption:
+                    type: object
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties: true
 #                  hashMap:
 #                    type: object
 #                    additionalProperties:

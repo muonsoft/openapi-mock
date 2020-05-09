@@ -38,4 +38,6 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 	json.AssertArrayNodeShouldHaveElementsCount("$.array", 5)
 	json.AssertArrayNodeShouldHaveElementsCount("$.uniqueArrayOfObjects", 1)
 	json.AssertNodeEqualToTheString("$.uniqueArrayOfObjects[0].key", "value")
+	json.AssertArrayNodeShouldHaveElementsCount("$.freeForm", 1)
+	json.AssertArrayNodeShouldHaveElementsCount("$.freeFormWithBooleanOption", 1)
 }
