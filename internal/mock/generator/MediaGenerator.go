@@ -23,9 +23,7 @@ func New(options Options) MediaGenerator {
 		"boolean": &booleanGenerator{random: random},
 		"integer": &integerGenerator{random: random},
 		"number":  &numberGenerator{random: random},
-		"array": &regularArrayGenerator{
-			lengthGenerator: lengthGenerator,
-		},
+		"array":   newArrayGenerator(lengthGenerator),
 	}
 
 	var schemaGenerator schemaGenerator

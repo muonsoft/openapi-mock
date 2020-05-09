@@ -36,4 +36,6 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 	json.AssertNodeShouldBeAStringWithLengthInRange("$.shortString", 2, 4)
 	json.AssertNodeShouldBeAStringWithLengthInRange("$.longString", 100, 105)
 	json.AssertArrayNodeShouldHaveElementsCount("$.array", 5)
+	json.AssertArrayNodeShouldHaveElementsCount("$.uniqueArrayOfObjects", 1)
+	json.AssertNodeEqualToTheString("$.uniqueArrayOfObjects[0].key", "value")
 }
