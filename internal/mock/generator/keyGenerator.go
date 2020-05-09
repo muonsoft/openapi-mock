@@ -7,11 +7,15 @@ import (
 )
 
 type keyGenerator interface {
+	AddKey(key string)
 	GenerateKey() (string, error)
 }
 
 type camelCaseKeyGenerator struct {
 	random randomGenerator
+}
+
+func (generator *camelCaseKeyGenerator) AddKey(key string) {
 }
 
 func (generator *camelCaseKeyGenerator) GenerateKey() (string, error) {
@@ -36,6 +40,10 @@ func newUniqueKeyGenerator(generator keyGenerator) keyGenerator {
 		keyGenerator: generator,
 		uniqueKeys:   make(map[string]bool),
 	}
+}
+
+func (generator *uniqueKeyGenerator) AddKey(key string) {
+	generator.uniqueKeys[key] = true
 }
 
 func (generator *uniqueKeyGenerator) GenerateKey() (string, error) {

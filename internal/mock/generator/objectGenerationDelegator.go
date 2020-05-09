@@ -17,12 +17,16 @@ func newObjectGenerator(lengthGenerator arrayLengthGenerator, keyGenerator keyGe
 			lengthGenerator: lengthGenerator,
 			keyGenerator:    keyGenerator,
 		},
-		hashMapGenerator: nil,
-		objectGenerator:  &objectGenerator{},
+		hashMapGenerator: &hashMapGenerator{
+			lengthGenerator: lengthGenerator,
+			keyGenerator:    keyGenerator,
+		},
+		objectGenerator: &objectGenerator{},
 	}
 }
 
 func (delegator *objectGenerationDelegator) SetSchemaGenerator(schemaGenerator schemaGenerator) {
+	delegator.hashMapGenerator.(recursiveGenerator).SetSchemaGenerator(schemaGenerator)
 	delegator.objectGenerator.(recursiveGenerator).SetSchemaGenerator(schemaGenerator)
 }
 

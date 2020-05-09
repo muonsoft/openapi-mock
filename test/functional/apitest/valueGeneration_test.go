@@ -40,4 +40,7 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 	json.AssertNodeEqualToTheString("$.uniqueArrayOfObjects[0].key", "value")
 	json.AssertArrayNodeShouldHaveElementsCount("$.freeForm", 1)
 	json.AssertArrayNodeShouldHaveElementsCount("$.freeFormWithBooleanOption", 1)
+	json.AssertArrayNodeShouldHaveElementsCount("$.hashMap", 1)
+	json.AssertArrayNodeShouldHaveElementsCount("$.fixedHashMap", 1)
+	json.AssertNodeEqualToTheString("$.fixedHashMap.default", "value")
 }

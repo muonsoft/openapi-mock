@@ -120,25 +120,27 @@ paths:
                     minProperties: 1
                     maxProperties: 1
                     additionalProperties: true
-#                  hashMap:
-#                    type: object
-#                    additionalProperties:
-#                      type: string
-#                  fixedHashMap:
-#                    type: object
-#                    properties:
-#                      default:
-#                        type: string
-#                        enum:
-#                          - value
-#                    required:
-#                      - default
-#                    minProperties: 1
-#                    maxProperties: 1
-#                    additionalProperties:
-#                      type: string
-#                      enum:
-#                        - value
+                  hashMap:
+                    type: object
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties:
+                      type: string
+                  fixedHashMap:
+                    type: object
+                    properties:
+                      default:
+                        type: string
+                        enum:
+                          - value
+                    required:
+                      - default
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties:
+                      type: string
+                      enum:
+                        - value
 #                  writeOnlyBoolean:
 #                    type: boolean
 #                    writeOnly: true

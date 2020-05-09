@@ -9,6 +9,11 @@ type mockKeyGenerator struct {
 	mock.Mock
 }
 
+// AddKey provides a mock function with given fields: key
+func (_m *mockKeyGenerator) AddKey(key string) {
+	_m.Called(key)
+}
+
 // GenerateKey provides a mock function with given fields:
 func (_m *mockKeyGenerator) GenerateKey() (string, error) {
 	ret := _m.Called()

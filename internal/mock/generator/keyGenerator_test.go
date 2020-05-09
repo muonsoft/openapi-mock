@@ -50,12 +50,9 @@ func (suite *UniqueKeyGeneratorSuite) TestGenerateKey_EmptyUniqueValues_FirstVal
 }
 
 func (suite *UniqueKeyGeneratorSuite) TestGenerateKey_SecondValueIsNotUnique_ThirdValueReturned() {
-	suite.keyGenerator.
-		On("GenerateKey").Return("notUnique", nil).Once().
-		On("GenerateKey").Return("notUnique", nil).Once().
-		On("GenerateKey").Return("unique", nil).Once()
+	suite.keyGenerator.On("GenerateKey").Return("unique", nil).Once()
 
-	_, _ = suite.generator.GenerateKey()
+	suite.generator.AddKey("notUnique")
 	key, err := suite.generator.GenerateKey()
 
 	suite.keyGenerator.AssertExpectations(suite.T())
