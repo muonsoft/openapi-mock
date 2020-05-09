@@ -38,6 +38,13 @@ func (j *JSONAssert) AssertNodeDoesNotExist(path string, msgAndArgs ...interface
 	}
 }
 
+func (j *JSONAssert) AssertNodeShouldExist(path string, msgAndArgs ...interface{}) {
+	_, err := jsonpath.Read(j.data, path)
+	if err != nil {
+		assert.Fail(j.t, fmt.Sprintf("failed asserting that json node '%s' should exist", path), msgAndArgs)
+	}
+}
+
 func (j *JSONAssert) AssertNodeEqualToTheString(path string, expectedValue string, msgAndArgs ...interface{}) {
 	value := j.mustRead(path)
 	assert.IsType(j.t, "string", value, msgAndArgs)

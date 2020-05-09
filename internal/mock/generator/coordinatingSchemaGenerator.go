@@ -2,6 +2,7 @@ package generator
 
 import (
 	"context"
+	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
@@ -10,7 +11,27 @@ type coordinatingSchemaGenerator struct {
 }
 
 func (generator *coordinatingSchemaGenerator) GenerateDataBySchema(ctx context.Context, schema *openapi3.Schema) (Data, error) {
-	specificGenerator := generator.generatorsByType[schema.Type]
+	schemaType := generator.detectSchemaType(schema)
+
+	specificGenerator, exists := generator.generatorsByType[schemaType]
+	if !exists {
+		return nil, fmt.Errorf("data generation for objects of type '%s' is not supported", schemaType)
+	}
 
 	return specificGenerator.GenerateDataBySchema(ctx, schema)
+}
+
+func (generator *coordinatingSchemaGenerator) detectSchemaType(schema *openapi3.Schema) string {
+	schemaType := schema.Type
+
+	switch {
+	case schema.OneOf != nil:
+		schemaType = "oneOf"
+	case schema.AnyOf != nil:
+		schemaType = "anyOf"
+	case schema.AllOf != nil:
+		schemaType = "allOf"
+	}
+
+	return schemaType
 }
