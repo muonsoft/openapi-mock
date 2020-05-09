@@ -18,6 +18,10 @@ func (generator *objectGenerator) GenerateDataBySchema(ctx context.Context, sche
 	object := map[string]interface{}{}
 
 	for propertyName, propertySchema := range schema.Properties {
+		if propertySchema.Value.WriteOnly {
+			continue
+		}
+
 		object[propertyName], err = generator.schemaGenerator.GenerateDataBySchema(ctx, propertySchema.Value)
 		if err != nil {
 			return nil, err

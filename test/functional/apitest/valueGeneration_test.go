@@ -43,4 +43,10 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 	json.AssertArrayNodeShouldHaveElementsCount("$.hashMap", 1)
 	json.AssertArrayNodeShouldHaveElementsCount("$.fixedHashMap", 1)
 	json.AssertNodeEqualToTheString("$.fixedHashMap.default", "value")
+	json.AssertNodeDoesNotExist("$.writeOnlyBoolean")
+	json.AssertNodeDoesNotExist("$.writeOnlyInteger")
+	json.AssertNodeDoesNotExist("$.writeOnlyNumber")
+	json.AssertNodeDoesNotExist("$.writeOnlyString")
+	json.AssertNodeDoesNotExist("$.writeOnlyArray")
+	json.AssertNodeDoesNotExist("$.writeOnlyObject")
 }
