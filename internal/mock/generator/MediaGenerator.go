@@ -18,6 +18,10 @@ func New(options Options) MediaGenerator {
 	lengthGenerator := &randomArrayLengthGenerator{random: random}
 	keyGenerator := &camelCaseKeyGenerator{random: random}
 
+	combinedGenerator := &combinedSchemaGenerator{
+		merger: &combinedSchemaMerger{random: random},
+	}
+
 	generatorsByType := map[string]schemaGenerator{
 		"string":  newStringGenerator(random),
 		"boolean": &booleanGenerator{random: random},
@@ -26,6 +30,8 @@ func New(options Options) MediaGenerator {
 		"array":   newArrayGenerator(lengthGenerator),
 		"object":  newObjectGenerator(lengthGenerator, keyGenerator),
 		"oneOf":   &oneOfGenerator{random: random},
+		"allOf":   combinedGenerator,
+		"anyOf":   combinedGenerator,
 	}
 
 	var schemaGenerator schemaGenerator

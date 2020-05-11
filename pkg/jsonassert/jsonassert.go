@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/yalp/jsonpath"
+	"math"
 	"testing"
 )
 
@@ -83,8 +84,15 @@ func (j *JSONAssert) AssertNodeShouldBeANumberInRange(path string, min float64, 
 
 func (j *JSONAssert) AssertNodeEqualToTheInteger(path string, expectedValue int, msgAndArgs ...interface{}) {
 	value := j.mustRead(path)
-	assert.IsType(j.t, 0, value, msgAndArgs)
-	assert.Equal(j.t, expectedValue, value, msgAndArgs)
+	float, ok := value.(float64)
+	if !ok {
+		assert.Fail(j.t, fmt.Sprintf("value at path '%s' is not numeric", path), msgAndArgs)
+	}
+	integer, fractional := math.Modf(float)
+	if fractional != 0 {
+		assert.Fail(j.t, fmt.Sprintf("value at path '%s' is float, not integer", path), msgAndArgs)
+	}
+	assert.Equal(j.t, expectedValue, int(integer), msgAndArgs)
 }
 
 func (j *JSONAssert) AssertNodeEqualToTheFloat64(path string, expectedValue float64, msgAndArgs ...interface{}) {
