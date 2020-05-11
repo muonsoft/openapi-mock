@@ -29,11 +29,29 @@ func NewResponseGeneratorHandler(
 func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	logger := logcontext.LoggerFromContext(request.Context())
 
-	route, _, err := handler.router.FindRoute(request.Method, request.URL)
+	route, pathParameters, err := handler.router.FindRoute(request.Method, request.URL)
+
 	if err != nil {
 		http.NotFound(writer, request)
 
 		logger.Debugf("Route '%s %s' was not found", request.Method, request.URL)
+		return
+	}
+
+	routingValidation := &openapi3filter.RequestValidationInput{
+		Request:    request,
+		PathParams: pathParameters,
+		Route:      route,
+		Options: &openapi3filter.Options{
+			ExcludeRequestBody: true,
+		},
+	}
+
+	err = openapi3filter.ValidateRequest(request.Context(), routingValidation)
+	if err != nil {
+		http.NotFound(writer, request)
+		logger.Infof("Route '%s %s' does not pass validation: %v", request.Method, request.URL, err.Error())
+
 		return
 	}
 

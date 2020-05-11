@@ -10,12 +10,12 @@ import (
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/content", nil)
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "example-usage/media-type-example.yaml",
 		UseExamples:      generator.No,
 	})
 
+	request, _ := http.NewRequest("GET", "/content", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
@@ -26,12 +26,12 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabl
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPresent_ExampleInResponse() {
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/content", nil)
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "example-usage/media-type-example.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
+	request, _ := http.NewRequest("GET", "/content", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
@@ -42,12 +42,12 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 
 func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfPresent_ExampleInResponse() {
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/content", nil)
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "example-usage/media-type-examples.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
+	request, _ := http.NewRequest("GET", "/content", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
@@ -58,12 +58,12 @@ func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 
 func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_ExamplesInResponse() {
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/content", nil)
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "example-usage/value-examples.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
+	request, _ := http.NewRequest("GET", "/content", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)

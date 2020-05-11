@@ -9,12 +9,12 @@ import (
 
 func (suite *APISuite) TestNullValueGeneration_NullableTypeAndMaxProbability_NullGenerated() {
 	recorder := httptest.NewRecorder()
-	request, _ := http.NewRequest("GET", "/content", nil)
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "null-value-generation.yaml",
 		NullProbability:  1.0,
 	})
 
+	request, _ := http.NewRequest("GET", "/content", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)

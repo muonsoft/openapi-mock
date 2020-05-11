@@ -1,0 +1,109 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /resources:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - resourceCollection
+  /resources/{stringId}:
+    get:
+      parameters:
+        - name: stringId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - resourceItem
+  /resources/{stringId}/subresources:
+    get:
+      parameters:
+        - name: stringId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - subresourceCollection
+  /resources/{stringId}/subresources/{stringId}:
+    get:
+      parameters:
+        - name: stringId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - subresourceItem
+  /integer-route/{integerId}:
+    get:
+      parameters:
+        - name: integerId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - integerRouteItem
