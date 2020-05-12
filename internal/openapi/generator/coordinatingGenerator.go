@@ -3,7 +3,6 @@ package generator
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"net/http"
-	"strconv"
 	"swagger-mock/internal/mock/generator"
 	"swagger-mock/internal/openapi/generator/negotiator"
 )
@@ -15,10 +14,10 @@ type coordinatingGenerator struct {
 }
 
 func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, route *openapi3filter.Route) (*Response, error) {
-	statusCode, _ := generator.statusCodeNegotiator.NegotiateStatusCode(request, route)
+	responseKey, statusCode, _ := generator.statusCodeNegotiator.NegotiateStatusCode(request, route.Operation.Responses)
 	contentType, _ := generator.contentTypeNegotiator.NegotiateContentType(request, route)
 
-	mediaType := route.Operation.Responses[strconv.Itoa(statusCode)].Value.Content[contentType]
+	mediaType := route.Operation.Responses[responseKey].Value.Content[contentType]
 
 	data, _ := generator.mediaGenerator.GenerateData(request.Context(), mediaType)
 
