@@ -15,9 +15,10 @@ type coordinatingGenerator struct {
 
 func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, route *openapi3filter.Route) (*Response, error) {
 	responseKey, statusCode, _ := generator.statusCodeNegotiator.NegotiateStatusCode(request, route.Operation.Responses)
-	contentType, _ := generator.contentTypeNegotiator.NegotiateContentType(request, route)
+	bestResponse := route.Operation.Responses[responseKey].Value
+	contentType := generator.contentTypeNegotiator.NegotiateContentType(request, bestResponse)
 
-	mediaType := route.Operation.Responses[responseKey].Value.Content[contentType]
+	mediaType := bestResponse.Content[contentType]
 
 	data, _ := generator.mediaGenerator.GenerateData(request.Context(), mediaType)
 
