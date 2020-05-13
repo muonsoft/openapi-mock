@@ -1,23 +1,32 @@
 linters:
   enable:
+    - asciicheck
     - bodyclose
     - depguard
     - dogsled
     - funlen
+    - gochecknoglobals
     - gochecknoinits
     - gocognit
     - goconst
     - gocritic
     - gocyclo
+    - godot
     - godox
+#    - goerr113
     - gofmt
     - golint
+    - gomodguard
+    - goprintffuncname
     - gosec
     - interfacer
     - maligned
     - misspell
     - nakedret
+    - nestif
+    - nolintlint
     - prealloc
+    - rowserrcheck
     - scopelint
     - stylecheck
     - unconvert
@@ -36,3 +45,5 @@ issues:
         - dupl
         - gosec
         - scopelint
+        - gochecknoglobals
+        - goerr113
