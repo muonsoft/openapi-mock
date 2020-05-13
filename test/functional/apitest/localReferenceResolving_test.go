@@ -17,7 +17,7 @@ func (suite *APISuite) TestLocalReferenceResolving_LocalReferences_AllReferences
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
-	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
+	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
 	json.AssertNodeShouldBeANumberInRange("$.id", 0, 65535)
 	json.AssertNodeEqualToTheString("$.tags[0]", "tag")

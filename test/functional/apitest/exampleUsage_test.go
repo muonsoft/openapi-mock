@@ -19,7 +19,7 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabl
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
-	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
+	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
 	json.AssertNodeEqualToTheString("$.key", "generatedValue")
 }
@@ -35,7 +35,7 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
-	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
+	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
 	json.AssertNodeEqualToTheString("$.key", "exampleValue")
 }
@@ -51,7 +51,7 @@ func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
-	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
+	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
 	json.AssertNodeEqualToTheString("$.key", "multiExampleValue")
 }
@@ -67,7 +67,7 @@ func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_Exa
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
-	suite.Equal("application/json", recorder.Header().Get("Content-Type"))
+	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
 	json.AssertNodeEqualToTheString("$.stringExample", "stringValue")
 	json.AssertNodeEqualToTheFloat64("$.numberExample", 123)

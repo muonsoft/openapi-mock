@@ -50,7 +50,7 @@ func (suite *APISuite) TestRouting_ValidRoute_200StatusAndExpectedContent() {
 			handler.ServeHTTP(recorder, request)
 
 			assert.Equal(t, http.StatusOK, recorder.Code)
-			assert.Equal(t, "application/json", recorder.Header().Get("Content-Type"))
+			assert.Equal(t, "application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 			json := jsonassert.MustParse(t, recorder.Body.Bytes())
 			json.AssertNodeEqualToTheString("$.key", test.expectedContent)
 		})

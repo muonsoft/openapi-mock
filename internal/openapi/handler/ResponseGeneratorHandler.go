@@ -57,7 +57,7 @@ func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, r
 
 	response, err := handler.responseGenerator.GenerateResponse(request, route)
 	if err != nil {
-		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		handler.responder.WriteUnexpectedError(writer, err.Error())
 		return
 	}
 

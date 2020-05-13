@@ -23,9 +23,9 @@ func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, 
 	data, _ := generator.mediaGenerator.GenerateData(request.Context(), mediaType)
 
 	response := &Response{
-		StatusCode: statusCode,
-		MediaType:  contentType,
-		Data:       data,
+		StatusCode:  statusCode,
+		ContentType: contentType,
+		Data:        data,
 	}
 
 	return response, nil

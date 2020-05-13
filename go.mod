@@ -3,6 +3,8 @@ module swagger-mock
 go 1.14
 
 require (
+	github.com/clbanning/anyxml v1.2.2 // indirect
+	github.com/clbanning/mxj v1.8.4
 	github.com/getkin/kin-openapi v0.8.0
 	github.com/go-ozzo/ozzo-routing/v2 v2.3.0
 	github.com/gofrs/uuid v3.3.0+incompatible
