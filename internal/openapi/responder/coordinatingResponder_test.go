@@ -74,6 +74,27 @@ func TestWriteResponse_GivenResponse_SerializedDataWritten(t *testing.T) {
 	}
 }
 
+func TestCoordinatingResponder_WriteResponse_NoContentResponse_EmptyBodyWritten(t *testing.T) {
+	response := &generator.Response{
+		StatusCode:  http.StatusNoContent,
+		ContentType: "",
+		Data:        "",
+	}
+	serializer := &serializermock.Serializer{}
+	serializer.On("Serialize", response.Data, "raw").Return([]byte(""), nil).Once()
+	recorder := httptest.NewRecorder()
+	responder := New().(*coordinatingResponder)
+	responder.serializer = serializer
+
+	responder.WriteResponse(recorder, response)
+
+	serializer.AssertExpectations(t)
+	assert.Equal(t, "", recorder.Header().Get("Content-Type"))
+	assert.Equal(t, "nosniff", recorder.Header().Get("X-Content-Type-Options"))
+	assert.Equal(t, http.StatusNoContent, recorder.Code)
+	assert.Equal(t, "", recorder.Body.String())
+}
+
 func TestCoordinatingResponder_WriteResponse_SerializationError_UnexpectedErrorWritten(t *testing.T) {
 	response := &generator.Response{
 		StatusCode:  http.StatusOK,

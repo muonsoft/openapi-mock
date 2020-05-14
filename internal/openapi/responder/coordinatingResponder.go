@@ -28,7 +28,10 @@ func (responder *coordinatingResponder) WriteResponse(writer http.ResponseWriter
 		return
 	}
 
-	writer.Header().Set("Content-Type", fmt.Sprintf("%s; charset=utf-8", response.ContentType))
+	if response.ContentType != "" {
+		writer.Header().Set("Content-Type", fmt.Sprintf("%s; charset=utf-8", response.ContentType))
+	}
+
 	writer.Header().Set("X-Content-Type-Options", "nosniff")
 	writer.WriteHeader(response.StatusCode)
 	_, _ = writer.Write(data)
