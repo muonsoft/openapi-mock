@@ -1,0 +1,77 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+servers:
+  - url: http://example.com:1234/global/base/path
+  - url: /another-global/base/path
+paths:
+  /endpoint:
+    get:
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value
+  /second-endpoint:
+    servers:
+      - url: http://example.com:1234/local/base/path
+      - url: /another-local/base/path
+    get:
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value
+  /third-endpoint:
+    get:
+      servers:
+        - url: http://example.com:1234/endpoint/base/path
+        - url: /another-endpoint/base/path
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value
+    post:
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value
