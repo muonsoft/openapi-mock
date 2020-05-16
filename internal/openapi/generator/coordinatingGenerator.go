@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"net/http"
-	"swagger-mock/internal/mock/generator"
+	"swagger-mock/internal/openapi/generator/content"
 	"swagger-mock/internal/openapi/generator/negotiator"
 )
 
 type coordinatingGenerator struct {
 	statusCodeNegotiator  negotiator.StatusCodeNegotiator
 	contentTypeNegotiator negotiator.ContentTypeNegotiator
-	mediaGenerator        generator.MediaGenerator
+	contentGenerator      content.Generator
 }
 
 func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, route *openapi3filter.Route) (*Response, error) {
@@ -23,12 +23,7 @@ func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, 
 	bestResponse := route.Operation.Responses[responseKey].Value
 	contentType := generator.contentTypeNegotiator.NegotiateContentType(request, bestResponse)
 
-	mediaType := bestResponse.Content[contentType]
-	if mediaType == nil {
-		return &Response{StatusCode: statusCode, Data: ""}, nil
-	}
-
-	data, err := generator.mediaGenerator.GenerateData(request.Context(), mediaType)
+	contentData, err := generator.contentGenerator.GenerateContent(request.Context(), bestResponse, contentType)
 	if err != nil {
 		return nil, fmt.Errorf("[coordinatingGenerator] failed to generate response data: %w", err)
 	}
@@ -36,7 +31,7 @@ func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, 
 	response := &Response{
 		StatusCode:  statusCode,
 		ContentType: contentType,
-		Data:        data,
+		Data:        contentData,
 	}
 
 	return response, nil

@@ -4,6 +4,7 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"net/http"
 	"swagger-mock/internal/mock/generator"
+	"swagger-mock/internal/openapi/generator/content"
 	"swagger-mock/internal/openapi/generator/negotiator"
 )
 
@@ -15,6 +16,6 @@ func New(dataGenerator generator.MediaGenerator) ResponseGenerator {
 	return &coordinatingGenerator{
 		contentTypeNegotiator: negotiator.NewContentTypeNegotiator(),
 		statusCodeNegotiator:  negotiator.NewStatusCodeNegotiator(),
-		mediaGenerator:        dataGenerator,
+		contentGenerator:      content.NewGenerator(dataGenerator),
 	}
 }
