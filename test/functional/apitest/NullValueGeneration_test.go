@@ -7,17 +7,18 @@ import (
 	"swagger-mock/pkg/jsonassert"
 )
 
-func (suite *APISuite) TestLocalCrossReference_LocalPathReference_ReferenceResolved() {
+func (suite *APISuite) TestNullValueGeneration_NullableTypeAndMaxProbability_NullGenerated() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "local-cross-reference.yaml",
+		SpecificationURL: "NullValueGeneration.yaml",
+		NullProbability:  1.0,
 	})
 
-	request, _ := http.NewRequest("GET", "/entities", nil)
+	request, _ := http.NewRequest("GET", "/content", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$[0].key", "value")
+	json.AssertNodeIsNull("$.key")
 }

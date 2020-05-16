@@ -7,17 +7,17 @@ import (
 	"swagger-mock/pkg/jsonassert"
 )
 
-func (suite *APISuite) TestDefaultResponse_OnlyDefaultResponse_500StatusAndDefaultContent() {
+func (suite *APISuite) TestLocalCrossReference_LocalPathReference_ReferenceResolved() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "default-response.yaml",
+		SpecificationURL: "LocalCrossReference.yaml",
 	})
 
-	request, _ := http.NewRequest("GET", "/content", nil)
+	request, _ := http.NewRequest("GET", "/entities", nil)
 	handler.ServeHTTP(recorder, request)
 
-	suite.Equal(http.StatusInternalServerError, recorder.Code)
+	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.key", "value")
+	json.AssertNodeEqualToTheString("$[0].key", "value")
 }

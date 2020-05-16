@@ -52,7 +52,7 @@ func (suite *APISuite) TestContentNegotiation_OperationWithMultipleContentTypesA
 		suite.T().Run(test.acceptHeader, func(t *testing.T) {
 			recorder := httptest.NewRecorder()
 			handler := suite.createOpenAPIHandler(config.Configuration{
-				SpecificationURL: "content-negotiation.yaml",
+				SpecificationURL: "ContentNegotiation.yaml",
 			})
 
 			request, _ := http.NewRequest("GET", "/content", nil)

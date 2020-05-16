@@ -7,18 +7,18 @@ import (
 	"swagger-mock/pkg/jsonassert"
 )
 
-func (suite *APISuite) TestNullValueGeneration_NullableTypeAndMaxProbability_NullGenerated() {
+func (suite *APISuite) TestLocalReferenceResolving_LocalReferences_AllReferencesResolved() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "null-value-generation.yaml",
-		NullProbability:  1.0,
+		SpecificationURL: "LocalReferenceResolving.yaml",
 	})
 
-	request, _ := http.NewRequest("GET", "/content", nil)
+	request, _ := http.NewRequest("GET", "/entity/12345", nil)
 	handler.ServeHTTP(recorder, request)
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeIsNull("$.key")
+	json.AssertNodeShouldBeANumberInRange("$.id", 0, 65535)
+	json.AssertNodeEqualToTheString("$.tags[0]", "tag")
 }

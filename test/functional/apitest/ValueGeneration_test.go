@@ -10,7 +10,7 @@ import (
 func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_ExpectedValuesGenerated() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "value-generation.yaml",
+		SpecificationURL: "ValueGeneration.yaml",
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)

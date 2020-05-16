@@ -11,7 +11,7 @@ import (
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "example-usage/media-type-example.yaml",
+		SpecificationURL: "ExampleUsage/MediaTypeExample.yaml",
 		UseExamples:      generator.No,
 	})
 
@@ -27,7 +27,7 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabl
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPresent_ExampleInResponse() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "example-usage/media-type-example.yaml",
+		SpecificationURL: "ExampleUsage/MediaTypeExample.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
@@ -43,7 +43,7 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfPresent_ExampleInResponse() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "example-usage/media-type-examples.yaml",
+		SpecificationURL: "ExampleUsage/MediaTypeExamples.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 
@@ -59,7 +59,7 @@ func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_ExamplesInResponse() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "example-usage/value-examples.yaml",
+		SpecificationURL: "ExampleUsage/ValueExamples.yaml",
 		UseExamples:      generator.IfPresent,
 	})
 

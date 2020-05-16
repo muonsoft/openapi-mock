@@ -9,7 +9,7 @@ import (
 func (suite *APISuite) TestRespondingNoContent_NoContentResponse_204StatusAndEmptyResponseBody() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "responding-no-content.yaml",
+		SpecificationURL: "RespondingNoContent.yaml",
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)

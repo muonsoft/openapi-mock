@@ -10,7 +10,7 @@ import (
 func (suite *APISuite) TestCombinedTypes_SpecificationWithCombinedTypeSchemas_ExpectedValuesGenerated() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "combined-types.yaml",
+		SpecificationURL: "CombinedTypes.yaml",
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)

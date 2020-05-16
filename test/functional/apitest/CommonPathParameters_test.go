@@ -10,7 +10,7 @@ import (
 func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndGETRequest_RouteResolved() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "common-path-parameters.yaml",
+		SpecificationURL: "CommonPathParameters.yaml",
 	})
 
 	request, _ := http.NewRequest("GET", "/entity/123", nil)
@@ -25,7 +25,7 @@ func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndGETReques
 func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndPUTRequest_RouteResolved() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
-		SpecificationURL: "common-path-parameters.yaml",
+		SpecificationURL: "CommonPathParameters.yaml",
 	})
 
 	request, _ := http.NewRequest("PUT", "/entity/123", nil)

@@ -43,7 +43,7 @@ func (suite *APISuite) TestRouting_ValidRoute_200StatusAndExpectedContent() {
 		suite.T().Run(test.route, func(t *testing.T) {
 			recorder := httptest.NewRecorder()
 			handler := suite.createOpenAPIHandler(config.Configuration{
-				SpecificationURL: "routing.yaml",
+				SpecificationURL: "Routing.yaml",
 			})
 
 			request, _ := http.NewRequest("GET", test.route, nil)
@@ -72,7 +72,7 @@ func (suite *APISuite) TestRouting_InvalidRoute_404Status() {
 		suite.T().Run(test.route, func(t *testing.T) {
 			recorder := httptest.NewRecorder()
 			handler := suite.createOpenAPIHandler(config.Configuration{
-				SpecificationURL: "routing.yaml",
+				SpecificationURL: "Routing.yaml",
 			})
 
 			request, _ := http.NewRequest("GET", test.route, nil)
