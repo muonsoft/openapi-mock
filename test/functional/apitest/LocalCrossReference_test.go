@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
-	"swagger-mock/pkg/jsonassert"
+	"swagger-mock/pkg/assertjson"
 )
 
 func (suite *APISuite) TestLocalCrossReference_LocalPathReference_ReferenceResolved() {
@@ -18,6 +18,7 @@ func (suite *APISuite) TestLocalCrossReference_LocalPathReference_ReferenceResol
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$[0].key", "value")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$[0].key").EqualToTheString("value")
+	})
 }

@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
-	"swagger-mock/pkg/jsonassert"
+	"swagger-mock/pkg/assertjson"
 	"testing"
 )
 
@@ -34,11 +34,9 @@ func (suite *APISuite) TestServerURLsInRouting_SendingGETToEndpointsWithGlobalAn
 
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.Equal(t, "application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-			json, err := jsonassert.Parse(t, recorder.Body.Bytes())
-			assert.NoError(t, err)
-			if err == nil {
-				json.AssertNodeEqualToTheString("$.key", "value")
-			}
+			assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+				json.Node("$.key").EqualToTheString("value")
+			})
 		})
 	}
 }
@@ -84,11 +82,9 @@ func (suite *APISuite) TestServerURLsInRouting_SendingPOSTToExistentNotOverridde
 
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.Equal(t, "application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-			json, err := jsonassert.Parse(t, recorder.Body.Bytes())
-			assert.NoError(t, err)
-			if err == nil {
-				json.AssertNodeEqualToTheString("$.key", "value")
-			}
+			assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+				json.Node("$.key").EqualToTheString("value")
+			})
 		})
 	}
 }

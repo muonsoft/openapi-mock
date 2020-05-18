@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
 	"swagger-mock/internal/mock/generator"
-	"swagger-mock/pkg/jsonassert"
+	"swagger-mock/pkg/assertjson"
 )
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
@@ -20,8 +20,9 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabl
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.key", "generatedValue")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$.key").EqualToTheString("generatedValue")
+	})
 }
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPresent_ExampleInResponse() {
@@ -36,8 +37,9 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.key", "exampleValue")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$.key").EqualToTheString("exampleValue")
+	})
 }
 
 func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfPresent_ExampleInResponse() {
@@ -52,8 +54,9 @@ func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.key", "multiExampleValue")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$.key").EqualToTheString("multiExampleValue")
+	})
 }
 
 func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_ExamplesInResponse() {
@@ -68,10 +71,11 @@ func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_Exa
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.stringExample", "stringValue")
-	json.AssertNodeEqualToTheFloat64("$.numberExample", 123)
-	json.AssertNodeIsTrue("$.booleanExample")
-	json.AssertNodeEqualToTheString("$.objectExample.key", "objectValue")
-	json.AssertNodeEqualToTheString("$.arrayExample[0]", "arrayValue")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$.stringExample").EqualToTheString("stringValue")
+		json.Node("$.numberExample").EqualToTheFloat64(123)
+		json.Node("$.booleanExample").IsTrue()
+		json.Node("$.objectExample.key").EqualToTheString("objectValue")
+		json.Node("$.arrayExample[0]").EqualToTheString("arrayValue")
+	})
 }

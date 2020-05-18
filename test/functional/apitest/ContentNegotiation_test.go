@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
-	"swagger-mock/pkg/jsonassert"
-	"swagger-mock/pkg/xmlassert"
+	"swagger-mock/pkg/assertjson"
+	"swagger-mock/pkg/assertxml"
 	"testing"
 )
 
@@ -62,11 +62,13 @@ func (suite *APISuite) TestContentNegotiation_OperationWithMultipleContentTypesA
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.Equal(t, test.expectedContentType, recorder.Header().Get("Content-Type"))
 			if test.expectedFormat == "json" {
-				json := jsonassert.MustParse(t, recorder.Body.Bytes())
-				json.AssertNodeEqualToTheString("$.key", test.expectedContent)
+				assertjson.Has(t, recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+					json.Node("$.key").EqualToTheString(test.expectedContent)
+				})
 			} else {
-				xml := xmlassert.MustParse(t, recorder.Body.Bytes())
-				xml.AssertNodeEqualToTheString("/key", test.expectedContent)
+				assertxml.Has(t, recorder.Body.Bytes(), func(xml *assertxml.AssertXML) {
+					xml.Node("/key").EqualToTheString(test.expectedContent)
+				})
 			}
 		})
 	}

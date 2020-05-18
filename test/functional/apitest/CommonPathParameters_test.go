@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
-	"swagger-mock/pkg/jsonassert"
+	"swagger-mock/pkg/assertjson"
 )
 
 func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndGETRequest_RouteResolved() {
@@ -18,8 +18,9 @@ func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndGETReques
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.key", "getEntity")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$.key").EqualToTheString("getEntity")
+	})
 }
 
 func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndPUTRequest_RouteResolved() {
@@ -33,6 +34,7 @@ func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndPUTReques
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
-	json := jsonassert.MustParse(suite.T(), recorder.Body.Bytes())
-	json.AssertNodeEqualToTheString("$.key", "putEntity")
+	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
+		json.Node("$.key").EqualToTheString("putEntity")
+	})
 }
