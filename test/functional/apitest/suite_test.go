@@ -18,8 +18,14 @@ func TestApi(t *testing.T) {
 }
 
 func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) http.Handler {
+	specificationPath := "./../../resources/openapi-files/" + configuration.SpecificationURL
 	diContainer := container.New(configuration)
-	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + configuration.SpecificationURL)
+	specificationLoader := diContainer.CreateSpecificationLoader()
+	specification, err := specificationLoader.LoadFromURI(specificationPath)
+	if err != nil {
+		panic(err)
+	}
+	router := openapi3filter.NewRouter().WithSwagger(specification)
 
 	return diContainer.CreateHTTPHandler(router)
 }
