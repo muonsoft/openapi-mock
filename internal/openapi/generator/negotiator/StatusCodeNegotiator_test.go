@@ -2,6 +2,7 @@ package negotiator
 
 import (
 	"context"
+	"errors"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
@@ -64,7 +65,8 @@ func TestStatusCodeNegotiator_NegotiateStatusCode_EmptyResponses_Error(t *testin
 
 	key, code, err := negotiator.NegotiateStatusCode(request, responses)
 
-	assert.EqualError(t, err, "[statusCodeNegotiator] no matching response is found")
+	assert.True(t, errors.Is(err, ErrNoMatchingResponse))
+	assert.EqualError(t, err, "[statusCodeNegotiator] failed to negotiate response: no matching response found")
 	assert.Equal(t, "", key)
 	assert.Equal(t, http.StatusInternalServerError, code)
 }

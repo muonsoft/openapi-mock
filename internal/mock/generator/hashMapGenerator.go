@@ -2,9 +2,8 @@ package generator
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
 
 type hashMapGenerator struct {
@@ -26,7 +25,7 @@ func (generator *hashMapGenerator) GenerateDataBySchema(ctx context.Context, sch
 	for _, defaultPropertyName := range schema.Required {
 		value, err := generator.schemaGenerator.GenerateDataBySchema(ctx, schema.Properties[defaultPropertyName].Value)
 		if err != nil {
-			return values, fmt.Errorf("[hashMapGenerator] failed to generate default value '%s': %w", defaultPropertyName, err)
+			return values, errors.WithMessagef(err, "[hashMapGenerator] failed to generate default value '%s'", defaultPropertyName)
 		}
 
 		values[defaultPropertyName] = value
@@ -35,19 +34,16 @@ func (generator *hashMapGenerator) GenerateDataBySchema(ctx context.Context, sch
 
 	for i := uint64(len(values) + 1); i <= length; i++ {
 		key, err := keyGenerator.GenerateKey()
+		if errors.Is(err, errAttemptsLimitExceeded) && i > minLength {
+			return values, nil
+		}
 		if err != nil {
-			if errors.Is(err, errAttemptsLimitExceeded) {
-				if i > minLength {
-					return values, nil
-				}
-			}
-
-			return values, fmt.Errorf("[hashMapGenerator] failed to generate hash map key: %w", err)
+			return values, errors.WithMessage(err, "[hashMapGenerator] failed to generate hash map key")
 		}
 
 		value, err := generator.schemaGenerator.GenerateDataBySchema(ctx, schema.AdditionalProperties.Value)
 		if err != nil {
-			return values, fmt.Errorf("[hashMapGenerator] failed to generate hash map value: %w", err)
+			return values, errors.WithMessage(err, "[hashMapGenerator] failed to generate hash map value")
 		}
 
 		values[key] = value

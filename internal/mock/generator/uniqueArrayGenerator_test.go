@@ -83,7 +83,7 @@ func (suite *UniqueArrayGeneratorSuite) TestGenerateDataBySchema_LengthIs2AndMin
 	data, err := suite.generator.GenerateDataBySchema(context.Background(), schema)
 
 	suite.assertExpectations()
-	suite.EqualError(err, "[uniqueArrayGenerator] cannot generate array with unique values: attempts limit exceeded")
+	suite.EqualError(err, "[uniqueArrayGenerator] failed to generate array with unique values: [uniqueValueGenerator] failed to generate unique value: attempts limit exceeded")
 	suite.True(errors.Is(err, errAttemptsLimitExceeded))
 	suite.Len(data, 1)
 	suite.Equal("data", data.([]interface{})[0])
@@ -99,7 +99,7 @@ func (suite *UniqueArrayGeneratorSuite) TestGenerateDataBySchema_GenerationError
 	data, err := suite.generator.GenerateDataBySchema(context.Background(), schema)
 
 	suite.assertExpectations()
-	suite.EqualError(err, "[uniqueArrayGenerator] cannot generate array with unique values: error")
+	suite.EqualError(err, "[uniqueArrayGenerator] failed to generate array with unique values: [uniqueValueGenerator] failed to generate value: error")
 	suite.Len(data, 0)
 }
 

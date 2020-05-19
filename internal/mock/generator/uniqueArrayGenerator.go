@@ -2,9 +2,8 @@ package generator
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
 
 type uniqueArrayGenerator struct {
@@ -24,14 +23,11 @@ func (generator *uniqueArrayGenerator) GenerateDataBySchema(ctx context.Context,
 
 	for i := uint64(1); i <= length; i++ {
 		data, err := valueGenerator.GenerateDataBySchema(ctx, schema.Items.Value)
+		if errors.Is(err, errAttemptsLimitExceeded) && i > minLength {
+			return values[0 : i-1], nil
+		}
 		if err != nil {
-			if errors.Is(err, errAttemptsLimitExceeded) {
-				if i > minLength {
-					return values[0 : i-1], nil
-				}
-			}
-
-			return values[0 : i-1], fmt.Errorf("[uniqueArrayGenerator] cannot generate array with unique values: %w", err)
+			return values[0 : i-1], errors.WithMessage(err, "[uniqueArrayGenerator] failed to generate array with unique values")
 		}
 
 		values[i-1] = data

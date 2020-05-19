@@ -2,8 +2,8 @@ package generator
 
 import (
 	"context"
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
 
 type textGenerator struct {
@@ -23,7 +23,10 @@ func (generator *textGenerator) GenerateDataBySchema(ctx context.Context, schema
 	}
 
 	if maxLength < schema.MinLength {
-		return "", fmt.Errorf("[textGenerator] max length cannot be less than min length")
+		return "", errors.WithStack(&ErrGenerationFailed{
+			GeneratorID: "textGenerator",
+			Message:     "max length cannot be less than min length",
+		})
 	}
 
 	return generator.generator.generateRangedText(int(schema.MinLength), int(maxLength)), nil

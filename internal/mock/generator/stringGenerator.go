@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 	"syreclabs.com/go/faker"
 )
 
@@ -53,7 +54,11 @@ func (generator *stringGenerator) getRandomEnumValue(enum []interface{}) string 
 func (generator *stringGenerator) generateValueByPattern(pattern string) (string, error) {
 	value, err := faker.Regexify(pattern)
 	if err != nil {
-		return "", fmt.Errorf("[stringGenerator] Cannot generate string value by pattern %s: %s", pattern, err)
+		return "", errors.WithStack(&ErrGenerationFailed{
+			GeneratorID: "stringGenerator",
+			Message:     fmt.Sprintf("cannot generate string value by pattern '%s'", pattern),
+			Previous:    err,
+		})
 	}
 
 	return value, nil

@@ -2,9 +2,8 @@ package generator
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 	"syreclabs.com/go/faker"
 )
 
@@ -21,14 +20,11 @@ func (generator *freeFormGenerator) GenerateDataBySchema(ctx context.Context, sc
 
 	for i := uint64(1); i <= length; i++ {
 		key, err := keyGenerator.GenerateKey()
+		if errors.Is(err, errAttemptsLimitExceeded) && i > minLength {
+			return values, nil
+		}
 		if err != nil {
-			if errors.Is(err, errAttemptsLimitExceeded) {
-				if i > minLength {
-					return values, nil
-				}
-			}
-
-			return values, fmt.Errorf("[freeFormGenerator] failed to generate free form object: %w", err)
+			return values, errors.WithMessage(err, "[freeFormGenerator] failed to generate free form object")
 		}
 
 		values[key] = faker.Lorem().String()

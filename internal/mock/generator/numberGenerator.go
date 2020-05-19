@@ -2,8 +2,8 @@ package generator
 
 import (
 	"context"
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 	"math"
 )
 
@@ -15,7 +15,10 @@ func (generator *numberGenerator) GenerateDataBySchema(ctx context.Context, sche
 	minimum, maximum := generator.getMinMax(schema)
 
 	if maximum < minimum {
-		return 0, fmt.Errorf("[numberGenerator] maximum cannot be less than minimum")
+		return 0, errors.WithStack(&ErrGenerationFailed{
+			GeneratorID: "numberGenerator",
+			Message:     "maximum cannot be less than minimum",
+		})
 	}
 	if maximum == minimum {
 		return minimum, nil

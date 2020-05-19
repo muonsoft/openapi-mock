@@ -49,7 +49,8 @@ func TestUniqueValueGenerator_GenerateDataBySchema_FailedToGenerateUniqueValue_E
 	data, err := uniqueGenerator.GenerateDataBySchema(context.Background(), schema)
 
 	valueGeneratorMock.AssertExpectations(t)
-	assert.EqualError(t, err, errAttemptsLimitExceeded.Error())
+	assert.True(t, errors.Is(err, errAttemptsLimitExceeded))
+	assert.EqualError(t, err, "[uniqueValueGenerator] failed to generate unique value: attempts limit exceeded")
 	assert.Nil(t, data)
 }
 
@@ -62,6 +63,6 @@ func TestUniqueValueGenerator_GenerateDataBySchema_GenerationError_ErrorReturned
 	data, err := uniqueGenerator.GenerateDataBySchema(context.Background(), schema)
 
 	valueGeneratorMock.AssertExpectations(t)
-	assert.EqualError(t, err, "error")
+	assert.EqualError(t, err, "[uniqueValueGenerator] failed to generate value: error")
 	assert.Nil(t, data)
 }

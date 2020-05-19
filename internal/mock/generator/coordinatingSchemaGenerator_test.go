@@ -16,7 +16,7 @@ func TestCoordinatingSchemaGenerator_GenerateDataBySchema_NotSupportedType_Error
 
 	data, err := coordinatingGenerator.GenerateDataBySchema(context.Background(), schema)
 
-	assert.EqualError(t, err, "data generation for objects of type 'type' is not supported")
+	assert.EqualError(t, err, "[coordinatingSchemaGenerator] data generation for objects of type 'type' is not supported")
 	assert.Nil(t, data)
 }
 

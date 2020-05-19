@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -57,7 +58,7 @@ func (httpServer *httpServer) Run() error {
 
 	httpServer.server.ErrorLog.Printf("%s - Starting server on port %v", hostname, httpServer.server.Addr)
 
-	if err := httpServer.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+	if err := httpServer.server.ListenAndServe(); errors.Is(err, http.ErrServerClosed) {
 		httpServer.server.ErrorLog.Fatalf("Could not listen on %s: %v\n", httpServer.server.Addr, err)
 	}
 

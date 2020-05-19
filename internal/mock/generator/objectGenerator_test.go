@@ -74,6 +74,6 @@ func TestObjectGenerator_GenerateDataBySchema_SchemaGeneratorError_ErrorReturned
 	data, err := objectGeneratorInstance.GenerateDataBySchema(context.Background(), schema)
 
 	schemaGeneratorMock.AssertExpectations(t)
-	assert.EqualError(t, err, "error")
+	assert.EqualError(t, err, "[objectGenerator] failed to generate object property 'propertyName': error")
 	assert.Nil(t, data)
 }

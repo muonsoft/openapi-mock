@@ -1,8 +1,9 @@
 package negotiator
 
 import (
-	"errors"
+	"context"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 	"math"
 	"net/http"
 	"strconv"
@@ -28,21 +29,9 @@ func (negotiator *statusCodeNegotiator) NegotiateStatusCode(request *http.Reques
 	hasErrorCode := false
 
 	for key := range responses {
-		code := 0
-		if key == "default" {
-			code = http.StatusInternalServerError
-		} else {
-			code, err = strconv.Atoi(key)
-			if err != nil {
-				logger := logcontext.LoggerFromContext(request.Context())
-				logger.Warnf(
-					"[statusCodeNegotiator] response with key '%s' is ignored: "+
-						"key must be a valid status code integer or equal to 'default'",
-					key,
-				)
-
-				continue
-			}
+		code, err := negotiator.parseStatusCode(request.Context(), key)
+		if err != nil {
+			continue
 		}
 
 		if code >= 200 && code < 300 && code < minSuccessCode {
@@ -63,5 +52,26 @@ func (negotiator *statusCodeNegotiator) NegotiateStatusCode(request *http.Reques
 		return minErrorCodeKey, minErrorCode, nil
 	}
 
-	return "", http.StatusInternalServerError, errors.New("[statusCodeNegotiator] no matching response is found")
+	return "", http.StatusInternalServerError, errors.Wrap(ErrNoMatchingResponse, "[statusCodeNegotiator] failed to negotiate response")
+}
+
+func (negotiator *statusCodeNegotiator) parseStatusCode(ctx context.Context, key string) (int, error) {
+	var err error
+	code := 0
+
+	if key == "default" {
+		code = http.StatusInternalServerError
+	} else {
+		code, err = strconv.Atoi(key)
+		if err != nil {
+			logger := logcontext.LoggerFromContext(ctx)
+			logger.Warnf(
+				"[statusCodeNegotiator] response with key '%s' is ignored: "+
+					"key must be a valid status code integer or equal to 'default'",
+				key,
+			)
+		}
+	}
+
+	return code, err
 }

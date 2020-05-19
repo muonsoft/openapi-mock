@@ -1,7 +1,7 @@
 package generator
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
 	"strings"
 	"syreclabs.com/go/faker"
 )
@@ -54,7 +54,7 @@ func (generator *uniqueKeyGenerator) GenerateKey() (string, error) {
 	for attempt = 0; attempt < maxAttempts; attempt++ {
 		key, err = generator.keyGenerator.GenerateKey()
 		if err != nil {
-			return "", fmt.Errorf("[uniqueKeyGenerator] failed to generate key: %w", err)
+			return "", errors.WithMessage(err, "[uniqueKeyGenerator] failed to generate key")
 		}
 
 		if !generator.uniqueKeys[key] {
@@ -63,7 +63,7 @@ func (generator *uniqueKeyGenerator) GenerateKey() (string, error) {
 	}
 
 	if attempt >= maxAttempts {
-		return "", fmt.Errorf("[uniqueKeyGenerator] failed to generate unique key: %w", errAttemptsLimitExceeded)
+		return "", errors.Wrap(errAttemptsLimitExceeded, "[uniqueKeyGenerator] failed to generate unique key")
 	}
 
 	generator.uniqueKeys[key] = true

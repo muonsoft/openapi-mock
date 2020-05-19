@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
 
 type coordinatingSchemaGenerator struct {
@@ -15,7 +16,10 @@ func (generator *coordinatingSchemaGenerator) GenerateDataBySchema(ctx context.C
 
 	specificGenerator, exists := generator.generatorsByType[schemaType]
 	if !exists {
-		return nil, fmt.Errorf("data generation for objects of type '%s' is not supported", schemaType)
+		return nil, errors.WithStack(&ErrGenerationFailed{
+			GeneratorID: "coordinatingSchemaGenerator",
+			Message:     fmt.Sprintf("data generation for objects of type '%s' is not supported", schemaType),
+		})
 	}
 
 	return specificGenerator.GenerateDataBySchema(ctx, schema)

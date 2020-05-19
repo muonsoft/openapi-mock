@@ -1,8 +1,8 @@
 package generator
 
 import (
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/pkg/errors"
 	"net/http"
 	"swagger-mock/internal/openapi/generator/content"
 	"swagger-mock/internal/openapi/generator/negotiator"
@@ -17,7 +17,7 @@ type coordinatingGenerator struct {
 func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, route *openapi3filter.Route) (*Response, error) {
 	responseKey, statusCode, err := generator.statusCodeNegotiator.NegotiateStatusCode(request, route.Operation.Responses)
 	if err != nil {
-		return nil, fmt.Errorf("[coordinatingGenerator] failed to negotiate response: %w", err)
+		return nil, errors.WithMessage(err, "[coordinatingGenerator] failed to negotiate response")
 	}
 
 	bestResponse := route.Operation.Responses[responseKey].Value
@@ -25,7 +25,7 @@ func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, 
 
 	contentData, err := generator.contentGenerator.GenerateContent(request.Context(), bestResponse, contentType)
 	if err != nil {
-		return nil, fmt.Errorf("[coordinatingGenerator] failed to generate response data: %w", err)
+		return nil, errors.WithMessage(err, "[coordinatingGenerator] failed to generate response data")
 	}
 
 	response := &Response{

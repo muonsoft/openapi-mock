@@ -3,6 +3,7 @@ package generator
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
 
 type objectGenerator struct {
@@ -24,7 +25,7 @@ func (generator *objectGenerator) GenerateDataBySchema(ctx context.Context, sche
 
 		object[propertyName], err = generator.schemaGenerator.GenerateDataBySchema(ctx, propertySchema.Value)
 		if err != nil {
-			return nil, err
+			return nil, errors.Wrapf(err, "[objectGenerator] failed to generate object property '%s'", propertyName)
 		}
 	}
 

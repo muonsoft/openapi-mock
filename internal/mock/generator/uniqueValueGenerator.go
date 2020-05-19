@@ -4,11 +4,9 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/json"
-	"errors"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
-
-var errAttemptsLimitExceeded = errors.New("attempts limit exceeded")
 
 type uniqueValueGenerator struct {
 	valueGenerator schemaGenerator
@@ -33,7 +31,7 @@ func (generator *uniqueValueGenerator) GenerateDataBySchema(ctx context.Context,
 	for attempt = 0; attempt < maxAttempts; attempt++ {
 		data, err = generator.valueGenerator.GenerateDataBySchema(ctx, schema)
 		if err != nil {
-			return nil, err
+			return nil, errors.WithMessage(err, "[uniqueValueGenerator] failed to generate value")
 		}
 		if generator.isUnique(data) {
 			break
@@ -41,7 +39,7 @@ func (generator *uniqueValueGenerator) GenerateDataBySchema(ctx context.Context,
 	}
 
 	if attempt >= maxAttempts {
-		return nil, errAttemptsLimitExceeded
+		return nil, errors.Wrap(errAttemptsLimitExceeded, "[uniqueValueGenerator] failed to generate unique value")
 	}
 
 	generator.rememberValue(data)

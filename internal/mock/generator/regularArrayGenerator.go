@@ -2,8 +2,8 @@ package generator
 
 import (
 	"context"
-	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/pkg/errors"
 )
 
 type regularArrayGenerator struct {
@@ -24,7 +24,7 @@ func (generator *regularArrayGenerator) GenerateDataBySchema(ctx context.Context
 	for i := uint64(0); i < length; i++ {
 		values[i], err = generator.schemaGenerator.GenerateDataBySchema(ctx, schema.Items.Value)
 		if err != nil {
-			return values[0:i], fmt.Errorf("[regularArrayGenerator] error occurred while generating array value: %w", err)
+			return values[0:i], errors.WithMessage(err, "[regularArrayGenerator] error occurred while generating array value")
 		}
 	}
 
