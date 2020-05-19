@@ -6,7 +6,9 @@ import (
 	"github.com/pkg/errors"
 	"math"
 	"net/http"
+	"regexp"
 	"strconv"
+	"strings"
 	"swagger-mock/pkg/logcontext"
 )
 
@@ -15,10 +17,14 @@ type StatusCodeNegotiator interface {
 }
 
 func NewStatusCodeNegotiator() StatusCodeNegotiator {
-	return &statusCodeNegotiator{}
+	return &statusCodeNegotiator{
+		rangeDefinitionPattern: regexp.MustCompile("^[1-5]xx$"),
+	}
 }
 
-type statusCodeNegotiator struct{}
+type statusCodeNegotiator struct {
+	rangeDefinitionPattern *regexp.Regexp
+}
 
 func (negotiator *statusCodeNegotiator) NegotiateStatusCode(request *http.Request, responses openapi3.Responses) (key string, code int, err error) {
 	minSuccessCode := math.MaxInt32
@@ -56,18 +62,25 @@ func (negotiator *statusCodeNegotiator) NegotiateStatusCode(request *http.Reques
 }
 
 func (negotiator *statusCodeNegotiator) parseStatusCode(ctx context.Context, key string) (int, error) {
+	var code int
 	var err error
-	code := 0
 
-	if key == "default" {
+	key = strings.ToLower(key)
+
+	switch {
+	case key == "default":
 		code = http.StatusInternalServerError
-	} else {
+	case negotiator.rangeDefinitionPattern.MatchString(key):
+		code, _ = strconv.Atoi(string(key[0]))
+		code *= 100
+	default:
 		code, err = strconv.Atoi(key)
 		if err != nil {
 			logger := logcontext.LoggerFromContext(ctx)
 			logger.Warnf(
 				"[statusCodeNegotiator] response with key '%s' is ignored: "+
-					"key must be a valid status code integer or equal to 'default'",
+					"key must be a valid status code integer or equal to 'default', "+
+					"'1xx', '2xx', '3xx', '4xx' or '5xx'",
 				key,
 			)
 		}

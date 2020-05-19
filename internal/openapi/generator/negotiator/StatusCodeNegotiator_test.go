@@ -44,20 +44,6 @@ func TestStatusCodeNegotiator_NegotiateStatusCode_OnlyErrorResponses_ResponseWit
 	assert.Equal(t, http.StatusMovedPermanently, code)
 }
 
-func TestStatusCodeNegotiator_NegotiateStatusCode_OnlyDefaultResponse_ResponseWith500ErrorCodeReturned(t *testing.T) {
-	responses := openapi3.Responses{
-		"default": &openapi3.ResponseRef{},
-	}
-	negotiator := NewStatusCodeNegotiator()
-	request, _ := http.NewRequest("", "", nil)
-
-	key, code, err := negotiator.NegotiateStatusCode(request, responses)
-
-	assert.NoError(t, err)
-	assert.Equal(t, "default", key)
-	assert.Equal(t, http.StatusInternalServerError, code)
-}
-
 func TestStatusCodeNegotiator_NegotiateStatusCode_EmptyResponses_Error(t *testing.T) {
 	responses := openapi3.Responses{}
 	negotiator := NewStatusCodeNegotiator()
@@ -90,7 +76,64 @@ func TestStatusCodeNegotiator_NegotiateStatusCode_InvalidResponseKey_ResponseWit
 	assert.Equal(t, logrus.WarnLevel, hook.LastEntry().Level)
 	assert.Equal(
 		t,
-		"[statusCodeNegotiator] response with key 'unsupported' is ignored: key must be a valid status code integer or equal to 'default'",
+		"[statusCodeNegotiator] response with key 'unsupported' is ignored: "+
+			"key must be a valid status code integer or equal to 'default', "+
+			"'1xx', '2xx', '3xx', '4xx' or '5xx'",
 		hook.LastEntry().Message,
 	)
+}
+
+func TestStatusCodeNegotiator_NegotiateStatusCode_NonNumericResponse_ExpectedKeyAndStatusCode(t *testing.T) {
+	tests := []struct {
+		key                string
+		expectedStatusCode int
+	}{
+		{
+			"default",
+			http.StatusInternalServerError,
+		},
+		{
+			"Default",
+			http.StatusInternalServerError,
+		},
+		{
+			"1xx",
+			http.StatusContinue,
+		},
+		{
+			"2xx",
+			http.StatusOK,
+		},
+		{
+			"3xx",
+			http.StatusMultipleChoices,
+		},
+		{
+			"4xx",
+			http.StatusBadRequest,
+		},
+		{
+			"5xx",
+			http.StatusInternalServerError,
+		},
+		{
+			"5XX",
+			http.StatusInternalServerError,
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.key, func(t *testing.T) {
+			responses := openapi3.Responses{
+				test.key: &openapi3.ResponseRef{},
+			}
+			negotiator := NewStatusCodeNegotiator()
+			request, _ := http.NewRequest("", "", nil)
+
+			key, code, err := negotiator.NegotiateStatusCode(request, responses)
+
+			assert.NoError(t, err)
+			assert.Equal(t, test.key, key)
+			assert.Equal(t, test.expectedStatusCode, code)
+		})
+	}
 }
