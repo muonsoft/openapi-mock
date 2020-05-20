@@ -2,10 +2,12 @@ package responder
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
+	apperrors "swagger-mock/internal/errors"
 	"swagger-mock/internal/openapi/generator"
 	"swagger-mock/internal/openapi/responder/serializer"
 	"swagger-mock/pkg/logcontext"
@@ -44,14 +46,37 @@ func (responder *coordinatingResponder) WriteError(ctx context.Context, writer h
 	writer.Header().Set("X-Content-Type-Options", "nosniff")
 	writer.WriteHeader(http.StatusInternalServerError)
 
+	html := ""
+
+	var unsupported *apperrors.NotSupported
+	if errors.As(err, &unsupported) {
+		html = responder.generateUnsupportedErrorHTML(unsupported)
+	} else {
+		html = responder.generateUnexpectedErrorHTML(ctx, err)
+	}
+
+	_, _ = writer.Write([]byte(html))
+}
+
+func (responder *coordinatingResponder) generateUnexpectedErrorHTML(ctx context.Context, err error) string {
 	html := strings.ReplaceAll(errorTemplate, "{{title}}", "Unexpected error")
 	message := "An unexpected error occurred:<br>" + strings.ReplaceAll(err.Error(), ":", ":<br>")
 	html = strings.ReplaceAll(html, "{{message}}", message)
+	html = strings.ReplaceAll(html, "{{hint}}", errorHint)
 
 	logger := logcontext.LoggerFromContext(ctx)
 	logger.Errorf("an unexpected error occurred: %+v", err)
 
-	_, _ = writer.Write([]byte(html))
+	return html
+}
+
+func (responder *coordinatingResponder) generateUnsupportedErrorHTML(err *apperrors.NotSupported) string {
+	html := strings.ReplaceAll(errorTemplate, "{{title}}", "Feature is not supported")
+	message := fmt.Sprintf("An error occurred: %s.", err.Error())
+	html = strings.ReplaceAll(html, "{{message}}", message)
+	html = strings.ReplaceAll(html, "{{hint}}", unsupportedHint)
+
+	return html
 }
 
 func (responder *coordinatingResponder) guessSerializationFormat(contentType string) string {

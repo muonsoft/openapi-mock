@@ -17,5 +17,8 @@ func (suite *APISuite) TestUnexpectedErrorPage_InvalidSchema_500StatusAndErrorPa
 
 	suite.Equal(http.StatusInternalServerError, recorder.Code)
 	suite.Equal("text/html; charset=utf-8", recorder.Header().Get("Content-Type"))
-	suite.Contains(recorder.Body.String(), "<h1>Unexpected error</h1>")
+	response := recorder.Body.String()
+	suite.Contains(response, "<h1>Unexpected error</h1>")
+	suite.Contains(response, "attempts limit exceeded")
+	suite.Contains(response, "it seems to be a problem with the application")
 }
