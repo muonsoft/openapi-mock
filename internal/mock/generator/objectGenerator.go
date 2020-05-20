@@ -25,7 +25,7 @@ func (generator *objectGenerator) GenerateDataBySchema(ctx context.Context, sche
 
 		object[propertyName], err = generator.schemaGenerator.GenerateDataBySchema(ctx, propertySchema.Value)
 		if err != nil {
-			return nil, errors.Wrapf(err, "[objectGenerator] failed to generate object property '%s'", propertyName)
+			return nil, errors.WithMessagef(err, "[objectGenerator] failed to generate object property '%s'", propertyName)
 		}
 	}
 

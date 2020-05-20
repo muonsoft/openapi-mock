@@ -1,6 +1,7 @@
 package responder
 
 import (
+	"context"
 	"net/http"
 	"regexp"
 	"swagger-mock/internal/openapi/generator"
@@ -8,8 +9,8 @@ import (
 )
 
 type Responder interface {
-	WriteResponse(writer http.ResponseWriter, response *generator.Response)
-	WriteUnexpectedError(writer http.ResponseWriter, message string)
+	WriteResponse(ctx context.Context, writer http.ResponseWriter, response *generator.Response)
+	WriteError(ctx context.Context, writer http.ResponseWriter, err error)
 }
 
 func New() Responder {

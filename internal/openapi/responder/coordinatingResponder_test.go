@@ -1,6 +1,7 @@
 package responder
 
 import (
+	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -63,7 +64,7 @@ func TestWriteResponse_GivenResponse_SerializedDataWritten(t *testing.T) {
 			responder := New().(*coordinatingResponder)
 			responder.serializer = serializer
 
-			responder.WriteResponse(recorder, response)
+			responder.WriteResponse(context.Background(), recorder, response)
 
 			serializer.AssertExpectations(t)
 			assert.Equal(t, response.ContentType+"; charset=utf-8", recorder.Header().Get("Content-Type"))
@@ -86,7 +87,7 @@ func TestCoordinatingResponder_WriteResponse_NoContentResponse_EmptyBodyWritten(
 	responder := New().(*coordinatingResponder)
 	responder.serializer = serializer
 
-	responder.WriteResponse(recorder, response)
+	responder.WriteResponse(context.Background(), recorder, response)
 
 	serializer.AssertExpectations(t)
 	assert.Equal(t, "", recorder.Header().Get("Content-Type"))
@@ -110,12 +111,12 @@ func TestCoordinatingResponder_WriteResponse_SerializationError_UnexpectedErrorW
 	responder := New().(*coordinatingResponder)
 	responder.serializer = serializer
 
-	responder.WriteResponse(recorder, response)
+	responder.WriteResponse(context.Background(), recorder, response)
 
 	serializer.AssertExpectations(t)
 	assert.Equal(t, "text/html; charset=utf-8", recorder.Header().Get("Content-Type"))
 	assert.Equal(t, "nosniff", recorder.Header().Get("X-Content-Type-Options"))
 	assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	assert.Contains(t, recorder.Body.String(), "Unexpected error")
-	assert.Contains(t, recorder.Body.String(), "An unexpected error occurred: error")
+	assert.Contains(t, recorder.Body.String(), "An unexpected error occurred:<br>error")
 }

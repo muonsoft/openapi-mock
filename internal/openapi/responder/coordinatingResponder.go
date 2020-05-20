@@ -1,12 +1,14 @@
 package responder
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strings"
 	"swagger-mock/internal/openapi/generator"
 	"swagger-mock/internal/openapi/responder/serializer"
+	"swagger-mock/pkg/logcontext"
 )
 
 type coordinatingResponder struct {
@@ -19,12 +21,12 @@ type formatGuess struct {
 	pattern *regexp.Regexp
 }
 
-func (responder *coordinatingResponder) WriteResponse(writer http.ResponseWriter, response *generator.Response) {
+func (responder *coordinatingResponder) WriteResponse(ctx context.Context, writer http.ResponseWriter, response *generator.Response) {
 	format := responder.guessSerializationFormat(response.ContentType)
 
 	data, err := responder.serializer.Serialize(response.Data, format)
 	if err != nil {
-		responder.WriteUnexpectedError(writer, err.Error())
+		responder.WriteError(ctx, writer, err)
 		return
 	}
 
@@ -37,13 +39,17 @@ func (responder *coordinatingResponder) WriteResponse(writer http.ResponseWriter
 	_, _ = writer.Write(data)
 }
 
-func (responder *coordinatingResponder) WriteUnexpectedError(writer http.ResponseWriter, message string) {
+func (responder *coordinatingResponder) WriteError(ctx context.Context, writer http.ResponseWriter, err error) {
 	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
 	writer.Header().Set("X-Content-Type-Options", "nosniff")
 	writer.WriteHeader(http.StatusInternalServerError)
 
 	html := strings.ReplaceAll(errorTemplate, "{{title}}", "Unexpected error")
-	html = strings.ReplaceAll(html, "{{message}}", fmt.Sprintf("An unexpected error occurred: %s", message))
+	message := "An unexpected error occurred:<br>" + strings.ReplaceAll(err.Error(), ":", ":<br>")
+	html = strings.ReplaceAll(html, "{{message}}", message)
+
+	logger := logcontext.LoggerFromContext(ctx)
+	logger.Errorf("an unexpected error occurred: %+v", err)
 
 	_, _ = writer.Write([]byte(html))
 }

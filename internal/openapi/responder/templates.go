@@ -11,8 +11,10 @@ const errorTemplate = `
 <h1>{{title}}</h1>
 <p>{{message}}</p>
 <p>
-	If you see this message, please make an issue at project page 
+	If you see this message, please investigate your specification for errors. 
+	If it seems to be a problem with the application, then make an issue at the project page 
 	<a href="https://github.com/swagger-mock/swagger-mock/issues">https://github.com/swagger-mock/swagger-mock/issues</a>.
+	Thank you for your support.
 </p>
 </body>
 </html>

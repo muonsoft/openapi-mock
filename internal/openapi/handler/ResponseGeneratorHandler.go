@@ -27,7 +27,8 @@ func NewResponseGeneratorHandler(
 }
 
 func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	logger := logcontext.LoggerFromContext(request.Context())
+	ctx := request.Context()
+	logger := logcontext.LoggerFromContext(ctx)
 
 	route, pathParameters, err := handler.router.FindRoute(request.Method, request.URL)
 
@@ -47,7 +48,7 @@ func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, r
 		},
 	}
 
-	err = openapi3filter.ValidateRequest(request.Context(), routingValidation)
+	err = openapi3filter.ValidateRequest(ctx, routingValidation)
 	if err != nil {
 		http.NotFound(writer, request)
 		logger.Infof("Route '%s %s' does not pass validation: %v", request.Method, request.URL, err.Error())
@@ -57,9 +58,9 @@ func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, r
 
 	response, err := handler.responseGenerator.GenerateResponse(request, route)
 	if err != nil {
-		handler.responder.WriteUnexpectedError(writer, err.Error())
+		handler.responder.WriteError(ctx, writer, err)
 		return
 	}
 
-	handler.responder.WriteResponse(writer, response)
+	handler.responder.WriteResponse(ctx, writer, response)
 }
