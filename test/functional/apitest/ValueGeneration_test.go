@@ -18,6 +18,7 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
+	suite.Equal("nosniff", recorder.Header().Get("X-Content-Type-Options"))
 	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
 		json.Node("$.rangedInteger").ShouldBeANumberInRange(1, 5)
 		json.Node("$.rangedFloat").ShouldBeANumberInRange(1, 1.5)

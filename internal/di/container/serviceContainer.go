@@ -3,8 +3,11 @@ package container
 import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/gorilla/handlers"
 	"github.com/sirupsen/logrus"
+	"github.com/unrolled/secure"
 	"net/http"
+	"os"
 	"swagger-mock/internal/di/config"
 	dataGenerator "swagger-mock/internal/mock/generator"
 	responseGenerator "swagger-mock/internal/openapi/generator"
@@ -60,8 +63,21 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 		httpHandler = middleware.CORSHandler(httpHandler)
 	}
 
+	secureMiddleware := secure.New(secure.Options{
+		FrameDeny:             true,
+		ContentTypeNosniff:    true,
+		BrowserXssFilter:      true,
+		ContentSecurityPolicy: "default-src 'self'",
+	})
+
+	httpHandler = secureMiddleware.Handler(httpHandler)
 	httpHandler = middleware.ContextLoggerHandler(container.logger, httpHandler)
 	httpHandler = middleware.TracingHandler(httpHandler)
+	httpHandler = handlers.CombinedLoggingHandler(os.Stdout, httpHandler)
+	httpHandler = handlers.RecoveryHandler(
+		handlers.RecoveryLogger(container.logger),
+		handlers.PrintRecoveryStack(true),
+	)(httpHandler)
 
 	return httpHandler
 }

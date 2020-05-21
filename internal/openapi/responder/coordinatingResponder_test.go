@@ -69,7 +69,6 @@ func TestWriteResponse_GivenResponse_SerializedDataWritten(t *testing.T) {
 
 			serializer.AssertExpectations(t)
 			assert.Equal(t, response.ContentType+"; charset=utf-8", recorder.Header().Get("Content-Type"))
-			assert.Equal(t, "nosniff", recorder.Header().Get("X-Content-Type-Options"))
 			assert.Equal(t, response.StatusCode, recorder.Code)
 			assert.Equal(t, "serialized", recorder.Body.String())
 		})
@@ -92,7 +91,6 @@ func TestCoordinatingResponder_WriteResponse_NoContentResponse_EmptyBodyWritten(
 
 	serializer.AssertExpectations(t)
 	assert.Equal(t, "", recorder.Header().Get("Content-Type"))
-	assert.Equal(t, "nosniff", recorder.Header().Get("X-Content-Type-Options"))
 	assert.Equal(t, http.StatusNoContent, recorder.Code)
 	assert.Equal(t, "", recorder.Body.String())
 }
@@ -116,7 +114,6 @@ func TestCoordinatingResponder_WriteResponse_SerializationError_UnexpectedErrorW
 
 	serializer.AssertExpectations(t)
 	assert.Equal(t, "text/html; charset=utf-8", recorder.Header().Get("Content-Type"))
-	assert.Equal(t, "nosniff", recorder.Header().Get("X-Content-Type-Options"))
 	assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	assert.Contains(t, recorder.Body.String(), "<h1>Unexpected error</h1>")
 	assert.Contains(t, recorder.Body.String(), "An unexpected error occurred:<br>error")
@@ -131,7 +128,6 @@ func TestCoordinatingResponder_WriteError_UnsupportedFeatureError_UnsupportedPag
 	response := recorder.Body.String()
 
 	assert.Equal(t, "text/html; charset=utf-8", recorder.Header().Get("Content-Type"))
-	assert.Equal(t, "nosniff", recorder.Header().Get("X-Content-Type-Options"))
 	assert.Equal(t, http.StatusInternalServerError, recorder.Code)
 	assert.Contains(t, response, "<h1>Feature is not supported</h1>")
 	assert.Contains(t, response, "An error occurred: unsupported feature description.")

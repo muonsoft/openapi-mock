@@ -8,10 +8,12 @@ require (
 	github.com/getkin/kin-openapi v0.8.0
 	github.com/go-ozzo/ozzo-routing/v2 v2.3.0
 	github.com/gofrs/uuid v3.3.0+incompatible
+	github.com/gorilla/handlers v1.4.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/pkg/errors v0.9.1
 	github.com/sirupsen/logrus v1.6.0
 	github.com/stretchr/testify v1.5.1
+	github.com/unrolled/secure v1.0.7
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0
 	golang.org/x/net v0.0.0-20200506145744-7e3656a0809f // indirect
 	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect

@@ -36,14 +36,12 @@ func (responder *coordinatingResponder) WriteResponse(ctx context.Context, write
 		writer.Header().Set("Content-Type", fmt.Sprintf("%s; charset=utf-8", response.ContentType))
 	}
 
-	writer.Header().Set("X-Content-Type-Options", "nosniff")
 	writer.WriteHeader(response.StatusCode)
 	_, _ = writer.Write(data)
 }
 
 func (responder *coordinatingResponder) WriteError(ctx context.Context, writer http.ResponseWriter, err error) {
 	writer.Header().Set("Content-Type", "text/html; charset=utf-8")
-	writer.Header().Set("X-Content-Type-Options", "nosniff")
 	writer.WriteHeader(http.StatusInternalServerError)
 
 	html := ""
