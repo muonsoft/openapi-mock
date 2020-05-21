@@ -56,6 +56,10 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 
 	var httpHandler http.Handler
 	httpHandler = handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
+	if container.configuration.CORSEnabled {
+		httpHandler = middleware.CORSHandler(httpHandler)
+	}
+
 	httpHandler = middleware.ContextLoggerHandler(container.logger, httpHandler)
 	httpHandler = middleware.TracingHandler(httpHandler)
 

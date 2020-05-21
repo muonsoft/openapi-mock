@@ -11,6 +11,7 @@ type Configuration struct {
 	SpecificationURL string                    `required:"true" split_words:"true"`
 	UseExamples      generator.UseExamplesEnum `ignored:"true"`
 	NullProbability  float64                   `default:"0.5" split_words:"true"`
+	CORSEnabled      bool                      `envconfig:"cors_enabled"`
 	Debug            bool
 	Port             uint16       `default:"8080"`
 	LogLevel         logrus.Level `ignored:"true"`
@@ -43,7 +44,7 @@ func getLogLevel() logrus.Level {
 	unparsedLogLevel := os.Getenv("SWAGGER_MOCK_LOG_LEVEL")
 
 	if unparsedLogLevel == "" {
-		logLevel = logrus.WarnLevel
+		logLevel = logrus.InfoLevel
 	} else {
 		logLevel, err = logrus.ParseLevel(unparsedLogLevel)
 

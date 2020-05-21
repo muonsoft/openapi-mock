@@ -81,7 +81,7 @@ Mock server options can be set via environment variables.
 #### SWAGGER_MOCK_LOG_LEVEL
 
 * Error log level
-* _Default value_: `warning`
+* _Default value_: `info`
 * _Possible values_: `error`, `warning`, `info`, `debug`
 
 #### SWAGGER_MOCK_USE_EXAMPLES

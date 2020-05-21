@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
+	httpmock "swagger-mock/test/mocks/http"
 	"testing"
 )
 
@@ -15,7 +16,7 @@ func TestContextualLoggerHandler_ServeHTTP_RequestIdInContext_LoggerSetToContext
 	request = request.WithContext(ctx)
 	recorder := httptest.NewRecorder()
 	logger, _ := test.NewNullLogger()
-	nextHandler := handlerMock{}
+	nextHandler := httpmock.Handler{}
 	handler := ContextLoggerHandler(logger, &nextHandler)
 	nextHandler.
 		On("ServeHTTP", mock.Anything, mock.Anything).

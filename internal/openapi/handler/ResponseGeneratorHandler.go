@@ -19,10 +19,15 @@ func NewResponseGeneratorHandler(
 	responseGenerator generator.ResponseGenerator,
 	responder responder.Responder,
 ) http.Handler {
-	return &responseGeneratorHandler{
+	generatorHandler := &responseGeneratorHandler{
 		router:            router,
 		responseGenerator: responseGenerator,
 		responder:         responder,
+	}
+
+	return &optionsHandler{
+		router:      router,
+		nextHandler: generatorHandler,
 	}
 }
 
