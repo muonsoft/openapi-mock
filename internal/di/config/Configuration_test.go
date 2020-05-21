@@ -41,7 +41,7 @@ func TestLoadFromEnvironment_OnlyRequiredParametersInEnv_DefaultParametersLoaded
 	assert.Equal(t, 0.5, config.NullProbability)
 	assert.False(t, config.CORSEnabled)
 	assert.False(t, config.Debug)
-	assert.Equal(t, logrus.WarnLevel, config.LogLevel)
+	assert.Equal(t, logrus.InfoLevel, config.LogLevel)
 	assert.Equal(t, "tty", config.LogFormat)
 }
 
