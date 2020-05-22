@@ -24,7 +24,7 @@ jobs:
 
       - name: Build application
         run: |
-          cd cmd/swagger-mock
+          cd cmd/openapi-mock
           go build -v
           cd ../..
 

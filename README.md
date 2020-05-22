@@ -151,17 +151,3 @@ Mock server options can be set via environment variables.
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Features roadmap for next versions
-
-* [ ] extra response negotiation (return of 405 code)
-  * [ ] path parser
-  * [ ] route matcher in path object
-  * [ ] routing by path and endpoints
-* [ ] response cache
-* [ ] faker expression extension for numbers
-* [ ] faker expression extension for strings
-* [ ] request body validation
-* [ ] remote reference support
-* [ ] url reference support
-* [ ] discriminator in combined types
