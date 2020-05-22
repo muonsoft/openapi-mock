@@ -130,6 +130,12 @@ Mock server options can be set via environment variables.
  * _Default value_: `0`
  * _Possible values_: `1` or `0`
 
+#### SWAGGER_MOCK_PORT
+
+* Server port for listening HTTP connections
+* _Default value_: `8080`
+* _Possible values_: any valid port
+
 #### SWAGGER_MOCK_LOG_LEVEL
 
 * Error log level

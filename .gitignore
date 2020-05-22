@@ -2,4 +2,4 @@
 /vendor/
 
 # compiled application
-/cmd/swagger-mock/swagger-mock
+/cmd/openapi-mock/openapi-mock
