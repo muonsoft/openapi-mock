@@ -8,7 +8,9 @@ import (
 )
 
 type numberGenerator struct {
-	random randomGenerator
+	random         randomGenerator
+	defaultMinimum float64
+	defaultMaximum float64
 }
 
 func (generator *numberGenerator) GenerateDataBySchema(ctx context.Context, schema *openapi3.Schema) (Data, error) {
@@ -35,8 +37,8 @@ func (generator *numberGenerator) GenerateDataBySchema(ctx context.Context, sche
 }
 
 func (generator *numberGenerator) getMinMax(schema *openapi3.Schema) (float64, float64) {
-	minimum := -float64(math.MaxInt64 / 2)
-	maximum := float64(math.MaxInt64 / 2)
+	minimum := generator.defaultMinimum
+	maximum := generator.defaultMaximum
 
 	if schema.Min != nil {
 		minimum = *schema.Min

@@ -8,6 +8,11 @@ import (
 	"testing"
 )
 
+const (
+	testDefaultMinFloat = -12345.0
+	testDefaultMaxFloat = 12345.0
+)
+
 func TestNumberGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_ExpectedValue(t *testing.T) {
 	min := 10.0
 	max := 100.0
@@ -24,14 +29,14 @@ func TestNumberGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_Expected
 			openapi3.NewSchema(),
 			0,
 			math.MaxInt64,
-			-math.MaxInt64 / 2,
+			testDefaultMinFloat,
 		},
 		{
 			"no params, max random value",
 			openapi3.NewSchema(),
 			math.MaxInt64,
 			math.MaxInt64,
-			math.MaxInt64 / 2,
+			testDefaultMaxFloat,
 		},
 		{
 			"given range, min random value",
@@ -92,7 +97,11 @@ func TestNumberGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_Expected
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			randomMock := &mockRandomGenerator{}
-			numberGeneratorInstance := &numberGenerator{random: randomMock}
+			numberGeneratorInstance := &numberGenerator{
+				random:         randomMock,
+				defaultMinimum: testDefaultMinFloat,
+				defaultMaximum: testDefaultMaxFloat,
+			}
 			randomMock.On("Intn", test.expectedMaxValue).Return(test.randomValue).Twice()
 
 			data, err := numberGeneratorInstance.GenerateDataBySchema(context.Background(), test.schema)

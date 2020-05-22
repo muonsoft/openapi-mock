@@ -8,7 +8,9 @@ import (
 )
 
 type integerGenerator struct {
-	random randomGenerator
+	random         randomGenerator
+	defaultMinimum int64
+	defaultMaximum int64
 }
 
 func (generator *integerGenerator) GenerateDataBySchema(ctx context.Context, schema *openapi3.Schema) (Data, error) {
@@ -27,24 +29,24 @@ func (generator *integerGenerator) GenerateDataBySchema(ctx context.Context, sch
 	value := generator.generateValueInRange(minimum, maximum)
 
 	if schema.MultipleOf != nil {
-		value -= value % int(*schema.MultipleOf)
+		value -= value % int64(*schema.MultipleOf)
 	}
 
 	return value, nil
 }
 
-func (generator *integerGenerator) getMinMax(schema *openapi3.Schema) (int, int) {
-	minimum := 0
-	maximum := math.MaxInt64
-	if schema.Format == "int32" {
+func (generator *integerGenerator) getMinMax(schema *openapi3.Schema) (int64, int64) {
+	minimum := generator.defaultMinimum
+	maximum := generator.defaultMaximum
+	if schema.Format == "int32" && generator.defaultMaximum > math.MaxInt32 {
 		maximum = math.MaxInt32
 	}
 
 	if schema.Min != nil {
-		minimum = int(*schema.Min)
+		minimum = int64(*schema.Min)
 	}
 	if schema.Max != nil {
-		maximum = int(*schema.Max)
+		maximum = int64(*schema.Max)
 	}
 
 	if schema.ExclusiveMin {
@@ -57,11 +59,11 @@ func (generator *integerGenerator) getMinMax(schema *openapi3.Schema) (int, int)
 	return minimum, maximum
 }
 
-func (generator *integerGenerator) generateValueInRange(minimum int, maximum int) int {
+func (generator *integerGenerator) generateValueInRange(minimum int64, maximum int64) int64 {
 	delta := maximum - minimum
 	if delta < math.MaxInt64 {
 		delta++
 	}
 
-	return generator.random.Intn(delta) + minimum
+	return generator.random.Int63n(delta) + minimum
 }

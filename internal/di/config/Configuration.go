@@ -8,15 +8,19 @@ import (
 )
 
 type Configuration struct {
-	SpecificationURL string                    `required:"true" split_words:"true"`
+	SpecificationURL string                    `split_words:"true" required:"true"`
 	UseExamples      generator.UseExamplesEnum `ignored:"true"`
-	NullProbability  float64                   `default:"0.5" split_words:"true"`
-	CORSEnabled      bool                      `envconfig:"cors_enabled"`
-	SuppressErrors   bool                      `envconfig:"suppress_errors"`
+	NullProbability  float64                   `split_words:"true" default:"0.5"`
+	DefaultMinInt    int64                     `split_words:"true"`
+	DefaultMaxInt    int64                     `split_words:"true" default:"2147483647"`
+	DefaultMinFloat  float64                   `split_words:"true" default:"-1.073741823e+09"`
+	DefaultMaxFloat  float64                   `split_words:"true" default:"1.073741823e+09"`
+	CORSEnabled      bool                      `split_words:"true"`
+	SuppressErrors   bool                      `split_words:"true"`
 	Debug            bool
 	Port             uint16       `default:"8080"`
 	LogLevel         logrus.Level `ignored:"true"`
-	LogFormat        string       `envconfig:"log_format"`
+	LogFormat        string       `split_words:"true"`
 }
 
 func LoadFromEnvironment() Configuration {

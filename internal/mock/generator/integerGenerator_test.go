@@ -4,8 +4,12 @@ import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/assert"
-	"math"
 	"testing"
+)
+
+const (
+	testDefaultMinInt int64 = 0
+	testDefaultMaxInt int64 = 12345
 )
 
 func TestIntegerGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_ExpectedValue(t *testing.T) {
@@ -15,23 +19,23 @@ func TestIntegerGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_Expecte
 	tests := []struct {
 		name             string
 		schema           *openapi3.Schema
-		randomValue      int
-		expectedMaxValue int
-		expectedValue    int
+		randomValue      int64
+		expectedMaxValue int64
+		expectedValue    int64
 	}{
 		{
 			"no params, min random value",
 			openapi3.NewSchema(),
 			0,
-			math.MaxInt64,
+			testDefaultMaxInt + 1,
 			0,
 		},
 		{
 			"no params, max random value",
 			openapi3.NewSchema(),
-			math.MaxInt64,
-			math.MaxInt64,
-			math.MaxInt64,
+			testDefaultMaxInt,
+			testDefaultMaxInt + 1,
+			testDefaultMaxInt,
 		},
 		{
 			"given range, min random value",
@@ -83,7 +87,7 @@ func TestIntegerGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_Expecte
 				Format: "int32",
 			},
 			0,
-			math.MaxInt32 + 1,
+			testDefaultMaxInt + 1,
 			0,
 		},
 		{
@@ -92,15 +96,19 @@ func TestIntegerGenerator_GenerateDataBySchema_GivenSchemaAndRandomValue_Expecte
 				MultipleOf: &min,
 			},
 			17,
-			math.MaxInt64,
+			testDefaultMaxInt + 1,
 			10,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			randomMock := &mockRandomGenerator{}
-			integerGeneratorInstance := &integerGenerator{random: randomMock}
-			randomMock.On("Intn", test.expectedMaxValue).Return(test.randomValue).Once()
+			integerGeneratorInstance := &integerGenerator{
+				random:         randomMock,
+				defaultMinimum: testDefaultMinInt,
+				defaultMaximum: testDefaultMaxInt,
+			}
+			randomMock.On("Int63n", test.expectedMaxValue).Return(test.randomValue).Once()
 
 			data, err := integerGeneratorInstance.GenerateDataBySchema(context.Background(), test.schema)
 
@@ -136,5 +144,5 @@ func TestIntegerGenerator_GenerateDataBySchema_MaxEqualToMin_StaticValue(t *test
 	data, err := integerGeneratorInstance.GenerateDataBySchema(context.Background(), schema)
 
 	assert.NoError(t, err)
-	assert.Equal(t, 10, data)
+	assert.Equal(t, int64(10), data)
 }

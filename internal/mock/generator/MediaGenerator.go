@@ -25,13 +25,21 @@ func New(options Options) MediaGenerator {
 	generatorsByType := map[string]schemaGenerator{
 		"string":  newStringGenerator(random),
 		"boolean": &booleanGenerator{random: random},
-		"integer": &integerGenerator{random: random},
-		"number":  &numberGenerator{random: random},
-		"array":   newArrayGenerator(lengthGenerator),
-		"object":  newObjectGenerator(lengthGenerator, keyGenerator),
-		"oneOf":   &oneOfGenerator{random: random},
-		"allOf":   combinedGenerator,
-		"anyOf":   combinedGenerator,
+		"integer": &integerGenerator{
+			random:         random,
+			defaultMinimum: options.DefaultMinInt,
+			defaultMaximum: options.DefaultMaxInt,
+		},
+		"number": &numberGenerator{
+			random:         random,
+			defaultMinimum: options.DefaultMinFloat,
+			defaultMaximum: options.DefaultMaxFloat,
+		},
+		"array":  newArrayGenerator(lengthGenerator),
+		"object": newObjectGenerator(lengthGenerator, keyGenerator),
+		"oneOf":  &oneOfGenerator{random: random},
+		"allOf":  combinedGenerator,
+		"anyOf":  combinedGenerator,
 	}
 
 	schemaGenerator := createCoordinatingSchemaGenerator(options, generatorsByType, random)

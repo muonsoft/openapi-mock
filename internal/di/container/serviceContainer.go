@@ -51,6 +51,10 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 	generatorOptions := dataGenerator.Options{
 		UseExamples:     container.configuration.UseExamples,
 		NullProbability: container.configuration.NullProbability,
+		DefaultMinInt:   container.configuration.DefaultMinInt,
+		DefaultMaxInt:   container.configuration.DefaultMaxInt,
+		DefaultMinFloat: container.configuration.DefaultMinFloat,
+		DefaultMaxFloat: container.configuration.DefaultMaxFloat,
 		SuppressErrors:  container.configuration.SuppressErrors,
 	}
 

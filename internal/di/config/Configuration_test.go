@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"math"
 	"os"
 	"swagger-mock/internal/mock/generator"
 	"testing"
@@ -13,6 +14,10 @@ func TestLoadFromEnvironment_AllParametersInEnv_ParametersLoaded(t *testing.T) {
 	_ = os.Setenv("SWAGGER_MOCK_SPECIFICATION_URL", "specification_url")
 	_ = os.Setenv("SWAGGER_MOCK_USE_EXAMPLES", "if_present")
 	_ = os.Setenv("SWAGGER_MOCK_NULL_PROBABILITY", "0.8")
+	_ = os.Setenv("SWAGGER_MOCK_DEFAULT_MIN_INT", "-123")
+	_ = os.Setenv("SWAGGER_MOCK_DEFAULT_MAX_INT", "123")
+	_ = os.Setenv("SWAGGER_MOCK_DEFAULT_MIN_FLOAT", "-123.123")
+	_ = os.Setenv("SWAGGER_MOCK_DEFAULT_MAX_FLOAT", "123.123")
 	_ = os.Setenv("SWAGGER_MOCK_CORS_ENABLED", "1")
 	_ = os.Setenv("SWAGGER_MOCK_SUPPRESS_ERRORS", "1")
 	_ = os.Setenv("SWAGGER_MOCK_PORT", "1234")
@@ -25,6 +30,10 @@ func TestLoadFromEnvironment_AllParametersInEnv_ParametersLoaded(t *testing.T) {
 	assert.Equal(t, "specification_url", config.SpecificationURL)
 	assert.Equal(t, generator.IfPresent, config.UseExamples)
 	assert.Equal(t, 0.8, config.NullProbability)
+	assert.Equal(t, int64(-123), config.DefaultMinInt)
+	assert.Equal(t, int64(123), config.DefaultMaxInt)
+	assert.Equal(t, -123.123, config.DefaultMinFloat)
+	assert.Equal(t, 123.123, config.DefaultMaxFloat)
 	assert.True(t, config.CORSEnabled)
 	assert.True(t, config.SuppressErrors)
 	assert.False(t, config.Debug)
@@ -41,6 +50,10 @@ func TestLoadFromEnvironment_OnlyRequiredParametersInEnv_DefaultParametersLoaded
 	assert.Equal(t, "specification_url", config.SpecificationURL)
 	assert.Equal(t, generator.No, config.UseExamples)
 	assert.Equal(t, 0.5, config.NullProbability)
+	assert.Equal(t, int64(0), config.DefaultMinInt)
+	assert.Equal(t, int64(math.MaxInt32), config.DefaultMaxInt)
+	assert.Equal(t, -float64(math.MaxInt32/2), config.DefaultMinFloat)
+	assert.Equal(t, float64(math.MaxInt32/2), config.DefaultMaxFloat)
 	assert.False(t, config.CORSEnabled)
 	assert.False(t, config.SuppressErrors)
 	assert.False(t, config.Debug)
@@ -98,6 +111,10 @@ func resetEnvironment() {
 	_ = os.Unsetenv("SWAGGER_MOCK_SPECIFICATION_URL")
 	_ = os.Unsetenv("SWAGGER_MOCK_USE_EXAMPLES")
 	_ = os.Unsetenv("SWAGGER_MOCK_NULL_PROBABILITY")
+	_ = os.Unsetenv("SWAGGER_MOCK_DEFAULT_MIN_INT")
+	_ = os.Unsetenv("SWAGGER_MOCK_DEFAULT_MAX_INT")
+	_ = os.Unsetenv("SWAGGER_MOCK_DEFAULT_MIN_FLOAT")
+	_ = os.Unsetenv("SWAGGER_MOCK_DEFAULT_MAX_FLOAT")
 	_ = os.Unsetenv("SWAGGER_MOCK_CORS_ENABLED")
 	_ = os.Unsetenv("SWAGGER_MOCK_SUPPRESS_ERRORS")
 	_ = os.Unsetenv("SWAGGER_MOCK_PORT")

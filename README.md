@@ -78,12 +78,6 @@ Mock server options can be set via environment variables.
 * Path to file with OpenAPI v3 specification (_required_)
 * _Possible values_: any valid URL or path to file
 
-#### SWAGGER_MOCK_LOG_LEVEL
-
-* Error log level
-* _Default value_: `info`
-* _Possible values_: `error`, `warning`, `info`, `debug`
-
 #### SWAGGER_MOCK_USE_EXAMPLES
 
 * Strategy for generating response data by examples
@@ -100,6 +94,30 @@ Mock server options can be set via environment variables.
 * _Default value_: `0.5`
 * _Possible values_: from `0.0` to `1.0`
 
+#### SWAGGER_MOCK_DEFAULT_MIN_INT
+
+* Default minimum value for integer type
+* _Default value_: `0`
+* _Possible values_: any 64-bit integer
+
+#### SWAGGER_MOCK_DEFAULT_MAX_INT
+
+* Default maximum value for integer type
+* _Default value_: `2147483647`
+* _Possible values_: any 64-bit integer
+
+#### SWAGGER_MOCK_DEFAULT_MIN_FLOAT
+
+* Default minimum value for integer type
+* _Default value_: `-1.073741823e+09`
+* _Possible values_: any 64-bit float
+
+#### SWAGGER_MOCK_DEFAULT_MAX_FLOAT
+
+* Default maximum value for integer type
+* _Default value_: `1.073741823e+09`
+* _Possible values_: any 64-bit float
+
 #### SWAGGER_MOCK_CORS_ENABLE
 
  * When enabled, CORS request will automatically be handled
@@ -109,6 +127,18 @@ Mock server options can be set via environment variables.
 #### SWAGGER_MOCK_SUPPRESS_ERRORS
 
  * When enabled, generation errors will be suppressed and default values used instead. Can be useful when dealing with complex specification, and some bugs occurs in the part of the data. 
+ * _Default value_: `0`
+ * _Possible values_: `1` or `0`
+
+#### SWAGGER_MOCK_LOG_LEVEL
+
+* Error log level
+* _Default value_: `info`
+* _Possible values_: `error`, `warning`, `info`, `debug`
+
+#### SWAGGER_MOCK_DEBUG
+
+ * Debug mode with more details about errors. 
  * _Default value_: `0`
  * _Possible values_: `1` or `0`
 
