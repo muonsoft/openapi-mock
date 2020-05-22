@@ -51,6 +51,7 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 	generatorOptions := dataGenerator.Options{
 		UseExamples:     container.configuration.UseExamples,
 		NullProbability: container.configuration.NullProbability,
+		SuppressErrors:  container.configuration.SuppressErrors,
 	}
 
 	dataGeneratorInstance := dataGenerator.New(generatorOptions)

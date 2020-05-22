@@ -34,10 +34,29 @@ func New(options Options) MediaGenerator {
 		"anyOf":   combinedGenerator,
 	}
 
+	schemaGenerator := createCoordinatingSchemaGenerator(options, generatorsByType, random)
+
+	for i := range generatorsByType {
+		if generator, ok := generatorsByType[i].(recursiveGenerator); ok {
+			generator.SetSchemaGenerator(schemaGenerator)
+		}
+	}
+
+	return &coordinatingMediaGenerator{
+		useExamples:     options.UseExamples,
+		schemaGenerator: schemaGenerator,
+	}
+}
+
+func createCoordinatingSchemaGenerator(options Options, generatorsByType map[string]schemaGenerator, random *rand.Rand) schemaGenerator {
 	var schemaGenerator schemaGenerator
 
 	schemaGenerator = &coordinatingSchemaGenerator{
 		generatorsByType: generatorsByType,
+	}
+
+	if options.SuppressErrors {
+		schemaGenerator = &errorSuppressor{schemaGenerator: schemaGenerator}
 	}
 
 	if options.UseExamples != No {
@@ -55,14 +74,5 @@ func New(options Options) MediaGenerator {
 		}
 	}
 
-	for i := range generatorsByType {
-		if generator, ok := generatorsByType[i].(recursiveGenerator); ok {
-			generator.SetSchemaGenerator(schemaGenerator)
-		}
-	}
-
-	return &coordinatingMediaGenerator{
-		useExamples:     options.UseExamples,
-		schemaGenerator: schemaGenerator,
-	}
+	return schemaGenerator
 }

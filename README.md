@@ -100,46 +100,17 @@ Mock server options can be set via environment variables.
 * _Default value_: `0.5`
 * _Possible values_: from `0.0` to `1.0`
 
-#### SWAGGER_MOCK_CACHE_DIRECTORY
-
-* Directory for OpenAPI specification cache
-* _Default value_: `/dev/shm/openapi-cache`
-* _Possible values_: any valid path
-
-#### SWAGGER_MOCK_CACHE_TTL
-
-* Time to live for OpenAPI specification cache in seconds
-* _Default value_: 0
-* _Possible values_: positive integer
-
-#### SWAGGER_MOCK_CACHE_STRATEGY
-
-* Caching strategy for OpenAPI specification cache
-* _Default value_: `disabled`
-* _Possible values_: `disabled`, `url_md5`, `url_and_timestamp_md5`
-
 #### SWAGGER_MOCK_CORS_ENABLE
 
  * When enabled, CORS request will automatically be handled
- * _Default value_: `False`
- * _Possible values_: `True` or `False`
+ * _Default value_: `0`
+ * _Possible values_: `1` or `0`
 
-### Specification cache
+#### SWAGGER_MOCK_SUPPRESS_ERRORS
 
-To speed up server response time you can use caching mechanism for OpenAPI. There are several caching strategies. Specific strategy can be set by environment variable `SWAGGER_MOCK_CACHE_STRATEGY`.
-
-* `url_md5` calculates hash from specification URL and if specification URL was not changed uses parsed objects from cache.
-* `url_and_timestamp_md5` calculates hash from specification URL and timestamp (file timestamp or value of `Last-Modified` header). If you are using file from remote server make sure that valid `Last-Modified` header is present. 
-
-Recommended options for use with remote file (accessible by URL).
-
-* `SWAGGER_MOCK_CACHE_STRATEGY='url_md5'`
-* `SWAGGER_MOCK_CACHE_TTL=3600`
-
-Recommended options for use with local file (at local server).
-
-* `SWAGGER_MOCK_CACHE_STRATEGY='url_and_timestamp_md5'`
-* `SWAGGER_MOCK_CACHE_TTL=3600`
+ * When enabled, generation errors will be suppressed and default values used instead. Can be useful when dealing with complex specification, and some bugs occurs in the part of the data. 
+ * _Default value_: `0`
+ * _Possible values_: `1` or `0`
 
 ## License
 
