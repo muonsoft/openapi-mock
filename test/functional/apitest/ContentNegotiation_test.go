@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	"swagger-mock/internal/di/config"
+	"swagger-mock/internal/application/config"
 	"testing"
 )
 

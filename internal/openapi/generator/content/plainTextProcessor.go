@@ -3,12 +3,12 @@ package content
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
-	"swagger-mock/internal/mock/generator"
+	"swagger-mock/internal/openapi/generator/data"
 	"swagger-mock/pkg/logcontext"
 )
 
 type plainTextGenerator struct {
-	contentGenerator generator.MediaGenerator
+	contentGenerator data.MediaGenerator
 }
 
 func (generator *plainTextGenerator) GenerateContent(ctx context.Context, response *openapi3.Response, contentType string) (interface{}, error) {

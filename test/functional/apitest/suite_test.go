@@ -4,8 +4,8 @@ import (
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/stretchr/testify/suite"
 	"net/http"
-	"swagger-mock/internal/di/config"
-	"swagger-mock/internal/di/container"
+	"swagger-mock/internal/application/config"
+	"swagger-mock/internal/application/container"
 	"testing"
 )
 

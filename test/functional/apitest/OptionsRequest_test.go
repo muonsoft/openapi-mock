@@ -3,7 +3,7 @@ package apitest
 import (
 	"net/http"
 	"net/http/httptest"
-	"swagger-mock/internal/di/config"
+	"swagger-mock/internal/application/config"
 )
 
 func (suite *APISuite) TestOptionsRequest_PathWithSomeHTTPMethods_AllowHeaderWithExpectedHTTPMethods() {

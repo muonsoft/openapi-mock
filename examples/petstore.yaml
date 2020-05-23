@@ -22,15 +22,15 @@ paths:
             type: integer
             format: int32
       responses:
-        200:
-          description: An paged array of pets
+        '200':
+          description: A paged array of pets
           headers:
             x-next:
               description: A link to the next page of responses
               schema:
                 type: string
           content:
-            application/json:    
+            application/json:
               schema:
                 $ref: "#/components/schemas/Pets"
         default:
@@ -45,7 +45,7 @@ paths:
       tags:
         - pets
       responses:
-        201:
+        '201':
           description: Null response
         default:
           description: unexpected error
@@ -67,12 +67,12 @@ paths:
           schema:
             type: string
       responses:
-        200:
+        '200':
           description: Expected response to a valid request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Pets"
+                $ref: "#/components/schemas/Pet"
         default:
           description: unexpected error
           content:
@@ -82,6 +82,7 @@ paths:
 components:
   schemas:
     Pet:
+      type: object
       required:
         - id
         - name
@@ -98,6 +99,7 @@ components:
       items:
         $ref: "#/components/schemas/Pet"
     Error:
+      type: object
       required:
         - code
         - message

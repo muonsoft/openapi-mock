@@ -4,9 +4,8 @@ package generatormock
 
 import (
 	context "context"
-	generator "swagger-mock/internal/mock/generator"
-
 	mock "github.com/stretchr/testify/mock"
+	"swagger-mock/internal/openapi/generator/data"
 
 	openapi3 "github.com/getkin/kin-openapi/openapi3"
 )
@@ -17,15 +16,15 @@ type MediaGenerator struct {
 }
 
 // GenerateData provides a mock function with given fields: ctx, mediaType
-func (_m *MediaGenerator) GenerateData(ctx context.Context, mediaType *openapi3.MediaType) (generator.Data, error) {
+func (_m *MediaGenerator) GenerateData(ctx context.Context, mediaType *openapi3.MediaType) (data.Data, error) {
 	ret := _m.Called(ctx, mediaType)
 
-	var r0 generator.Data
-	if rf, ok := ret.Get(0).(func(context.Context, *openapi3.MediaType) generator.Data); ok {
+	var r0 data.Data
+	if rf, ok := ret.Get(0).(func(context.Context, *openapi3.MediaType) data.Data); ok {
 		r0 = rf(ctx, mediaType)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(generator.Data)
+			r0 = ret.Get(0).(data.Data)
 		}
 	}
 

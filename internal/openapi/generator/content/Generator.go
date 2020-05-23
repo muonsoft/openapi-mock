@@ -4,14 +4,14 @@ import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
 	"regexp"
-	"swagger-mock/internal/mock/generator"
+	"swagger-mock/internal/openapi/generator/data"
 )
 
 type Generator interface {
 	GenerateContent(ctx context.Context, response *openapi3.Response, contentType string) (interface{}, error)
 }
 
-func NewGenerator(generator generator.MediaGenerator) Generator {
+func NewGenerator(generator data.MediaGenerator) Generator {
 	mediaGenerator := &mediaGenerator{contentGenerator: generator}
 
 	return &delegatingGenerator{

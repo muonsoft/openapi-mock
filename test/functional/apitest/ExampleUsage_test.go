@@ -4,15 +4,15 @@ import (
 	"github.com/muonsoft/api-testing/assertjson"
 	"net/http"
 	"net/http/httptest"
-	"swagger-mock/internal/di/config"
-	"swagger-mock/internal/mock/generator"
+	"swagger-mock/internal/application/config"
+	"swagger-mock/internal/openapi/generator/data"
 )
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/MediaTypeExample.yaml",
-		UseExamples:      generator.No,
+		UseExamples:      data.No,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)
@@ -29,7 +29,7 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/MediaTypeExample.yaml",
-		UseExamples:      generator.IfPresent,
+		UseExamples:      data.IfPresent,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)
@@ -46,7 +46,7 @@ func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/MediaTypeExamples.yaml",
-		UseExamples:      generator.IfPresent,
+		UseExamples:      data.IfPresent,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)
@@ -63,7 +63,7 @@ func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_Exa
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/ValueExamples.yaml",
-		UseExamples:      generator.IfPresent,
+		UseExamples:      data.IfPresent,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)

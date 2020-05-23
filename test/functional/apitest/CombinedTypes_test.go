@@ -4,7 +4,7 @@ import (
 	"github.com/muonsoft/api-testing/assertjson"
 	"net/http"
 	"net/http/httptest"
-	"swagger-mock/internal/di/config"
+	"swagger-mock/internal/application/config"
 )
 
 func (suite *APISuite) TestCombinedTypes_SpecificationWithCombinedTypeSchemas_ExpectedValuesGenerated() {

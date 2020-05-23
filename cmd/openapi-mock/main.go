@@ -1,12 +1,14 @@
 package main
 
 import (
-	"swagger-mock/internal/application"
-	"swagger-mock/internal/di/config"
+	"log"
+	"swagger-mock/internal/console"
 )
 
 func main() {
-	configuration := config.LoadFromEnvironment()
-	app := application.NewMockServer(configuration)
-	app.Run()
+	command := console.CreateCommand()
+	err := command.Execute()
+	if err != nil {
+		log.Fatal(err)
+	}
 }
