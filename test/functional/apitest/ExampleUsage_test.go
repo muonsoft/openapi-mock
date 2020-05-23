@@ -1,11 +1,11 @@
 package apitest
 
 import (
+	"github.com/muonsoft/api-testing/assertjson"
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
 	"swagger-mock/internal/mock/generator"
-	"swagger-mock/pkg/assertjson"
 )
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
@@ -73,7 +73,7 @@ func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_Exa
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
 		json.Node("$.stringExample").EqualToTheString("stringValue")
-		json.Node("$.numberExample").EqualToTheFloat64(123)
+		json.Node("$.numberExample").EqualToTheFloat(123)
 		json.Node("$.booleanExample").IsTrue()
 		json.Node("$.objectExample.key").EqualToTheString("objectValue")
 		json.Node("$.arrayExample[0]").EqualToTheString("arrayValue")

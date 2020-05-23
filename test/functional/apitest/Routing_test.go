@@ -1,11 +1,11 @@
 package apitest
 
 import (
+	"github.com/muonsoft/api-testing/assertjson"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
-	"swagger-mock/pkg/assertjson"
 	"testing"
 )
 

@@ -1,10 +1,10 @@
 package apitest
 
 import (
+	"github.com/muonsoft/api-testing/assertjson"
 	"net/http"
 	"net/http/httptest"
 	"swagger-mock/internal/di/config"
-	"swagger-mock/pkg/assertjson"
 )
 
 func (suite *APISuite) TestDefaultResponse_OnlyDefaultResponse_500StatusAndDefaultContent() {
