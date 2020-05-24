@@ -4,8 +4,8 @@ import (
 	"github.com/jessevdk/go-flags"
 	"os"
 	"swagger-mock/internal/application/config"
-	"swagger-mock/internal/console/command/run"
-	"swagger-mock/internal/console/command/validate"
+	"swagger-mock/internal/application/console/command/run"
+	"swagger-mock/internal/application/console/command/validate"
 )
 
 func CreateCommand() Command {

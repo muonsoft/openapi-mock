@@ -2,7 +2,7 @@ package main
 
 import (
 	"log"
-	"swagger-mock/internal/console"
+	"swagger-mock/internal/application/console"
 )
 
 func main() {
