@@ -1,0 +1,10 @@
+http:
+  port: 0
+
+application:
+  log_format: invalid
+  log_level: invalid
+
+generation:
+  null_probability: 1.1
+  use_examples: invalid

@@ -47,3 +47,6 @@ issues:
         - scopelint
         - gochecknoglobals
         - goerr113
+    - path: internal/application/config/Configuration.go
+      linters:
+        - maligned

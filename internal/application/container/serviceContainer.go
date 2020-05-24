@@ -20,11 +20,11 @@ import (
 )
 
 type serviceContainer struct {
-	configuration config.Configuration
+	configuration *config.Configuration
 	logger        logrus.FieldLogger
 }
 
-func New(configuration config.Configuration) Container {
+func New(configuration *config.Configuration) Container {
 	logger := createLogger(configuration)
 
 	container := &serviceContainer{
@@ -106,7 +106,7 @@ func (container *serviceContainer) CreateHTTPServer() server.Server {
 	return server.New(container.configuration.Port, httpHandler, serverLogger)
 }
 
-func createLogger(configuration config.Configuration) *logrus.Logger {
+func createLogger(configuration *config.Configuration) *logrus.Logger {
 	logger := logrus.New()
 	logger.SetLevel(configuration.LogLevel)
 

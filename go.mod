@@ -3,6 +3,7 @@ module swagger-mock
 go 1.14
 
 require (
+	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/clbanning/anyxml v1.2.2 // indirect
 	github.com/clbanning/mxj v1.8.4
 	github.com/getkin/kin-openapi v0.8.0
@@ -19,5 +20,6 @@ require (
 	github.com/yalp/jsonpath v0.0.0-20180802001716-5cc68e5049a0 // indirect
 	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect
 	gopkg.in/xmlpath.v2 v2.0.0-20150820204837-860cbeca3ebc // indirect
+	gopkg.in/yaml.v2 v2.3.0
 	syreclabs.com/go/faker v1.2.2
 )

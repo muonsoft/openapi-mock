@@ -26,4 +26,6 @@ COPY --from=build-env /project/cmd/openapi-mock/openapi-mock /app/openapi-mock
 
 USER openapi
 
+EXPOSE 8080
+
 ENTRYPOINT [ "/app/openapi-mock" ]

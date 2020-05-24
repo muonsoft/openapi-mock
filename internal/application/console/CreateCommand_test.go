@@ -7,7 +7,10 @@ import (
 	"testing"
 )
 
-const testSpecificationURL = "./../../../test/resources/openapi-files/ValueGeneration.yaml"
+const (
+	testSpecificationURL = "./../../../test/resources/openapi-files/ValueGeneration.yaml"
+	testConfigFilename   = "./../../../test/resources/config.yaml"
+)
 
 func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 	tests := []struct {
@@ -30,6 +33,24 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"run",
 				"--url",
 				testSpecificationURL,
+			},
+			&run.Command{},
+		},
+		{
+			"run command with url from config (short)",
+			[]string{
+				"run",
+				"-c",
+				testConfigFilename,
+			},
+			&run.Command{},
+		},
+		{
+			"run command with url from config (long)",
+			[]string{
+				"run",
+				"--configuration",
+				testConfigFilename,
 			},
 			&run.Command{},
 		},

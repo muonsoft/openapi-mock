@@ -1,6 +1,7 @@
 package console
 
 import (
+	"fmt"
 	"github.com/jessevdk/go-flags"
 	"github.com/pkg/errors"
 	"swagger-mock/internal/application/config"
@@ -15,7 +16,11 @@ func CreateCommand(arguments []string) (Command, error) {
 		return nil, err
 	}
 
-	configuration := config.LoadFromEnvironment()
+	configuration, err := config.Load(options.ConfigFilename)
+	if err != nil {
+		fmt.Printf("%v", err)
+		return nil, &Error{Previous: err, ExitCode: 1}
+	}
 
 	if options.URL != "" {
 		configuration.SpecificationURL = options.URL
@@ -48,7 +53,7 @@ func parseCommandLine(arguments []string) (*Options, error) {
 	return options, nil
 }
 
-func createConsoleCommand(commandName string, configuration config.Configuration) Command {
+func createConsoleCommand(commandName string, configuration *config.Configuration) Command {
 	appContainer := container.New(configuration)
 
 	var command Command

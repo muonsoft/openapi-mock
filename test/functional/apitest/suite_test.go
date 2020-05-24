@@ -19,7 +19,7 @@ func TestApi(t *testing.T) {
 
 func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) http.Handler {
 	specificationPath := "./../../resources/openapi-files/" + configuration.SpecificationURL
-	diContainer := container.New(configuration)
+	diContainer := container.New(&configuration)
 	specificationLoader := diContainer.CreateSpecificationLoader()
 	specification, err := specificationLoader.LoadFromURI(specificationPath)
 	if err != nil {
