@@ -35,6 +35,8 @@ func (generator *coordinatingSchemaGenerator) detectSchemaType(schema *openapi3.
 		schemaType = "anyOf"
 	case schema.AllOf != nil:
 		schemaType = "allOf"
+	case schemaType == "" && len(schema.Properties) > 0:
+		schemaType = "object"
 	}
 
 	return schemaType

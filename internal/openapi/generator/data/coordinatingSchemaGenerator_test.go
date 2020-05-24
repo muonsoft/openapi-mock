@@ -38,6 +38,28 @@ func TestCoordinatingSchemaGenerator_GenerateDataBySchema_MatchingType_DataGener
 	assert.Equal(t, generatedData, data)
 }
 
+func TestCoordinatingSchemaGenerator_GenerateDataBySchema_SchemaWithEmptyTypeAndProperties_DataGeneratedByObjectGenerator(t *testing.T) {
+	mockGenerator := &mockSchemaGenerator{}
+	coordinatingGenerator := &coordinatingSchemaGenerator{
+		generatorsByType: map[string]schemaGenerator{
+			"object": mockGenerator,
+		},
+	}
+	schema := &openapi3.Schema{
+		Properties: map[string]*openapi3.SchemaRef{
+			"key": openapi3.NewSchemaRef("", openapi3.NewSchema()),
+		},
+	}
+	generatedData := map[string]interface{}{}
+	mockGenerator.On("GenerateDataBySchema", mock.Anything, schema).Return(generatedData, nil).Once()
+
+	data, err := coordinatingGenerator.GenerateDataBySchema(context.Background(), schema)
+
+	mockGenerator.AssertExpectations(t)
+	assert.NoError(t, err)
+	assert.Equal(t, generatedData, data)
+}
+
 func TestCoordinatingSchemaGenerator_GenerateDataBySchema_CombiningType_DataGeneratedBySpecificGenerator(t *testing.T) {
 	tests := []struct {
 		combiningType string
