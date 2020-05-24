@@ -2,21 +2,17 @@ package console
 
 import (
 	"github.com/jessevdk/go-flags"
-	"os"
+	"github.com/pkg/errors"
 	"swagger-mock/internal/application/config"
+	"swagger-mock/internal/application/console/command/check"
 	"swagger-mock/internal/application/console/command/run"
-	"swagger-mock/internal/application/console/command/validate"
+	"swagger-mock/internal/application/container"
 )
 
-func CreateCommand() Command {
-	options := &Options{}
-	parser := flags.NewParser(options, flags.Default)
-	_, _ = parser.AddCommand("run", "Runs an OpenAPI mock server", "", options)
-	_, _ = parser.AddCommand("validate", "Validates an OpenAPI specification", "", options)
-
-	_, err := parser.Parse()
+func CreateCommand(arguments []string) (Command, error) {
+	options, err := parseCommandLine(arguments)
 	if err != nil {
-		os.Exit(0)
+		return nil, err
 	}
 
 	configuration := config.LoadFromEnvironment()
@@ -25,13 +21,45 @@ func CreateCommand() Command {
 		configuration.SpecificationURL = options.URL
 	}
 
+	return createConsoleCommand(options.CommandName, configuration), nil
+}
+
+func parseCommandLine(arguments []string) (*Options, error) {
+	options := &Options{}
+	parser := flags.NewParser(options, flags.Default)
+	_, _ = parser.AddCommand("run", "Runs an OpenAPI mock server", "", options)
+	_, _ = parser.AddCommand("check", "Checks that an OpenAPI specification can be loaded", "", options)
+
+	_, err := parser.ParseArgs(arguments)
+	if err != nil {
+		exitCode := 1
+		var flagError *flags.Error
+		if errors.As(err, &flagError) && flagError.Type == flags.ErrHelp {
+			exitCode = 0
+		}
+		return nil, &Error{
+			ExitCode: exitCode,
+			Previous: err,
+		}
+	}
+
+	options.CommandName = parser.Active.Name
+
+	return options, nil
+}
+
+func createConsoleCommand(commandName string, configuration config.Configuration) Command {
+	appContainer := container.New(configuration)
+
 	var command Command
 
-	switch parser.Active.Name {
+	switch commandName {
 	case "run":
-		command = run.NewCommand(configuration)
-	case "validate":
-		command = validate.NewCommand(configuration)
+		httpServer := appContainer.CreateHTTPServer()
+		command = run.NewCommand(httpServer)
+	case "check":
+		specificationLoader := appContainer.CreateSpecificationLoader()
+		command = check.NewCommand(configuration.SpecificationURL, specificationLoader)
 	}
 
 	return command

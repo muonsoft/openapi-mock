@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
+	"log"
 	"net/http"
 	"os"
 	"swagger-mock/internal/application/config"
@@ -14,6 +15,7 @@ import (
 	"swagger-mock/internal/openapi/handler"
 	"swagger-mock/internal/openapi/loader"
 	"swagger-mock/internal/openapi/responder"
+	"swagger-mock/internal/server"
 	"swagger-mock/internal/server/middleware"
 )
 
@@ -85,6 +87,23 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 	)(httpHandler)
 
 	return httpHandler
+}
+
+func (container *serviceContainer) CreateHTTPServer() server.Server {
+	loggerWriter := container.GetLogger().(*logrus.Logger).Writer()
+
+	specificationLoader := container.CreateSpecificationLoader()
+	specification, err := specificationLoader.LoadFromURI(container.configuration.SpecificationURL)
+	if err != nil {
+		log.Fatalf("failed to load OpenAPI specification from '%s': %s", container.configuration.SpecificationURL, err)
+	}
+
+	router := openapi3filter.NewRouter().WithSwagger(specification)
+	httpHandler := container.CreateHTTPHandler(router)
+
+	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
+
+	return server.New(container.configuration.Port, httpHandler, serverLogger)
 }
 
 func createLogger(configuration config.Configuration) *logrus.Logger {

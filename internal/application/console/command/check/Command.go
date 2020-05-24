@@ -1,9 +1,7 @@
-package validate
+package check
 
 import (
 	"log"
-	"swagger-mock/internal/application/config"
-	diContainer "swagger-mock/internal/application/container"
 	"swagger-mock/internal/openapi/loader"
 )
 
@@ -12,12 +10,10 @@ type Command struct {
 	specificationLoader loader.SpecificationLoader
 }
 
-func NewCommand(configuration config.Configuration) *Command {
-	container := diContainer.New(configuration)
-
+func NewCommand(specificationURL string, specificationLoader loader.SpecificationLoader) *Command {
 	return &Command{
-		specificationURL:    configuration.SpecificationURL,
-		specificationLoader: container.CreateSpecificationLoader(),
+		specificationURL:    specificationURL,
+		specificationLoader: specificationLoader,
 	}
 }
 
