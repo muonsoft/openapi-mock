@@ -5,9 +5,11 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
+type contextKey int
+
 const (
-	recursionKey      int = 0
-	maxRecursionLevel     = 100
+	recursionKey      contextKey = 0
+	maxRecursionLevel int        = 20
 )
 
 type recursionBreaker struct {
