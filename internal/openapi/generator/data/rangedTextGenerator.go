@@ -18,8 +18,15 @@ func (generator *rangedTextGenerator) generateRangedText(minLength int, maxLengt
 
 	text := ""
 
+	maxWordsCount := length / 10
+	if maxWordsCount < 2 {
+		maxWordsCount = 2
+	} else if maxWordsCount > 9 {
+		maxWordsCount = 9
+	}
+
 	for {
-		wordsCount := generator.random.Intn(9) + 3
+		wordsCount := generator.random.Intn(maxWordsCount) + 1
 		sentence := faker.Lorem().Sentence(wordsCount)
 
 		var extendedText string
