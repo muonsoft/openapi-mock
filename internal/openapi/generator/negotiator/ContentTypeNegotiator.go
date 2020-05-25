@@ -2,7 +2,7 @@ package negotiator
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/golang/gddo/httputil"
+	"github.com/go-ozzo/ozzo-routing/v2/content"
 	"net/http"
 	"swagger-mock/pkg/logcontext"
 )
@@ -27,7 +27,7 @@ func (negotiator *contentTypeNegotiator) NegotiateContentType(request *http.Requ
 	}
 
 	contentTypes := negotiator.getContentTypes(response)
-	contentType := httputil.NegotiateContentType(request, contentTypes, contentTypes[0])
+	contentType := content.NegotiateContentType(request, contentTypes, contentTypes[0])
 
 	logger.Infof(
 		"[contentTypeNegotiator] best media type '%s' was negotiated for accept header '%s'",

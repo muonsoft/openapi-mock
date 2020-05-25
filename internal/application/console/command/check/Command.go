@@ -1,6 +1,7 @@
 package check
 
 import (
+	"context"
 	"log"
 	"swagger-mock/internal/openapi/loader"
 )
@@ -18,13 +19,17 @@ func NewCommand(specificationURL string, specificationLoader loader.Specificatio
 }
 
 func (command *Command) Execute() error {
-	_, err := command.specificationLoader.LoadFromURI(command.specificationURL)
-
+	specification, err := command.specificationLoader.LoadFromURI(command.specificationURL)
 	if err != nil {
 		log.Fatalf("failed to load OpenAPI specification from '%s': %s", command.specificationURL, err)
-	} else {
-		log.Printf("OpenAPI specification '%s' is valid", command.specificationURL)
 	}
+
+	err = specification.Validate(context.Background())
+	if err != nil {
+		log.Fatalf("OpenAPI specification '%s' is not valid: %s", command.specificationURL, err)
+	}
+
+	log.Printf("OpenAPI specification '%s' is valid", command.specificationURL)
 
 	return nil
 }

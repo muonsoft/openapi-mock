@@ -1,11 +1,11 @@
 openapi: "3.0.0"
 info:
   version: 1.0.0
-  title: Swagger Personstore
+  title: Persons API example
   license:
     name: MIT
 servers:
-  - url: https://github.com/openapi/openapi/blob/master/examples/petstore.yaml
+  - url: http://example.com/api
 paths:
   /persons:
     get:
