@@ -82,5 +82,7 @@ func createCoordinatingSchemaGenerator(options Options, generatorsByType map[str
 		}
 	}
 
+	schemaGenerator = &recursionBreaker{schemaGenerator: schemaGenerator}
+
 	return schemaGenerator
 }
