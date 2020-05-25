@@ -90,20 +90,26 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 }
 
 func (container *serviceContainer) CreateHTTPServer() server.Server {
-	loggerWriter := container.GetLogger().(*logrus.Logger).Writer()
+	logger := container.GetLogger()
+	loggerWriter := logger.(*logrus.Logger).Writer()
 
 	specificationLoader := container.CreateSpecificationLoader()
 	specification, err := specificationLoader.LoadFromURI(container.configuration.SpecificationURL)
 	if err != nil {
 		log.Fatalf("failed to load OpenAPI specification from '%s': %s", container.configuration.SpecificationURL, err)
+	} else {
+		logger.Infof("OpenAPI specification was successfully loaded from '%s'", container.configuration.SpecificationURL)
 	}
 
 	router := openapi3filter.NewRouter().WithSwagger(specification)
 	httpHandler := container.CreateHTTPHandler(router)
 
 	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
+	httpServer := server.New(container.configuration.Port, httpHandler, serverLogger)
 
-	return server.New(container.configuration.Port, httpHandler, serverLogger)
+	logger.WithFields(container.configuration.Dump()).Info("OpenAPI mock server was created")
+
+	return httpServer
 }
 
 func createLogger(configuration *config.Configuration) *logrus.Logger {

@@ -17,3 +17,16 @@ const (
 	IfPresent
 	Exclusively
 )
+
+func (enum UseExamplesEnum) String() string {
+	switch enum {
+	case No:
+		return "no"
+	case IfPresent:
+		return "if_present"
+	case Exclusively:
+		return "exclusively"
+	}
+
+	return "unknown"
+}
