@@ -2,8 +2,8 @@ package console
 
 import (
 	"github.com/stretchr/testify/assert"
-	"swagger-mock/internal/application/console/command/check"
 	"swagger-mock/internal/application/console/command/run"
+	"swagger-mock/internal/application/console/command/validate"
 	"testing"
 )
 
@@ -55,22 +55,22 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 			&run.Command{},
 		},
 		{
-			"check command with short url",
+			"validate command with short url",
 			[]string{
-				"check",
+				"validate",
 				"-u",
 				testSpecificationURL,
 			},
-			&check.Command{},
+			&validate.Command{},
 		},
 		{
-			"check command with long url",
+			"validate command with long url",
 			[]string{
-				"check",
+				"validate",
 				"--url",
 				testSpecificationURL,
 			},
-			&check.Command{},
+			&validate.Command{},
 		},
 	}
 	for _, test := range tests {

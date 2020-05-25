@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/pkg/errors"
 	"net/http"
 	"swagger-mock/internal/openapi/generator"
 	"swagger-mock/internal/openapi/responder"
@@ -54,7 +55,8 @@ func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, r
 	}
 
 	err = openapi3filter.ValidateRequest(ctx, routingValidation)
-	if err != nil {
+	var requestError *openapi3filter.RequestError
+	if errors.As(err, &requestError) {
 		http.NotFound(writer, request)
 		logger.Infof("Route '%s %s' does not pass validation: %v", request.Method, request.URL, err.Error())
 
