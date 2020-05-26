@@ -1,12 +1,8 @@
 name: Build docker release
 
-#on:
-#  release:
-#    types: [created]
-
 on:
-  push:
-    branches: [ '*' ]
+  release:
+    types: [created]
 
 jobs:
   release-docker:
