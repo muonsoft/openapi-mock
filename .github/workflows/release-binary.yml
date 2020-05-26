@@ -1,11 +1,8 @@
-name: Build Release
+name: Build release binary
 
 on:
-  push:
-    branches: [ '*' ]
-#on:
-#  release:
-#    types: [created]
+  release:
+    types: [created]
 
 jobs:
   release-linux-amd64:
@@ -13,8 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # build and publish in parallel: linux/386, linux/amd64, windows/386, windows/amd64, darwin/386, darwin/amd64
-        goos: [linux] #, windows, darwin]
+        goos: [linux, windows, darwin]
         goarch: [amd64] #["386", amd64]
     steps:
       - uses: actions/checkout@v2
