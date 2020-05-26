@@ -20,4 +20,5 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: muonsoft/openapi-mock
           always_pull: true
+          tags: latest
           tag_with_ref: true
