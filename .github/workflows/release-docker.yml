@@ -1,4 +1,4 @@
-name: Build release binary
+name: Build docker release
 
 #on:
 #  release:
@@ -11,6 +11,7 @@ on:
 jobs:
   release-docker:
     name: release docker
+    runs-on: ubuntu-latest
     steps:
       - uses: docker/build-push-action@v1
         with:
