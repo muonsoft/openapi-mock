@@ -19,6 +19,9 @@ RUN set -e \
 # final stage
 FROM alpine
 
+LABEL "homepage"="https://github.com/muonsoft/openapi-mock"
+LABEL "maintainer"="Igor Lazarev <strider2038@yandex.ru>"
+
 WORKDIR "/app"
 
 COPY --from=build-env /etc/passwd /etc/passwd
