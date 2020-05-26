@@ -1,4 +1,4 @@
-package run
+package serve
 
 import (
 	"swagger-mock/internal/server"

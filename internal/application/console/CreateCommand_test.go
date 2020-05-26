@@ -2,7 +2,7 @@ package console
 
 import (
 	"github.com/stretchr/testify/assert"
-	"swagger-mock/internal/application/console/command/run"
+	"swagger-mock/internal/application/console/command/serve"
 	"swagger-mock/internal/application/console/command/validate"
 	"testing"
 )
@@ -19,40 +19,40 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 		expectedCommand Command
 	}{
 		{
-			"run command with short url",
+			"serve command with short url",
 			[]string{
-				"run",
+				"serve",
 				"-u",
 				testSpecificationURL,
 			},
-			&run.Command{},
+			&serve.Command{},
 		},
 		{
-			"run command with long url",
+			"serve command with long url",
 			[]string{
-				"run",
+				"serve",
 				"--url",
 				testSpecificationURL,
 			},
-			&run.Command{},
+			&serve.Command{},
 		},
 		{
-			"run command with url from config (short)",
+			"serve command with url from config (short)",
 			[]string{
-				"run",
+				"serve",
 				"-c",
 				testConfigFilename,
 			},
-			&run.Command{},
+			&serve.Command{},
 		},
 		{
-			"run command with url from config (long)",
+			"serve command with url from config (long)",
 			[]string{
-				"run",
+				"serve",
 				"--configuration",
 				testConfigFilename,
 			},
-			&run.Command{},
+			&serve.Command{},
 		},
 		{
 			"validate command with short url",

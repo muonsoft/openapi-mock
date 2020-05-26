@@ -5,7 +5,7 @@ import (
 	"github.com/jessevdk/go-flags"
 	"github.com/pkg/errors"
 	"swagger-mock/internal/application/config"
-	"swagger-mock/internal/application/console/command/run"
+	"swagger-mock/internal/application/console/command/serve"
 	"swagger-mock/internal/application/console/command/validate"
 	"swagger-mock/internal/application/container"
 )
@@ -32,8 +32,17 @@ func CreateCommand(arguments []string) (Command, error) {
 func parseCommandLine(arguments []string) (*Options, error) {
 	options := &Options{}
 	parser := flags.NewParser(options, flags.Default)
-	_, _ = parser.AddCommand("run", "Runs an OpenAPI mock server", "", options)
-	_, _ = parser.AddCommand("validate", "Validates an OpenAPI specification", "", options)
+	_, _ = parser.AddCommand(
+		"serve",
+		"Starts an HTTP server for generating mock responses by OpenAPI specification",
+		"", options,
+	)
+	_, _ = parser.AddCommand(
+		"validate",
+		"Validates an OpenAPI specification",
+		"",
+		options,
+	)
 
 	_, err := parser.ParseArgs(arguments)
 	if err != nil {
@@ -59,9 +68,9 @@ func createConsoleCommand(commandName string, configuration *config.Configuratio
 	var command Command
 
 	switch commandName {
-	case "run":
+	case "serve":
 		httpServer := appContainer.CreateHTTPServer()
-		command = run.NewCommand(httpServer)
+		command = serve.NewCommand(httpServer)
 	case "validate":
 		specificationLoader := appContainer.CreateSpecificationLoader()
 		command = validate.NewCommand(configuration.SpecificationURL, specificationLoader)
