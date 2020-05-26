@@ -85,6 +85,7 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 		handlers.RecoveryLogger(container.logger),
 		handlers.PrintRecoveryStack(true),
 	)(httpHandler)
+	httpHandler = http.TimeoutHandler(httpHandler, container.configuration.ResponseTimeout, "")
 
 	return httpHandler
 }

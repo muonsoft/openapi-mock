@@ -136,6 +136,12 @@ Mock server options can be set via environment variables.
 * _Default value_: `8080`
 * _Possible values_: any valid port
 
+#### SWAGGER_MOCK_RESPONSE_TIMEOUT
+
+* Timeout in seconds for generating mock response. If it is exceeded then HTTP service will return 503 error.
+* _Default value_: `1.0`
+* _Possible values_: any float value more than `0`
+
 #### SWAGGER_MOCK_LOG_LEVEL
 
 * Error log level

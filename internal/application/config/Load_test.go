@@ -7,9 +7,13 @@ import (
 	"os"
 	"swagger-mock/internal/openapi/generator/data"
 	"testing"
+	"time"
 )
 
-const testResourcesDir = "../../../test/resources/"
+const (
+	testResourcesDir    = "../../../test/resources/"
+	testCustomConfigDir = testResourcesDir + "./openapi-files/ValueGeneration.yaml"
+)
 
 func TestLoad_YAMLFile_ConfigurationWithExpectedValues(t *testing.T) {
 	resetEnvironment()
@@ -17,19 +21,7 @@ func TestLoad_YAMLFile_ConfigurationWithExpectedValues(t *testing.T) {
 	config, err := Load(testResourcesDir + "config.yaml")
 
 	assert.NoError(t, err)
-	assert.Equal(t, testResourcesDir+"./openapi-files/ValueGeneration.yaml", config.SpecificationURL)
-	assert.True(t, config.CORSEnabled)
-	assert.Equal(t, uint16(8888), config.Port)
-	assert.False(t, config.Debug)
-	assert.Equal(t, "json", config.LogFormat)
-	assert.Equal(t, logrus.ErrorLevel, config.LogLevel)
-	assert.Equal(t, -123.123, config.DefaultMinFloat)
-	assert.Equal(t, 123.123, config.DefaultMaxFloat)
-	assert.Equal(t, int64(-123), config.DefaultMinInt)
-	assert.Equal(t, int64(123), config.DefaultMaxInt)
-	assert.Equal(t, 0.8, config.NullProbability)
-	assert.True(t, config.SuppressErrors)
-	assert.Equal(t, data.IfPresent, config.UseExamples)
+	assertIsModifiedConfiguration(t, config)
 }
 
 func TestLoad_JSONFile_ConfigurationWithExpectedValues(t *testing.T) {
@@ -38,18 +30,7 @@ func TestLoad_JSONFile_ConfigurationWithExpectedValues(t *testing.T) {
 	config, err := Load(testResourcesDir + "config.json")
 
 	assert.NoError(t, err)
-	assert.Equal(t, testResourcesDir+"./openapi-files/ValueGeneration.yaml", config.SpecificationURL)
-	assert.Equal(t, data.IfPresent, config.UseExamples)
-	assert.Equal(t, 0.8, config.NullProbability)
-	assert.Equal(t, int64(-123), config.DefaultMinInt)
-	assert.Equal(t, int64(123), config.DefaultMaxInt)
-	assert.Equal(t, -123.123, config.DefaultMinFloat)
-	assert.Equal(t, 123.123, config.DefaultMaxFloat)
-	assert.True(t, config.CORSEnabled)
-	assert.True(t, config.SuppressErrors)
-	assert.False(t, config.Debug)
-	assert.Equal(t, logrus.ErrorLevel, config.LogLevel)
-	assert.Equal(t, "json", config.LogFormat)
+	assertIsModifiedConfiguration(t, config)
 }
 
 func TestLoad_EmptyConfigFile_ConfigurationWithDefaultValues(t *testing.T) {
@@ -58,18 +39,7 @@ func TestLoad_EmptyConfigFile_ConfigurationWithDefaultValues(t *testing.T) {
 	config, err := Load(testResourcesDir + "empty-config.yaml")
 
 	assert.NoError(t, err)
-	assert.Equal(t, "", config.SpecificationURL)
-	assert.Equal(t, data.No, config.UseExamples)
-	assert.Equal(t, 0.5, config.NullProbability)
-	assert.Equal(t, int64(0), config.DefaultMinInt)
-	assert.Equal(t, int64(math.MaxInt32), config.DefaultMaxInt)
-	assert.Equal(t, -float64(math.MaxInt32/2), config.DefaultMinFloat)
-	assert.Equal(t, float64(math.MaxInt32/2), config.DefaultMaxFloat)
-	assert.False(t, config.CORSEnabled)
-	assert.False(t, config.SuppressErrors)
-	assert.False(t, config.Debug)
-	assert.Equal(t, logrus.InfoLevel, config.LogLevel)
-	assert.Equal(t, "tty", config.LogFormat)
+	assertIsDefaultConfiguration(t, config)
 }
 
 func TestLoad_EmptyFilenameAndNoEnvParams_ConfigurationWithDefaultValues(t *testing.T) {
@@ -78,86 +48,27 @@ func TestLoad_EmptyFilenameAndNoEnvParams_ConfigurationWithDefaultValues(t *test
 	config, err := Load("")
 
 	assert.NoError(t, err)
-	assert.Equal(t, "", config.SpecificationURL)
-	assert.Equal(t, data.No, config.UseExamples)
-	assert.Equal(t, 0.5, config.NullProbability)
-	assert.Equal(t, int64(0), config.DefaultMinInt)
-	assert.Equal(t, int64(math.MaxInt32), config.DefaultMaxInt)
-	assert.Equal(t, -float64(math.MaxInt32/2), config.DefaultMinFloat)
-	assert.Equal(t, float64(math.MaxInt32/2), config.DefaultMaxFloat)
-	assert.False(t, config.CORSEnabled)
-	assert.False(t, config.SuppressErrors)
-	assert.False(t, config.Debug)
-	assert.Equal(t, logrus.InfoLevel, config.LogLevel)
-	assert.Equal(t, "tty", config.LogFormat)
+	assertIsDefaultConfiguration(t, config)
 }
 
 func TestLoad_NoFileAndAllEnvironmentParams_ExpectedValues(t *testing.T) {
 	resetEnvironment()
-	_ = os.Setenv("OPENAPI_MOCK_SPECIFICATION_URL", "specification_url")
-	_ = os.Setenv("OPENAPI_MOCK_CORS_ENABLED", "1")
-	_ = os.Setenv("OPENAPI_MOCK_PORT", "8888")
-	_ = os.Setenv("OPENAPI_MOCK_DEBUG", "0")
-	_ = os.Setenv("OPENAPI_MOCK_LOG_FORMAT", "json")
-	_ = os.Setenv("OPENAPI_MOCK_LOG_LEVEL", "error")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MIN_INT", "-123")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MAX_INT", "123")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MIN_FLOAT", "-123.123")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MAX_FLOAT", "123.123")
-	_ = os.Setenv("OPENAPI_MOCK_NULL_PROBABILITY", "0.8")
-	_ = os.Setenv("OPENAPI_MOCK_SUPPRESS_ERRORS", "1")
-	_ = os.Setenv("OPENAPI_MOCK_USE_EXAMPLES", "if_present")
+	givenAllEnvironmentParameters()
 
 	config, err := Load("")
 
 	assert.NoError(t, err)
-	assert.Equal(t, "specification_url", config.SpecificationURL)
-	assert.True(t, config.CORSEnabled)
-	assert.Equal(t, uint16(8888), config.Port)
-	assert.False(t, config.Debug)
-	assert.Equal(t, "json", config.LogFormat)
-	assert.Equal(t, logrus.ErrorLevel, config.LogLevel)
-	assert.Equal(t, -123.123, config.DefaultMinFloat)
-	assert.Equal(t, 123.123, config.DefaultMaxFloat)
-	assert.Equal(t, int64(-123), config.DefaultMinInt)
-	assert.Equal(t, int64(123), config.DefaultMaxInt)
-	assert.Equal(t, 0.8, config.NullProbability)
-	assert.True(t, config.SuppressErrors)
-	assert.Equal(t, data.IfPresent, config.UseExamples)
+	assertIsModifiedConfiguration(t, config)
 }
 
 func TestLoad_EmptyFileAndAllEnvironmentParams_ValuesFromEnvironment(t *testing.T) {
 	resetEnvironment()
-	_ = os.Setenv("OPENAPI_MOCK_SPECIFICATION_URL", "specification_url")
-	_ = os.Setenv("OPENAPI_MOCK_CORS_ENABLED", "1")
-	_ = os.Setenv("OPENAPI_MOCK_PORT", "8888")
-	_ = os.Setenv("OPENAPI_MOCK_DEBUG", "0")
-	_ = os.Setenv("OPENAPI_MOCK_LOG_FORMAT", "json")
-	_ = os.Setenv("OPENAPI_MOCK_LOG_LEVEL", "error")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MIN_INT", "-123")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MAX_INT", "123")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MIN_FLOAT", "-123.123")
-	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MAX_FLOAT", "123.123")
-	_ = os.Setenv("OPENAPI_MOCK_NULL_PROBABILITY", "0.8")
-	_ = os.Setenv("OPENAPI_MOCK_SUPPRESS_ERRORS", "1")
-	_ = os.Setenv("OPENAPI_MOCK_USE_EXAMPLES", "if_present")
+	givenAllEnvironmentParameters()
 
 	config, err := Load("./../../../test/resources/empty-config.yaml")
 
 	assert.NoError(t, err)
-	assert.Equal(t, "specification_url", config.SpecificationURL)
-	assert.True(t, config.CORSEnabled)
-	assert.Equal(t, uint16(8888), config.Port)
-	assert.False(t, config.Debug)
-	assert.Equal(t, "json", config.LogFormat)
-	assert.Equal(t, logrus.ErrorLevel, config.LogLevel)
-	assert.Equal(t, -123.123, config.DefaultMinFloat)
-	assert.Equal(t, 123.123, config.DefaultMaxFloat)
-	assert.Equal(t, int64(-123), config.DefaultMinInt)
-	assert.Equal(t, int64(123), config.DefaultMaxInt)
-	assert.Equal(t, 0.8, config.NullProbability)
-	assert.True(t, config.SuppressErrors)
-	assert.Equal(t, data.IfPresent, config.UseExamples)
+	assertIsModifiedConfiguration(t, config)
 }
 
 func TestLoad_NotExistingFilename_Error(t *testing.T) {
@@ -216,4 +127,61 @@ func resetEnvironment() {
 	_ = os.Unsetenv("OPENAPI_MOCK_LOG_LEVEL")
 	_ = os.Unsetenv("OPENAPI_MOCK_LOG_FORMAT")
 	_ = os.Unsetenv("OPENAPI_MOCK_DEBUG")
+}
+
+func givenAllEnvironmentParameters() {
+	_ = os.Setenv("OPENAPI_MOCK_SPECIFICATION_URL", testCustomConfigDir)
+	_ = os.Setenv("OPENAPI_MOCK_CORS_ENABLED", "1")
+	_ = os.Setenv("OPENAPI_MOCK_PORT", "8888")
+	_ = os.Setenv("OPENAPI_MOCK_RESPONSE_TIMEOUT", "0.5")
+	_ = os.Setenv("OPENAPI_MOCK_DEBUG", "0")
+	_ = os.Setenv("OPENAPI_MOCK_LOG_FORMAT", "json")
+	_ = os.Setenv("OPENAPI_MOCK_LOG_LEVEL", "error")
+	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MIN_INT", "-123")
+	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MAX_INT", "123")
+	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MIN_FLOAT", "-123.123")
+	_ = os.Setenv("OPENAPI_MOCK_DEFAULT_MAX_FLOAT", "123.123")
+	_ = os.Setenv("OPENAPI_MOCK_NULL_PROBABILITY", "0.8")
+	_ = os.Setenv("OPENAPI_MOCK_SUPPRESS_ERRORS", "1")
+	_ = os.Setenv("OPENAPI_MOCK_USE_EXAMPLES", "if_present")
+}
+
+func assertIsModifiedConfiguration(t *testing.T, config *Configuration) {
+	assert.Equal(t, testCustomConfigDir, config.SpecificationURL)
+
+	assert.True(t, config.CORSEnabled)
+	assert.Equal(t, uint16(8888), config.Port)
+	assert.Equal(t, time.Second/2, config.ResponseTimeout)
+
+	assert.False(t, config.Debug)
+	assert.Equal(t, "json", config.LogFormat)
+	assert.Equal(t, logrus.ErrorLevel, config.LogLevel)
+
+	assert.Equal(t, -123.123, config.DefaultMinFloat)
+	assert.Equal(t, 123.123, config.DefaultMaxFloat)
+	assert.Equal(t, int64(-123), config.DefaultMinInt)
+	assert.Equal(t, int64(123), config.DefaultMaxInt)
+	assert.Equal(t, 0.8, config.NullProbability)
+	assert.True(t, config.SuppressErrors)
+	assert.Equal(t, data.IfPresent, config.UseExamples)
+}
+
+func assertIsDefaultConfiguration(t *testing.T, config *Configuration) {
+	assert.Equal(t, "", config.SpecificationURL)
+
+	assert.False(t, config.CORSEnabled)
+	assert.Equal(t, uint16(8080), config.Port)
+	assert.Equal(t, DefaultResponseTimeout, config.ResponseTimeout)
+
+	assert.False(t, config.Debug)
+	assert.Equal(t, logrus.InfoLevel, config.LogLevel)
+	assert.Equal(t, "tty", config.LogFormat)
+
+	assert.Equal(t, 0.5, config.NullProbability)
+	assert.Equal(t, int64(0), config.DefaultMinInt)
+	assert.Equal(t, int64(math.MaxInt32), config.DefaultMaxInt)
+	assert.Equal(t, -float64(math.MaxInt32/2), config.DefaultMinFloat)
+	assert.Equal(t, float64(math.MaxInt32/2), config.DefaultMaxFloat)
+	assert.False(t, config.SuppressErrors)
+	assert.Equal(t, data.No, config.UseExamples)
 }

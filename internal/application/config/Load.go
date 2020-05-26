@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"swagger-mock/internal/openapi/generator/data"
+	"time"
 )
 
 func Load(filename string) (*Configuration, error) {
@@ -64,6 +65,10 @@ func autocorrectValues(filename string, fileConfig *fileConfiguration) {
 		fileConfig.Application.LogLevel = logrus.TraceLevel.String()
 	}
 
+	if fileConfig.HTTP.ResponseTimeout <= 0 {
+		fileConfig.HTTP.ResponseTimeout = DefaultResponseTimeout.Seconds()
+	}
+
 	if specificationURLIsRelativeFilename(filename, fileConfig) {
 		fileConfig.OpenAPI.SpecificationURL = filepath.Dir(filename) + "/" + fileConfig.OpenAPI.SpecificationURL
 	}
@@ -80,8 +85,9 @@ func createApplicationConfiguration(fileConfig *fileConfiguration) *Configuratio
 	return &Configuration{
 		SpecificationURL: fileConfig.OpenAPI.SpecificationURL,
 
-		CORSEnabled: fileConfig.HTTP.CORSEnabled,
-		Port:        defaultOnNilUint16(fileConfig.HTTP.Port, DefaultPort),
+		CORSEnabled:     fileConfig.HTTP.CORSEnabled,
+		Port:            defaultOnNilUint16(fileConfig.HTTP.Port, DefaultPort),
+		ResponseTimeout: time.Duration(fileConfig.HTTP.ResponseTimeout * float64(time.Second)),
 
 		Debug:     fileConfig.Application.Debug,
 		LogFormat: fileConfig.Application.LogFormat,

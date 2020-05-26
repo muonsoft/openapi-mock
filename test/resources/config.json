@@ -4,7 +4,8 @@
   },
   "http": {
     "cors_enabled": true,
-    "port": 8888
+    "port": 8888,
+    "response_timeout": 0.5
   },
   "application": {
     "debug": false,

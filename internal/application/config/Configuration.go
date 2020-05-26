@@ -4,6 +4,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"math"
 	"swagger-mock/internal/openapi/generator/data"
+	"time"
 )
 
 type Configuration struct {
@@ -11,8 +12,9 @@ type Configuration struct {
 	SpecificationURL string
 
 	// HTTP server options
-	CORSEnabled bool
-	Port        uint16
+	CORSEnabled     bool
+	Port            uint16
+	ResponseTimeout time.Duration
 
 	// Application options
 	Debug     bool
@@ -31,6 +33,7 @@ type Configuration struct {
 
 const (
 	DefaultPort            = uint16(8080)
+	DefaultResponseTimeout = time.Second
 	DefaultLogLevel        = logrus.InfoLevel
 	DefaultNullProbability = 0.5
 	DefaultMaxInt          = int64(math.MaxInt32)
@@ -43,6 +46,7 @@ func (config *Configuration) Dump() map[string]interface{} {
 		"SpecificationURL": config.SpecificationURL,
 		"CORSEnabled":      config.CORSEnabled,
 		"Port":             config.Port,
+		"ResponseTimeout":  config.ResponseTimeout,
 		"Debug":            config.Debug,
 		"LogFormat":        config.LogFormat,
 		"LogLevel":         config.LogLevel,

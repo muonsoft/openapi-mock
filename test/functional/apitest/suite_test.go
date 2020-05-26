@@ -7,6 +7,7 @@ import (
 	"swagger-mock/internal/application/config"
 	"swagger-mock/internal/application/container"
 	"testing"
+	"time"
 )
 
 type APISuite struct {
@@ -18,6 +19,7 @@ func TestApi(t *testing.T) {
 }
 
 func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) http.Handler {
+	configuration.ResponseTimeout = time.Second
 	specificationPath := "./../../resources/openapi-files/" + configuration.SpecificationURL
 	diContainer := container.New(&configuration)
 	specificationLoader := diContainer.CreateSpecificationLoader()

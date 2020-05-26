@@ -18,8 +18,9 @@ type openapiConfiguration struct {
 }
 
 type httpConfiguration struct {
-	Port        *uint16 `json:"port" yaml:"port" valid:"range(1|65535)"`
-	CORSEnabled bool    `json:"cors_enabled" yaml:"cors_enabled"`
+	Port            *uint16 `json:"port" yaml:"port" valid:"range(1|65535)"`
+	CORSEnabled     bool    `json:"cors_enabled" yaml:"cors_enabled"`
+	ResponseTimeout float64 `json:"response_timeout" yaml:"response_timeout"`
 }
 
 type applicationConfiguration struct {

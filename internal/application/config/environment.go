@@ -5,8 +5,9 @@ import "github.com/kelseyhightower/envconfig"
 type environmentConfiguration struct {
 	SpecificationURL *string `split_words:"true"`
 
-	CORSEnabled *bool `split_words:"true"`
-	Port        *uint16
+	CORSEnabled     *bool `split_words:"true"`
+	Port            *uint16
+	ResponseTimeout *float64 `split_words:"true"`
 
 	Debug     *bool
 	LogFormat *string `split_words:"true"`
@@ -32,6 +33,7 @@ func updateConfigFromEnvironment(fileConfig *fileConfiguration) {
 
 	fileConfig.HTTP.CORSEnabled = coalesceBool(fileConfig.HTTP.CORSEnabled, envConfig.CORSEnabled)
 	fileConfig.HTTP.Port = coalesceUint16(fileConfig.HTTP.Port, envConfig.Port)
+	fileConfig.HTTP.ResponseTimeout = *coalesceFloat(&fileConfig.HTTP.ResponseTimeout, envConfig.ResponseTimeout)
 
 	fileConfig.Application.Debug = coalesceBool(fileConfig.Application.Debug, envConfig.Debug)
 	fileConfig.Application.LogFormat = coalesceString(fileConfig.Application.LogFormat, envConfig.LogFormat)
