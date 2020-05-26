@@ -29,3 +29,4 @@ USER openapi
 EXPOSE 8080
 
 ENTRYPOINT [ "/app/openapi-mock" ]
+CMD ["serve"]

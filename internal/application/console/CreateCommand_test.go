@@ -31,7 +31,7 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 			"serve command with long url",
 			[]string{
 				"serve",
-				"--url",
+				"--specification-url",
 				testSpecificationURL,
 			},
 			&serve.Command{},
@@ -67,7 +67,7 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 			"validate command with long url",
 			[]string{
 				"validate",
-				"--url",
+				"--specification-url",
 				testSpecificationURL,
 			},
 			&validate.Command{},
