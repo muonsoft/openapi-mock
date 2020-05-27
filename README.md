@@ -1,10 +1,9 @@
 # OpenAPI Mock Server
 
-[![Build Status](https://travis-ci.org/swagger-mock/swagger-mock.svg?branch=master)](https://travis-ci.org/swagger-mock/swagger-mock)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
-![Docker Pulls](https://img.shields.io/docker/pulls/swaggermock/swagger-mock)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/swagger-mock/swagger-mock)
+![CI](https://github.com/muonsoft/openapi-mock/workflows/CI/badge.svg?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/?branch=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/?branch=master)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/muonsoft/openapi-mock)
 
 OpenAPI API mock server with random data generation by specified schemas.
 
