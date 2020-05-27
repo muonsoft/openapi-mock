@@ -21,4 +21,4 @@ jobs:
           project_path: ./cmd/openapi-mock
           binary_name: openapi-mock
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          ldflags: -w -s main.version=${{ env.RELEASE_VERSION }}
+          ldflags: -w -s main.version=`${{ env.RELEASE_VERSION }}`
