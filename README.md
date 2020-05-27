@@ -3,7 +3,6 @@
 [![Build Status](https://travis-ci.org/swagger-mock/swagger-mock.svg?branch=master)](https://travis-ci.org/swagger-mock/swagger-mock)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
-[![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)](https://github.styleci.io/repos/145602302)
 ![Docker Pulls](https://img.shields.io/docker/pulls/swaggermock/swagger-mock)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/swagger-mock/swagger-mock)
 
@@ -34,7 +33,7 @@ OpenAPI API mock server with random data generation by specified schemas.
 
 ## Quick start
 
-Download binary and run server.
+Download latest binary and run a server.
 
 ```bash
 # runs a local server on port 8080

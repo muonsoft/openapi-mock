@@ -26,21 +26,21 @@ Runs a local server with local specification file.
 ./openapi-mock serve --specification-url path/to/your/openapi-specification.yaml
 ```
 
-Setting URL to specification file via environment variable.
+Set URL to specification file via environment variable.
 
 ```bash
 export OPENAPI_MOCK_SPECIFICATION_FILE=path/to/your/openapi-specification.yaml
 ./openapi-mock serve
 ```
 
-Setting URL to specification file via configuration file `openapi-mock.yaml`.
+Set URL to specification file via configuration file `openapi-mock.yaml`.
 
 ```yaml
 openapi:
   specification_url: 'path/to/your/openapi-specification.yaml'
 ```
 
-To start a web server simply use.
+For that case to start a web server simply use.
 
 ```bash
 ./openapi-mock serve
@@ -48,7 +48,7 @@ To start a web server simply use.
 
 ### Validating a specification
 
-Before starting a web server it is useful to check that your specification file is correct and can be handled by application. Especially, it can be useful for Continuous Integration. To do that you can use `validate` command.
+Before starting a web server it is useful to check that your specification file is correct and can be handled by the application. Especially, it can be useful for Continuous Integration. To do that you can use `validate` command.
 
 ```bash
 ./openapi-mock validate --specification-url http://your.domain/openapi-specification.yaml

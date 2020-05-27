@@ -12,7 +12,7 @@ var version string
 func main() {
 	arguments := os.Args[1:]
 	if len(arguments) > 0 && (arguments[0] == "-v" || arguments[0] == "--version") {
-		fmt.Printf("OpenAPI Mock server with random data generation by specified schemas. Version %s.\n", version)
+		fmt.Printf("OpenAPI Mock server version %s.\n", version)
 		os.Exit(0)
 	}
 
