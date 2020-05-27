@@ -13,6 +13,7 @@ namespace App\API;
 use App\Mock\EndpointRepository;
 use App\Mock\MockResponseGenerator;
 use App\Mock\Parameters\Endpoint;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -27,14 +28,23 @@ class RequestHandler
     /** @var MockResponseGenerator */
     private $responseGenerator;
 
-    public function __construct(EndpointRepository $repository, MockResponseGenerator $responseGenerator)
+    /** @var LoggerInterface */
+    private $logger;
+
+    public function __construct(EndpointRepository $repository, MockResponseGenerator $responseGenerator, LoggerInterface $logger)
     {
         $this->repository = $repository;
         $this->responseGenerator = $responseGenerator;
+        $this->logger = $logger;
     }
 
     public function handleRequest(Request $request): Response
     {
+        $this->logger->notice(
+            'Warning! This version of project is no longer maintained. '
+            .'Please, migrate to newer version at <https://github.com/muonsoft/openapi-mock>.'
+        );
+
         $mockEndpoint = $this->findMockEndpointForRequest($request);
 
         if (null === $mockEndpoint) {
