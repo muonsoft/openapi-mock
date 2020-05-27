@@ -50,3 +50,6 @@ issues:
     - path: internal/application/config/Configuration.go
       linters:
         - maligned
+    - path: cmd/openapi-mock/main.go
+      linters:
+        - gochecknoglobals
