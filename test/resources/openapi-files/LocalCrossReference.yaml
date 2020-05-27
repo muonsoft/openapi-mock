@@ -1,0 +1,42 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /entities:
+    get:
+      summary: 'Get entities'
+      responses:
+        200:
+          description: 'Returns entity in JSON'
+          content:
+            application/json:
+              schema:
+                type: array
+                minItems: 1
+                maxItems: 1
+                items:
+                  $ref: '#/paths/~1entities~1%7Bid%7D/get/responses/200/content/application~1json/schema'
+  /entities/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: 'Get entity by id'
+      responses:
+        200:
+          description: 'Returns entity in JSON'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value

@@ -1,0 +1,47 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum: ['json']
+            application/ld+json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum: ['json ld']
+            application/xml:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum: ['xml']
+            application/soap+xml:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum: ['soap xml']

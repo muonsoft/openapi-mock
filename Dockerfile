@@ -1,58 +1,37 @@
-# Composer dependencies
-FROM composer as vendor
+# build stage
+FROM golang:alpine AS build-env
 
-COPY composer.json composer.json
-COPY composer.lock composer.lock
-COPY symfony.lock symfony.lock
-COPY src/ src/
+ARG RELEASE_VERSION=""
 
-RUN set -xe \
-    && composer install \
-        --ignore-platform-reqs \
-        --no-dev \
-        --no-interaction \
-        --no-plugins \
-        --no-scripts \
-        --prefer-dist \
-    && composer dump-autoload \
-        --optimize \
-        --no-dev \
-        --classmap-authoritative
+ADD . /project
 
-# Main image
-FROM php:7.4-alpine
-LABEL maintainer="Igor Lazarev <strider2038@yandex.ru>"
+RUN set -e \
+    && apk add --no-cache --update \
+        git \
+        bash \
+    && set -x \
+    && adduser -D -g '' openapi \
+    && go version \
+    && cd /project \
+    && go mod download \
+    && cd /project/cmd/openapi-mock \
+    && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s main.version=${RELEASE_VERSION}" -o openapi-mock \
+    && ls -la | grep "openapi-mock"
 
-ARG ROADRUNNER_VERSION=1.7.1
+# final stage
+FROM alpine
 
-ENV APP_ENV=prod \
-    SWAGGER_MOCK_SPECIFICATION_URL='' \
-    SWAGGER_MOCK_LOG_LEVEL='warning' \
-    SWAGGER_MOCK_CACHE_DIRECTORY='/dev/shm/openapi-cache' \
-    SWAGGER_MOCK_CACHE_TTL='0' \
-    SWAGGER_MOCK_CACHE_STRATEGY='disabled'
+LABEL "homepage"="https://github.com/muonsoft/openapi-mock"
+LABEL "maintainer"="Igor Lazarev <strider2038@yandex.ru>"
 
-WORKDIR /app
+WORKDIR "/app"
 
-COPY ./.docker /
-COPY . /app
-COPY --from=vendor /app/vendor/ /app/vendor/
+COPY --from=build-env /etc/passwd /etc/passwd
+COPY --from=build-env /project/cmd/openapi-mock/openapi-mock /app/openapi-mock
 
-RUN set -xe \
-    && wget -O /tmp/rr.tar.gz "https://github.com/spiral/roadrunner/releases/download/v$ROADRUNNER_VERSION/roadrunner-$ROADRUNNER_VERSION-linux-amd64.tar.gz" \
-    && tar -xzvf /tmp/rr.tar.gz -C /tmp \
-    && rm -rf /tmp/rr.tar.gz \
-    && cp "/tmp/roadrunner-$ROADRUNNER_VERSION-linux-amd64/rr" /usr/local/bin/rr \
-    && rm -rf "/tmp/roadrunner-$ROADRUNNER_VERSION-linux-amd" \
-    && docker-php-ext-install \
-        sockets \
-        opcache \
-    && docker-php-ext-enable \
-       sockets \
-       opcache \
-   && chmod +x /entry-point.sh
+USER openapi
 
 EXPOSE 8080
 
-ENTRYPOINT [ "/entry-point.sh" ]
-CMD ["/usr/local/bin/rr", "serve", "-d", "-c", "/app/road-runner.dist.yaml"]
+ENTRYPOINT [ "/app/openapi-mock" ]
+CMD ["serve"]

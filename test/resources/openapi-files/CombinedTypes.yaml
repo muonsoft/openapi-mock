@@ -1,0 +1,147 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - oneOfProperty
+                  - allOfProperty
+                  - anyOfProperty
+                  - deepAllOfProperty
+                properties:
+
+                  oneOfProperty:
+                    oneOf:
+                      - type: object
+                        required:
+                          - id
+                          - name
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          name:
+                            type: string
+                      - type: object
+                        required:
+                          - id
+                          - title
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          title:
+                            type: string
+
+                  allOfProperty:
+                    allOf:
+                      - type: object
+                        required:
+                          - id
+                          - name
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          name:
+                            type: string
+                            enum:
+                              - name
+                      - type: object
+                        required:
+                          - id
+                          - title
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          title:
+                            type: string
+                            enum:
+                              - title
+
+                  anyOfProperty:
+                    anyOf:
+                      - type: object
+                        required:
+                          - id
+                          - name
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          name:
+                            type: string
+                      - type: object
+                        required:
+                          - id
+                          - title
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          title:
+                            type: string
+
+                  deepAllOfProperty:
+                    allOf:
+                      - type: object
+                        required:
+                          - id
+                          - name
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          name:
+                            type: string
+                            enum:
+                              - name
+                      - type: object
+                        required:
+                          - id
+                          - title
+                        properties:
+                          id:
+                            type: integer
+                            minimum: 0
+                            maximum: 0
+                          title:
+                            type: string
+                            enum:
+                              - title
+                      - allOf:
+                          - anyOf:
+                              - type: object
+                                required:
+                                  - description
+                                properties:
+                                  description:
+                                    type: string
+                                    enum:
+                                      - description
+                          - oneOf:
+                              - type: object
+                                required:
+                                  - type
+                                properties:
+                                  type:
+                                    type: string
+                                    enum:
+                                      - type

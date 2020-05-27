@@ -1,0 +1,54 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /entity/{id}:
+    get:
+      summary: 'Get entity'
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          $ref: '#/components/responses/getEntity'
+
+components:
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        $ref: '#/components/schemas/id'
+  responses:
+    getEntity:
+      description: 'Returns entity in JSON'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/entity'
+  schemas:
+    entity:
+      type: object
+      required:
+        - id
+        - tags
+      properties:
+        id:
+          $ref: '#/components/schemas/id'
+        tags:
+          $ref: '#/components/schemas/tags'
+    id:
+      type: integer
+      minimum: 0
+      maximum: 65535
+    tags:
+      type: array
+      minItems: 1
+      maxItems: 1
+      items:
+        $ref: '#/components/schemas/tag'
+    tag:
+      type: string
+      enum:
+        - tag

@@ -1,0 +1,21 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        default:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - key
+                properties:
+                  key:
+                    type: string
+                    enum:
+                      - value

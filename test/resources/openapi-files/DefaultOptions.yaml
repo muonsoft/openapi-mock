@@ -1,0 +1,22 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - int
+                  - float
+                properties:
+                  int:
+                    type: integer
+                  float:
+                    type: number

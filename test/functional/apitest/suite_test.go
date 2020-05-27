@@ -2,24 +2,32 @@ package apitest
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
+	"github.com/muonsoft/openapi-mock/internal/application/container"
 	"github.com/stretchr/testify/suite"
 	"net/http"
-	"swagger-mock/internal/di/config"
-	"swagger-mock/internal/di/container"
 	"testing"
+	"time"
 )
 
-type ApiSuite struct {
+type APISuite struct {
 	suite.Suite
 }
 
 func TestApi(t *testing.T) {
-	suite.Run(t, new(ApiSuite))
+	suite.Run(t, new(APISuite))
 }
 
-func (suite *ApiSuite) createOpenApiHandler(specificationFilename string) http.Handler {
-	router := openapi3filter.NewRouter().WithSwaggerFromFile("./../../resources/openapi-files/" + specificationFilename)
-	diContainer := container.New(config.Configuration{})
+func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) http.Handler {
+	configuration.ResponseTimeout = time.Second
+	specificationPath := "./../../resources/openapi-files/" + configuration.SpecificationURL
+	diContainer := container.New(&configuration)
+	specificationLoader := diContainer.CreateSpecificationLoader()
+	specification, err := specificationLoader.LoadFromURI(specificationPath)
+	if err != nil {
+		panic(err)
+	}
+	router := openapi3filter.NewRouter().WithSwagger(specification)
 
-	return diContainer.CreateOpenApiHandler(router)
+	return diContainer.CreateHTTPHandler(router)
 }

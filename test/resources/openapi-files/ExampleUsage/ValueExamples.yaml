@@ -1,0 +1,34 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stringExample:
+                    type: string
+                    example: 'stringValue'
+                  numberExample:
+                    type: number
+                    example: 123
+                  booleanExample:
+                    type: boolean
+                    example: true
+                  objectExample:
+                    type: object
+                    example:
+                      key: 'objectValue'
+                  arrayExample:
+                    type: array
+                    items:
+                      type: string
+                    example:
+                      - 'arrayValue'
