@@ -1,11 +1,11 @@
 package config
 
 import (
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"math"
 	"os"
-	"swagger-mock/internal/openapi/generator/data"
 	"testing"
 	"time"
 )

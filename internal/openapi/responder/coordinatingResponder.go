@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/responder/serializer"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"net/http"
 	"regexp"
 	"strings"
-	apperrors "swagger-mock/internal/errors"
-	"swagger-mock/internal/openapi/generator"
-	"swagger-mock/internal/openapi/responder/serializer"
-	"swagger-mock/pkg/logcontext"
 )
 
 type coordinatingResponder struct {

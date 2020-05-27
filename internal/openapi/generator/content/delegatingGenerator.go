@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/muonsoft/openapi-mock/internal/errors"
 	"regexp"
-	"swagger-mock/internal/errors"
 )
 
 type delegatingGenerator struct {

@@ -1,7 +1,7 @@
 package serve
 
 import (
-	"swagger-mock/internal/server"
+	"github.com/muonsoft/openapi-mock/internal/server"
 )
 
 type Command struct {

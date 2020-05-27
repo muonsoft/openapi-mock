@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"swagger-mock/pkg/logcontext"
 	"testing"
 )
 

@@ -2,8 +2,8 @@ package validate
 
 import (
 	"context"
+	"github.com/muonsoft/openapi-mock/internal/openapi/loader"
 	"log"
-	"swagger-mock/internal/openapi/loader"
 )
 
 type Command struct {

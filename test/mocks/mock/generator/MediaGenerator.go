@@ -4,8 +4,8 @@ package generatormock
 
 import (
 	context "context"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	mock "github.com/stretchr/testify/mock"
-	"swagger-mock/internal/openapi/generator/data"
 
 	openapi3 "github.com/getkin/kin-openapi/openapi3"
 )

@@ -2,11 +2,11 @@ package handler
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/responder"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"github.com/pkg/errors"
 	"net/http"
-	"swagger-mock/internal/openapi/generator"
-	"swagger-mock/internal/openapi/responder"
-	"swagger-mock/pkg/logcontext"
 )
 
 type responseGeneratorHandler struct {

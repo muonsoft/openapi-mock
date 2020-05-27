@@ -1,4 +1,4 @@
-module swagger-mock
+module github.com/muonsoft/openapi-mock
 
 go 1.14
 

@@ -3,12 +3,12 @@ package responder
 import (
 	"context"
 	"errors"
+	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	serializermock "github.com/muonsoft/openapi-mock/test/mocks/openapi/responder/serializer"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	apperrors "swagger-mock/internal/errors"
-	"swagger-mock/internal/openapi/generator"
-	serializermock "swagger-mock/test/mocks/openapi/responder/serializer"
 	"testing"
 )
 

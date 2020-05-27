@@ -3,11 +3,11 @@ package console
 import (
 	"fmt"
 	"github.com/jessevdk/go-flags"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
+	"github.com/muonsoft/openapi-mock/internal/application/console/command/serve"
+	"github.com/muonsoft/openapi-mock/internal/application/console/command/validate"
+	"github.com/muonsoft/openapi-mock/internal/application/container"
 	"github.com/pkg/errors"
-	"swagger-mock/internal/application/config"
-	"swagger-mock/internal/application/console/command/serve"
-	"swagger-mock/internal/application/console/command/validate"
-	"swagger-mock/internal/application/container"
 )
 
 func CreateCommand(arguments []string) (Command, error) {

@@ -1,9 +1,9 @@
 package config
 
 import (
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	"github.com/sirupsen/logrus"
 	"math"
-	"swagger-mock/internal/openapi/generator/data"
 	"time"
 )
 

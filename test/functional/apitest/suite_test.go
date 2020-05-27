@@ -2,10 +2,10 @@ package apitest
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
+	"github.com/muonsoft/openapi-mock/internal/application/container"
 	"github.com/stretchr/testify/suite"
 	"net/http"
-	"swagger-mock/internal/application/config"
-	"swagger-mock/internal/application/container"
 	"testing"
 	"time"
 )

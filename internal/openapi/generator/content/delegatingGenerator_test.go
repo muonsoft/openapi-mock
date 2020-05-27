@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"github.com/getkin/kin-openapi/openapi3"
+	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"regexp"
-	apperrors "swagger-mock/internal/errors"
 	"testing"
 )
 

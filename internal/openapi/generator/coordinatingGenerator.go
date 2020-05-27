@@ -2,10 +2,10 @@ package generator
 
 import (
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/content"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/negotiator"
 	"github.com/pkg/errors"
 	"net/http"
-	"swagger-mock/internal/openapi/generator/content"
-	"swagger-mock/internal/openapi/generator/negotiator"
 )
 
 type coordinatingGenerator struct {

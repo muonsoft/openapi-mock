@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
-	"swagger-mock/pkg/logcontext"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 )
 
 type errorSuppressor struct {

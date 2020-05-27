@@ -3,10 +3,10 @@ package apitest
 import (
 	"github.com/muonsoft/api-testing/assertjson"
 	"github.com/muonsoft/api-testing/assertxml"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	"swagger-mock/internal/application/config"
 	"testing"
 )
 

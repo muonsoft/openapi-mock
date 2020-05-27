@@ -1,10 +1,10 @@
 package middleware
 
 import (
+	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
-	httpmock "swagger-mock/test/mocks/http"
 	"testing"
 )
 

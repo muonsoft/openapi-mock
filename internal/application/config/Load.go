@@ -2,11 +2,11 @@ package config
 
 import (
 	"github.com/asaskevich/govalidator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strings"
-	"swagger-mock/internal/openapi/generator/data"
 	"time"
 )
 

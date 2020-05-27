@@ -3,12 +3,12 @@ package content
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
+	generatormock "github.com/muonsoft/openapi-mock/test/mocks/mock/generator"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"swagger-mock/pkg/logcontext"
-	generatormock "swagger-mock/test/mocks/mock/generator"
 	"testing"
 )
 

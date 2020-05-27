@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/muonsoft/openapi-mock/internal/application/console"
 	"log"
 	"os"
-	"swagger-mock/internal/application/console"
 )
 
 var version string

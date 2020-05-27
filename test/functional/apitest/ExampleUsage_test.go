@@ -2,10 +2,10 @@ package apitest
 
 import (
 	"github.com/muonsoft/api-testing/assertjson"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	"net/http"
 	"net/http/httptest"
-	"swagger-mock/internal/application/config"
-	"swagger-mock/internal/openapi/generator/data"
 )
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {

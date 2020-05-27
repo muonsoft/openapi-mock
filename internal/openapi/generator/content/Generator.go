@@ -3,8 +3,8 @@ package content
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	"regexp"
-	"swagger-mock/internal/openapi/generator/data"
 )
 
 type Generator interface {

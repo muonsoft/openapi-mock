@@ -4,11 +4,11 @@ import (
 	"errors"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
+	contentmock "github.com/muonsoft/openapi-mock/test/mocks/openapi/generator/content"
+	negotiatormock "github.com/muonsoft/openapi-mock/test/mocks/openapi/generator/negotiator"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"net/http"
-	contentmock "swagger-mock/test/mocks/openapi/generator/content"
-	negotiatormock "swagger-mock/test/mocks/openapi/generator/negotiator"
 	"testing"
 )
 

@@ -3,8 +3,8 @@ package content
 import (
 	"context"
 	"github.com/getkin/kin-openapi/openapi3"
-	"swagger-mock/internal/openapi/generator/data"
-	"swagger-mock/pkg/logcontext"
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 )
 
 type plainTextGenerator struct {
