@@ -14,8 +14,11 @@ jobs:
         goarch: [amd64] #["386", amd64]
     steps:
       - uses: actions/checkout@v2
+      - name: Set release version env
+        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
       - uses: wangyoucao577/go-release-action@master
         with:
           project_path: ./cmd/openapi-mock
           binary_name: openapi-mock
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          ldflags: -w -s main.version=${{ env.RELEASE_VERSION }}

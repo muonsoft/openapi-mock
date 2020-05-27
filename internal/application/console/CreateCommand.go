@@ -35,7 +35,8 @@ func parseCommandLine(arguments []string) (*Options, error) {
 	_, _ = parser.AddCommand(
 		"serve",
 		"Starts an HTTP server for generating mock responses by OpenAPI specification",
-		"", options,
+		"",
+		options,
 	)
 	_, _ = parser.AddCommand(
 		"validate",

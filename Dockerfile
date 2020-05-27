@@ -1,6 +1,8 @@
 # build stage
 FROM golang:alpine AS build-env
 
+ARG RELEASE_VERSION=""
+
 ADD . /project
 
 RUN set -e \
@@ -13,7 +15,7 @@ RUN set -e \
     && cd /project \
     && go mod download \
     && cd /project/cmd/openapi-mock \
-    && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o openapi-mock \
+    && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s main.version=${RELEASE_VERSION}" -o openapi-mock \
     && ls -la | grep "openapi-mock"
 
 # final stage
