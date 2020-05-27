@@ -1,20 +1,19 @@
-# Swagger Mock Server
+# OpenAPI Mock Server
 
 [![Build Status](https://travis-ci.org/swagger-mock/swagger-mock.svg?branch=master)](https://travis-ci.org/swagger-mock/swagger-mock)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/swagger-mock/swagger-mock/?branch=master)
-[![StyleCI](https://github.styleci.io/repos/145602302/shield?branch=master)](https://github.styleci.io/repos/145602302)
 ![Docker Pulls](https://img.shields.io/docker/pulls/swaggermock/swagger-mock)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/swagger-mock/swagger-mock)
 
-Swagger API mock server with fake data generation with main features.
+OpenAPI API mock server with random data generation by specified schemas.
 
 * OpenAPI 3.x support.
-* Load specification from local file or URL.
+* Load specification from a local file or URL.
 * JSON and YAML format supported.
-* Generates fake response data by provided schemas.
+* Generates fake response data by provided schemas or by examples.
 * Content negotiation by Accept header.
-* Runs in Docker container.
+* Can be used as standalone application (Linux and Windows) or can be run via Docker container.
 
 ## Supported features
 
@@ -32,18 +31,29 @@ Swagger API mock server with fake data generation with main features.
 | validating request data | not supported |
 | force using custom response schema | not supported (schema detected automatically) |
 
-## How to use
+## Quick start
 
-Recommended way is to use [Docker](https://www.docker.com/) container.
+Download latest binary and run a server.
 
 ```bash
-docker pull swaggermock/swagger-mock
+# runs a local server on port 8080
+./openapi-mock serve --specification-url https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml
 
-# with remote file
-docker run -p 8080:8080 -e "SWAGGER_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml" --rm swaggermock/swagger-mock
+# to test that the server successfully ran
+curl 'http://localhost:8080/v1/pets'
+```
 
-# with local file
-docker run -p 8080:8080 -v $PWD/examples/petstore.yaml:/openapi/petstore.yaml -e "SWAGGER_MOCK_SPECIFICATION_URL=/openapi/petstore.yaml" --rm swaggermock/swagger-mock
+Alternatively, you can use [Docker](https://www.docker.com/) image.
+
+```bash
+# downloads an image
+docker pull muonsoft/openapi-mock
+
+# runs a docker container with exported port 8080
+docker run -p 8080:8080 -e "OPENAPI_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml" --rm muonsoft/openapi-mock
+
+# to test that the server successfully ran
+curl 'http://localhost:8080/v1/pets'
 ```
 
 Also, you can use [Docker Compose](https://docs.docker.com/compose/). Example of `docker-compose.yml`
@@ -52,93 +62,28 @@ Also, you can use [Docker Compose](https://docs.docker.com/compose/). Example of
 version: '3.0'
 
 services:
-  swagger_mock:
-    container_name: swagger_mock
-    image: swaggermock/swagger-mock
+  openapi_mock:
+    container_name: openapi_mock
+    image: muonsoft/openapi-mock
     environment:
-      SWAGGER_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
+      OPENAPI_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
     ports:
       - "8080:8080"
 ```
 
-To start up container run command
+To start up a container run command.
 
 ```bash
 docker-compose up -d
 ```
 
-## Configuration
+## Usage guide
 
-### Environment variables
-
-Mock server options can be set via environment variables.
-
-#### SWAGGER_MOCK_SPECIFICATION_URL
-
-* Path to file with OpenAPI v3 specification (_required_)
-* _Possible values_: any valid URL or path to file
-
-#### SWAGGER_MOCK_LOG_LEVEL
-
-* Error log level
-* _Default value_: `warning`
-* _Possible values_: `error`, `warning`, `info`, `debug`
-
-#### SWAGGER_MOCK_CACHE_DIRECTORY
-
-* Directory for OpenAPI specification cache
-* _Default value_: `/dev/shm/openapi-cache`
-* _Possible values_: any valid path
-
-#### SWAGGER_MOCK_CACHE_TTL
-
-* Time to live for OpenAPI specification cache in seconds
-* _Default value_: 0
-* _Possible values_: positive integer
-
-#### SWAGGER_MOCK_CACHE_STRATEGY
-
-* Caching strategy for OpenAPI specification cache
-* _Default value_: `disabled`
-* _Possible values_: `disabled`, `url_md5`, `url_and_timestamp_md5`
-
-#### SWAGGER_MOCK_CORS_ENABLE
-
- * When enabled, CORS request will automatically be handled
- * _Default value_: `False`
- * _Possible values_: `True` or `False`
-
-### Specification cache
-
-To speed up server response time you can use caching mechanism for OpenAPI. There are several caching strategies. Specific strategy can be set by environment variable `SWAGGER_MOCK_CACHE_STRATEGY`.
-
-* `url_md5` calculates hash from specification URL and if specification URL was not changed uses parsed objects from cache.
-* `url_and_timestamp_md5` calculates hash from specification URL and timestamp (file timestamp or value of `Last-Modified` header). If you are using file from remote server make sure that valid `Last-Modified` header is present. 
-
-Recommended options for use with remote file (accessible by URL).
-
-* `SWAGGER_MOCK_CACHE_STRATEGY='url_md5'`
-* `SWAGGER_MOCK_CACHE_TTL=3600`
-
-Recommended options for use with local file (at local server).
-
-* `SWAGGER_MOCK_CACHE_STRATEGY='url_and_timestamp_md5'`
-* `SWAGGER_MOCK_CACHE_TTL=3600`
+* [Console commands](docs/usage_guide.md#console-commands)
+* [Setting up a configuration](docs/usage_guide.md#setting-up-a-configuration)
+* [Configuration file example](docs/usage_guide.md#configuration-file-example)
+* [Configuration options](docs/usage_guide.md#configuration-options)
 
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Features roadmap for next versions
-
-* [ ] extra response negotiation (return of 405 code)
-  * [ ] path parser
-  * [ ] route matcher in path object
-  * [ ] routing by path and endpoints
-* [ ] response cache
-* [ ] faker expression extension for numbers
-* [ ] faker expression extension for strings
-* [ ] request body validation
-* [ ] remote reference support
-* [ ] url reference support
-* [ ] discriminator in combined types

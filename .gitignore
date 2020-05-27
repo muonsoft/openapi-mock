@@ -1,22 +1,6 @@
-###> symfony/framework-bundle ###
-/.env
-/public/bundles/
 /var/
 /vendor/
-###< symfony/framework-bundle ###
 
-###> behat/symfony2-extension ###
-behat.yml
-###< behat/symfony2-extension ###
-
-###> phpunit/phpunit ###
-/phpunit.xml
-.phpunit.result.cache
-###< phpunit/phpunit ###
-
-###> friendsofphp/php-cs-fixer ###
-/.php_cs
-/.php_cs.cache
-###< friendsofphp/php-cs-fixer ###
-
-docker-compose.override.yml
+# compiled application
+/cmd/openapi-mock/openapi-mock
+/cmd/openapi-mock/openapi-mock.*

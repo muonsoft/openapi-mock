@@ -1,0 +1,32 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity'
+    post:
+      responses:
+        201:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/entity'
+
+components:
+  schemas:
+    entity:
+      type: object
+      required:
+        - key
+      properties:
+        key:
+          type: string

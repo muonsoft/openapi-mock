@@ -1,0 +1,164 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - rangedInteger
+                  - rangedFloat
+                  - enum
+                  - date
+                  - dateTime
+                  - uuid
+                  - email
+                  - uri
+                  - hostname
+                  - ipv4
+                  - ipv6
+                  - byte
+                  - shortString
+                  - longString
+                  - array
+                  - uniqueArrayOfObjects
+                  - freeForm
+                  - writeOnlyBoolean
+                  - writeOnlyInteger
+                  - writeOnlyNumber
+                  - writeOnlyString
+                  - writeOnlyArray
+                  - writeOnlyObject
+                properties:
+                  rangedInteger:
+                    type: integer
+                    minimum: 1
+                    maximum: 5
+                  rangedFloat:
+                    type: number
+                    minimum: 1.0
+                    maximum: 1.5
+                    multipleOf: 0.1
+                  enum:
+                    type: string
+                    enum:
+                      - enumValue1
+                      - enumValue2
+                      - enumValue3
+                  date:
+                    type: string
+                    format: date
+                  dateTime:
+                    type: string
+                    format: 'date-time'
+                  uuid:
+                    type: string
+                    format: uuid
+                  email:
+                    type: string
+                    format: email
+                  uri:
+                    type: string
+                    format: uri
+                  hostname:
+                    type: string
+                    format: hostname
+                  ipv4:
+                    type: string
+                    format: ipv4
+                  ipv6:
+                    type: string
+                    format: ipv6
+                  byte:
+                    type: string
+                    format: byte
+                  html:
+                    type: string
+                    format: html
+                  shortString:
+                    type: string
+                    minLength: 2
+                    maxLength: 4
+                  longString:
+                    type: string
+                    minLength: 100
+                    maxLength: 105
+                  array:
+                    type: array
+                    minItems: 5
+                    maxItems: 5
+                    items:
+                      type: integer
+                  uniqueArrayOfObjects:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    maxItems: 5
+                    items:
+                      type: object
+                      required:
+                        - key
+                      properties:
+                        key:
+                          type: string
+                          enum:
+                            - value
+                  freeForm:
+                    type: object
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties: {}
+                  freeFormWithBooleanOption:
+                    type: object
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties: true
+                  hashMap:
+                    type: object
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties:
+                      type: string
+                  fixedHashMap:
+                    type: object
+                    properties:
+                      default:
+                        type: string
+                        enum:
+                          - value
+                    required:
+                      - default
+                    minProperties: 1
+                    maxProperties: 1
+                    additionalProperties:
+                      type: string
+                      enum:
+                        - value
+                  writeOnlyBoolean:
+                    type: boolean
+                    writeOnly: true
+                  writeOnlyInteger:
+                    type: integer
+                    writeOnly: true
+                  writeOnlyNumber:
+                    type: number
+                    writeOnly: true
+                  writeOnlyString:
+                    type: string
+                    writeOnly: true
+                  writeOnlyArray:
+                    type: array
+                    writeOnly: true
+                    items:
+                      type: string
+                  writeOnlyObject:
+                    type: object
+                    writeOnly: true
+                    additionalProperties: true

@@ -1,0 +1,16 @@
+openapi: "3.0.0"
+info:
+  title: 'test'
+  version: 1.0.0
+paths:
+  /content:
+    get:
+      responses:
+        200:
+          description: 'test'
+          content:
+            text/plain:
+              schema:
+                type: string
+                enum:
+                  - value

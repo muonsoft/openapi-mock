@@ -1,0 +1,52 @@
+linters:
+  enable:
+    - asciicheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - godox
+    - goerr113
+    - gofmt
+    - golint
+    - gomodguard
+    - goprintffuncname
+    - gosec
+    - interfacer
+    - maligned
+    - misspell
+    - nakedret
+    - nestif
+    - nolintlint
+    - prealloc
+    - rowserrcheck
+    - scopelint
+    - stylecheck
+    - unconvert
+    - unparam
+    - whitespace
+
+issues:
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - funlen
+        - lll
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+        - scopelint
+        - gochecknoglobals
+        - goerr113
+    - path: internal/application/config/Configuration.go
+      linters:
+        - maligned

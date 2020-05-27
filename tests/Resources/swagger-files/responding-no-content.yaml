@@ -1,7 +1,0 @@
-openapi: "3.0.0"
-paths:
-  /content:
-    get:
-      responses:
-        204:
-          description: 'No content'

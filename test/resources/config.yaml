@@ -1,0 +1,21 @@
+openapi:
+  specification_url: './openapi-files/ValueGeneration.yaml'
+
+http:
+  cors_enabled: true
+  port: 8888
+  response_timeout: 0.5
+
+application:
+  debug: false
+  log_format: json
+  log_level: error
+
+generation:
+  default_min_float: -123.123
+  default_max_float: 123.123
+  default_min_int: -123
+  default_max_int: 123
+  null_probability: 0.8
+  suppress_errors: true
+  use_examples: if_present
