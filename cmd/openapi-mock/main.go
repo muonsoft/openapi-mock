@@ -7,12 +7,15 @@ import (
 	"os"
 )
 
-var version string
+var (
+	version   string
+	buildTime string
+)
 
 func main() {
 	arguments := os.Args[1:]
 	if len(arguments) > 0 && (arguments[0] == "-v" || arguments[0] == "--version") {
-		fmt.Printf("OpenAPI Mock server version %s.\n", version)
+		fmt.Printf("OpenAPI Mock server version %s built at %s.\n", version, buildTime)
 		os.Exit(0)
 	}
 
