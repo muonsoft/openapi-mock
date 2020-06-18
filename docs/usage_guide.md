@@ -156,7 +156,7 @@ Server port for listening HTTP connections.
 
 * **type**: `float` 
 * **key**: `http.response_timeout` 
-* **environment variable**: `SWAGGER_MOCK_RESPONSE_TIMEOUT` 
+* **environment variable**: `OPENAPI_MOCK_RESPONSE_TIMEOUT` 
 * **default value**: `1.0`
 * **possible values**: any float value more than `0`
 
@@ -168,7 +168,7 @@ Timeout in seconds for generating a mock response. If it is exceeded then HTTP s
 
 * **type**: `boolean` 
 * **key**: `application.debug` 
-* **environment variable**: `SWAGGER_MOCK_DEBUG` 
+* **environment variable**: `OPENAPI_MOCK_DEBUG` 
 * **default value**: `false`
 * **possible values**: `true` or `false` (using `0` or `1` is recommended for an environment variable)
 
@@ -187,8 +187,8 @@ If option is `tty` then logs will be printed in color-coded style (when TTY is a
 #### log_level
 
 * **type**: `string` 
-* **key**: `application.log_format` 
-* **environment variable**: `OPENAPI_MOCK_` 
+* **key**: `application.log_level` 
+* **environment variable**: `OPENAPI_MOCK_LOG_LEVEL` 
 * **default value**: `info`
 * **possible values**: `fatal`, `error`, `warning`, `info`, `debug`, `trace`
 
@@ -200,7 +200,7 @@ Error log level.
 
 * **type**: `float` 
 * **key**: `generation.default_min_float` 
-* **environment variable**: `SWAGGER_MOCK_DEFAULT_MIN_FLOAT` 
+* **environment variable**: `OPENAPI_MOCK_DEFAULT_MIN_FLOAT` 
 * **default value**: `-1.073741823e+09`
 * **possible values**: any 64-bit float
 
@@ -210,7 +210,7 @@ Default minimum value for float type.
 
 * **type**: `float` 
 * **key**: `generation.default_max_float` 
-* **environment variable**: `SWAGGER_MOCK_DEFAULT_MAX_FLOAT` 
+* **environment variable**: `OPENAPI_MOCK_DEFAULT_MAX_FLOAT` 
 * **default value**: `1.073741823e+09`
 * **possible values**: any 64-bit float
 
@@ -220,7 +220,7 @@ Default maximum value for float type.
 
 * **type**: `integer` 
 * **key**: `generation.default_min_int` 
-* **environment variable**: `SWAGGER_MOCK_DEFAULT_MIN_INT` 
+* **environment variable**: `OPENAPI_MOCK_DEFAULT_MIN_INT` 
 * **default value**: `0`
 * **possible values**: any 64-bit integer
 
@@ -230,7 +230,7 @@ Default minimum value for integer type.
 
 * **type**: `integer` 
 * **key**: `generation.default_max_int` 
-* **environment variable**: `SWAGGER_MOCK_DEFAULT_MAX_INT` 
+* **environment variable**: `OPENAPI_MOCK_DEFAULT_MAX_INT` 
 * **default value**: `2147483647`
 * **possible values**: any 64-bit integer
 
@@ -240,7 +240,7 @@ Default maximum value for integer type.
 
 * **type**: `float` 
 * **key**: `generation.null_probability` 
-* **environment variable**: `SWAGGER_MOCK_NULL_PROBABILITY` 
+* **environment variable**: `OPENAPI_MOCK_NULL_PROBABILITY` 
 * **default value**: `0.5`
 * **possible values**: from `0.0` to `1.0`
 
@@ -250,7 +250,7 @@ Probability for generating null values for nullable properties.
 
 * **type**: `boolean` 
 * **key**: `generation.suppress_errors` 
-* **environment variable**: `SWAGGER_MOCK_SUPPRESS_ERRORS` 
+* **environment variable**: `OPENAPI_MOCK_SUPPRESS_ERRORS` 
 * **default value**: `false`
 * **possible values**: `true` or `false` (using `0` or `1` is recommended for an environment variable)
 
@@ -260,7 +260,7 @@ When enabled, generation errors will be suppressed and default values used inste
 
 * **type**: `string` 
 * **key**: `generation.use_examples` 
-* **environment variable**: `SWAGGER_MOCK_USE_EXAMPLES` 
+* **environment variable**: `OPENAPI_MOCK_USE_EXAMPLES` 
 * **default value**: `no`
 * **possible values**: `no`, `if_present`, `exclusively`
 
