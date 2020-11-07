@@ -97,7 +97,7 @@ func (factory *Factory) CreateHTTPServer() (server.Server, error) {
 	specificationLoader := factory.CreateSpecificationLoader()
 	specification, err := specificationLoader.LoadFromURI(factory.configuration.SpecificationURL)
 	if err != nil {
-		return nil, fmt.Errorf("failed to load OpenAPI specification from '%s': %s", factory.configuration.SpecificationURL, err)
+		return nil, fmt.Errorf("failed to load OpenAPI specification from '%s': %w", factory.configuration.SpecificationURL, err)
 	}
 
 	logger.Infof("OpenAPI specification was successfully loaded from '%s'", factory.configuration.SpecificationURL)

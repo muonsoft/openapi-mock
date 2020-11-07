@@ -20,8 +20,8 @@ type Options struct {
 	Version           string
 	BuildTime         string
 	ConfigFilename    string
-	DryRun            bool
 	Arguments         []string
+	DryRun            bool
 	overrideArguments bool
 }
 
