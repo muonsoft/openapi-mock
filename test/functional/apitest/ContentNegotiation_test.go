@@ -1,13 +1,14 @@
 package apitest
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/muonsoft/api-testing/assertjson"
 	"github.com/muonsoft/api-testing/assertxml"
 	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func (suite *APISuite) TestContentNegotiation_OperationWithMultipleContentTypesAndJSONAcceptHeader_ExpectedContent() {
@@ -63,7 +64,7 @@ func (suite *APISuite) TestContentNegotiation_OperationWithMultipleContentTypesA
 			assert.Equal(t, test.expectedContentType, recorder.Header().Get("Content-Type"))
 			if test.expectedFormat == "json" {
 				assertjson.Has(t, recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
-					json.Node("$.key").EqualToTheString(test.expectedContent)
+					json.Node("/key").EqualToTheString(test.expectedContent)
 				})
 			} else {
 				assertxml.Has(t, recorder.Body.Bytes(), func(xml *assertxml.AssertXML) {

@@ -2,11 +2,12 @@ package data
 
 import (
 	"context"
-	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTextGenerator_GenerateDataBySchema_MaxLengthLessThanMinLength_Error(t *testing.T) {

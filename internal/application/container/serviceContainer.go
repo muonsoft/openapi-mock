@@ -1,6 +1,10 @@
 package container
 
 import (
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/gorilla/handlers"
@@ -14,9 +18,6 @@ import (
 	"github.com/muonsoft/openapi-mock/internal/server/middleware"
 	"github.com/sirupsen/logrus"
 	"github.com/unrolled/secure"
-	"log"
-	"net/http"
-	"os"
 )
 
 type serviceContainer struct {

@@ -2,9 +2,10 @@ package data
 
 import (
 	"context"
-	"github.com/getkin/kin-openapi/openapi3"
 	"math/rand"
 	"time"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 type MediaGenerator interface {

@@ -2,6 +2,8 @@ package content
 
 import (
 	"context"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	generatormock "github.com/muonsoft/openapi-mock/test/mocks/mock/generator"
@@ -9,7 +11,6 @@ import (
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type HTMLGeneratorSuite struct {

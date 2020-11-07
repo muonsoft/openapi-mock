@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/pkg/errors"
 	"syreclabs.com/go/faker"

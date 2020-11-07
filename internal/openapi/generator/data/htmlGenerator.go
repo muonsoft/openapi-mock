@@ -2,6 +2,7 @@ package data
 
 import (
 	"strings"
+
 	"syreclabs.com/go/faker"
 )
 

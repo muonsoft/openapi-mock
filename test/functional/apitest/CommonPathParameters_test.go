@@ -1,10 +1,11 @@
 package apitest
 
 import (
-	"github.com/muonsoft/api-testing/assertjson"
-	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/muonsoft/api-testing/assertjson"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
 )
 
 func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndGETRequest_RouteResolved() {
@@ -19,7 +20,7 @@ func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndGETReques
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
-		json.Node("$.key").EqualToTheString("getEntity")
+		json.Node("/key").EqualToTheString("getEntity")
 	})
 }
 
@@ -35,6 +36,6 @@ func (suite *APISuite) TestCommonPathParameters_CommonPathParametersAndPUTReques
 	suite.Equal(http.StatusOK, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
-		json.Node("$.key").EqualToTheString("putEntity")
+		json.Node("/key").EqualToTheString("putEntity")
 	})
 }

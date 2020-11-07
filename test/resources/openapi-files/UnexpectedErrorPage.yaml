@@ -20,7 +20,7 @@ paths:
                     uniqueItems: true
                     minItems: 2
                     maxItems: 2
-                    default: ['value']
+                    default: [ 'value' ]
                     items:
                       type: string
-                      enum: ['value']
+                      enum: [ 'value' ]

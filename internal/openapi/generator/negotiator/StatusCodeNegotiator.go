@@ -2,14 +2,15 @@ package negotiator
 
 import (
 	"context"
-	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/muonsoft/openapi-mock/pkg/logcontext"
-	"github.com/pkg/errors"
 	"math"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/muonsoft/openapi-mock/pkg/logcontext"
+	"github.com/pkg/errors"
 )
 
 type StatusCodeNegotiator interface {

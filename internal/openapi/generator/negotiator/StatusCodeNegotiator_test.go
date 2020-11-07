@@ -3,13 +3,14 @@ package negotiator
 import (
 	"context"
 	"errors"
+	"net/http"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"testing"
 )
 
 func TestStatusCodeNegotiator_NegotiateStatusCode_OnlySuccessfulResponses_ResponseWithMinCodeReturned(t *testing.T) {

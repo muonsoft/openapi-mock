@@ -2,8 +2,9 @@ package serializer
 
 import (
 	"errors"
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCoordinatingSerializer_Serialize_SupportedFormat_DataSerializedByFormatSerializer(t *testing.T) {

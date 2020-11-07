@@ -17,7 +17,7 @@ paths:
                 properties:
                   key:
                     type: string
-                    enum: ['json']
+                    enum: [ 'json' ]
             application/ld+json:
               schema:
                 type: object
@@ -26,7 +26,7 @@ paths:
                 properties:
                   key:
                     type: string
-                    enum: ['json ld']
+                    enum: [ 'json ld' ]
             application/xml:
               schema:
                 type: object
@@ -35,7 +35,7 @@ paths:
                 properties:
                   key:
                     type: string
-                    enum: ['xml']
+                    enum: [ 'xml' ]
             application/soap+xml:
               schema:
                 type: object
@@ -44,4 +44,4 @@ paths:
                 properties:
                   key:
                     type: string
-                    enum: ['soap xml']
+                    enum: [ 'soap xml' ]

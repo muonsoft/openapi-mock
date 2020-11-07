@@ -114,7 +114,7 @@ paths:
                     type: object
                     minProperties: 1
                     maxProperties: 1
-                    additionalProperties: {}
+                    additionalProperties: { }
                   freeFormWithBooleanOption:
                     type: object
                     minProperties: 1

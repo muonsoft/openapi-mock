@@ -1,9 +1,10 @@
 package serializer
 
 import (
-	"github.com/stretchr/testify/assert"
 	"math"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestJsonSerializer_Serialize_SerializableData_SerializedData(t *testing.T) {

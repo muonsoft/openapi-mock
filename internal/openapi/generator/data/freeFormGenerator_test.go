@@ -2,10 +2,11 @@ package data
 
 import (
 	"context"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/suite"
 	"syreclabs.com/go/faker"
-	"testing"
 )
 
 type FreeFormGeneratorSuite struct {

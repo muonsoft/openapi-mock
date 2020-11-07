@@ -1,9 +1,10 @@
 package handler
 
 import (
-	"github.com/getkin/kin-openapi/openapi3filter"
 	"net/http"
 	"strings"
+
+	"github.com/getkin/kin-openapi/openapi3filter"
 )
 
 type optionsHandler struct {

@@ -2,6 +2,7 @@ package console
 
 import (
 	"fmt"
+
 	"github.com/jessevdk/go-flags"
 	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"github.com/muonsoft/openapi-mock/internal/application/console/command/serve"

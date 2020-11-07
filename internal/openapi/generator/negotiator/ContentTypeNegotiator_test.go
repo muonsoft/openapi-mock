@@ -1,10 +1,11 @@
 package negotiator
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"testing"
+
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestContentTypeNegotiator_NegotiateContentType_GivenContentTypesAndRequest_ExpectedContentType(t *testing.T) {

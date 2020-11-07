@@ -1,8 +1,9 @@
 package data
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"reflect"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 type schemaMerger interface {

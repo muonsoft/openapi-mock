@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCORSHandler_ServeHTTP_RequestWithoutOrigin_RequestPassedToNextHandler(t *testing.T) {

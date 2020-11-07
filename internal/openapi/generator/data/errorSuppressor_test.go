@@ -3,13 +3,14 @@ package data
 import (
 	"context"
 	"errors"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func TestErrorSuppressor_GenerateDataBySchema_GeneratorReturnsValue_ValueReturned(t *testing.T) {

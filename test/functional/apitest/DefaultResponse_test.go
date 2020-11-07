@@ -1,10 +1,11 @@
 package apitest
 
 import (
-	"github.com/muonsoft/api-testing/assertjson"
-	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/muonsoft/api-testing/assertjson"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
 )
 
 func (suite *APISuite) TestDefaultResponse_OnlyDefaultResponse_500StatusAndDefaultContent() {
@@ -19,6 +20,6 @@ func (suite *APISuite) TestDefaultResponse_OnlyDefaultResponse_500StatusAndDefau
 	suite.Equal(http.StatusInternalServerError, recorder.Code)
 	suite.Equal("application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 	assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
-		json.Node("$.key").EqualToTheString("value")
+		json.Node("/key").EqualToTheString("value")
 	})
 }

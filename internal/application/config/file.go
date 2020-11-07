@@ -1,8 +1,12 @@
 package config
 
 import (
-	"gopkg.in/yaml.v2"
+	"fmt"
 	"io/ioutil"
+	"strings"
+
+	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"gopkg.in/yaml.v3"
 )
 
 type fileConfiguration struct {
@@ -18,15 +22,15 @@ type openapiConfiguration struct {
 }
 
 type httpConfiguration struct {
-	Port            *uint16 `json:"port" yaml:"port" valid:"range(1|65535)"`
+	Port            *uint16 `json:"port" yaml:"port"`
 	CORSEnabled     bool    `json:"cors_enabled" yaml:"cors_enabled"`
 	ResponseTimeout float64 `json:"response_timeout" yaml:"response_timeout"`
 }
 
 type applicationConfiguration struct {
 	Debug     bool   `json:"debug" yaml:"debug"`
-	LogFormat string `json:"log_format" yaml:"log_format" valid:"in(tty|json)"`
-	LogLevel  string `json:"log_level" yaml:"log_level" valid:"in(panic|fatal|error|warn|warning|info|debug|trace)"`
+	LogFormat string `json:"log_format" yaml:"log_format"`
+	LogLevel  string `json:"log_level" yaml:"log_level"`
 }
 
 type generationConfiguration struct {
@@ -36,7 +40,7 @@ type generationConfiguration struct {
 	DefaultMaxInt   *int64   `json:"default_max_int" yaml:"default_max_int"`
 	NullProbability *float64 `json:"null_probability" yaml:"null_probability"`
 	SuppressErrors  bool     `json:"suppress_errors" yaml:"suppress_errors"`
-	UseExamples     string   `json:"use_examples" yaml:"use_examples" valid:"in(no|if_present|exclusively)"`
+	UseExamples     string   `json:"use_examples" yaml:"use_examples"`
 }
 
 func loadFileConfiguration(filename string) (*fileConfiguration, error) {
@@ -52,4 +56,43 @@ func loadFileConfiguration(filename string) (*fileConfiguration, error) {
 	}
 
 	return &fileConfig, nil
+}
+
+var logFormats = []string{"tty", "json"}
+var logLevels = []string{"panic", "fatal", "error", "warn", "warning", "info", "debug", "trace"}
+var useExampleOptions = []string{"no", "if_present", "exclusively"}
+
+var invalidLogFormat = fmt.Sprintf("must be one of: %s", strings.Join(logFormats, ", "))
+var invalidLogLevel = fmt.Sprintf("must be one of: %s", strings.Join(logLevels, ", "))
+var invalidUseExample = fmt.Sprintf("must be one of: %s", strings.Join(useExampleOptions, ", "))
+
+func stringsAsInterfaces(ss []string) []interface{} {
+	ii := make([]interface{}, len(ss))
+	for i, s := range ss {
+		ii[i] = s
+	}
+	return ii
+}
+
+func (config *fileConfiguration) Validate() error {
+	return validation.Errors{
+		"http.port": validation.Validate(
+			config.HTTP.Port,
+			validation.Required.When(config.HTTP.Port != nil),
+			validation.Min(uint16(1)),
+			validation.Max(uint16(65535)),
+		),
+		"application.log_format": validation.Validate(
+			config.Application.LogFormat,
+			validation.In(stringsAsInterfaces(logFormats)...).Error(invalidLogFormat),
+		),
+		"application.log_level": validation.Validate(
+			config.Application.LogLevel,
+			validation.In(stringsAsInterfaces(logLevels)...).Error(invalidLogLevel),
+		),
+		"generation.use_examples": validation.Validate(
+			config.Generation.UseExamples,
+			validation.In(stringsAsInterfaces(useExampleOptions)...).Error(invalidUseExample),
+		),
+	}.Filter()
 }

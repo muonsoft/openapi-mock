@@ -2,11 +2,12 @@ package content
 
 import (
 	"context"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	generatormock "github.com/muonsoft/openapi-mock/test/mocks/mock/generator"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func TestMediaGenerator_GenerateContent_ResponseWithContent_GeneratedMediaDataReturned(t *testing.T) {
