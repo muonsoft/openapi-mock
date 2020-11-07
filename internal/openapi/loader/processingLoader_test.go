@@ -1,9 +1,10 @@
 package loader
 
 import (
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestProcessingLoader_LoadFromURI_ServerUrlHasSchemeAndHost_OnlyPathInServerUrl(t *testing.T) {

@@ -1,10 +1,11 @@
 package data
 
 import (
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestBase64Generator_GenerateBase64Text_NoRange_GeneratedTextWithDefaultMaxLength(t *testing.T) {

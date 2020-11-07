@@ -1,8 +1,9 @@
 package data
 
 import (
-	"github.com/pkg/errors"
 	"strings"
+
+	"github.com/pkg/errors"
 	"syreclabs.com/go/faker"
 )
 

@@ -2,12 +2,13 @@ package middleware
 
 import (
 	"context"
-	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
-	"github.com/sirupsen/logrus/hooks/test"
-	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
+	"github.com/sirupsen/logrus/hooks/test"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestContextualLoggerHandler_ServeHTTP_RequestIdInContext_LoggerSetToContext(t *testing.T) {

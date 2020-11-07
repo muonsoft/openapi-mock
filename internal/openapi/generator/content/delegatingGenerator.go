@@ -3,9 +3,10 @@ package content
 import (
 	"context"
 	"fmt"
+	"regexp"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/muonsoft/openapi-mock/internal/errors"
-	"regexp"
 )
 
 type delegatingGenerator struct {

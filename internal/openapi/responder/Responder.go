@@ -2,10 +2,11 @@ package responder
 
 import (
 	"context"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
-	"github.com/muonsoft/openapi-mock/internal/openapi/responder/serializer"
 	"net/http"
 	"regexp"
+
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/responder/serializer"
 )
 
 type Responder interface {

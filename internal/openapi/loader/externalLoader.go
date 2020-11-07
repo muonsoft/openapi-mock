@@ -1,8 +1,9 @@
 package loader
 
 import (
-	"github.com/getkin/kin-openapi/openapi3"
 	"net/url"
+
+	"github.com/getkin/kin-openapi/openapi3"
 )
 
 type externalLoader interface {

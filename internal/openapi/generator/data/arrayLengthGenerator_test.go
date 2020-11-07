@@ -1,8 +1,9 @@
 package data
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestRandomArrayLengthGenerator_GenerateLength_GivenRange_ExpectedLengths(t *testing.T) {

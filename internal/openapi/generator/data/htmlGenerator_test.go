@@ -1,9 +1,10 @@
 package data
 
 import (
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestHtmlGenerator_GenerateHTML_NoParams_GeneratedHTMLReturned(t *testing.T) {

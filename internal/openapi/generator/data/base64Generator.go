@@ -3,6 +3,7 @@ package data
 import (
 	"bytes"
 	"encoding/base64"
+
 	"syreclabs.com/go/faker"
 )
 

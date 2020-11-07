@@ -2,9 +2,10 @@ package data
 
 import (
 	"context"
+	"math"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/pkg/errors"
-	"math"
 )
 
 type integerGenerator struct {

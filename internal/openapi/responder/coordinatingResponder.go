@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
+	"regexp"
+	"strings"
+
 	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
 	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
 	"github.com/muonsoft/openapi-mock/internal/openapi/responder/serializer"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
-	"net/http"
-	"regexp"
-	"strings"
 )
 
 type coordinatingResponder struct {

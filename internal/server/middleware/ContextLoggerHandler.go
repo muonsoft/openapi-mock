@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	"net/http"
+
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type contextLoggerHandler struct {

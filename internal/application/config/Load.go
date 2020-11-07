@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/asaskevich/govalidator"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
-	"github.com/sirupsen/logrus"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/sirupsen/logrus"
 )
 
 func Load(filename string) (*Configuration, error) {
@@ -19,7 +19,7 @@ func Load(filename string) (*Configuration, error) {
 	updateConfigFromEnvironment(fileConfig)
 	autocorrectValues(filename, fileConfig)
 
-	_, err = govalidator.ValidateStruct(fileConfig)
+	err = fileConfig.Validate()
 	if err != nil {
 		return nil, &ErrInvalidConfiguration{ValidationError: err}
 	}

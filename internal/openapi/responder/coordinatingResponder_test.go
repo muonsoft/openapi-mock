@@ -3,13 +3,14 @@ package responder
 import (
 	"context"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
 	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
 	serializermock "github.com/muonsoft/openapi-mock/test/mocks/openapi/responder/serializer"
 	"github.com/stretchr/testify/assert"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 func TestWriteResponse_GivenResponse_SerializedDataWritten(t *testing.T) {

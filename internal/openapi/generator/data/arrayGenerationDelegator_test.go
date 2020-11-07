@@ -2,10 +2,11 @@ package data
 
 import (
 	"context"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type ArrayGenerationDelegatorSuite struct {

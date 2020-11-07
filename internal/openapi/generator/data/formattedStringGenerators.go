@@ -2,9 +2,10 @@ package data
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/gofrs/uuid"
 	"syreclabs.com/go/faker"
-	"time"
 )
 
 type stringGeneratorFunction func(minLength int, maxLength int) string

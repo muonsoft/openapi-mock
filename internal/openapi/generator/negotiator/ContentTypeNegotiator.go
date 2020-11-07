@@ -1,10 +1,11 @@
 package negotiator
 
 import (
+	"net/http"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/go-ozzo/ozzo-routing/v2/content"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
-	"net/http"
 )
 
 type ContentTypeNegotiator interface {

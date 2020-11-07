@@ -2,8 +2,9 @@ package logcontext
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
+
+	"github.com/sirupsen/logrus"
 )
 
 type key int

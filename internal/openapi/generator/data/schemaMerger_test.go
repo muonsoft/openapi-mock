@@ -1,9 +1,10 @@
 package data
 
 import (
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 var (

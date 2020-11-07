@@ -2,9 +2,10 @@ package data
 
 import (
 	"context"
+	"testing"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (

@@ -1,8 +1,9 @@
 package serializer
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestXmlSerializer_Serialize_SerializableData_SerializedData(t *testing.T) {

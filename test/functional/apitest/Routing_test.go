@@ -1,12 +1,13 @@
 package apitest
 
 import (
-	"github.com/muonsoft/api-testing/assertjson"
-	"github.com/muonsoft/openapi-mock/internal/application/config"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/muonsoft/api-testing/assertjson"
+	"github.com/muonsoft/openapi-mock/internal/application/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func (suite *APISuite) TestRouting_ValidRoute_200StatusAndExpectedContent() {
@@ -52,7 +53,7 @@ func (suite *APISuite) TestRouting_ValidRoute_200StatusAndExpectedContent() {
 			assert.Equal(t, http.StatusOK, recorder.Code)
 			assert.Equal(t, "application/json; charset=utf-8", recorder.Header().Get("Content-Type"))
 			assertjson.Has(suite.T(), recorder.Body.Bytes(), func(json *assertjson.AssertJSON) {
-				json.Node("$.key").EqualToTheString(test.expectedContent)
+				json.Node("/key").EqualToTheString(test.expectedContent)
 			})
 		})
 	}

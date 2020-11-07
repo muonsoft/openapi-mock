@@ -1,13 +1,14 @@
 package middleware
 
 import (
-	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
 	"testing"
+
+	httpmock "github.com/muonsoft/openapi-mock/test/mocks/http"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 const uuidRegExp = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"

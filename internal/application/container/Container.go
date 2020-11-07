@@ -1,11 +1,12 @@
 package container
 
 import (
+	"net/http"
+
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/muonsoft/openapi-mock/internal/openapi/loader"
 	"github.com/muonsoft/openapi-mock/internal/server"
 	"github.com/sirupsen/logrus"
-	"net/http"
 )
 
 type Container interface {

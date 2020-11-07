@@ -2,8 +2,9 @@ package middleware
 
 import (
 	"context"
-	"github.com/gofrs/uuid"
 	"net/http"
+
+	"github.com/gofrs/uuid"
 )
 
 type key int

@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
-	"github.com/sirupsen/logrus"
 	"math"
 	"time"
+
+	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/sirupsen/logrus"
 )
 
 type Configuration struct {

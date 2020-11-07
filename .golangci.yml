@@ -5,7 +5,6 @@ linters:
     - depguard
     - dogsled
     - funlen
-    - gochecknoglobals
     - gochecknoinits
     - gocognit
     - goconst
@@ -18,7 +17,6 @@ linters:
     - golint
     - gomodguard
     - goprintffuncname
-    - gosec
     - interfacer
     - maligned
     - misspell
@@ -50,6 +48,3 @@ issues:
     - path: internal/application/config/Configuration.go
       linters:
         - maligned
-    - path: cmd/openapi-mock/main.go
-      linters:
-        - gochecknoglobals

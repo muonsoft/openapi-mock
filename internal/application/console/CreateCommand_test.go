@@ -1,10 +1,11 @@
 package console
 
 import (
+	"testing"
+
 	"github.com/muonsoft/openapi-mock/internal/application/console/command/serve"
 	"github.com/muonsoft/openapi-mock/internal/application/console/command/validate"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 const (

@@ -2,10 +2,11 @@ package data
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"syreclabs.com/go/faker"
-	"testing"
 )
 
 func TestCamelCaseKeyGenerator_GenerateKey_NoParams_CamelCaseKey(t *testing.T) {

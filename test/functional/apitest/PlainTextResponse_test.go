@@ -1,9 +1,10 @@
 package apitest
 
 import (
-	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"net/http"
 	"net/http/httptest"
+
+	"github.com/muonsoft/openapi-mock/internal/application/config"
 )
 
 func (suite *APISuite) TestPlainTextResponse_TextPlainResponseSchema_PlainTextGenerated() {
