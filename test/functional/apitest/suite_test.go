@@ -7,7 +7,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/muonsoft/openapi-mock/internal/application/config"
-	"github.com/muonsoft/openapi-mock/internal/application/container"
+	"github.com/muonsoft/openapi-mock/internal/application/di"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -22,13 +22,13 @@ func TestApi(t *testing.T) {
 func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) http.Handler {
 	configuration.ResponseTimeout = time.Second
 	specificationPath := "./../../resources/openapi-files/" + configuration.SpecificationURL
-	diContainer := container.New(&configuration)
-	specificationLoader := diContainer.CreateSpecificationLoader()
+	factory := di.NewFactory(&configuration)
+	specificationLoader := factory.CreateSpecificationLoader()
 	specification, err := specificationLoader.LoadFromURI(specificationPath)
 	if err != nil {
-		panic(err)
+		suite.T().Fatal(err)
 	}
 	router := openapi3filter.NewRouter().WithSwagger(specification)
 
-	return diContainer.CreateHTTPHandler(router)
+	return factory.CreateHTTPHandler(router)
 }

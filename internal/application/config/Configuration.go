@@ -18,6 +18,7 @@ type Configuration struct {
 	ResponseTimeout time.Duration
 
 	// Application options
+	DryRun    bool
 	Debug     bool
 	LogFormat string
 	LogLevel  logrus.Level

@@ -1,23 +1,20 @@
-package console
+package application
 
 import (
 	"testing"
 
-	"github.com/muonsoft/openapi-mock/internal/application/console/command/serve"
-	"github.com/muonsoft/openapi-mock/internal/application/console/command/validate"
 	"github.com/stretchr/testify/assert"
 )
 
 const (
-	testSpecificationURL = "./../../../test/resources/openapi-files/ValueGeneration.yaml"
-	testConfigFilename   = "./../../../test/resources/config.yaml"
+	testSpecificationURL = "./../../test/resources/openapi-files/ValueGeneration.yaml"
+	testConfigFilename   = "./../../test/resources/config.yaml"
 )
 
-func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
+func TestExecute_ValidArguments_NoError(t *testing.T) {
 	tests := []struct {
-		name            string
-		arguments       []string
-		expectedCommand Command
+		name      string
+		arguments []string
 	}{
 		{
 			"serve command with short url",
@@ -26,7 +23,6 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"-u",
 				testSpecificationURL,
 			},
-			&serve.Command{},
 		},
 		{
 			"serve command with long url",
@@ -35,7 +31,6 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"--specification-url",
 				testSpecificationURL,
 			},
-			&serve.Command{},
 		},
 		{
 			"serve command with url from config (short)",
@@ -44,7 +39,6 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"-c",
 				testConfigFilename,
 			},
-			&serve.Command{},
 		},
 		{
 			"serve command with url from config (long)",
@@ -53,7 +47,6 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"--configuration",
 				testConfigFilename,
 			},
-			&serve.Command{},
 		},
 		{
 			"validate command with short url",
@@ -62,7 +55,6 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"-u",
 				testSpecificationURL,
 			},
-			&validate.Command{},
 		},
 		{
 			"validate command with long url",
@@ -71,47 +63,46 @@ func TestCreateCommand_ValidArguments_ExpectedCommandCreated(t *testing.T) {
 				"--specification-url",
 				testSpecificationURL,
 			},
-			&validate.Command{},
-		},
-	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			command, err := CreateCommand(test.arguments)
-
-			assert.NoError(t, err)
-			assert.IsType(t, test.expectedCommand, command)
-		})
-	}
-}
-
-func TestCreateCommand_InvalidArguments_Error(t *testing.T) {
-	tests := []struct {
-		name      string
-		arguments []string
-		exitCode  int
-	}{
-		{
-			"empty arguments",
-			[]string{},
-			1,
 		},
 		{
 			"help command with short argument",
 			[]string{"-h"},
-			0,
 		},
 		{
 			"help command with long argument",
 			[]string{"--help"},
-			0,
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			command, err := CreateCommand(test.arguments)
+			args := append(test.arguments, "--dry-run")
 
-			assert.Nil(t, command)
-			assert.Equal(t, test.exitCode, err.(*Error).ExitCode)
+			err := Execute(Arguments(args))
+
+			assert.NoError(t, err)
+		})
+	}
+}
+
+func TestExecute_InvalidArguments_Error(t *testing.T) {
+	tests := []struct {
+		name      string
+		arguments []string
+		error     string
+	}{
+		{
+			"no specification url",
+			[]string{"serve"},
+			"failed to load OpenAPI specification from '': open : no such file or directory",
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			args := append(test.arguments, "--dry-run")
+
+			err := Execute(Arguments(args))
+
+			assert.EqualError(t, err, test.error)
 		})
 	}
 }

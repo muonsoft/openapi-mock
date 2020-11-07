@@ -1,6 +1,8 @@
-package container
+package di
 
 import (
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -20,45 +22,42 @@ import (
 	"github.com/unrolled/secure"
 )
 
-type serviceContainer struct {
+type Factory struct {
 	configuration *config.Configuration
 	logger        logrus.FieldLogger
 }
 
-func New(configuration *config.Configuration) Container {
+func NewFactory(configuration *config.Configuration) *Factory {
 	logger := createLogger(configuration)
 
-	container := &serviceContainer{
+	return &Factory{
 		configuration: configuration,
 		logger:        logger,
 	}
-
-	container.init()
-	return container
 }
 
-func (container *serviceContainer) init() {
+func init() {
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 	openapi3.DefineStringFormat("html", "<[^>]+>|&[^;]+;")
 }
 
-func (container *serviceContainer) GetLogger() logrus.FieldLogger {
-	return container.logger
+func (factory *Factory) GetLogger() logrus.FieldLogger {
+	return factory.logger
 }
 
-func (container *serviceContainer) CreateSpecificationLoader() loader.SpecificationLoader {
+func (factory *Factory) CreateSpecificationLoader() loader.SpecificationLoader {
 	return loader.New()
 }
 
-func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Router) http.Handler {
+func (factory *Factory) CreateHTTPHandler(router *openapi3filter.Router) http.Handler {
 	generatorOptions := data.Options{
-		UseExamples:     container.configuration.UseExamples,
-		NullProbability: container.configuration.NullProbability,
-		DefaultMinInt:   container.configuration.DefaultMinInt,
-		DefaultMaxInt:   container.configuration.DefaultMaxInt,
-		DefaultMinFloat: container.configuration.DefaultMinFloat,
-		DefaultMaxFloat: container.configuration.DefaultMaxFloat,
-		SuppressErrors:  container.configuration.SuppressErrors,
+		UseExamples:     factory.configuration.UseExamples,
+		NullProbability: factory.configuration.NullProbability,
+		DefaultMinInt:   factory.configuration.DefaultMinInt,
+		DefaultMaxInt:   factory.configuration.DefaultMaxInt,
+		DefaultMinFloat: factory.configuration.DefaultMinFloat,
+		DefaultMaxFloat: factory.configuration.DefaultMaxFloat,
+		SuppressErrors:  factory.configuration.SuppressErrors,
 	}
 
 	dataGeneratorInstance := data.New(generatorOptions)
@@ -67,7 +66,7 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 
 	var httpHandler http.Handler
 	httpHandler = handler.NewResponseGeneratorHandler(router, responseGeneratorInstance, apiResponder)
-	if container.configuration.CORSEnabled {
+	if factory.configuration.CORSEnabled {
 		httpHandler = middleware.CORSHandler(httpHandler)
 	}
 
@@ -79,43 +78,48 @@ func (container *serviceContainer) CreateHTTPHandler(router *openapi3filter.Rout
 	})
 
 	httpHandler = secureMiddleware.Handler(httpHandler)
-	httpHandler = middleware.ContextLoggerHandler(container.logger, httpHandler)
+	httpHandler = middleware.ContextLoggerHandler(factory.logger, httpHandler)
 	httpHandler = middleware.TracingHandler(httpHandler)
 	httpHandler = handlers.CombinedLoggingHandler(os.Stdout, httpHandler)
 	httpHandler = handlers.RecoveryHandler(
-		handlers.RecoveryLogger(container.logger),
+		handlers.RecoveryLogger(factory.logger),
 		handlers.PrintRecoveryStack(true),
 	)(httpHandler)
-	httpHandler = http.TimeoutHandler(httpHandler, container.configuration.ResponseTimeout, "")
+	httpHandler = http.TimeoutHandler(httpHandler, factory.configuration.ResponseTimeout, "")
 
 	return httpHandler
 }
 
-func (container *serviceContainer) CreateHTTPServer() server.Server {
-	logger := container.GetLogger()
+func (factory *Factory) CreateHTTPServer() (server.Server, error) {
+	logger := factory.GetLogger()
 	loggerWriter := logger.(*logrus.Logger).Writer()
 
-	specificationLoader := container.CreateSpecificationLoader()
-	specification, err := specificationLoader.LoadFromURI(container.configuration.SpecificationURL)
+	specificationLoader := factory.CreateSpecificationLoader()
+	specification, err := specificationLoader.LoadFromURI(factory.configuration.SpecificationURL)
 	if err != nil {
-		log.Fatalf("failed to load OpenAPI specification from '%s': %s", container.configuration.SpecificationURL, err)
-	} else {
-		logger.Infof("OpenAPI specification was successfully loaded from '%s'", container.configuration.SpecificationURL)
+		return nil, fmt.Errorf("failed to load OpenAPI specification from '%s': %s", factory.configuration.SpecificationURL, err)
 	}
 
+	logger.Infof("OpenAPI specification was successfully loaded from '%s'", factory.configuration.SpecificationURL)
+
 	router := openapi3filter.NewRouter().WithSwagger(specification)
-	httpHandler := container.CreateHTTPHandler(router)
+	httpHandler := factory.CreateHTTPHandler(router)
 
 	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
-	httpServer := server.New(container.configuration.Port, httpHandler, serverLogger)
+	httpServer := server.New(factory.configuration.Port, httpHandler, serverLogger)
 
-	logger.WithFields(container.configuration.Dump()).Info("OpenAPI mock server was created")
+	logger.WithFields(factory.configuration.Dump()).Info("OpenAPI mock server was created")
 
-	return httpServer
+	return httpServer, nil
 }
 
 func createLogger(configuration *config.Configuration) *logrus.Logger {
 	logger := logrus.New()
+	if configuration.DryRun {
+		logger.Out = ioutil.Discard
+		return logger
+	}
+
 	logger.SetLevel(configuration.LogLevel)
 
 	if configuration.LogFormat == "json" {
