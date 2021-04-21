@@ -29,7 +29,7 @@ Runs a local server with local specification file.
 Set URL to specification file via environment variable.
 
 ```bash
-export OPENAPI_MOCK_SPECIFICATION_FILE=path/to/your/openapi-specification.yaml
+export OPENAPI_MOCK_SPECIFICATION_URL=path/to/your/openapi-specification.yaml
 ./openapi-mock serve
 ```
 
@@ -70,7 +70,7 @@ Options loaded from a file can be overridden by environment variables.
 
 ```bash
 # this will override any options loaded from `openapi-mock.yaml`
-export OPENAPI_MOCK_SPECIFICATION_FILE=path/to/your/openapi-specification.yaml
+export OPENAPI_MOCK_SPECIFICATION_URL=path/to/your/openapi-specification.yaml
 ./openapi-mock serve --configuration openapi-mock.yaml
 ``` 
 
@@ -78,7 +78,7 @@ Also, if you specify a path to an OpenAPI specification via console argument `--
 
 ```bash
 # OpenAPI specification will be loaded from `http://your.domain/openapi-specification.yaml`
-export OPENAPI_MOCK_SPECIFICATION_FILE=path/to/your/openapi-specification.yaml
+export OPENAPI_MOCK_SPECIFICATION_URL=path/to/your/openapi-specification.yaml
 ./openapi-mock serve --configuration openapi-mock.yaml --specification-url http://your.domain/openapi-specification.yaml
 ``` 
 
