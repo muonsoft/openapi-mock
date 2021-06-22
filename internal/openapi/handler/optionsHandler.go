@@ -4,16 +4,16 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/getkin/kin-openapi/routers"
 )
 
 type optionsHandler struct {
-	router      *openapi3filter.Router
+	router      routers.Router
 	nextHandler http.Handler
 }
 
 func (handler *optionsHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	if request.Method == "OPTIONS" {
+	if request.Method == http.MethodOptions {
 		handler.respond(writer, request)
 	} else {
 		handler.nextHandler.ServeHTTP(writer, request)
@@ -22,11 +22,12 @@ func (handler *optionsHandler) ServeHTTP(writer http.ResponseWriter, request *ht
 
 func (handler *optionsHandler) respond(writer http.ResponseWriter, request *http.Request) {
 	var allowedMethods []string
-	possibleMethods := []string{"GET", "POST", "PUT", "PATCH", "DELETE"}
+	possibleMethods := []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch, http.MethodDelete}
 
 	// temporary solution until new routing based on patterns
 	for _, method := range possibleMethods {
-		_, _, err := handler.router.FindRoute(method, request.URL)
+		request, _ = http.NewRequest(method, request.URL.String(), request.Body)
+		_, _, err := handler.router.FindRoute(request)
 		if err == nil {
 			allowedMethods = append(allowedMethods, method)
 		}

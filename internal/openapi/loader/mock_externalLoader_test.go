@@ -15,15 +15,15 @@ type mockExternalLoader struct {
 }
 
 // LoadSwaggerFromFile provides a mock function with given fields: path
-func (_m *mockExternalLoader) LoadSwaggerFromFile(path string) (*openapi3.Swagger, error) {
+func (_m *mockExternalLoader) LoadFromFile(path string) (*openapi3.T, error) {
 	ret := _m.Called(path)
 
-	var r0 *openapi3.Swagger
-	if rf, ok := ret.Get(0).(func(string) *openapi3.Swagger); ok {
+	var r0 *openapi3.T
+	if rf, ok := ret.Get(0).(func(string) *openapi3.T); ok {
 		r0 = rf(path)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*openapi3.Swagger)
+			r0 = ret.Get(0).(*openapi3.T)
 		}
 	}
 
@@ -38,15 +38,15 @@ func (_m *mockExternalLoader) LoadSwaggerFromFile(path string) (*openapi3.Swagge
 }
 
 // LoadSwaggerFromURI provides a mock function with given fields: location
-func (_m *mockExternalLoader) LoadSwaggerFromURI(location *url.URL) (*openapi3.Swagger, error) {
+func (_m *mockExternalLoader) LoadFromURI(location *url.URL) (*openapi3.T, error) {
 	ret := _m.Called(location)
 
-	var r0 *openapi3.Swagger
-	if rf, ok := ret.Get(0).(func(*url.URL) *openapi3.Swagger); ok {
+	var r0 *openapi3.T
+	if rf, ok := ret.Get(0).(func(*url.URL) *openapi3.T); ok {
 		r0 = rf(location)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*openapi3.Swagger)
+			r0 = ret.Get(0).(*openapi3.T)
 		}
 	}
 

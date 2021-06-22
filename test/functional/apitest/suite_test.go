@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/getkin/kin-openapi/routers/legacy"
 	"github.com/muonsoft/openapi-mock/internal/application/config"
 	"github.com/muonsoft/openapi-mock/internal/application/di"
 	"github.com/stretchr/testify/suite"
@@ -26,9 +26,12 @@ func (suite *APISuite) createOpenAPIHandler(configuration config.Configuration) 
 	specificationLoader := factory.CreateSpecificationLoader()
 	specification, err := specificationLoader.LoadFromURI(specificationPath)
 	if err != nil {
-		suite.T().Fatal(err)
+		suite.T().Fatal("failed to load specification:", err)
 	}
-	router := openapi3filter.NewRouter().WithSwagger(specification)
+	router, err := legacy.NewRouter(specification)
+	if err != nil {
+		suite.T().Fatal("failed to set up routing:", err)
+	}
 
 	return factory.CreateHTTPHandler(router)
 }

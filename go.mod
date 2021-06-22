@@ -1,11 +1,11 @@
 module github.com/muonsoft/openapi-mock
 
-go 1.15
+go 1.16
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef // indirect
 	github.com/clbanning/mxj v1.8.4
-	github.com/getkin/kin-openapi v0.26.0
+	github.com/getkin/kin-openapi v0.63.0
 	github.com/go-ozzo/ozzo-routing/v2 v2.3.0
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
 	github.com/gofrs/uuid v3.3.0+incompatible
