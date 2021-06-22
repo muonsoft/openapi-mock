@@ -51,7 +51,7 @@ func TestStringGenerator_GenerateDataBySchema_SchemaWithPattern_RegExpGeneratedV
 	stringGeneratorInstance := &stringGenerator{}
 	schema := &openapi3.Schema{
 		Type:    "string",
-		Pattern: "/ABC/",
+		Pattern: "^ABC$",
 	}
 
 	data, err := stringGeneratorInstance.GenerateDataBySchema(context.Background(), schema)
