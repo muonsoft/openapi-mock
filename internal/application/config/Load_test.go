@@ -93,7 +93,7 @@ func TestLoad_InvalidFile_Error(t *testing.T) {
 	config, err := Load("errors.go")
 
 	assert.Nil(t, config)
-	assert.EqualError(t, err, "failed to load configuration: yaml: line 16: mapping values are not allowed in this context")
+	assert.EqualError(t, err, "failed to load configuration: yaml: line 15: mapping values are not allowed in this context")
 }
 
 func TestLoad_FileWithInvalidValues_Error(t *testing.T) {
@@ -106,7 +106,7 @@ func TestLoad_FileWithInvalidValues_Error(t *testing.T) {
 		"invalid option 'application.log_format': must be one of: tty, json; "+
 		"invalid option 'application.log_level': must be one of: panic, fatal, error, warn, warning, info, debug, trace; "+
 		"invalid option 'generation.use_examples': must be one of: no, if_present, exclusively; "+
-		"invalid option 'http.port': cannot be blank")
+		"invalid option 'http.port': value should be between 1 and 65535 if present")
 }
 
 func TestLoad_DebugIsOn_LogLevelIsTrace(t *testing.T) {

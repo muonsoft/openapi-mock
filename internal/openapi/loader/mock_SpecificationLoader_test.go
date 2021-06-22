@@ -13,15 +13,15 @@ type MockSpecificationLoader struct {
 }
 
 // LoadFromURI provides a mock function with given fields: uri
-func (_m *MockSpecificationLoader) LoadFromURI(uri string) (*openapi3.Swagger, error) {
+func (_m *MockSpecificationLoader) LoadFromURI(uri string) (*openapi3.T, error) {
 	ret := _m.Called(uri)
 
-	var r0 *openapi3.Swagger
-	if rf, ok := ret.Get(0).(func(string) *openapi3.Swagger); ok {
+	var r0 *openapi3.T
+	if rf, ok := ret.Get(0).(func(string) *openapi3.T); ok {
 		r0 = rf(uri)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*openapi3.Swagger)
+			r0 = ret.Get(0).(*openapi3.T)
 		}
 	}
 

@@ -12,8 +12,8 @@ func TestAutoLoader_LoadFromURI_FileName_SpecificationLoadedFromFile(t *testing.
 	const filename = "/file/path/specification.json"
 	swaggerLoader := &mockExternalLoader{}
 	loader := &autoLoader{loader: swaggerLoader}
-	expectedSwagger := &openapi3.Swagger{}
-	swaggerLoader.On("LoadSwaggerFromFile", filename).Return(expectedSwagger, nil)
+	expectedSwagger := &openapi3.T{}
+	swaggerLoader.On("LoadFromFile", filename).Return(expectedSwagger, nil)
 
 	swagger, err := loader.LoadFromURI(filename)
 
@@ -25,8 +25,8 @@ func TestAutoLoader_LoadFromURI_FileName_SpecificationLoadedFromFile(t *testing.
 func TestAutoLoader_LoadFromURI_URL_SpecificationLoadedFromURL(t *testing.T) {
 	swaggerLoader := &mockExternalLoader{}
 	loader := &autoLoader{loader: swaggerLoader}
-	expectedSwagger := &openapi3.Swagger{}
-	swaggerLoader.On("LoadSwaggerFromURI", mock.Anything).Return(expectedSwagger, nil)
+	expectedSwagger := &openapi3.T{}
+	swaggerLoader.On("LoadFromURI", mock.Anything).Return(expectedSwagger, nil)
 
 	swagger, err := loader.LoadFromURI("http://localhost/specification.json")
 

@@ -10,7 +10,7 @@ type processingLoader struct {
 	loader SpecificationLoader
 }
 
-func (loader *processingLoader) LoadFromURI(uri string) (*openapi3.Swagger, error) {
+func (loader *processingLoader) LoadFromURI(uri string) (*openapi3.T, error) {
 	specification, err := loader.loader.LoadFromURI(uri)
 	if err != nil {
 		return nil, err

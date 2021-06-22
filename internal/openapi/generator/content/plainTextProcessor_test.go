@@ -21,7 +21,7 @@ type PlainTextGeneratorSuite struct {
 	logger *logrus.Logger
 	hook   *test.Hook
 
-	examples map[string]*openapi3.ExampleRef
+	examples openapi3.Examples
 
 	plainTextGenerator *plainTextGenerator
 }
@@ -30,7 +30,7 @@ func (suite *PlainTextGeneratorSuite) SetupTest() {
 	suite.contentGenerator = &generatormock.MediaGenerator{}
 	suite.logger, suite.hook = test.NewNullLogger()
 
-	suite.examples = map[string]*openapi3.ExampleRef{}
+	suite.examples = make(openapi3.Examples)
 
 	suite.plainTextGenerator = &plainTextGenerator{
 		contentGenerator: suite.contentGenerator,

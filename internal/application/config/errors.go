@@ -2,48 +2,41 @@ package config
 
 import (
 	"fmt"
-	"sort"
 	"strings"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/muonsoft/validation"
 )
 
-type ErrLoadFailed struct {
+type LoadingFailedError struct {
 	Previous error
 }
 
-func (err *ErrLoadFailed) Error() string {
+func (err *LoadingFailedError) Error() string {
 	return fmt.Sprintf("failed to load configuration: %s", err.Previous.Error())
 }
 
-func (err *ErrLoadFailed) Unwrap() error {
+func (err *LoadingFailedError) Unwrap() error {
 	return err.Previous
 }
 
-type ErrInvalidConfiguration struct {
+type InvalidConfigurationError struct {
 	ValidationError error
 }
 
-func (err *ErrInvalidConfiguration) Error() string {
-	violations := err.ValidationError.(validation.Errors)
-
-	keys := make([]string, 0, len(violations))
-	for key := range violations {
-		keys = append(keys, key)
+func (err *InvalidConfigurationError) Error() string {
+	violations, ok := validation.UnwrapViolationList(err.ValidationError)
+	if !ok {
+		return fmt.Sprintf("failed to validate configuration: %s", err.ValidationError)
 	}
-	sort.Strings(keys)
 
 	var message strings.Builder
 	message.WriteString("configuration has invalid values: ")
 
-	for i, key := range keys {
-		err := violations[key]
-		if err != nil {
-			if i > 0 {
-				message.WriteString("; ")
-			}
-			message.WriteString(fmt.Sprintf("invalid option '%s': %s", key, err.Error()))
+	for violation := violations.First(); violation != nil; violation = violation.Next() {
+		if violation != violations.First() {
+			message.WriteString("; ")
 		}
+		message.WriteString(fmt.Sprintf("invalid option '%s': %s", violation.PropertyPath().String(), violation.Message()))
 	}
 
 	return message.String()

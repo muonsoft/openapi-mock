@@ -11,7 +11,7 @@ func TestProcessingLoader_LoadFromURI_ServerUrlHasSchemeAndHost_OnlyPathInServer
 	const uri = "uri"
 	loaderMock := &MockSpecificationLoader{}
 	loader := &processingLoader{loader: loaderMock}
-	originalSwagger := &openapi3.Swagger{
+	originalSwagger := &openapi3.T{
 		Servers: *givenServers(),
 		Paths: map[string]*openapi3.PathItem{
 			"path": {

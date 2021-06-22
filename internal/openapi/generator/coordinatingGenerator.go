@@ -3,7 +3,7 @@ package generator
 import (
 	"net/http"
 
-	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/getkin/kin-openapi/routers"
 	"github.com/muonsoft/openapi-mock/internal/openapi/generator/content"
 	"github.com/muonsoft/openapi-mock/internal/openapi/generator/negotiator"
 	"github.com/pkg/errors"
@@ -15,7 +15,7 @@ type coordinatingGenerator struct {
 	contentGenerator      content.Generator
 }
 
-func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, route *openapi3filter.Route) (*Response, error) {
+func (generator *coordinatingGenerator) GenerateResponse(request *http.Request, route *routers.Route) (*Response, error) {
 	responseKey, statusCode, err := generator.statusCodeNegotiator.NegotiateStatusCode(request, route.Operation.Responses)
 	if err != nil {
 		return nil, errors.WithMessage(err, "[coordinatingGenerator] failed to negotiate response")

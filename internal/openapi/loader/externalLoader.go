@@ -7,6 +7,6 @@ import (
 )
 
 type externalLoader interface {
-	LoadSwaggerFromURI(location *url.URL) (*openapi3.Swagger, error)
-	LoadSwaggerFromFile(path string) (*openapi3.Swagger, error)
+	LoadFromURI(location *url.URL) (*openapi3.T, error)
+	LoadFromFile(path string) (*openapi3.T, error)
 }

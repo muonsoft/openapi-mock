@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/getkin/kin-openapi/routers"
 	contentmock "github.com/muonsoft/openapi-mock/test/mocks/openapi/generator/content"
 	negotiatormock "github.com/muonsoft/openapi-mock/test/mocks/openapi/generator/negotiator"
 	"github.com/stretchr/testify/mock"
@@ -47,7 +47,7 @@ func (suite *CoordinatingGeneratorSuite) TestGenerateResponse_RouteWithValidResp
 			"contentType": mediaType,
 		},
 	}
-	route := &openapi3filter.Route{}
+	route := &routers.Route{}
 	route.Operation = &openapi3.Operation{}
 	route.Operation.Responses = openapi3.Responses{
 		"200": {
@@ -75,7 +75,7 @@ func (suite *CoordinatingGeneratorSuite) TestGenerateResponse_ContentGenerationE
 			"contentType": mediaType,
 		},
 	}
-	route := &openapi3filter.Route{}
+	route := &routers.Route{}
 	route.Operation = &openapi3.Operation{}
 	route.Operation.Responses = openapi3.Responses{
 		"200": {
@@ -101,7 +101,7 @@ func (suite *CoordinatingGeneratorSuite) TestGenerateResponse_StatusCodeNegotiat
 			"contentType": mediaType,
 		},
 	}
-	route := &openapi3filter.Route{}
+	route := &routers.Route{}
 	route.Operation = &openapi3.Operation{}
 	route.Operation.Responses = openapi3.Responses{
 		"200": {

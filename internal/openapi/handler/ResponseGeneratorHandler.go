@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3filter"
+	"github.com/getkin/kin-openapi/routers"
 	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
 	"github.com/muonsoft/openapi-mock/internal/openapi/responder"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
@@ -11,13 +12,13 @@ import (
 )
 
 type responseGeneratorHandler struct {
-	router            *openapi3filter.Router
+	router            routers.Router
 	responseGenerator generator.ResponseGenerator
 	responder         responder.Responder
 }
 
 func NewResponseGeneratorHandler(
-	router *openapi3filter.Router,
+	router routers.Router,
 	responseGenerator generator.ResponseGenerator,
 	responder responder.Responder,
 ) http.Handler {
@@ -37,8 +38,7 @@ func (handler *responseGeneratorHandler) ServeHTTP(writer http.ResponseWriter, r
 	ctx := request.Context()
 	logger := logcontext.LoggerFromContext(ctx)
 
-	route, pathParameters, err := handler.router.FindRoute(request.Method, request.URL)
-
+	route, pathParameters, err := handler.router.FindRoute(request)
 	if err != nil {
 		http.NotFound(writer, request)
 
