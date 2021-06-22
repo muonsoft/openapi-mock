@@ -5,6 +5,7 @@ info:
 servers:
   - url: http://example.com:1234/global/base/path
   - url: /another-global/base/path
+  - url: http://localhost:1234
 paths:
   /endpoint:
     get:

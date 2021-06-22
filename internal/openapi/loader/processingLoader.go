@@ -47,7 +47,12 @@ func (loader *processingLoader) processServers(servers *openapi3.Servers) {
 		}
 
 		// server urls need to be cleaned for proper routing
-		(*servers)[i].URL = serverURL.Path
+		path := serverURL.Path
+		if path == "" {
+			path = "/"
+		}
+
+		(*servers)[i].URL = path
 	}
 }
 

@@ -34,8 +34,10 @@ func TestProcessingLoader_LoadFromURI_ServerUrlHasSchemeAndHost_OnlyPathInServer
 
 	loaderMock.AssertExpectations(t)
 	assert.NoError(t, err)
-	assert.Len(t, swagger.Servers, 1)
-	assert.Equal(t, "/path", swagger.Servers[0].URL)
+	if assert.Len(t, swagger.Servers, 2) {
+		assert.Equal(t, "/path", swagger.Servers[0].URL)
+		assert.Equal(t, "/", swagger.Servers[1].URL)
+	}
 	assert.Equal(t, "/path", swagger.Paths["path"].Servers[0].URL)
 	assert.Equal(t, "/path", (*swagger.Paths["path"].Connect.Servers)[0].URL)
 	assert.Equal(t, "/path", (*swagger.Paths["path"].Delete.Servers)[0].URL)
@@ -52,6 +54,9 @@ func givenServers() *openapi3.Servers {
 	return &openapi3.Servers{
 		{
 			URL: "https://localhost:1345/path?param=value",
+		},
+		{
+			URL: "https://localhost:1345",
 		},
 	}
 }
