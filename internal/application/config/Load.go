@@ -21,7 +21,7 @@ func Load(filename string) (*Configuration, error) {
 
 	err = fileConfig.Validate()
 	if err != nil {
-		return nil, &ErrInvalidConfiguration{ValidationError: err}
+		return nil, &InvalidConfigurationError{ValidationError: err}
 	}
 
 	return createApplicationConfiguration(fileConfig), nil

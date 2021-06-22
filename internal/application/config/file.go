@@ -5,7 +5,9 @@ import (
 	"io/ioutil"
 	"strings"
 
-	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/muonsoft/validation"
+	"github.com/muonsoft/validation/it"
+	"github.com/muonsoft/validation/validator"
 	"gopkg.in/yaml.v3"
 )
 
@@ -46,13 +48,13 @@ type generationConfiguration struct {
 func loadFileConfiguration(filename string) (*fileConfiguration, error) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, &ErrLoadFailed{Previous: err}
+		return nil, &LoadingFailedError{Previous: err}
 	}
 
 	var fileConfig fileConfiguration
 	err = yaml.Unmarshal(data, &fileConfig)
 	if err != nil {
-		return nil, &ErrLoadFailed{Previous: err}
+		return nil, &LoadingFailedError{Previous: err}
 	}
 
 	return &fileConfig, nil
@@ -66,33 +68,29 @@ var invalidLogFormat = fmt.Sprintf("must be one of: %s", strings.Join(logFormats
 var invalidLogLevel = fmt.Sprintf("must be one of: %s", strings.Join(logLevels, ", "))
 var invalidUseExample = fmt.Sprintf("must be one of: %s", strings.Join(useExampleOptions, ", "))
 
-func stringsAsInterfaces(ss []string) []interface{} {
-	ii := make([]interface{}, len(ss))
-	for i, s := range ss {
-		ii[i] = s
-	}
-	return ii
-}
-
 func (config *fileConfiguration) Validate() error {
-	return validation.Errors{
-		"http.port": validation.Validate(
+	return validator.Validate(
+		validation.StringProperty(
+			"application.log_format",
+			&config.Application.LogFormat,
+			it.IsOneOfStrings(logFormats...).Message(invalidLogFormat),
+		),
+		validation.StringProperty(
+			"application.log_level",
+			&config.Application.LogLevel,
+			it.IsOneOfStrings(logLevels...).Message(invalidLogLevel),
+		),
+		validation.StringProperty(
+			"generation.use_examples",
+			&config.Generation.UseExamples,
+			it.IsOneOfStrings(useExampleOptions...).Message(invalidUseExample),
+		),
+		validation.NumberProperty(
+			"http.port",
 			config.HTTP.Port,
-			validation.Required.When(config.HTTP.Port != nil),
-			validation.Min(uint16(1)),
-			validation.Max(uint16(65535)),
+			it.IsBetweenIntegers(1, 65535).
+				When(config.HTTP.Port != nil).
+				Message("value should be between {{ min }} and {{ max }} if present"),
 		),
-		"application.log_format": validation.Validate(
-			config.Application.LogFormat,
-			validation.In(stringsAsInterfaces(logFormats)...).Error(invalidLogFormat),
-		),
-		"application.log_level": validation.Validate(
-			config.Application.LogLevel,
-			validation.In(stringsAsInterfaces(logLevels)...).Error(invalidLogLevel),
-		),
-		"generation.use_examples": validation.Validate(
-			config.Generation.UseExamples,
-			validation.In(stringsAsInterfaces(useExampleOptions)...).Error(invalidUseExample),
-		),
-	}.Filter()
+	)
 }
