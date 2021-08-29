@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"regexp"
 
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking"
 	"github.com/muonsoft/openapi-mock/internal/openapi/responder/serializer"
 )
 
 type Responder interface {
-	WriteResponse(ctx context.Context, writer http.ResponseWriter, response *generator.Response)
+	WriteResponse(ctx context.Context, writer http.ResponseWriter, response *mocking.Response)
 	WriteError(ctx context.Context, writer http.ResponseWriter, err error)
 }
 

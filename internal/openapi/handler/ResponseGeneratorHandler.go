@@ -5,7 +5,7 @@ import (
 
 	"github.com/getkin/kin-openapi/openapi3filter"
 	"github.com/getkin/kin-openapi/routers"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking"
 	"github.com/muonsoft/openapi-mock/internal/openapi/responder"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 	"github.com/pkg/errors"
@@ -13,13 +13,13 @@ import (
 
 type responseGeneratorHandler struct {
 	router            routers.Router
-	responseGenerator generator.ResponseGenerator
+	responseGenerator *mocking.ResponseMocker
 	responder         responder.Responder
 }
 
 func NewResponseGeneratorHandler(
 	router routers.Router,
-	responseGenerator generator.ResponseGenerator,
+	responseGenerator *mocking.ResponseMocker,
 	responder responder.Responder,
 ) http.Handler {
 	generatorHandler := &responseGeneratorHandler{

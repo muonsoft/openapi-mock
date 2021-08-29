@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking"
 	serializermock "github.com/muonsoft/openapi-mock/test/mocks/openapi/responder/serializer"
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +52,7 @@ func TestWriteResponse_GivenResponse_SerializedDataWritten(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			response := &generator.Response{
+			response := &mocking.Response{
 				StatusCode:  http.StatusOK,
 				ContentType: test.contentType,
 				Data:        "data",
@@ -77,7 +77,7 @@ func TestWriteResponse_GivenResponse_SerializedDataWritten(t *testing.T) {
 }
 
 func TestCoordinatingResponder_WriteResponse_NoContentResponse_EmptyBodyWritten(t *testing.T) {
-	response := &generator.Response{
+	response := &mocking.Response{
 		StatusCode:  http.StatusNoContent,
 		ContentType: "",
 		Data:        "",
@@ -97,7 +97,7 @@ func TestCoordinatingResponder_WriteResponse_NoContentResponse_EmptyBodyWritten(
 }
 
 func TestCoordinatingResponder_WriteResponse_SerializationError_UnexpectedErrorWritten(t *testing.T) {
-	response := &generator.Response{
+	response := &mocking.Response{
 		StatusCode:  http.StatusOK,
 		ContentType: "content/type",
 		Data:        "data",
@@ -123,7 +123,7 @@ func TestCoordinatingResponder_WriteResponse_SerializationError_UnexpectedErrorW
 func TestCoordinatingResponder_WriteError_UnsupportedFeatureError_UnsupportedPage(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	responder := New()
-	notSupported := &apperrors.NotSupported{Message: "unsupported feature description"}
+	notSupported := &apperrors.NotSupportedError{Message: "unsupported feature description"}
 
 	responder.WriteError(context.Background(), recorder, notSupported)
 	response := recorder.Body.String()

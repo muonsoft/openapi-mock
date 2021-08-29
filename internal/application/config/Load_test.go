@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking/data"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )

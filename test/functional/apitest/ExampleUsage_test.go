@@ -6,14 +6,14 @@ import (
 
 	"github.com/muonsoft/api-testing/assertjson"
 	"github.com/muonsoft/openapi-mock/internal/application/config"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/muonsoft/openapi-mock/internal/enum"
 )
 
 func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesDisabled_GeneratedValueInResponse() {
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/MediaTypeExample.yaml",
-		UseExamples:      data.No,
+		UseExamples:      enum.No,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)
@@ -30,7 +30,7 @@ func (suite *APISuite) TestExampleUsage_SingleExampleInMediaAndUseExamplesIfPres
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/MediaTypeExample.yaml",
-		UseExamples:      data.IfPresent,
+		UseExamples:      enum.IfPresent,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)
@@ -47,7 +47,7 @@ func (suite *APISuite) TestExampleUsage_MultipleExamplesInMediaAndUseExamplesIfP
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/MediaTypeExamples.yaml",
-		UseExamples:      data.IfPresent,
+		UseExamples:      enum.IfPresent,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)
@@ -64,7 +64,7 @@ func (suite *APISuite) TestExampleUsage_ValueExamplesAndUseExamplesIfPresent_Exa
 	recorder := httptest.NewRecorder()
 	handler := suite.createOpenAPIHandler(config.Configuration{
 		SpecificationURL: "ExampleUsage/ValueExamples.yaml",
-		UseExamples:      data.IfPresent,
+		UseExamples:      enum.IfPresent,
 	})
 
 	request, _ := http.NewRequest("GET", "/content", nil)

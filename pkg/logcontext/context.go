@@ -26,3 +26,13 @@ func LoggerFromContext(ctx context.Context) logrus.FieldLogger {
 
 	return logger
 }
+
+func Infof(ctx context.Context, format string, args ...interface{}) {
+	logger := LoggerFromContext(ctx)
+	logger.Infof(format, args...)
+}
+
+func Warnf(ctx context.Context, format string, args ...interface{}) {
+	logger := LoggerFromContext(ctx)
+	logger.Warnf(format, args...)
+}

@@ -4,7 +4,7 @@ import (
 	"math"
 	"time"
 
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/muonsoft/openapi-mock/internal/enum"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,7 +24,7 @@ type Configuration struct {
 	LogLevel  logrus.Level
 
 	// Generation options
-	UseExamples     data.UseExamplesEnum
+	UseExamples     enum.UseExamples
 	NullProbability float64
 	DefaultMinInt   int64
 	DefaultMaxInt   int64

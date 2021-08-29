@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
+	"github.com/muonsoft/openapi-mock/internal/enum"
 	"github.com/sirupsen/logrus"
 )
 
@@ -120,13 +120,13 @@ func parseLogLevel(rawLogLevel string) logrus.Level {
 	return logLevel
 }
 
-func parseUseExamples(useExamples string) data.UseExamplesEnum {
+func parseUseExamples(useExamples string) enum.UseExamples {
 	if useExamples == "if_present" {
-		return data.IfPresent
+		return enum.IfPresent
 	}
 	if useExamples == "exclusively" {
-		return data.Exclusively
+		return enum.Exclusively
 	}
 
-	return data.No
+	return enum.No
 }

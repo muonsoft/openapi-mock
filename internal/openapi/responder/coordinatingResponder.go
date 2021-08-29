@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	apperrors "github.com/muonsoft/openapi-mock/internal/errors"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking"
 	"github.com/muonsoft/openapi-mock/internal/openapi/responder/serializer"
 	"github.com/muonsoft/openapi-mock/pkg/logcontext"
 )
@@ -24,7 +24,7 @@ type formatGuess struct {
 	pattern *regexp.Regexp
 }
 
-func (responder *coordinatingResponder) WriteResponse(ctx context.Context, writer http.ResponseWriter, response *generator.Response) {
+func (responder *coordinatingResponder) WriteResponse(ctx context.Context, writer http.ResponseWriter, response *mocking.Response) {
 	format := responder.guessSerializationFormat(response.ContentType)
 
 	data, err := responder.serializer.Serialize(response.Data, format)
@@ -47,7 +47,7 @@ func (responder *coordinatingResponder) WriteError(ctx context.Context, writer h
 
 	html := ""
 
-	var unsupported *apperrors.NotSupported
+	var unsupported apperrors.NotSupportedError
 	if errors.As(err, &unsupported) {
 		html = responder.generateUnsupportedErrorHTML(unsupported)
 	} else {
@@ -69,7 +69,7 @@ func (responder *coordinatingResponder) generateUnexpectedErrorHTML(ctx context.
 	return html
 }
 
-func (responder *coordinatingResponder) generateUnsupportedErrorHTML(err *apperrors.NotSupported) string {
+func (responder *coordinatingResponder) generateUnsupportedErrorHTML(err apperrors.NotSupportedError) string {
 	html := strings.ReplaceAll(errorTemplate, "{{title}}", "Feature is not supported")
 	message := fmt.Sprintf("An error occurred: %s.", err.Error())
 	html = strings.ReplaceAll(html, "{{message}}", message)

@@ -12,10 +12,11 @@ import (
 	"github.com/getkin/kin-openapi/routers/legacy"
 	"github.com/gorilla/handlers"
 	"github.com/muonsoft/openapi-mock/internal/application/config"
-	responseGenerator "github.com/muonsoft/openapi-mock/internal/openapi/generator"
-	"github.com/muonsoft/openapi-mock/internal/openapi/generator/data"
 	"github.com/muonsoft/openapi-mock/internal/openapi/handler"
 	"github.com/muonsoft/openapi-mock/internal/openapi/loader"
+	responseGenerator "github.com/muonsoft/openapi-mock/internal/openapi/mocking"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking/content"
+	"github.com/muonsoft/openapi-mock/internal/openapi/mocking/data"
 	"github.com/muonsoft/openapi-mock/internal/openapi/responder"
 	"github.com/muonsoft/openapi-mock/internal/server"
 	"github.com/muonsoft/openapi-mock/internal/server/middleware"
@@ -62,7 +63,8 @@ func (factory *Factory) CreateHTTPHandler(router routers.Router) http.Handler {
 	}
 
 	dataGeneratorInstance := data.New(generatorOptions)
-	responseGeneratorInstance := responseGenerator.New(dataGeneratorInstance)
+	contentGenerator := content.NewGenerator(generatorOptions.UseExamples, dataGeneratorInstance)
+	responseGeneratorInstance := responseGenerator.NewResponseMocker(contentGenerator)
 	apiResponder := responder.New()
 
 	var httpHandler http.Handler

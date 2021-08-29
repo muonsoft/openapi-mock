@@ -1,13 +1,13 @@
 package errors
 
-type NotSupported struct {
+type NotSupportedError struct {
 	Message string
 }
 
-func NewNotSupported(message string) *NotSupported {
-	return &NotSupported{Message: message}
+func NotSupported(message string) error {
+	return NotSupportedError{Message: message}
 }
 
-func (err *NotSupported) Error() string {
+func (err NotSupportedError) Error() string {
 	return err.Message
 }
