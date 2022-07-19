@@ -18,7 +18,7 @@ func TestContextualLoggerHandler_ServeHTTP_RequestIdInContext_LoggerSetToContext
 	recorder := httptest.NewRecorder()
 	logger, _ := test.NewNullLogger()
 	nextHandler := httpmock.Handler{}
-	handler := ContextLoggerHandler(logger, &nextHandler)
+	handler := NewContextLogger(logger, &nextHandler)
 	nextHandler.
 		On("ServeHTTP", mock.Anything, mock.Anything).
 		Return(nil).

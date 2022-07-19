@@ -35,6 +35,7 @@ func (suite *APISuite) TestValueGeneration_SpecificationWithAllPossibleSchemas_E
 		json.Node("/byte").Matches("^[a-zA-Z0-9+\\/]+={0,2}$")
 		json.Node("/html").Contains("<html lang=\"en\">")
 		json.Node("/html").Matches("<[^>]+>|&[^;]+;")
+		json.Node("/custom").IsString()
 		json.Node("/shortString").IsStringWithLengthInRange(2, 4)
 		json.Node("/longString").IsStringWithLengthInRange(100, 105)
 		json.Node("/array").IsArrayWithElementsCount(5)

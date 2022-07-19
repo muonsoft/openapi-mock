@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"strings"
@@ -70,27 +71,18 @@ var invalidUseExample = fmt.Sprintf("must be one of: %s", strings.Join(useExampl
 
 func (config *fileConfiguration) Validate() error {
 	return validator.Validate(
-		validation.StringProperty(
-			"application.log_format",
-			&config.Application.LogFormat,
-			it.IsOneOfStrings(logFormats...).Message(invalidLogFormat),
-		),
-		validation.StringProperty(
-			"application.log_level",
-			&config.Application.LogLevel,
-			it.IsOneOfStrings(logLevels...).Message(invalidLogLevel),
-		),
-		validation.StringProperty(
-			"generation.use_examples",
-			&config.Generation.UseExamples,
-			it.IsOneOfStrings(useExampleOptions...).Message(invalidUseExample),
-		),
-		validation.NumberProperty(
-			"http.port",
+		context.Background(),
+		validation.String(config.Application.LogFormat, it.IsOneOf(logFormats...).WithMessage(invalidLogFormat)).
+			At(validation.PropertyName("application"), validation.PropertyName("log_format")),
+		validation.String(config.Application.LogLevel, it.IsOneOf(logLevels...).WithMessage(invalidLogLevel)).
+			At(validation.PropertyName("application"), validation.PropertyName("log_level")),
+		validation.String(config.Generation.UseExamples, it.IsOneOf(useExampleOptions...).WithMessage(invalidUseExample)).
+			At(validation.PropertyName("generation"), validation.PropertyName("use_examples")),
+		validation.NilNumber[uint16](
 			config.HTTP.Port,
-			it.IsBetweenIntegers(1, 65535).
+			it.IsBetween[uint16](1, 65535).
 				When(config.HTTP.Port != nil).
-				Message("value should be between {{ min }} and {{ max }} if present"),
-		),
+				WithMessage("value should be between {{ min }} and {{ max }} if present"),
+		).At(validation.PropertyName("http"), validation.PropertyName("port")),
 	)
 }
