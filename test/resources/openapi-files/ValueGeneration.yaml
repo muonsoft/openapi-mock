@@ -82,6 +82,9 @@ paths:
                   html:
                     type: string
                     format: html
+                  custom:
+                    type: string
+                    format: custom
                   shortString:
                     type: string
                     minLength: 2

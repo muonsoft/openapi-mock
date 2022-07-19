@@ -40,6 +40,7 @@ func NewFactory(configuration *config.Configuration) *Factory {
 func init() {
 	openapi3.DefineStringFormat("uuid", openapi3.FormatOfStringForUUIDOfRFC4122)
 	openapi3.DefineStringFormat("html", "<[^>]+>|&[^;]+;")
+	openapi3.SchemaFormatValidationDisabled = true
 }
 
 func (factory *Factory) GetLogger() logrus.FieldLogger {
