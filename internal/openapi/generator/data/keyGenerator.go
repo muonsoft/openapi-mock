@@ -1,9 +1,9 @@
 package data
 
 import (
-	"strings"
-
+	"github.com/muonsoft/language"
 	"github.com/pkg/errors"
+	"golang.org/x/text/cases"
 	"syreclabs.com/go/faker"
 )
 
@@ -25,7 +25,7 @@ func (generator *camelCaseKeyGenerator) GenerateKey() (string, error) {
 
 	key := words[0]
 	for i := 1; i < len(words); i++ {
-		key += strings.Title(words[i])
+		key += cases.Title(language.English).String(words[i])
 	}
 
 	return key, nil
