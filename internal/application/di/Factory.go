@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/routers"
@@ -25,7 +24,7 @@ import (
 
 type Factory struct {
 	configuration *config.Configuration
-	logger        logrus.FieldLogger
+	logger        *logrus.Logger
 }
 
 func NewFactory(configuration *config.Configuration) *Factory {
@@ -43,7 +42,7 @@ func init() {
 	openapi3.SchemaFormatValidationDisabled = true
 }
 
-func (factory *Factory) GetLogger() logrus.FieldLogger {
+func (factory *Factory) GetLogger() *logrus.Logger {
 	return factory.logger
 }
 
@@ -80,9 +79,8 @@ func (factory *Factory) CreateHTTPHandler(router routers.Router) http.Handler {
 	})
 
 	httpHandler = secureMiddleware.Handler(httpHandler)
-	httpHandler = middleware.ContextLoggerHandler(factory.logger, httpHandler)
+	httpHandler = middleware.NewContextLogger(factory.logger, httpHandler)
 	httpHandler = middleware.TracingHandler(httpHandler)
-	httpHandler = handlers.CombinedLoggingHandler(os.Stdout, httpHandler)
 	httpHandler = handlers.RecoveryHandler(
 		handlers.RecoveryLogger(factory.logger),
 		handlers.PrintRecoveryStack(true),
@@ -93,8 +91,7 @@ func (factory *Factory) CreateHTTPHandler(router routers.Router) http.Handler {
 }
 
 func (factory *Factory) CreateHTTPServer() (server.Server, error) {
-	logger := factory.GetLogger()
-	loggerWriter := logger.(*logrus.Logger).Writer()
+	loggerWriter := factory.logger.Writer()
 
 	specificationLoader := factory.CreateSpecificationLoader()
 	specification, err := specificationLoader.LoadFromURI(factory.configuration.SpecificationURL)
@@ -102,7 +99,7 @@ func (factory *Factory) CreateHTTPServer() (server.Server, error) {
 		return nil, fmt.Errorf("failed to load OpenAPI specification from '%s': %w", factory.configuration.SpecificationURL, err)
 	}
 
-	logger.Infof("OpenAPI specification was successfully loaded from '%s'", factory.configuration.SpecificationURL)
+	factory.logger.Infof("OpenAPI specification was successfully loaded from '%s'", factory.configuration.SpecificationURL)
 
 	router, err := legacy.NewRouter(specification)
 	if err != nil {
@@ -113,7 +110,7 @@ func (factory *Factory) CreateHTTPServer() (server.Server, error) {
 	serverLogger := log.New(loggerWriter, "[HTTP]: ", log.LstdFlags)
 	httpServer := server.New(factory.configuration.Port, httpHandler, serverLogger)
 
-	logger.WithFields(factory.configuration.Dump()).Info("OpenAPI mock server was created")
+	factory.logger.WithFields(factory.configuration.Dump()).Info("OpenAPI mock server was created")
 
 	return httpServer, nil
 }

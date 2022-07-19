@@ -35,15 +35,16 @@ issues:
     # Exclude some linters from running on tests files.
     - path: _test\.go
       linters:
-        - funlen
-        - lll
-        - gocyclo
-        - errcheck
         - dupl
-        - gosec
-        - scopelint
+        - errcheck
+        - funlen
         - gochecknoglobals
+        - gocritic
+        - gocyclo
         - goerr113
+        - gosec
+        - lll
+        - scopelint
     - path: internal/application/config/Configuration.go
       linters:
         - maligned
