@@ -9,7 +9,7 @@ type SpecificationLoader interface {
 func New() SpecificationLoader {
 	return &processingLoader{
 		&autoLoader{
-			loader: openapi3.NewLoader(),
+			loader: &openapi3.Loader{IsExternalRefsAllowed: true},
 		},
 	}
 }
