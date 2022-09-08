@@ -9,7 +9,7 @@ build:
     tests:
       environment:
         go:
-          version: 'go1.14'
+          version: 'go1.18'
       project_setup:
         override:
           - go mod download
