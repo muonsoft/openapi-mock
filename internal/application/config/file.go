@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/muonsoft/validation"
@@ -47,7 +47,7 @@ type generationConfiguration struct {
 }
 
 func loadFileConfiguration(filename string) (*fileConfiguration, error) {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, &LoadingFailedError{Previous: err}
 	}
