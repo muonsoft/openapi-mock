@@ -2,7 +2,7 @@ package di
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 
@@ -118,7 +118,7 @@ func (factory *Factory) CreateHTTPServer() (server.Server, error) {
 func createLogger(configuration *config.Configuration) *logrus.Logger {
 	logger := logrus.New()
 	if configuration.DryRun {
-		logger.Out = ioutil.Discard
+		logger.Out = io.Discard
 		return logger
 	}
 

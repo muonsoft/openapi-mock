@@ -2,7 +2,7 @@ package logcontext
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 
 	"github.com/sirupsen/logrus"
 )
@@ -20,7 +20,7 @@ func LoggerFromContext(ctx context.Context) logrus.FieldLogger {
 
 	if !exists {
 		nullLogger := logrus.New()
-		nullLogger.Out = ioutil.Discard
+		nullLogger.Out = io.Discard
 		logger = nullLogger
 	}
 

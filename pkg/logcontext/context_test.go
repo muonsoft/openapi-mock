@@ -2,7 +2,7 @@ package logcontext
 
 import (
 	"context"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"github.com/sirupsen/logrus"
@@ -23,7 +23,7 @@ func TestLoggerFromContext_EmptyContext_NullLoggerReturned(t *testing.T) {
 
 	logger := LoggerFromContext(ctx)
 
-	assert.Equal(t, ioutil.Discard, logger.(*logrus.Logger).Out)
+	assert.Equal(t, io.Discard, logger.(*logrus.Logger).Out)
 }
 
 func TestLoggerFromContext_ContextWithLogger_LoggerReturned(t *testing.T) {
