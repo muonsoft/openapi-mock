@@ -72,7 +72,7 @@ Options loaded from a file can be overridden by environment variables.
 # this will override any options loaded from `openapi-mock.yaml`
 export OPENAPI_MOCK_SPECIFICATION_URL=path/to/your/openapi-specification.yaml
 ./openapi-mock serve --configuration openapi-mock.yaml
-``` 
+```
 
 Also, if you specify a path to an OpenAPI specification via console argument `--specification-url` it will override the same option loaded from a file or an environment variable. 
 
@@ -127,8 +127,10 @@ Path to a local OpenAPI specification file or URL to a remote file. This option 
 
 Examples
 
-* `https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml`
-* `path/to/your/openapi-specification.yaml`
+* `https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml` loads a file from a URL.
+* `path/to/your/openapi-specification.yaml` loads a file relative to working directory.
+* `./path/to/your/openapi-specification.yaml` loads a file relative to configuration file.
+* `/path/to/your/openapi-specification.yaml` loads a file by absolute path.
 
 ### Web server options
 
