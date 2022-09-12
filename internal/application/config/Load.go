@@ -78,7 +78,7 @@ func specificationURLIsRelativeFilename(filename string, fileConfig *fileConfigu
 	return filename != "" &&
 		fileConfig.OpenAPI.SpecificationURL != "" &&
 		!fileConfig.OpenAPI.urlFromEnv &&
-		!strings.HasPrefix(fileConfig.OpenAPI.SpecificationURL, "http")
+		strings.HasPrefix(fileConfig.OpenAPI.SpecificationURL, "./")
 }
 
 func createApplicationConfiguration(fileConfig *fileConfiguration) *Configuration {
