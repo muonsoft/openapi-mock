@@ -1,9 +1,10 @@
 # OpenAPI Mock Server
 
 ![CI](https://github.com/muonsoft/openapi-mock/workflows/CI/badge.svg?branch=master)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/?branch=master)
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/muonsoft/openapi-mock)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/muonsoft/openapi-mock/?branch=master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/158deb3434a84924dade/maintainability)](https://codeclimate.com/github/muonsoft/openapi-mock/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/158deb3434a84924dade/test_coverage)](https://codeclimate.com/github/muonsoft/openapi-mock/test_coverage)
 
 OpenAPI API mock server with random data generation by specified schemas.
 
