@@ -10,20 +10,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: |
+            muonsoft/openapi-mock
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
       - name: Set APP_VERSION env
         run: echo "APP_VERSION=$(echo ${GITHUB_REF} | rev | cut -d'/' -f 1 | rev )" >> $GITHUB_ENV
       - name: Set BUILD_TIME env
         run: echo "BUILD_TIME=$(date)" >> $GITHUB_ENV
       - name: Environment Printer
         uses: managedkaos/print-env@v1.0
-
-      - uses: docker/build-push-action@v1
+      - name: Build and push
+        uses: docker/build-push-action@v3
         with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: muonsoft/openapi-mock
+          repository:
           always_pull: true
           build_args: APP_VERSION=${{ env.APP_VERSION }}, BUILD_TIME=${{ env.BUILD_TIME }}
-          tags: latest
-          tag_with_ref: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
