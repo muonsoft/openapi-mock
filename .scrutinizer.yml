@@ -6,19 +6,6 @@ build:
       tests:
         override:
           - go-scrutinizer-run
-    tests:
-      environment:
-        go:
-          version: 'go1.18'
-      project_setup:
-        override:
-          - go mod download
-      tests:
-        override:
-          - command: go test -v $(go list ./... | grep -v vendor) -coverprofile=cover.out
-            coverage:
-              file: 'cover.out'
-              format: 'go-cc'
 
 filter:
   excluded_paths:
