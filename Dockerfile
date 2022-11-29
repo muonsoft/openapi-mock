@@ -17,11 +17,11 @@ RUN set -e \
     && cd /project \
     && go mod download \
     && cd /project/cmd/openapi-mock \
-    && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-w -s -X main.version=${APP_VERSION} -X main.buildTime=${BUILD_TIME}" -o openapi-mock \
+    && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -ldflags="-w -s -X 'main.version=${APP_VERSION}' -X 'main.buildTime=${BUILD_TIME}'" -o openapi-mock \
     && ls -la | grep "openapi-mock"
 
 # final stage
-FROM alpine
+FROM --platform=$BUILDPLATFORM alpine
 
 LABEL "homepage"="https://github.com/muonsoft/openapi-mock"
 LABEL "maintainer"="Igor Lazarev <strider2038@yandex.ru>"
