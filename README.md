@@ -77,6 +77,26 @@ To start up a container run command.
 docker-compose up -d
 ```
 
+If you want to reference a local file in docker compose:
+
+* you must first mount the host dir into container - `./openapi:/etc/openapi`
+* only then can you reference it
+
+```yaml
+version: '3.0'
+
+services:
+  openapi_mock:
+    container_name: openapi_mock
+    image: muonsoft/openapi-mock
+    volumes:
+    - ./openapi:/etc/openapi
+    environment:
+      OPENAPI_MOCK_SPECIFICATION_URL: '/etc/openapi/petstore.yaml'
+    ports:
+      - "8080:8080"
+```
+
 ## Usage guide
 
 * [Console commands](docs/usage_guide.md#console-commands)
