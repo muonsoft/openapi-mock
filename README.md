@@ -26,8 +26,8 @@ OpenAPI API mock server with random data generation by specified schemas.
 | generation of [associative arrays](https://swagger.io/docs/specification/data-models/dictionaries/) | supported |
 | generation of [combined types](https://swagger.io/docs/specification/data-models/oneof-anyof-allof-not/) | supported (without tag `not` and discriminator) |
 | local reference resolving | supported |
-| remote reference resolving | not supported |
-| URL reference resolving | not supported |
+| remote reference resolving | supported |
+| URL reference resolving | supported |
 | validating request data | not supported |
 | force using custom response schema | not supported (schema detected automatically) |
 
