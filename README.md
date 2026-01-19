@@ -37,7 +37,7 @@ Download latest binary and run a server.
 
 ```bash
 # runs a local server on port 8080
-./openapi-mock serve --specification-url https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml
+./openapi-mock serve --specification-url https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/_archive_/schemas/v3.0/pass/petstore.yaml
 
 # to test that the server successfully ran
 curl 'http://localhost:8080/v1/pets'
@@ -50,7 +50,7 @@ Alternatively, you can use [Docker](https://www.docker.com/) image.
 docker pull muonsoft/openapi-mock
 
 # runs a docker container with exported port 8080
-docker run -p 8080:8080 -e "OPENAPI_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml" --rm muonsoft/openapi-mock
+docker run -p 8080:8080 -e "OPENAPI_MOCK_SPECIFICATION_URL=https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/_archive_/schemas/v3.0/pass/petstore.yaml" --rm muonsoft/openapi-mock
 
 # to test that the server successfully ran
 curl 'http://localhost:8080/v1/pets'
@@ -66,7 +66,7 @@ services:
     container_name: openapi_mock
     image: muonsoft/openapi-mock
     environment:
-      OPENAPI_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml'
+      OPENAPI_MOCK_SPECIFICATION_URL: 'https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/_archive_/schemas/v3.0/pass/petstore.yaml'
     ports:
       - "8080:8080"
 ```
